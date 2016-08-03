@@ -18,23 +18,22 @@ public struct UdpSocketError: Error {
 }
 
 public protocol UdpSocketDelegate {
-    func udpSocket(_ socket:UdpSocket, didStartWithAddress:UdpSocket.Address)
-    func udpSocket(_ socket:UdpSocket, didSend:UdpSocket.Buffer, to:UdpSocket.Address)
-    func udpSocket(_ socket:UdpSocket, didFailToSend:UdpSocket.Buffer, to:UdpSocket.Address, withError:UdpSocketError)
-    func udpSocket(_ socket:UdpSocket, didRead:UdpSocket.Buffer, from:UdpSocket.Address)
+    func udpSocket(_ socket:UdpSocket, didStartWithAddress:SocketAddress)
+    func udpSocket(_ socket:UdpSocket, didSend:UdpSocket.Buffer, to:SocketAddress)
+    func udpSocket(_ socket:UdpSocket, didFailToSend:UdpSocket.Buffer, to:SocketAddress, withError:UdpSocketError)
+    func udpSocket(_ socket:UdpSocket, didRead:UdpSocket.Buffer, from:SocketAddress)
     func udpSocket(_ socket:UdpSocket, didReceiveError:UdpSocketError)
     func udpSocket(_ socket:UdpSocket, didStopWithError:UdpSocketError)
 }
 
 public class UdpSocket {
     
-    public typealias Address = [UInt8]
     public typealias Buffer = [UInt8]
     
     public var delegate: UdpSocketDelegate?
     
     private(set) public var hostName: String?
-    private(set) public var hostAddress: Address?
+    private(set) public var hostAddress: SocketAddress?
     private(set) public var port: UInt = 0
     
     public var isServer: Bool {
@@ -63,26 +62,25 @@ public class UdpSocket {
         }
     }
     
-    public func send(data: Buffer, to address: Address?) {
+    public func send(data: Buffer, to address: SocketAddress?) {
         
         // address is nil in the client case, whereupon the
         // data is automatically sent to the hostAddress by virtue of the fact
         // that the socket is connected to that address.
         
         assert((address != nil) == self.isServer)
-        assert((address == nil) || (address?.count <= sizeof(sockaddr_storage.self)))
         
         let sock = CFSocketGetNative(self.cfSocket)
         assert(sock >= 0)
         
         let dataPtr: UnsafePointer<Void> = castToPointer(array: data)
-        let addr: Address
+        var addr: SocketAddress
         let addrPtr: UnsafePointer<sockaddr>?
         let addrLen: socklen_t
         if let address = address {
             addr = address
-            addrPtr = castToPointer(array: address)
-            addrLen = socklen_t(address.count)
+            addrPtr = addr.pointer()
+            addrLen = addr.size
         }
         else {
             assert(self.hostAddress != nil)
@@ -93,7 +91,7 @@ public class UdpSocket {
             }
             else {
                 // just to silent compiler
-                addr = Address()
+                addr = SocketAddress()
                 addrPtr = nil
                 addrLen = 0
             }
@@ -149,10 +147,7 @@ public class UdpSocket {
             
             if let delegate = self.delegate {
                 let localAddressData = CFSocketCopyAddress(self.cfSocket) as Data
-                
-                let localAddress = localAddressData.withUnsafeBytes {
-                    Array(UnsafeBufferPointer<UInt8>(start: $0, count: localAddressData.count))
-                }
+                let localAddress = SocketAddress(data: localAddressData)
                 delegate.udpSocket(self, didStartWithAddress:localAddress)
             }
         }
@@ -201,11 +196,10 @@ public class UdpSocket {
         assert(sock >= 0)
         
         var buffer = Buffer(repeating: 0, count: 65536)
-        var addr = sockaddr_storage()
-        let addrPtr: UnsafeMutablePointer<sockaddr> = cast(pointer: &addr)
-        var addrLen = socklen_t(sizeofValue(addr))
+        var addr = SocketAddress()
+        var addrLen = socklen_t(sizeofValue(addr.storage))
         
-        let bytesRead = recvfrom(sock, &buffer, buffer.count, 0, addrPtr, &addrLen)
+        let bytesRead = recvfrom(sock, &buffer, buffer.count, 0, addr.pointer(), &addrLen)
         let err: Int32
         if bytesRead < 0 {
             err = errno
@@ -218,7 +212,7 @@ public class UdpSocket {
             err = 0
             
             let dataObj = Buffer(buffer.prefix(bytesRead))
-            let addrObj = Address(UnsafeBufferPointer(start: cast(pointer: &addr), count: Int(addrLen)))
+            let addrObj = SocketAddress(addr: addr.pointer(), size:addrLen)
             
             // Tell the delegate about the data.
             if let delegate = self.delegate {
@@ -233,7 +227,7 @@ public class UdpSocket {
         }
     }
     
-    private func setupSocket(connectedToAddress address:Address?, port:UInt, enableBroadcast:Bool) throws {
+    private func setupSocket(connectedToAddress address:SocketAddress?, port:UInt, enableBroadcast:Bool) throws {
         // Sets up the CFSocket in either client or server mode.  In client mode,
         // address contains the address that the socket should be connected to.
         // The address contains zero port number, so the port parameter is used instead.
@@ -241,7 +235,6 @@ public class UdpSocket {
         // address on the specified port.
     
         assert((address == nil) == self.isServer)
-        assert((address == nil) || (address?.count <= sizeof(sockaddr_storage.self)))
         assert(port < 65536)
         assert(self.cfSocket == nil)
     
@@ -271,9 +264,9 @@ public class UdpSocket {
         // Bind or connect the socket, depending on whether we're in server or client mode.
         if err == 0 {
     
-            var addr = sockaddr_storage()
-            let addr4: UnsafeMutablePointer<sockaddr_in> = cast(pointer: &addr)
-            let addr6: UnsafeMutablePointer<sockaddr_in6> = cast(pointer: &addr)
+            var addr = SocketAddress()
+            let addr4: UnsafeMutablePointer<sockaddr_in> = addr.pointer()
+            let addr6: UnsafeMutablePointer<sockaddr_in6> = addr.pointer()
     
             memset(&addr, 0, sizeofValue(addr))
             
@@ -282,16 +275,9 @@ public class UdpSocket {
                 // number. Also, if the address is IPv4 and we created an IPv6 socket,
                 // convert the address to an IPv4-mapped address.
                 
-                let addressPtr: UnsafePointer<UInt8> = castToPointer(array: address)
-                if address.count > sizeofValue(addr) {
-                    assert(false) // very weird
-                    memcpy(&addr, addressPtr, sizeofValue(addr))
-                }
-                else {
-                    memcpy(&addr, addressPtr, address.count)
-                }
+                addr = address
                 
-                if addr.ss_family == sa_family_t(AF_INET) {
+                if addr.storage.ss_family == sa_family_t(AF_INET) {
                     
                     if socketFamily == AF_INET6 {
                         // Convert IPv4 address to IPv4-mapped-into-IPv6 address.
@@ -312,11 +298,11 @@ public class UdpSocket {
                     
                 }
                 else {
-                    assert(addr.ss_family == sa_family_t(AF_INET6))
+                    assert(addr.storage.ss_family == sa_family_t(AF_INET6))
                     addr6.pointee.sin6_port = CFSwapInt16HostToBig(in_port_t(port))
                 }
                 
-                if (addr.ss_family == sa_family_t(AF_INET)) && (socketFamily == AF_INET6) {
+                if (addr.storage.ss_family == sa_family_t(AF_INET)) && (socketFamily == AF_INET6) {
                     addr6.pointee.sin6_len = UInt8(sizeofValue(addr6.pointee))
                     addr6.pointee.sin6_port = CFSwapInt16HostToBig(in_port_t(port))
                     addr6.pointee.sin6_addr = in6addr_any
@@ -327,7 +313,7 @@ public class UdpSocket {
                 // Server mode. Set up the address based on the socket family of the socket
                 // that we created, with the wildcard address and the caller-supplied port number.
                 
-                addr.ss_family = sa_family_t(socketFamily)
+                addr.storage.ss_family = sa_family_t(socketFamily)
                 
                 if socketFamily == AF_INET {
                     addr4.pointee.sin_len = UInt8(sizeofValue(addr4.pointee))
@@ -348,12 +334,11 @@ public class UdpSocket {
             }
     
             if err == 0 {
-                let addrPtr: UnsafePointer<sockaddr>! = cast(pointer: &addr)
                 if address != nil {
-                    err = connect(sock, addrPtr, socklen_t(addr.ss_len))
+                    err = connect(sock, addr.pointer(), addr.size)
                 }
                 else {
-                    err = bind(sock, addrPtr, socklen_t(addr.ss_len))
+                    err = bind(sock, addr.pointer(), addr.size)
                 }
         
                 if err < 0 {
@@ -418,21 +403,18 @@ public class UdpSocket {
             
             for addressData in resolvedAddresses {
     
-                let address = Address(UnsafeBufferPointer<UInt8>(start: CFDataGetBytePtr(addressData), count: CFDataGetLength(addressData)))
-                let addrPtr: UnsafePointer<sockaddr> = castToPointer(array: address)
-                let addrLen = address.count
-                assert(addrLen >= sizeof(sockaddr.self))
+                let address = SocketAddress(addr: CFDataGetBytePtr(addressData), size:socklen_t(CFDataGetLength(addressData)))
                 
                 // Try to create a connected CFSocket for this address.  If that fails,
                 // we move along to the next address. If it succeeds, we're done.
-                if (addrPtr.pointee.sa_family == sa_family_t(AF_INET)) || (addrPtr.pointee.sa_family == sa_family_t(AF_INET6)) {
+                if (address.storage.ss_family == sa_family_t(AF_INET)) || (address.storage.ss_family == sa_family_t(AF_INET6)) {
                     do {
                         try self.setupSocket(connectedToAddress: address, port: self.port, enableBroadcast: true)
                         
                         let hostAddressData = CFSocketCopyPeerAddress(self.cfSocket)
                         assert(hostAddress != nil)
                         
-                        self.hostAddress = Address(UnsafeBufferPointer<UInt8>(start: CFDataGetBytePtr(hostAddressData), count: CFDataGetLength(hostAddressData)))
+                        self.hostAddress = SocketAddress(addr: CFDataGetBytePtr(hostAddressData), size: socklen_t(CFDataGetLength(hostAddressData)))
                         
                         break
                     }
@@ -497,38 +479,6 @@ public class UdpSocket {
         self.stop(withError:error)
     }
 
-}
-
-
-
-func bridge<T : AnyObject>(obj : T) -> UnsafeMutablePointer<Void> {
-    return UnsafeMutablePointer<Void>(Unmanaged.passUnretained(obj).toOpaque())
-    // return unsafeAddressOf(obj) // ***
-}
-
-func bridge<T : AnyObject>(ptr : UnsafePointer<Void>) -> T {
-    return Unmanaged<T>.fromOpaque(ptr).takeUnretainedValue()
-    // return unsafeBitCast(ptr, T.self) // ***
-}
-
-func cast<T,U>(pointer: UnsafeMutablePointer<T>) -> UnsafeMutablePointer<U> {
-    return unsafeBitCast(pointer, to: UnsafeMutablePointer<U>.self)
-}
-
-func cast<T,U>(pointer: UnsafePointer<T>) -> UnsafePointer<U> {
-    return unsafeBitCast(pointer, to: UnsafePointer<U>.self)
-}
-
-func castToMutablePointer<T,U>(array: Array<T>) -> UnsafeMutablePointer<U> {
-    return array.withUnsafeBufferPointer({ (ptr:UnsafeBufferPointer<T>) -> UnsafeMutablePointer<U> in
-        return unsafeBitCast(ptr, to: UnsafeMutablePointer<U>.self)
-    })
-}
-
-func castToPointer<T,U>(array: Array<T>) -> UnsafePointer<U> {
-    return array.withUnsafeBufferPointer({ (ptr:UnsafeBufferPointer<T>) -> UnsafePointer<U> in
-        return unsafeBitCast(ptr, to: UnsafePointer<U>.self)
-    })
 }
 
 

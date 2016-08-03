@@ -11,7 +11,7 @@ import Foundation
 
 struct PendingConnection {
     let packet: DataPacket
-    let address: Address
+    let address: SocketAddress
 }
 
 public class ConnectionProvider: UdpSocketDelegate {
@@ -21,7 +21,7 @@ public class ConnectionProvider: UdpSocketDelegate {
     
     private let udpSocket: UdpSocket
     
-    private var
+
     
     
     
@@ -34,19 +34,19 @@ public class ConnectionProvider: UdpSocketDelegate {
     
     
     
-    public func udpSocket(_ socket:UdpSocket, didStartWithAddress address:UdpSocket.Address) {
+    public func udpSocket(_ socket:UdpSocket, didStartWithAddress address:SocketAddress) {
         Swift.print("udpSocket:didStartWithAddress: \(address)")
     }
     
-    public func udpSocket(_ socket:UdpSocket, didSend data:UdpSocket.Buffer, to address:UdpSocket.Address) {
+    public func udpSocket(_ socket:UdpSocket, didSend data:UdpSocket.Buffer, to address:SocketAddress) {
         Swift.print("udpSocket:didSend:to: \(data) \(address)")
     }
     
-    public func udpSocket(_ socket:UdpSocket, didFailToSend data:UdpSocket.Buffer, to address:UdpSocket.Address, withError error:UdpSocketError) {
+    public func udpSocket(_ socket:UdpSocket, didFailToSend data:UdpSocket.Buffer, to address:SocketAddress, withError error:UdpSocketError) {
         Swift.print("udpSocket:didFailToSend:to:withError: \(data) \(address) \(error)")
     }
     
-    public func udpSocket(_ socket:UdpSocket, didRead data:UdpSocket.Buffer, from address:UdpSocket.Address) {
+    public func udpSocket(_ socket:UdpSocket, didRead data:UdpSocket.Buffer, from address:SocketAddress) {
         var mutableData = data
         let packet = DataPacket(json: &mutableData)
         Swift.print("udpSocket:didRead:from: \(packet) \(address)")

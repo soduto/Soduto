@@ -10,6 +10,8 @@
 		843301641D2D8CB8008934BB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843301631D2D8CB8008934BB /* AppDelegate.swift */; };
 		843301661D2D8CB8008934BB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 843301651D2D8CB8008934BB /* Assets.xcassets */; };
 		843301691D2D8CB8008934BB /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 843301671D2D8CB8008934BB /* MainMenu.xib */; };
+		844B81AA1D526CC8000F89D3 /* SocketAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844B81A91D526CC8000F89D3 /* SocketAddress.swift */; };
+		844B81AC1D526FC5000F89D3 /* UnsafePointersUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844B81AB1D526FC5000F89D3 /* UnsafePointersUtils.swift */; };
 		8454D1321D34228E00788632 /* ysocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454D12D1D34228E00788632 /* ysocket.swift */; };
 		8454D1331D34228E00788632 /* ytcpsocket.c in Sources */ = {isa = PBXBuildFile; fileRef = 8454D12E1D34228E00788632 /* ytcpsocket.c */; };
 		8454D1341D34228E00788632 /* ytcpsocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454D12F1D34228E00788632 /* ytcpsocket.swift */; };
@@ -40,6 +42,8 @@
 		843301651D2D8CB8008934BB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		843301681D2D8CB8008934BB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		8433016A1D2D8CB8008934BB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		844B81A91D526CC8000F89D3 /* SocketAddress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketAddress.swift; sourceTree = "<group>"; };
+		844B81AB1D526FC5000F89D3 /* UnsafePointersUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnsafePointersUtils.swift; sourceTree = "<group>"; };
 		8454D12C1D34228D00788632 /* Migla-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Migla-Bridging-Header.h"; sourceTree = "<group>"; };
 		8454D12D1D34228E00788632 /* ysocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ysocket.swift; path = SwiftSocket/SwiftSocket/ysocket/ysocket.swift; sourceTree = "<group>"; };
 		8454D12E1D34228E00788632 /* ytcpsocket.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ytcpsocket.c; path = SwiftSocket/SwiftSocket/ysocket/ytcpsocket.c; sourceTree = "<group>"; };
@@ -91,6 +95,8 @@
 				8FC977F01D4778E9001ADF7E /* StatusBarMenuController.swift */,
 				848E3C891D51237C009A7EEA /* DataPacket.swift */,
 				848E3C8B1D5138CE009A7EEA /* ConnectionProvider.swift */,
+				844B81A91D526CC8000F89D3 /* SocketAddress.swift */,
+				844B81AB1D526FC5000F89D3 /* UnsafePointersUtils.swift */,
 			);
 			path = Migla;
 			sourceTree = "<group>";
@@ -189,6 +195,8 @@
 				8FC977F11D4778E9001ADF7E /* StatusBarMenuController.swift in Sources */,
 				8454D1351D34228E00788632 /* yudpsocket.c in Sources */,
 				8454D1321D34228E00788632 /* ysocket.swift in Sources */,
+				844B81AA1D526CC8000F89D3 /* SocketAddress.swift in Sources */,
+				844B81AC1D526FC5000F89D3 /* UnsafePointersUtils.swift in Sources */,
 				848E3C8A1D51237C009A7EEA /* DataPacket.swift in Sources */,
 				8454D1331D34228E00788632 /* ytcpsocket.c in Sources */,
 				8454D1431D3573E500788632 /* UdpSocket.swift in Sources */,
