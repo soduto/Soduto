@@ -10,7 +10,29 @@
 		843301641D2D8CB8008934BB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843301631D2D8CB8008934BB /* AppDelegate.swift */; };
 		843301661D2D8CB8008934BB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 843301651D2D8CB8008934BB /* Assets.xcassets */; };
 		843301691D2D8CB8008934BB /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 843301671D2D8CB8008934BB /* MainMenu.xib */; };
+		8454D1321D34228E00788632 /* ysocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454D12D1D34228E00788632 /* ysocket.swift */; };
+		8454D1331D34228E00788632 /* ytcpsocket.c in Sources */ = {isa = PBXBuildFile; fileRef = 8454D12E1D34228E00788632 /* ytcpsocket.c */; };
+		8454D1341D34228E00788632 /* ytcpsocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454D12F1D34228E00788632 /* ytcpsocket.swift */; };
+		8454D1351D34228E00788632 /* yudpsocket.c in Sources */ = {isa = PBXBuildFile; fileRef = 8454D1301D34228E00788632 /* yudpsocket.c */; };
+		8454D1361D34228E00788632 /* yudpsocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454D1311D34228E00788632 /* yudpsocket.swift */; };
+		8454D1431D3573E500788632 /* UdpSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454D1421D3573E500788632 /* UdpSocket.swift */; };
+		848E3C8A1D51237C009A7EEA /* DataPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848E3C891D51237C009A7EEA /* DataPacket.swift */; };
+		848E3C8C1D5138CE009A7EEA /* ConnectionProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848E3C8B1D5138CE009A7EEA /* ConnectionProvider.swift */; };
+		8FC977F11D4778E9001ADF7E /* StatusBarMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC977F01D4778E9001ADF7E /* StatusBarMenuController.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		84DFAF121D34215800763193 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		843301601D2D8CB8008934BB /* Migla.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Migla.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -18,6 +40,16 @@
 		843301651D2D8CB8008934BB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		843301681D2D8CB8008934BB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		8433016A1D2D8CB8008934BB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8454D12C1D34228D00788632 /* Migla-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Migla-Bridging-Header.h"; sourceTree = "<group>"; };
+		8454D12D1D34228E00788632 /* ysocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ysocket.swift; path = SwiftSocket/SwiftSocket/ysocket/ysocket.swift; sourceTree = "<group>"; };
+		8454D12E1D34228E00788632 /* ytcpsocket.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ytcpsocket.c; path = SwiftSocket/SwiftSocket/ysocket/ytcpsocket.c; sourceTree = "<group>"; };
+		8454D12F1D34228E00788632 /* ytcpsocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ytcpsocket.swift; path = SwiftSocket/SwiftSocket/ysocket/ytcpsocket.swift; sourceTree = "<group>"; };
+		8454D1301D34228E00788632 /* yudpsocket.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = yudpsocket.c; path = SwiftSocket/SwiftSocket/ysocket/yudpsocket.c; sourceTree = "<group>"; };
+		8454D1311D34228E00788632 /* yudpsocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = yudpsocket.swift; path = SwiftSocket/SwiftSocket/ysocket/yudpsocket.swift; sourceTree = "<group>"; };
+		8454D1421D3573E500788632 /* UdpSocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UdpSocket.swift; sourceTree = "<group>"; };
+		848E3C891D51237C009A7EEA /* DataPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataPacket.swift; sourceTree = "<group>"; };
+		848E3C8B1D5138CE009A7EEA /* ConnectionProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionProvider.swift; sourceTree = "<group>"; };
+		8FC977F01D4778E9001ADF7E /* StatusBarMenuController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusBarMenuController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,12 +82,30 @@
 		843301621D2D8CB8008934BB /* Migla */ = {
 			isa = PBXGroup;
 			children = (
+				8454D12B1D34226600788632 /* SwiftSocket */,
 				843301631D2D8CB8008934BB /* AppDelegate.swift */,
 				843301651D2D8CB8008934BB /* Assets.xcassets */,
 				843301671D2D8CB8008934BB /* MainMenu.xib */,
 				8433016A1D2D8CB8008934BB /* Info.plist */,
+				8454D1421D3573E500788632 /* UdpSocket.swift */,
+				8FC977F01D4778E9001ADF7E /* StatusBarMenuController.swift */,
+				848E3C891D51237C009A7EEA /* DataPacket.swift */,
+				848E3C8B1D5138CE009A7EEA /* ConnectionProvider.swift */,
 			);
 			path = Migla;
+			sourceTree = "<group>";
+		};
+		8454D12B1D34226600788632 /* SwiftSocket */ = {
+			isa = PBXGroup;
+			children = (
+				8454D12D1D34228E00788632 /* ysocket.swift */,
+				8454D12E1D34228E00788632 /* ytcpsocket.c */,
+				8454D12F1D34228E00788632 /* ytcpsocket.swift */,
+				8454D1301D34228E00788632 /* yudpsocket.c */,
+				8454D1311D34228E00788632 /* yudpsocket.swift */,
+				8454D12C1D34228D00788632 /* Migla-Bridging-Header.h */,
+			);
+			name = SwiftSocket;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -68,6 +118,7 @@
 				8433015C1D2D8CB8008934BB /* Sources */,
 				8433015D1D2D8CB8008934BB /* Frameworks */,
 				8433015E1D2D8CB8008934BB /* Resources */,
+				84DFAF121D34215800763193 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -92,6 +143,7 @@
 						CreatedOnToolsVersion = 8.0;
 						DevelopmentTeam = 5K93S6HD22;
 						DevelopmentTeamName = "Giedrius Stanevicius (Personal Team)";
+						LastSwiftMigration = 0800;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -131,6 +183,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				848E3C8C1D5138CE009A7EEA /* ConnectionProvider.swift in Sources */,
+				8454D1361D34228E00788632 /* yudpsocket.swift in Sources */,
+				8454D1341D34228E00788632 /* ytcpsocket.swift in Sources */,
+				8FC977F11D4778E9001ADF7E /* StatusBarMenuController.swift in Sources */,
+				8454D1351D34228E00788632 /* yudpsocket.c in Sources */,
+				8454D1321D34228E00788632 /* ysocket.swift in Sources */,
+				848E3C8A1D51237C009A7EEA /* DataPacket.swift in Sources */,
+				8454D1331D34228E00788632 /* ytcpsocket.c in Sources */,
+				8454D1431D3573E500788632 /* UdpSocket.swift in Sources */,
 				843301641D2D8CB8008934BB /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -238,12 +299,17 @@
 		8433016E1D2D8CB8008934BB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = Migla/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.migla.Migla;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Migla/Migla-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -251,12 +317,16 @@
 		8433016F1D2D8CB8008934BB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = Migla/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.migla.Migla;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Migla/Migla-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
@@ -280,6 +350,7 @@
 				8433016F1D2D8CB8008934BB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
