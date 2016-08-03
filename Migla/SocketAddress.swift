@@ -32,7 +32,7 @@ public struct SocketAddress: CustomStringConvertible {
             var mutableStorage = self.storage
             let ptr: UnsafePointer<sockaddr_in6> = cast(pointer: &mutableStorage)
             let (b1, b2, b3, b4, b5, b6, b7, b8) = ptr.pointee.sin6_addr.__u6_addr.__u6_addr16
-            return String(format: "IPv6: %04X:%04X:%04X:%04X:%04X:%04X:%04X:%04X, port:%d", b1, b2, b3, b4, b5, b5, b6, b7, b8, ptr.pointee.sin6_port)
+            return String(format: "IPv6: %X:%X:%X:%X:%X:%X:%X:%X, port:%d", b1, b2, b3, b4, b5, b5, b6, b7, b8, ptr.pointee.sin6_port)
         }
         return "\(self.storage)"
     }
@@ -79,9 +79,10 @@ public struct SocketAddress: CustomStringConvertible {
         return cast(pointer: &self.storage)
     }
     
-    mutating func pointer<T>() -> UnsafePointer<T> {
+    func pointer<T>() -> UnsafePointer<T> {
         assert(sizeofValue(self.storage) >= sizeof(T.self), "Pointer type does not fit into sockaddr_storage")
         
-        return cast(pointer: &self.storage)
+        var storage = self.storage
+        return cast(pointer: &storage)
     }
 }
