@@ -66,7 +66,7 @@ public struct SocketAddress: CustomStringConvertible {
             let ptr: UnsafePointer<sockaddr_in6> = cast(pointer: &mutableStorage)
             let (b1, b2, b3, b4, b5, b6, b7, b8) = ptr.pointee.sin6_addr.__u6_addr.__u6_addr16
             let port = CFSwapInt16BigToHost(ptr.pointee.sin6_port)
-            return String(format: "IPv6: %X:%X:%X:%X:%X:%X:%X:%X, port:%d", b1, b2, b3, b4, b5, b5, b6, b7, b8, port)
+            return String(format: "IPv6: %X:%X:%X:%X:%X:%X:%X:%X, port:%d", b1, b2, b3, b4, b5, b6, b7, b8, port)
         }
         return "\(self.storage)"
     }
