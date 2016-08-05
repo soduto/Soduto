@@ -12,6 +12,10 @@ public class DataPacket: CustomStringConvertible {
     
     typealias Body = Dictionary<String, AnyObject>
     
+    enum PacketType: String {
+        case Identity = "kdeconnect.identity"
+    }
+    
     var id: Int64
     var type: String
     var body: Body

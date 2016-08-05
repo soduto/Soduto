@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8403BC271D538B9F00162F2C /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8403BC261D538B9F00162F2C /* Connection.swift */; };
 		843301641D2D8CB8008934BB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843301631D2D8CB8008934BB /* AppDelegate.swift */; };
 		843301661D2D8CB8008934BB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 843301651D2D8CB8008934BB /* Assets.xcassets */; };
 		843301691D2D8CB8008934BB /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 843301671D2D8CB8008934BB /* MainMenu.xib */; };
@@ -37,6 +38,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8403BC261D538B9F00162F2C /* Connection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
 		843301601D2D8CB8008934BB /* Migla.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Migla.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		843301631D2D8CB8008934BB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		843301651D2D8CB8008934BB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -86,17 +88,18 @@
 		843301621D2D8CB8008934BB /* Migla */ = {
 			isa = PBXGroup;
 			children = (
-				8454D12B1D34226600788632 /* SwiftSocket */,
+				8433016A1D2D8CB8008934BB /* Info.plist */,
 				843301631D2D8CB8008934BB /* AppDelegate.swift */,
+				8403BC261D538B9F00162F2C /* Connection.swift */,
+				848E3C8B1D5138CE009A7EEA /* ConnectionProvider.swift */,
+				848E3C891D51237C009A7EEA /* DataPacket.swift */,
+				844B81A91D526CC8000F89D3 /* SocketAddress.swift */,
+				8FC977F01D4778E9001ADF7E /* StatusBarMenuController.swift */,
+				8454D1421D3573E500788632 /* UdpSocket.swift */,
+				844B81AB1D526FC5000F89D3 /* UnsafePointersUtils.swift */,
 				843301651D2D8CB8008934BB /* Assets.xcassets */,
 				843301671D2D8CB8008934BB /* MainMenu.xib */,
-				8433016A1D2D8CB8008934BB /* Info.plist */,
-				8454D1421D3573E500788632 /* UdpSocket.swift */,
-				8FC977F01D4778E9001ADF7E /* StatusBarMenuController.swift */,
-				848E3C891D51237C009A7EEA /* DataPacket.swift */,
-				848E3C8B1D5138CE009A7EEA /* ConnectionProvider.swift */,
-				844B81A91D526CC8000F89D3 /* SocketAddress.swift */,
-				844B81AB1D526FC5000F89D3 /* UnsafePointersUtils.swift */,
+				8454D12B1D34226600788632 /* SwiftSocket */,
 			);
 			path = Migla;
 			sourceTree = "<group>";
@@ -189,6 +192,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8403BC271D538B9F00162F2C /* Connection.swift in Sources */,
 				848E3C8C1D5138CE009A7EEA /* ConnectionProvider.swift in Sources */,
 				8454D1361D34228E00788632 /* yudpsocket.swift in Sources */,
 				8454D1341D34228E00788632 /* ytcpsocket.swift in Sources */,

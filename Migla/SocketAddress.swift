@@ -12,8 +12,40 @@ public struct SocketAddress: CustomStringConvertible {
     
     var storage = sockaddr_storage()
     
-    var size: socklen_t {
+    public var size: socklen_t {
         return socklen_t(self.storage.ss_len)
+    }
+    
+    public var family: sa_family_t {
+        return sa_family_t(self.storage.ss_family)
+    }
+    
+    public var port: in_port_t {
+        get {
+            var mutableSelf = self
+            switch Int32(self.family) {
+            case AF_INET:
+                let ptr: UnsafeMutablePointer<sockaddr_in> = mutableSelf.pointer()
+                return CFSwapInt16BigToHost(ptr.pointee.sin_port)
+            case AF_INET6:
+                let ptr: UnsafeMutablePointer<sockaddr_in6> = mutableSelf.pointer()
+                return CFSwapInt16BigToHost(ptr.pointee.sin6_port)
+            default:
+                assert(false, "Cant retrieve port for this type address")
+            }
+        }
+        set {
+            switch Int32(self.family) {
+            case AF_INET:
+                let ptr: UnsafeMutablePointer<sockaddr_in> = self.pointer()
+                ptr.pointee.sin_port = CFSwapInt16HostToBig(newValue)
+            case AF_INET6:
+                let ptr: UnsafeMutablePointer<sockaddr_in6> = self.pointer()
+                ptr.pointee.sin6_port = CFSwapInt16HostToBig(newValue)
+            default:
+                assert(false, "Cant set port for this type address")
+            }
+        }
     }
     
     public var description: String {
@@ -25,14 +57,16 @@ public struct SocketAddress: CustomStringConvertible {
             let byte2 = (ptr.pointee.sin_addr.s_addr & 0x00ff0000) >> 16
             let byte3 = (ptr.pointee.sin_addr.s_addr & 0x0000ff00) >> 8
             let byte4 = (ptr.pointee.sin_addr.s_addr & 0x000000ff)
-            return "IPv4: \(byte1).\(byte2).\(byte3).\(byte4), port:\(ptr.pointee.sin_port)"
+            let port = CFSwapInt16BigToHost(ptr.pointee.sin_port)
+            return "IPv4: \(byte1).\(byte2).\(byte3).\(byte4), port:\(port)"
         }
         if (Int32(self.storage.ss_family) == AF_INET6) {
             // Print nice info about IPv6 address
             var mutableStorage = self.storage
             let ptr: UnsafePointer<sockaddr_in6> = cast(pointer: &mutableStorage)
             let (b1, b2, b3, b4, b5, b6, b7, b8) = ptr.pointee.sin6_addr.__u6_addr.__u6_addr16
-            return String(format: "IPv6: %X:%X:%X:%X:%X:%X:%X:%X, port:%d", b1, b2, b3, b4, b5, b5, b6, b7, b8, ptr.pointee.sin6_port)
+            let port = CFSwapInt16BigToHost(ptr.pointee.sin6_port)
+            return String(format: "IPv6: %X:%X:%X:%X:%X:%X:%X:%X, port:%d", b1, b2, b3, b4, b5, b5, b6, b7, b8, port)
         }
         return "\(self.storage)"
     }
@@ -79,10 +113,11 @@ public struct SocketAddress: CustomStringConvertible {
         return cast(pointer: &self.storage)
     }
     
-    func pointer<T>() -> UnsafePointer<T> {
-        assert(sizeofValue(self.storage) >= sizeof(T.self), "Pointer type does not fit into sockaddr_storage")
-        
-        var storage = self.storage
-        return cast(pointer: &storage)
+    
+    
+    func data() -> Data {
+        var mutableAddress = self
+        let ptr: UnsafeMutablePointer<UInt8> = mutableAddress.pointer()
+        return Data(bytes: ptr, count: sizeofValue(mutableAddress.storage))
     }
 }

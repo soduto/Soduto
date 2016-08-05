@@ -75,7 +75,7 @@ public class UdpSocket {
         
         let dataPtr: UnsafePointer<Void> = castToPointer(array: data)
         var addr: SocketAddress
-        let addrPtr: UnsafePointer<sockaddr>?
+        let addrPtr: UnsafeMutablePointer<sockaddr>?
         let addrLen: socklen_t
         if let address = address {
             addr = address
@@ -215,15 +215,13 @@ public class UdpSocket {
             let addrObj = SocketAddress(addr: addr.pointer(), size:addrLen)
             
             // Tell the delegate about the data.
-            if let delegate = self.delegate {
-                delegate.udpSocket(self, didRead: dataObj, from: addrObj)
-            }
+            delegate?.udpSocket(self, didRead: dataObj, from: addrObj)
         }
         
         // If we got an error, tell the delegate
-        if err != 0, let delegate = self.delegate {
+        if err != 0 {
             let error = UdpSocketError(domain: NSPOSIXErrorDomain, code: err, userInfo: nil)
-            delegate.udpSocket(self, didReceiveError: error)
+            delegate?.udpSocket(self, didReceiveError: error)
         }
     }
     
@@ -238,7 +236,7 @@ public class UdpSocket {
         assert(port < 65536)
         assert(self.cfSocket == nil)
     
-        // Create the UDP socket itself.  First try IPv6 and, if that's not available, revert to IPv6.
+        // Create the UDP socket itself.  First try IPv6 and, if that's not available, revert to IPv4.
         //
         // IMPORTANT: Even though we're using IPv6 by default, we can still work with IPv4 due to the
         // miracle of IPv4-mapped addresses.

@@ -12,16 +12,14 @@ import Foundation
 struct PendingConnection {
     let packet: DataPacket
     let address: SocketAddress
+    let cfSocket: CFSocket
 }
 
-public class ConnectionProvider: UdpSocketDelegate {
-    
+public class ConnectionProvider: UdpSocketDelegate, ConnectionDelegate {
     
     private let port: UInt = 1716
-    
     private let udpSocket: UdpSocket
-    
-
+    private var pendingConnections: Set<Connection> = Set<Connection>()
     
     
     
@@ -48,8 +46,22 @@ public class ConnectionProvider: UdpSocketDelegate {
     
     public func udpSocket(_ socket:UdpSocket, didRead data:UdpSocket.Buffer, from address:SocketAddress) {
         var mutableData = data
-        let packet = DataPacket(json: &mutableData)
+        guard let packet = DataPacket(json: &mutableData),
+            packet.type == DataPacket.PacketType.Identity.rawValue,
+            let port = packet.body["tcpPort"] as? NSNumber else {
+            return
+        }
+        
         Swift.print("udpSocket:didRead:from: \(packet) \(address)")
+        
+        // create a new address to connect - ip the same as source, port - from packet info
+        var connectionAddress = address
+        connectionAddress.port = in_port_t(port.uint16Value)
+        
+        if let connection = Connection(address: connectionAddress, identityPacket: packet) {
+            connection.delegate = self
+            self.pendingConnections.insert(connection)
+        }
     }
     
     public func udpSocket(_ socket:UdpSocket, didReceiveError error:UdpSocketError) {
@@ -58,6 +70,19 @@ public class ConnectionProvider: UdpSocketDelegate {
     
     public func udpSocket(_ socket:UdpSocket, didStopWithError error:UdpSocketError) {
         Swift.print("udpSocket:didStopWithError: \(error)")
+    }
+    
+    
+    
+    public func connection(_ connection: Connection, switchedToState state: Connection.State) {
+        switch state {
+        case .Closed:
+            self.pendingConnections.remove(connection)
+        case .Open:
+            Swift.print("connection:switchedToState: \(connection) \(state)")
+        default:
+            assert(false, "Closed or Open connection state expected")
+        }
     }
     
 }
