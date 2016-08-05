@@ -66,7 +66,28 @@ public struct SocketAddress: CustomStringConvertible {
             let ptr: UnsafePointer<sockaddr_in6> = cast(pointer: &mutableStorage)
             let (b1, b2, b3, b4, b5, b6, b7, b8) = ptr.pointee.sin6_addr.__u6_addr.__u6_addr16
             let port = CFSwapInt16BigToHost(ptr.pointee.sin6_port)
-            return String(format: "IPv6: %X:%X:%X:%X:%X:%X:%X:%X, port:%d", b1, b2, b3, b4, b5, b6, b7, b8, port)
+            let ipv4Mapping: String
+            if b1 == 0 && b2 == 0 && b3 == 0 && b4 == 0 && b5 == 0 && b6 == 0xffff {
+                let byte1 = b7 & 0xff
+                let byte2 = (b7 & 0xff00) >> 8
+                let byte3 = b8 & 0xff
+                let byte4 = (b8 & 0xff00) >> 8
+                ipv4Mapping = " (mapped IPv4: \(byte1).\(byte2).\(byte3).\(byte4))"
+            }
+            else {
+                ipv4Mapping = ""
+            }
+            return String(format: "IPv6: %X:%X:%X:%X:%X:%X:%X:%X,%@ port:%d",
+                          CFSwapInt16BigToHost(b1),
+                          CFSwapInt16BigToHost(b2),
+                          CFSwapInt16BigToHost(b3),
+                          CFSwapInt16BigToHost(b4),
+                          CFSwapInt16BigToHost(b5),
+                          CFSwapInt16BigToHost(b6),
+                          CFSwapInt16BigToHost(b7),
+                          CFSwapInt16BigToHost(b8),
+                          ipv4Mapping,
+                          port)
         }
         return "\(self.storage)"
     }
