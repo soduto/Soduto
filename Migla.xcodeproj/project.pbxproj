@@ -21,6 +21,13 @@
 		8454D1431D3573E500788632 /* UdpSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454D1421D3573E500788632 /* UdpSocket.swift */; };
 		848E3C8A1D51237C009A7EEA /* DataPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848E3C891D51237C009A7EEA /* DataPacket.swift */; };
 		848E3C8C1D5138CE009A7EEA /* ConnectionProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848E3C8B1D5138CE009A7EEA /* ConnectionProvider.swift */; };
+		849961B81D5726B0002B893A /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = 849961B41D5726B0002B893A /* LICENSE.txt */; };
+		849961B91D5726B0002B893A /* MYAnonymousIdentity.m in Sources */ = {isa = PBXBuildFile; fileRef = 849961B61D5726B0002B893A /* MYAnonymousIdentity.m */; };
+		849961C11D57287F002B893A /* CollectionUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 849961BC1D57287F002B893A /* CollectionUtils.m */; };
+		849961C31D57287F002B893A /* Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 849961C01D57287F002B893A /* Test.m */; };
+		849961C61D5728B2002B893A /* ExceptionUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 849961C51D5728B2002B893A /* ExceptionUtils.m */; };
+		8499620E1D5728EE002B893A /* Test_Assertions.m in Sources */ = {isa = PBXBuildFile; fileRef = 849961F31D5728EE002B893A /* Test_Assertions.m */; };
+		849962131D572B1F002B893A /* Logging.m in Sources */ = {isa = PBXBuildFile; fileRef = 849962121D572B1F002B893A /* Logging.m */; };
 		8FC977F11D4778E9001ADF7E /* StatusBarMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC977F01D4778E9001ADF7E /* StatusBarMenuController.swift */; };
 /* End PBXBuildFile section */
 
@@ -55,6 +62,18 @@
 		8454D1421D3573E500788632 /* UdpSocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UdpSocket.swift; sourceTree = "<group>"; };
 		848E3C891D51237C009A7EEA /* DataPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataPacket.swift; sourceTree = "<group>"; };
 		848E3C8B1D5138CE009A7EEA /* ConnectionProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionProvider.swift; sourceTree = "<group>"; };
+		849961B41D5726B0002B893A /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE.txt; path = MYUtilities/LICENSE.txt; sourceTree = "<group>"; };
+		849961B51D5726B0002B893A /* MYAnonymousIdentity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYAnonymousIdentity.h; path = MYUtilities/MYAnonymousIdentity.h; sourceTree = "<group>"; };
+		849961B61D5726B0002B893A /* MYAnonymousIdentity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYAnonymousIdentity.m; path = MYUtilities/MYAnonymousIdentity.m; sourceTree = "<group>"; };
+		849961BB1D57287F002B893A /* CollectionUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CollectionUtils.h; path = MYUtilities/CollectionUtils.h; sourceTree = "<group>"; };
+		849961BC1D57287F002B893A /* CollectionUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CollectionUtils.m; path = MYUtilities/CollectionUtils.m; sourceTree = "<group>"; };
+		849961BF1D57287F002B893A /* Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Test.h; path = MYUtilities/Test.h; sourceTree = "<group>"; };
+		849961C01D57287F002B893A /* Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Test.m; path = MYUtilities/Test.m; sourceTree = "<group>"; };
+		849961C41D5728B2002B893A /* ExceptionUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExceptionUtils.h; path = MYUtilities/ExceptionUtils.h; sourceTree = "<group>"; };
+		849961C51D5728B2002B893A /* ExceptionUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ExceptionUtils.m; path = MYUtilities/ExceptionUtils.m; sourceTree = "<group>"; };
+		849961F31D5728EE002B893A /* Test_Assertions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Test_Assertions.m; path = MYUtilities/Test_Assertions.m; sourceTree = "<group>"; };
+		849962111D572B1F002B893A /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = MYUtilities/Logging.h; sourceTree = "<group>"; };
+		849962121D572B1F002B893A /* Logging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Logging.m; path = MYUtilities/Logging.m; sourceTree = "<group>"; };
 		8FC977F01D4778E9001ADF7E /* StatusBarMenuController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusBarMenuController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -97,8 +116,10 @@
 				8FC977F01D4778E9001ADF7E /* StatusBarMenuController.swift */,
 				8454D1421D3573E500788632 /* UdpSocket.swift */,
 				844B81AB1D526FC5000F89D3 /* UnsafePointersUtils.swift */,
+				8454D12C1D34228D00788632 /* Migla-Bridging-Header.h */,
 				843301651D2D8CB8008934BB /* Assets.xcassets */,
 				843301671D2D8CB8008934BB /* MainMenu.xib */,
+				849961B31D572664002B893A /* MyUtilities */,
 				8454D12B1D34226600788632 /* SwiftSocket */,
 			);
 			path = Migla;
@@ -112,9 +133,27 @@
 				8454D12F1D34228E00788632 /* ytcpsocket.swift */,
 				8454D1301D34228E00788632 /* yudpsocket.c */,
 				8454D1311D34228E00788632 /* yudpsocket.swift */,
-				8454D12C1D34228D00788632 /* Migla-Bridging-Header.h */,
 			);
 			name = SwiftSocket;
+			sourceTree = "<group>";
+		};
+		849961B31D572664002B893A /* MyUtilities */ = {
+			isa = PBXGroup;
+			children = (
+				849962111D572B1F002B893A /* Logging.h */,
+				849962121D572B1F002B893A /* Logging.m */,
+				849961BB1D57287F002B893A /* CollectionUtils.h */,
+				849961BC1D57287F002B893A /* CollectionUtils.m */,
+				849961C41D5728B2002B893A /* ExceptionUtils.h */,
+				849961C51D5728B2002B893A /* ExceptionUtils.m */,
+				849961B41D5726B0002B893A /* LICENSE.txt */,
+				849961B51D5726B0002B893A /* MYAnonymousIdentity.h */,
+				849961B61D5726B0002B893A /* MYAnonymousIdentity.m */,
+				849961F31D5728EE002B893A /* Test_Assertions.m */,
+				849961BF1D57287F002B893A /* Test.h */,
+				849961C01D57287F002B893A /* Test.m */,
+			);
+			name = MyUtilities;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -180,6 +219,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				849961B81D5726B0002B893A /* LICENSE.txt in Resources */,
 				843301661D2D8CB8008934BB /* Assets.xcassets in Resources */,
 				843301691D2D8CB8008934BB /* MainMenu.xib in Resources */,
 			);
@@ -193,16 +233,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				8403BC271D538B9F00162F2C /* Connection.swift in Sources */,
+				849962131D572B1F002B893A /* Logging.m in Sources */,
+				849961B91D5726B0002B893A /* MYAnonymousIdentity.m in Sources */,
 				848E3C8C1D5138CE009A7EEA /* ConnectionProvider.swift in Sources */,
 				8454D1361D34228E00788632 /* yudpsocket.swift in Sources */,
+				849961C31D57287F002B893A /* Test.m in Sources */,
+				849961C11D57287F002B893A /* CollectionUtils.m in Sources */,
 				8454D1341D34228E00788632 /* ytcpsocket.swift in Sources */,
 				8FC977F11D4778E9001ADF7E /* StatusBarMenuController.swift in Sources */,
 				8454D1351D34228E00788632 /* yudpsocket.c in Sources */,
+				849961C61D5728B2002B893A /* ExceptionUtils.m in Sources */,
 				8454D1321D34228E00788632 /* ysocket.swift in Sources */,
 				844B81AA1D526CC8000F89D3 /* SocketAddress.swift in Sources */,
 				844B81AC1D526FC5000F89D3 /* UnsafePointersUtils.swift in Sources */,
 				848E3C8A1D51237C009A7EEA /* DataPacket.swift in Sources */,
 				8454D1331D34228E00788632 /* ytcpsocket.c in Sources */,
+				8499620E1D5728EE002B893A /* Test_Assertions.m in Sources */,
 				8454D1431D3573E500788632 /* UdpSocket.swift in Sources */,
 				843301641D2D8CB8008934BB /* AppDelegate.swift in Sources */,
 			);

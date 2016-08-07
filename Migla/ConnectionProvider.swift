@@ -17,7 +17,9 @@ struct PendingConnection {
 
 public class ConnectionProvider: UdpSocketDelegate, ConnectionDelegate {
     
-    private let port: UInt = 1716
+    static public let port: UInt = 1716
+    static public let minVersionWithSSLSupport = 6
+    
     private let udpSocket: UdpSocket
     private var pendingConnections: Set<Connection> = Set<Connection>()
     
@@ -27,7 +29,7 @@ public class ConnectionProvider: UdpSocketDelegate, ConnectionDelegate {
         // Listen for device announcement broadcasts
         self.udpSocket = UdpSocket()
         self.udpSocket.delegate = self
-        self.udpSocket.startServer(onPort: port, enableBroadcast:true)
+        self.udpSocket.startServer(onPort: ConnectionProvider.port, enableBroadcast:true)
     }
     
     
@@ -52,7 +54,7 @@ public class ConnectionProvider: UdpSocketDelegate, ConnectionDelegate {
             return
         }
         
-        Swift.print("udpSocket:didRead:from: \(packet) \(address)")
+        Swift.print("udpSocket:didRead:from: \(packet), \(address)")
         
         // create a new address to connect - ip the same as source, port - from packet info
         var connectionAddress = address
@@ -74,14 +76,22 @@ public class ConnectionProvider: UdpSocketDelegate, ConnectionDelegate {
     
     
     
-    public func connection(_ connection: Connection, switchedToState state: Connection.State) {
+    public func connection(_ connection: Connection, didSwitchToState state: Connection.State) {
         switch state {
         case .Closed:
             self.pendingConnections.remove(connection)
         case .Open:
-            Swift.print("connection:switchedToState: \(connection) \(state)")
+            Swift.print("connection:switchedToState: \(connection), \(state)")
+            connection.send(DataPacket.identity())
         default:
             assert(false, "Closed or Open connection state expected")
+        }
+    }
+    
+    public func connection(_ connection: Connection, didSendPacket packet: DataPacket) {
+        Swift.print("connection:didSendPacket: \(connection) \(packet)")
+        if connection.protocolVersion >= ConnectionProvider.minVersionWithSSLSupport {
+            connection.switchOnSSL()
         }
     }
     

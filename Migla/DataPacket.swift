@@ -8,13 +8,21 @@
 
 import Foundation
 
-public class DataPacket: CustomStringConvertible {
+public struct DataPacket: CustomStringConvertible {
     
     typealias Body = Dictionary<String, AnyObject>
     
     enum PacketType: String {
         case Identity = "kdeconnect.identity"
     }
+    
+    enum BodyProperty: String {
+        case ProtocolVerion = "protocolVersion"
+    }
+    
+    
+    
+    static let protocolVersion = 7
     
     var id: Int64
     var type: String
@@ -38,12 +46,13 @@ public class DataPacket: CustomStringConvertible {
     }
     
     
-    convenience init(type: String, body: Body) {
+    
+    init(type: String, body: Body) {
         let id = Int64(Date().timeIntervalSince1970 * 1000)
         self.init(id: id, type: type, body: body)
     }
     
-    convenience init?( json: inout [UInt8]) {
+    init?( json: inout [UInt8]) {
         let data = Data(bytesNoCopy: &json, count: json.count, deallocator: .none)
         let deserializedObj = try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions())
         guard let obj = deserializedObj,
@@ -62,6 +71,7 @@ public class DataPacket: CustomStringConvertible {
     }
     
     
+    
     func serialize() throws -> [UInt8] {
         return try serialize(options: JSONSerialization.WritingOptions())
     }
@@ -74,5 +84,23 @@ public class DataPacket: CustomStringConvertible {
         ]
         let data = try JSONSerialization.data(withJSONObject: dict, options: options)
         return [UInt8](data)
+    }
+    
+    
+    
+    static func identity() -> DataPacket {
+        let outgoingCapabilities: [String] = ["kdeconnect.ping"]
+        let incomingCapabilities: [String] = ["kdeconnect.ping"]
+        let body: Body = [
+            "deviceId": "12345678901234567890",
+            "deviceName": "Migla",
+            "deviceType": "desktop",
+            "protocolVersion": NSNumber(value: DataPacket.protocolVersion),
+//            "tcpPort": ConnectionProvider.port,
+            "outgoingCapabilities": outgoingCapabilities,
+            "incomingCapabilities": incomingCapabilities
+        ]
+        let packet = DataPacket(type: PacketType.Identity.rawValue, body: body)
+        return packet
     }
 }

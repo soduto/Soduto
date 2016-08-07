@@ -1,0 +1,10 @@
+//
+// Prefix header for clients of MYUtilities.
+//
+
+#ifdef __OBJC__
+    #import <Foundation/Foundation.h>
+    #import "Logging.h"
+    #import "Test.h"
+    #import "CollectionUtils.h"
+#endif
