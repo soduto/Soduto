@@ -13,7 +13,6 @@
 		843301691D2D8CB8008934BB /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 843301671D2D8CB8008934BB /* MainMenu.xib */; };
 		844B81AA1D526CC8000F89D3 /* SocketAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844B81A91D526CC8000F89D3 /* SocketAddress.swift */; };
 		844B81AC1D526FC5000F89D3 /* UnsafePointersUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844B81AB1D526FC5000F89D3 /* UnsafePointersUtils.swift */; };
-		8454D1431D3573E500788632 /* UdpSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454D1421D3573E500788632 /* UdpSocket.swift */; };
 		848E3C8A1D51237C009A7EEA /* DataPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848E3C891D51237C009A7EEA /* DataPacket.swift */; };
 		848E3C8C1D5138CE009A7EEA /* ConnectionProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848E3C8B1D5138CE009A7EEA /* ConnectionProvider.swift */; };
 		849961B81D5726B0002B893A /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = 849961B41D5726B0002B893A /* LICENSE.txt */; };
@@ -67,7 +66,6 @@
 		844B81A91D526CC8000F89D3 /* SocketAddress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketAddress.swift; sourceTree = "<group>"; };
 		844B81AB1D526FC5000F89D3 /* UnsafePointersUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnsafePointersUtils.swift; sourceTree = "<group>"; };
 		8454D12C1D34228D00788632 /* Migla-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Migla-Bridging-Header.h"; sourceTree = "<group>"; };
-		8454D1421D3573E500788632 /* UdpSocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UdpSocket.swift; sourceTree = "<group>"; };
 		848E3C891D51237C009A7EEA /* DataPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataPacket.swift; sourceTree = "<group>"; };
 		848E3C8B1D5138CE009A7EEA /* ConnectionProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionProvider.swift; sourceTree = "<group>"; };
 		849961B41D5726B0002B893A /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE.txt; path = MYUtilities/LICENSE.txt; sourceTree = "<group>"; };
@@ -126,7 +124,6 @@
 				848E3C891D51237C009A7EEA /* DataPacket.swift */,
 				844B81A91D526CC8000F89D3 /* SocketAddress.swift */,
 				8FC977F01D4778E9001ADF7E /* StatusBarMenuController.swift */,
-				8454D1421D3573E500788632 /* UdpSocket.swift */,
 				844B81AB1D526FC5000F89D3 /* UnsafePointersUtils.swift */,
 				8454D12C1D34228D00788632 /* Migla-Bridging-Header.h */,
 				843301651D2D8CB8008934BB /* Assets.xcassets */,
@@ -291,7 +288,6 @@
 				844B81AC1D526FC5000F89D3 /* UnsafePointersUtils.swift in Sources */,
 				848E3C8A1D51237C009A7EEA /* DataPacket.swift in Sources */,
 				8499620E1D5728EE002B893A /* Test_Assertions.m in Sources */,
-				8454D1431D3573E500788632 /* UdpSocket.swift in Sources */,
 				843301641D2D8CB8008934BB /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

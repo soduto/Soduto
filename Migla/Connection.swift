@@ -19,26 +19,7 @@ public protocol ConnectionDelegate {
     func connection(_ connection:Connection, didReadPacket:DataPacket)
 }
 
-private struct SendContext {
-    
-    let packet: DataPacket
-    let serializedPacket: [UInt8]
-    var bytesSent: Int = 0
-    var isFinished: Bool {
-        return serializedPacket.count <= bytesSent
-    }
-    
-    init?(packet: DataPacket) {
-        guard let data = try? packet.serialize() else {
-            return nil
-        }
-        self.packet = packet
-        self.serializedPacket = data
-    }
-    
-}
-
-public class Connection: NSObject, StreamDelegate, GCDAsyncSocketDelegate {
+public class Connection: NSObject, GCDAsyncSocketDelegate {
     
     public enum State {
         case Initializing
@@ -194,21 +175,30 @@ public class Connection: NSObject, StreamDelegate, GCDAsyncSocketDelegate {
     private static func getSSLCertificates() -> [AnyObject]? {
         var error: NSError? = nil
         if let identity = MYGetOrCreateAnonymousIdentity("Migla", 60.0 * 60.0 * 24.0 * 365.0 * 10.0, &error)?.takeUnretainedValue() {
-            //        var certificate: SecCertificate? = nil
-            //        SecIdentityCopyCertificate(identity, &certificate)
-            //
-            //        var commonName:CFString? = nil
-            //        SecCertificateCopyCommonName(certificate!, &commonName)
-            //        Swift.print("commonName: \(commonName)")
-            //
-            //        var error:Unmanaged<CFError>? = nil
-            //        let values = (SecCertificateCopyValues(certificate!, nil, &error) as Dictionary?)
-            //
-            //        for (key, value) in values! {
-            //            Swift.print("Key: \(key)")
-            //            Swift.print("Value: \(value)")
-            //        }
-            return [identity]
+            
+            var certificateOpt: SecCertificate? = nil
+            SecIdentityCopyCertificate(identity, &certificateOpt)
+        
+            if let certificate = certificateOpt {
+                
+//                var commonName:CFString? = nil
+//                SecCertificateCopyCommonName(certificate, &commonName)
+//                Swift.print("Using certificate with commonName: \(commonName)")
+                
+//                var error:Unmanaged<CFError>? = nil
+//                let values = (SecCertificateCopyValues(certificate!, nil, &error) as Dictionary?)
+//        
+//                for (key, value) in values! {
+//                    Swift.print("Key: \(key)")
+//                    Swift.print("Value: \(value)")
+//                }
+                
+                return [identity, certificate]
+            }
+            else {
+                Swift.print("Failed to extract certificate from identity")
+                return nil
+            }
         }
         else {
             Swift.print("Failed to get certificates for SSL: \(error)")

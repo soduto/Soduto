@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CocoaAsyncSocket
 
 
 struct PendingConnection {
@@ -15,49 +16,45 @@ struct PendingConnection {
     let cfSocket: CFSocket
 }
 
-public class ConnectionProvider: UdpSocketDelegate, ConnectionDelegate {
+public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSocketDelegate, ConnectionDelegate {
     
-    static public let port: UInt = 1716
+    static public let udpPort: UInt16 = 1716
     static public let minVersionWithSSLSupport = 6
     
-    private let udpSocket: UdpSocket
+    private let udpSocket: GCDAsyncUdpSocket = GCDAsyncUdpSocket(delegate: nil, delegateQueue: DispatchQueue.main)
+    private let tcpSocket: GCDAsyncSocket = GCDAsyncSocket(delegate: nil, delegateQueue: DispatchQueue.main)
     private var pendingConnections: Set<Connection> = Set<Connection>()
     
     
     
-    init() {
-        // Listen for device announcement broadcasts
-        self.udpSocket = UdpSocket()
-        self.udpSocket.delegate = self
-        self.udpSocket.startServer(onPort: ConnectionProvider.port, enableBroadcast:true)
-    }
-    
-    
-    
-    public func udpSocket(_ socket:UdpSocket, didStartWithAddress address:SocketAddress) {
-        Swift.print("udpSocket:didStartWithAddress: \(address)")
-    }
-    
-    public func udpSocket(_ socket:UdpSocket, didSend data:UdpSocket.Buffer, to address:SocketAddress) {
-        Swift.print("udpSocket:didSend:to: \(data) \(address)")
-    }
-    
-    public func udpSocket(_ socket:UdpSocket, didFailToSend data:UdpSocket.Buffer, to address:SocketAddress, withError error:UdpSocketError) {
-        Swift.print("udpSocket:didFailToSend:to:withError: \(data) \(address) \(error)")
-    }
-    
-    public func udpSocket(_ socket:UdpSocket, didRead data:UdpSocket.Buffer, from address:SocketAddress) {
-        var mutableData = data
-        guard let packet = DataPacket(json: &mutableData),
-            packet.type == DataPacket.PacketType.Identity.rawValue,
-            let port = packet.body["tcpPort"] as? NSNumber else {
-            return
-        }
+    override init() {
         
-        Swift.print("udpSocket:didRead:from: \(packet), \(address)")
+        super.init()
+        
+        // Listen for device announcement broadcasts
+        self.udpSocket.setDelegate(self)
+        do { try self.udpSocket.enableBroadcast(true) }
+        catch { Swift.print("Could not enable brodcast for udp socket: \(error)") }
+        do {
+            try self.udpSocket.bind(toPort: ConnectionProvider.udpPort)
+            try self.udpSocket.beginReceiving()
+        }
+        catch {
+            Swift.print("Could not start listening for self-announcement broadcasts: \(error)")
+        }
+    }
+    
+    
+    
+    public func udpSocket(_ sock: GCDAsyncUdpSocket, didReceive data: Data, fromAddress address: Data, withFilterContext filterContext: AnyObject?) {
+        guard let packet = DataPacket(data: data) else { return }
+        guard packet.type == DataPacket.PacketType.Identity.rawValue else { return }
+        guard let port = packet.body["tcpPort"] as? NSNumber else { return }
+        
+        Swift.print("udpSocket:didReceive:fromAddress:withFilterContext: \(sock), \(data), \(address), \(filterContext)")
         
         // create a new address to connect - ip the same as source, port - from packet info
-        var connectionAddress = address
+        var connectionAddress = SocketAddress(data: address)
         connectionAddress.port = in_port_t(port.uint16Value)
         
         if let connection = Connection(address: connectionAddress, identityPacket: packet) {
@@ -66,12 +63,8 @@ public class ConnectionProvider: UdpSocketDelegate, ConnectionDelegate {
         }
     }
     
-    public func udpSocket(_ socket:UdpSocket, didReceiveError error:UdpSocketError) {
-        Swift.print("udpSocket:didReceiveError: \(error)")
-    }
-    
-    public func udpSocket(_ socket:UdpSocket, didStopWithError error:UdpSocketError) {
-        Swift.print("udpSocket:didStopWithError: \(error)")
+    public func udpSocketDidClose(_ sock: GCDAsyncUdpSocket, withError error: Error) {
+        Swift.print("udpSocketDidClose:withError: \(sock), \(error)")
     }
     
     

@@ -65,6 +65,26 @@ static const int logLevel = LOG_LEVEL_VERBOSE;
 
 // Logging Disabled
 
+#if (0)
+
+#define THIS_FILE @(__FILE__)
+#define THIS_METHOD @(__PRETTY_FUNCTION__)
+
+#define LogError(frmt, ...)     { NSLog([@"[LOG ERROR] %s[%d]: " stringByAppendingString:frmt], (char *) __FILE__, __LINE__, ##__VA_ARGS__); }
+#define LogWarn(frmt, ...)      { NSLog([@"[LOG WARNING] %s[%d]: " stringByAppendingString:frmt], (char *) __FILE__, __LINE__, ##__VA_ARGS__); }
+#define LogInfo(frmt, ...)      { NSLog([@"[LOG INFO] %s[%d]: " stringByAppendingString:frmt], (char *) __FILE__, __LINE__, ##__VA_ARGS__); }
+#define LogVerbose(frmt, ...)   { NSLog([@"[LOG VERBOSE] %s[%d]: " stringByAppendingString:frmt], (char *) __FILE__, __LINE__, ##__VA_ARGS__); }
+
+#define LogCError(frmt, ...)    { NSLog([@"[LOG ERROR] %s[%d]: " stringByAppendingString:frmt], (char *) __FILE__, __LINE__, ##__VA_ARGS__); }
+#define LogCWarn(frmt, ...)     { NSLog([@"[LOG WARNING] %s[%d]: " stringByAppendingString:frmt], (char *) __FILE__, __LINE__, ##__VA_ARGS__); }
+#define LogCInfo(frmt, ...)     { NSLog([@"[LOG INFO] %s[%d]: " stringByAppendingString:frmt], (char *) __FILE__, __LINE__, ##__VA_ARGS__); }
+#define LogCVerbose(frmt, ...)  { NSLog([@"[LOG VERBOSE] %s[%d]: " stringByAppendingString:frmt], (char *) __FILE__, __LINE__, ##__VA_ARGS__); }
+
+#define LogTrace()              {}
+#define LogCTrace(frmt, ...)    {}
+
+#else
+
 #define LogError(frmt, ...)     {}
 #define LogWarn(frmt, ...)      {}
 #define LogInfo(frmt, ...)      {}
@@ -77,6 +97,8 @@ static const int logLevel = LOG_LEVEL_VERBOSE;
 
 #define LogTrace()              {}
 #define LogCTrace(frmt, ...)    {}
+
+#endif
 
 #endif
 
