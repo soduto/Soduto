@@ -91,8 +91,15 @@ public class ConnectionProvider: UdpSocketDelegate, ConnectionDelegate {
     public func connection(_ connection: Connection, didSendPacket packet: DataPacket) {
         Swift.print("connection:didSendPacket: \(connection) \(packet)")
         if connection.protocolVersion >= ConnectionProvider.minVersionWithSSLSupport {
-            connection.switchOnSSL()
+            connection.continueWithSSL()
         }
+        else {
+            connection.continueWithoutSSL()
+        }
+    }
+    
+    public func connection(_ connection: Connection, didReadPacket packet: DataPacket) {
+        Swift.print("connection:didReadPacket: \(connection) \(packet)")
     }
     
 }

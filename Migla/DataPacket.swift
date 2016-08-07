@@ -52,14 +52,18 @@ public struct DataPacket: CustomStringConvertible {
         self.init(id: id, type: type, body: body)
     }
     
-    init?( json: inout [UInt8]) {
+    init?(json: inout [UInt8]) {
         let data = Data(bytesNoCopy: &json, count: json.count, deallocator: .none)
+        self.init(data: data)
+    }
+    
+    init?(data: Data) {
         let deserializedObj = try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions())
         guard let obj = deserializedObj,
             let id = obj["id"] as? NSNumber,
             let type = obj["type"] as? String,
             let body = obj["body"] as? [String: AnyObject] else {
-            return nil
+                return nil
         }
         self.init(id: id.int64Value, type: type, body: body)
     }
