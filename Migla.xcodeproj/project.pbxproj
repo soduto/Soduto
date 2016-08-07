@@ -31,18 +31,36 @@
 		8FC977F11D4778E9001ADF7E /* StatusBarMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC977F01D4778E9001ADF7E /* StatusBarMenuController.swift */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		84DFAF121D34215800763193 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
+/* Begin PBXContainerItemProxy section */
+		84E2F2F11D574A4F00EAA802 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8499621A1D57438E002B893A /* CocoaAsyncSocket.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6CD990101B77868C0011A685;
+			remoteInfo = "iOS CocoaAsyncSocket";
 		};
-/* End PBXCopyFilesBuildPhase section */
+		84E2F2F31D574A4F00EAA802 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8499621A1D57438E002B893A /* CocoaAsyncSocket.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9FC41F131B9D965000578BEB;
+			remoteInfo = "Mac CocoaAsyncSocket";
+		};
+		84E2F2F51D574A4F00EAA802 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8499621A1D57438E002B893A /* CocoaAsyncSocket.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7D8B70C41BCFA15700D8E273;
+			remoteInfo = "tvOS CocoaAsyncSocket";
+		};
+		84E2F2F71D574A5900EAA802 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8499621A1D57438E002B893A /* CocoaAsyncSocket.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 9FC41F121B9D965000578BEB;
+			remoteInfo = "Mac CocoaAsyncSocket";
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		8403BC261D538B9F00162F2C /* Connection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
@@ -74,6 +92,8 @@
 		849961F31D5728EE002B893A /* Test_Assertions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Test_Assertions.m; path = MYUtilities/Test_Assertions.m; sourceTree = "<group>"; };
 		849962111D572B1F002B893A /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = MYUtilities/Logging.h; sourceTree = "<group>"; };
 		849962121D572B1F002B893A /* Logging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Logging.m; path = MYUtilities/Logging.m; sourceTree = "<group>"; };
+		8499621A1D57438E002B893A /* CocoaAsyncSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CocoaAsyncSocket.xcodeproj; path = Migla/CocoaAsyncSocket/CocoaAsyncSocket.xcodeproj; sourceTree = "<group>"; };
+		849962271D574530002B893A /* CocoaAsyncSocket.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaAsyncSocket.framework; path = Migla/CocoaAsyncSocket/build/Debug/CocoaAsyncSocket.framework; sourceTree = "<group>"; };
 		8FC977F01D4778E9001ADF7E /* StatusBarMenuController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusBarMenuController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -91,8 +111,10 @@
 		843301571D2D8CB8008934BB = {
 			isa = PBXGroup;
 			children = (
+				8499621A1D57438E002B893A /* CocoaAsyncSocket.xcodeproj */,
 				843301621D2D8CB8008934BB /* Migla */,
 				843301611D2D8CB8008934BB /* Products */,
+				849962261D574530002B893A /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -156,6 +178,24 @@
 			name = MyUtilities;
 			sourceTree = "<group>";
 		};
+		849962261D574530002B893A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				849962271D574530002B893A /* CocoaAsyncSocket.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		84E2F2EC1D574A4E00EAA802 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				84E2F2F21D574A4F00EAA802 /* CocoaAsyncSocket.framework */,
+				84E2F2F41D574A4F00EAA802 /* CocoaAsyncSocket.framework */,
+				84E2F2F61D574A4F00EAA802 /* CocoaAsyncSocket.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -166,11 +206,11 @@
 				8433015C1D2D8CB8008934BB /* Sources */,
 				8433015D1D2D8CB8008934BB /* Frameworks */,
 				8433015E1D2D8CB8008934BB /* Resources */,
-				84DFAF121D34215800763193 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				84E2F2F81D574A5900EAA802 /* PBXTargetDependency */,
 			);
 			name = Migla;
 			productName = Migla;
@@ -207,12 +247,42 @@
 			mainGroup = 843301571D2D8CB8008934BB;
 			productRefGroup = 843301611D2D8CB8008934BB /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 84E2F2EC1D574A4E00EAA802 /* Products */;
+					ProjectRef = 8499621A1D57438E002B893A /* CocoaAsyncSocket.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				8433015F1D2D8CB8008934BB /* Migla */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		84E2F2F21D574A4F00EAA802 /* CocoaAsyncSocket.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = CocoaAsyncSocket.framework;
+			remoteRef = 84E2F2F11D574A4F00EAA802 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		84E2F2F41D574A4F00EAA802 /* CocoaAsyncSocket.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = CocoaAsyncSocket.framework;
+			remoteRef = 84E2F2F31D574A4F00EAA802 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		84E2F2F61D574A4F00EAA802 /* CocoaAsyncSocket.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = CocoaAsyncSocket.framework;
+			remoteRef = 84E2F2F51D574A4F00EAA802 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		8433015E1D2D8CB8008934BB /* Resources */ = {
@@ -255,6 +325,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		84E2F2F81D574A5900EAA802 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Mac CocoaAsyncSocket";
+			targetProxy = 84E2F2F71D574A5900EAA802 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		843301671D2D8CB8008934BB /* MainMenu.xib */ = {
@@ -357,10 +435,13 @@
 		8433016E1D2D8CB8008934BB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Migla/CocoaAsyncSocket/build/Debug",
+				);
 				INFOPLIST_FILE = Migla/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
@@ -375,10 +456,13 @@
 		8433016F1D2D8CB8008934BB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Migla/CocoaAsyncSocket/build/Debug",
+				);
 				INFOPLIST_FILE = Migla/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;

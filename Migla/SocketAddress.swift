@@ -139,6 +139,6 @@ public struct SocketAddress: CustomStringConvertible {
     func data() -> Data {
         var mutableAddress = self
         let ptr: UnsafeMutablePointer<UInt8> = mutableAddress.pointer()
-        return Data(bytes: ptr, count: sizeofValue(mutableAddress.storage))
+        return Data(bytes: ptr, count: Int(self.size))
     }
 }

@@ -83,7 +83,9 @@ public struct DataPacket: CustomStringConvertible {
             "body": self.body
         ]
         let data = try JSONSerialization.data(withJSONObject: dict, options: options)
-        return [UInt8](data)
+        var bytes = [UInt8](data)
+        bytes.append(UInt8(ascii: "\n"))
+        return bytes
     }
     
     

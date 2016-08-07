@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CocoaAsyncSocket
 
 public enum ConnectionError: Error {
     case StreamWriteFailed
@@ -36,7 +37,7 @@ private struct SendContext {
     
 }
 
-public class Connection: NSObject, StreamDelegate {
+public class Connection: NSObject, StreamDelegate, GCDAsyncSocketDelegate {
     
     public enum State {
         case Initializing
@@ -57,9 +58,7 @@ public class Connection: NSObject, StreamDelegate {
     public let protocolVersion: Int
     public let address: SocketAddress
     
-    private let cfStream: CFReadStream
-    private let inputStream: InputStream
-    private let outputStream: NSOutputStream
+    private let socket: GCDAsyncSocket
     private let sslCertificates: [AnyObject]
     private var packetsToSend: [DataPacket] = []
     private var sendContext: SendContext?
@@ -71,35 +70,22 @@ public class Connection: NSObject, StreamDelegate {
         guard let protocolVersion = packet.body[DataPacket.BodyProperty.ProtocolVerion.rawValue] as? NSNumber else { return nil }
         guard let sslCertificates = Connection.getSSLCertificates() else { return nil }
         
-        // Enable diagnostics for debugging
-        setenv("CFNETWORK_DIAGNOSTICS","3",1);
-        
-        let sock = Connection.createSocket(address: address)
-        var readStream:  Unmanaged<CFReadStream>?
-        var writeStream: Unmanaged<CFWriteStream>?
-        CFStreamCreatePairWithSocket(kCFAllocatorDefault, sock, &readStream, &writeStream)
-        guard readStream != nil && writeStream != nil else {
-            return nil
-        }
-        
-        self.cfStream = readStream!.takeRetainedValue()
-        self.inputStream = readStream!.takeRetainedValue()
-        self.outputStream = writeStream!.takeRetainedValue()
+        self.socket = GCDAsyncSocket(delegate: nil, delegateQueue: DispatchQueue.main)
         self.sslCertificates = sslCertificates
         self.address = address
         self.protocolVersion = protocolVersion.intValue
         self.state = .Initializing
-        
+
         super.init()
         
-        self.inputStream.delegate = self
-        self.outputStream.delegate = self
-        
-        self.inputStream.schedule(in: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
-        self.outputStream.schedule(in: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
-        
-        self.inputStream.open()
-        self.outputStream.open()
+        self.socket.delegate = self
+        do {
+            try self.socket.connect(toAddress: address.data())
+        }
+        catch {
+            Swift.print("Could not connect to address \(address): \(error)")
+            return nil
+        }
     }
     
     deinit {
@@ -110,146 +96,163 @@ public class Connection: NSObject, StreamDelegate {
     
     public func send(_ packet:DataPacket) {
         self.packetsToSend.append(packet)
-        sendPendingData()
+//        sendPendingData()
+        if let bytes = try? packet.serialize() {
+            let data = Data(bytes: bytes)
+            self.socket.write(data, withTimeout: -1, tag: Int(packet.id))
+        }
     }
     
     public func switchOnSSL() {
-//        self.inputStream.setProperty(StreamSocketSecurityLevel.negotiatedSSL, forKey: .socketSecurityLevelKey)
-//        self.outputStream.setProperty(StreamSocketSecurityLevel.negotiatedSSL, forKey: .socketSecurityLevelKey)
-        
-        let sslSettings: [String: AnyObject] = [
-            kCFStreamSSLIsServer as String: true,
-            kCFStreamSSLCertificates as String: self.sslCertificates
+        let settings: [String:NSObject] = [
+            kCFStreamSSLCertificates as String: self.sslCertificates as NSArray,
+            kCFStreamSSLIsServer as String: NSNumber(value: true)
         ]
-//        CFReadStreamSetProperty(self.cfStream, CFStreamPropertyKey.init(kCFStreamPropertySSLSettings), sslSettings)
         
-//        self.outputStream.setProperty(self.sslCertificates, forKey: Stream.PropertyKey.init(rawValue: kCFStreamSSLCertificates as String))
-//        self.outputStream.setProperty(true, forKey: Stream.PropertyKey.init(rawValue: kCFStreamSSLIsServer as String))
-//        self.outputStream.setProperty(sslSettings, forKey: Stream.PropertyKey.init(rawValue: kCFStreamPropertySSLSettings as String))
-        
-        self.outputStream.setProperty(StreamSocketSecurityLevel.tlSv1, forKey: .socketSecurityLevelKey)
-        
-        self.outputStream.setProperty(self.sslCertificates, forKey: Stream.PropertyKey.init(rawValue: kCFStreamSSLCertificates as String))
-        self.outputStream.setProperty(true, forKey: Stream.PropertyKey.init(rawValue: kCFStreamSSLIsServer as String))
-        self.outputStream.setProperty(sslSettings, forKey: Stream.PropertyKey.init(rawValue: kCFStreamPropertySSLSettings as String))
-        
-        
-//        let sslContext = SSLCreateContext(kCFAllocatorDefault, SSLProtocolSide.serverSide, SSLConnectionType.streamType)
-//        self.outputStream.setProperty(sslContext, forKey: Stream.PropertyKey.init(rawValue: kCFStreamPropertySSLContext as String))
-//        
-////        self.outputStream.setProperty(StreamSocketSecurityLevel.tlSv1, forKey: .socketSecurityLevelKey)
-        
-//        if let sslContext = self.inputStream.property(forKey: Stream.PropertyKey.init(rawValue: kCFStreamPropertySSLContext as String)) {
-//            SSLGet
-//            Swift.print("sslContext: \(sslContext)");
-//        }
+        self.socket.startTLS(settings)
+        self.socket.readData(withTimeout: -1, tag: 0)
     }
     
+    public func 
     
     
-    public func stream(_ stream: Stream, handle event: Stream.Event) {
-        switch event {
-        case Stream.Event.openCompleted:
-            Swift.print("Stream open completed: \(stream), \(stream.streamError)")
-            if self.inputStream.streamStatus == .open && self.outputStream.streamStatus == .open && self.state == .Initializing {
-                self.state = .Open
-            }
-        case Stream.Event.errorOccurred:
-            Swift.print("Stream error encountered: \(stream), \(stream.streamError)")
-            self.close()
-        case Stream.Event.endEncountered:
-            Swift.print("Stream end encountered: \(stream), \(stream.streamError)")
-            self.close()
-        case Stream.Event.hasBytesAvailable:
-            Swift.print("Stream has bytes available: \(stream)")
-            var bufferOpt: UnsafeMutablePointer<UInt8>? = nil
-            var length: Int = 0
-            if self.inputStream.getBuffer(&bufferOpt, length: &length),
-                let buffer = bufferOpt {
-                
-                let bufferPtr = UnsafeBufferPointer(start: buffer, count: length)
-                let data = Data(bufferPtr)
-                Swift.print("Received data: \(data)");
-            }
-        case Stream.Event.hasSpaceAvailable:
-            Swift.print("Stream has space available: \(stream)")
-            sendPendingData()
-        default:
-            Swift.print("Stream unhandled event: \(stream) \(event)")
+    
+//    public func stream(_ stream: Stream, handle event: Stream.Event) {
+//        switch event {
+//        case Stream.Event.openCompleted:
+//            Swift.print("Stream open completed: \(stream), \(stream.streamError)")
+//            if self.inputStream.streamStatus == .open && self.outputStream.streamStatus == .open && self.state == .Initializing {
+//                self.state = .Open
+//            }
+//        case Stream.Event.errorOccurred:
+//            Swift.print("Stream error encountered: \(stream), \(stream.streamError)")
+//            self.close()
+//        case Stream.Event.endEncountered:
+//            Swift.print("Stream end encountered: \(stream), \(stream.streamError)")
+//            self.close()
+//        case Stream.Event.hasBytesAvailable:
+//            Swift.print("Stream has bytes available: \(stream)")
+//            var bufferOpt: UnsafeMutablePointer<UInt8>? = nil
+//            var length: Int = 0
+//            if self.inputStream.getBuffer(&bufferOpt, length: &length),
+//                let buffer = bufferOpt {
+//                
+//                let bufferPtr = UnsafeBufferPointer(start: buffer, count: length)
+//                let data = Data(bufferPtr)
+//                Swift.print("Received data: \(data)");
+//            }
+//        case Stream.Event.hasSpaceAvailable:
+//            Swift.print("Stream has space available: \(stream)")
+//            sendPendingData()
+//        default:
+//            Swift.print("Stream unhandled event: \(stream) \(event)")
+//        }
+//    }
+    
+    
+    
+    public func socket(_ sock: GCDAsyncSocket, didConnectToHost host: String, port: UInt16) {
+        Swift.print("socket:didConnectToHost:port: \(sock) \(host) \(port)")
+        self.state = .Open
+    }
+    
+    public func socket(_ sock: GCDAsyncSocket, didWriteDataWithTag tag: Int) {
+        Swift.print("socket:didWriteDataWithTag: \(sock) \(tag)")
+        let indexOpt = self.packetsToSend.index { packet -> Bool in
+            return Int(packet.id) == tag
+        }
+        if let index = indexOpt {
+            let packet = self.packetsToSend.remove(at: index)
+            self.delegate?.connection(self, didSendPacket: packet)
         }
     }
+    
+    public func socket(_ sock: GCDAsyncSocket, didRead data: Data, withTag tag: Int) {
+        Swift.print("socket:didRead:withTag: \(sock) \(data) \(tag)")
+    }
+    
+    public func socketDidSecure(_ sock: GCDAsyncSocket) {
+        Swift.print("socketDidSecure: \(sock)")
+    }
+    
+    public func socketDidDisconnect(_ sock: GCDAsyncSocket, withError err: Error?) {
+        Swift.print("socketDidDisconnect:withError: \(sock) \(err)")
+        self.close()
+    }
+    
     
     
     
     private func close() {
-        self.inputStream.close()
-        self.outputStream.close()
+//        self.inputStream.close()
+//        self.outputStream.close()
+        self.socket.disconnect()
         self.state = .Closed
     }
     
-    private func sendPendingData() {
-        assert(self.state != .Closed, "Cannot send data on closed connection")
-        
-        while self.outputStream.hasSpaceAvailable {
-            if let sendContext = self.sendContext, !sendContext.isFinished {
-                // send data using current send context
-                let remainingData = sendContext.serializedPacket.suffix(from: sendContext.bytesSent)
-                remainingData.withUnsafeBufferPointer({ bufferPointer in
-                    if let pointer = bufferPointer.baseAddress {
-                        let written = self.outputStream.write(pointer, maxLength: bufferPointer.count)
-                        if written > 0 {
-                            // update send context with sent bytes count
-                            self.sendContext!.bytesSent += written
-                            if self.sendContext!.isFinished {
-                                self.delegate?.connection(self, didSendPacket: sendContext.packet)
-                                self.sendContext = nil
-                            }
-                        }
-                    }
-                })
-            }
-            else if self.packetsToSend.count > 0 {
-                // setup new send context from pending packet
-                let packet = self.packetsToSend.removeFirst()
-                self.sendContext = SendContext(packet: packet)
-            }
-            else {
-                // nothing to send
-                break
-            }
-        }
-    }
+//    private func sendPendingData() {
+//        assert(self.state != .Closed, "Cannot send data on closed connection")
+//        
+//        while self.outputStream.hasSpaceAvailable {
+//            if let sendContext = self.sendContext, !sendContext.isFinished {
+//                // send data using current send context
+//                let remainingData = sendContext.serializedPacket.suffix(from: sendContext.bytesSent)
+//                remainingData.withUnsafeBufferPointer({ bufferPointer in
+//                    if let pointer = bufferPointer.baseAddress {
+//                        let written = self.outputStream.write(pointer, maxLength: bufferPointer.count)
+//                        if written > 0 {
+//                            // update send context with sent bytes count
+//                            self.sendContext!.bytesSent += written
+//                            if self.sendContext!.isFinished {
+//                                self.delegate?.connection(self, didSendPacket: sendContext.packet)
+//                                self.sendContext = nil
+//                            }
+//                        }
+//                    }
+//                })
+//            }
+//            else if self.packetsToSend.count > 0 {
+//                // setup new send context from pending packet
+//                let packet = self.packetsToSend.removeFirst()
+//                self.sendContext = SendContext(packet: packet)
+//            }
+//            else {
+//                // nothing to send
+//                break
+//            }
+//        }
+//    }
 
 
-    private static func createSocket(address: SocketAddress) -> CFSocketNativeHandle {
-        let sock = socket(Int32(address.family), SOCK_STREAM, IPPROTO_TCP)
-        
-        // connect
-        var mutableAddress = address
-        connect(sock, mutableAddress.pointer(), mutableAddress.size)
-        
-        // set options
-        var value: Int = 0
-        let valueSize = socklen_t(sizeofValue(value))
-        
-        // enable keepalive
-        value = 1
-        setsockopt(sock, SOL_SOCKET, TCP_KEEPALIVE, &value, valueSize)
-        
-        // set interval between keepalive packets (seconds)
-        value = 5
-        setsockopt(sock, IPPROTO_TCP, TCP_KEEPINTVL, &value, valueSize)
-        
-        // set number of missed keepalive packets before disconnecting
-        value = 3
-        setsockopt(sock, IPPROTO_TCP, TCP_KEEPINTVL, &value, valueSize)
-        
-        return sock
-    }
+//    private static func createSocket(address: SocketAddress) -> CFSocketNativeHandle {
+//        let sock = socket(Int32(address.family), SOCK_STREAM, IPPROTO_TCP)
+//        
+//        // connect
+//        var mutableAddress = address
+//        connect(sock, mutableAddress.pointer(), mutableAddress.size)
+//        
+//        // set options
+//        var value: Int = 0
+//        let valueSize = socklen_t(sizeofValue(value))
+//        
+//        // enable keepalive
+//        value = 1
+//        setsockopt(sock, SOL_SOCKET, TCP_KEEPALIVE, &value, valueSize)
+//        
+//        // set interval between keepalive packets (seconds)
+//        value = 5
+//        setsockopt(sock, IPPROTO_TCP, TCP_KEEPINTVL, &value, valueSize)
+//        
+//        // set number of missed keepalive packets before disconnecting
+//        value = 3
+//        setsockopt(sock, IPPROTO_TCP, TCP_KEEPINTVL, &value, valueSize)
+//        
+//        return sock
+//    }
     
     private static func getSSLCertificates() -> [AnyObject]? {
         var error: NSError? = nil
-        if let identity = MYGetOrCreateAnonymousIdentity("Migla", 60.0 * 60.0 * 24.0 * 365.0 * 10.0, &error)?.takeRetainedValue() {
+        if let identity = MYGetOrCreateAnonymousIdentity("Migla", 60.0 * 60.0 * 24.0 * 365.0 * 10.0, &error)?.takeUnretainedValue() {
             //        var certificate: SecCertificate? = nil
             //        SecIdentityCopyCertificate(identity, &certificate)
             //
