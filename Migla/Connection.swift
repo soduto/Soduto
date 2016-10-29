@@ -10,16 +10,23 @@ import Foundation
 import CocoaAsyncSocket
 
 public enum ConnectionError: Error {
-    case StreamWriteFailed
+    case InitializationAlreadyFinished
+    case IdentityAbsent
 }
 
-public protocol ConnectionDelegate {
+public protocol ConnectionDelegate: class {
     func connection(_ connection:Connection, didSwitchToState:Connection.State)
     func connection(_ connection:Connection, didSendPacket:DataPacket)
     func connection(_ connection:Connection, didReadPacket:DataPacket)
 }
 
-public class Connection: NSObject, GCDAsyncSocketDelegate {
+public protocol ConnectionConfiguration {
+    func deviceConfig(for deviceId:Device.Id) -> DeviceConfiguration
+}
+
+public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegate, Pairable, PairableDelegate {
+    
+    // MARK: Types
     
     public enum State {
         case Initializing
@@ -28,42 +35,53 @@ public class Connection: NSObject, GCDAsyncSocketDelegate {
     }
     
     
+    // MARK: Properties
     
-    public var delegate: ConnectionDelegate?
+    public weak var delegate: ConnectionDelegate?
+    
+    public weak var pairingDelegate: PairableDelegate?
     
     public private(set) var state: State {
         didSet {
-            self.delegate?.connection(self, didSwitchToState: self.state)
+            if oldValue != self.state {
+                self.delegate?.connection(self, didSwitchToState: self.state)
+            }
         }
     }
     
-    public let protocolVersion: Int
-    public let address: SocketAddress
+    public private(set) var identity: DataPacket? = nil
     
+    private let config: ConnectionConfiguration
     private let socket: GCDAsyncSocket
     private let sslCertificates: [AnyObject]
-    private var packetsToSend: [DataPacket] = []
+    private var packetsToSend: [DataPacket] = [] // queue of packets waiting to be sent
+    private var packetsExpected: Int = 0         // count of packets to read befor stopping automatic reading, -1 for unlimited count
+    private var waitingToSecure: Bool = false
+    private var shouldFinishIntializationWhenSecured: Bool = false
+    private var pairingHandler: DefaultPairingHandler? = nil
+    private var packetHandlers: [DataPacketsHandler] = []
     
-    // In readBuffers we accumulate data received from socket until whole packet data is received
-    private var readBuffers: [AnySequence<UInt8>] = []
+    static private let packetsDelimiter: Data = Data(bytes: [UInt8(ascii: "\n")])
     
     
-    init?(address: SocketAddress, identityPacket packet: DataPacket) {
-        guard packet.type == DataPacket.PacketType.Identity.rawValue else { return nil }
-        guard let protocolVersion = packet.body[DataPacket.BodyProperty.ProtocolVerion.rawValue] as? NSNumber else { return nil }
+    // MARK: Initialization / Deinitialization
+    
+    init?(address: SocketAddress, identityPacket packet: DataPacket, config: ConnectionConfiguration) {
         guard let sslCertificates = Connection.getSSLCertificates() else { return nil }
         
+        setenv("CFNETWORK_DIAGNOSTICS", "3", 1);
+        
+        self.config = config
         self.socket = GCDAsyncSocket(delegate: nil, delegateQueue: DispatchQueue.main)
         self.sslCertificates = sslCertificates
-        self.address = address
-        self.protocolVersion = protocolVersion.intValue
         self.state = .Initializing
 
         super.init()
         
         self.socket.delegate = self
         do {
-            try self.socket.connect(toAddress: address.data())
+            try self.applyIdentity(packet: packet)
+            try self.socket.connect(toAddress: address.data)
         }
         catch {
             Swift.print("Could not connect to address \(address): \(error)")
@@ -71,11 +89,73 @@ public class Connection: NSObject, GCDAsyncSocketDelegate {
         }
     }
     
+    init?(socket: GCDAsyncSocket, config: ConnectionConfiguration) {
+        guard socket.isConnected else { return nil }
+        guard let sslCertificates = Connection.getSSLCertificates() else { return nil }
+        
+        self.config = config
+        self.socket = socket
+        self.sslCertificates = sslCertificates
+        self.state = .Initializing
+        
+        super.init()
+        
+        self.socket.delegate = self
+    }
+    
     deinit {
         self.close()
     }
     
+    public func applyIdentity(packet: DataPacket) throws {
+        assert(self.state == .Initializing, "Connection initialization already finished")
+        
+        try packet.validateIdentityType()
+        let deviceId = try packet.getDeviceId()
+        let deviceConfig = self.config.deviceConfig(for: deviceId)
+        
+        self.identity = packet
+        self.pairingHandler = DefaultPairingHandler(paired: deviceConfig.isPaired)
+        self.pairingHandler!.delegate = self
+        self.pairingHandler!.pairingDelegate = self
+        self.packetHandlers.append(self.pairingHandler!)
+    }
     
+    public func secureServer() throws {
+        assert(self.state == .Initializing, "Connection initialization already finished")
+        
+        let settings: [String:NSObject] = [
+            kCFStreamSSLCertificates as String: self.sslCertificates as NSArray,
+            kCFStreamSSLIsServer as String: NSNumber(value: true)
+        ]
+        self.socket.startTLS(settings)
+        self.waitingToSecure = true
+    }
+    
+    public func secureClient() throws {
+        assert(self.state == .Initializing, "Connection initialization already finished")
+        
+        let settings: [String:NSObject] = [
+            kCFStreamSSLCertificates as String: self.sslCertificates as NSArray
+        ]
+        self.socket.startTLS(settings)
+        self.waitingToSecure = true
+    }
+    
+    public func finishInitialization() throws {
+        assert(self.state == .Initializing, "Connection initialization already finished")
+        assert(self.identity != nil, "Connection identity must be set before finishing initialization")
+        
+        if !self.waitingToSecure {
+            self.state = .Open
+        }
+        else {
+            self.shouldFinishIntializationWhenSecured = true
+        }
+    }
+    
+    
+    // MARK: Public API
     
     public func send(_ packet:DataPacket) {
         self.packetsToSend.append(packet)
@@ -85,31 +165,30 @@ public class Connection: NSObject, GCDAsyncSocketDelegate {
         }
     }
     
-    public func continueWithSSL() {
-        // Enable SSL and start listening for input packets
-        let settings: [String:NSObject] = [
-            kCFStreamSSLCertificates as String: self.sslCertificates as NSArray,
-            kCFStreamSSLIsServer as String: NSNumber(value: true)
-        ]
-        
-        self.socket.startTLS(settings)
-        self.socket.readData(withTimeout: -1, tag: 0)
+    public func readOnePacket() {
+        self.packetsExpected = 1
+        self.readNextPacket()
     }
     
-    public func continueWithoutSSL() {
-        // SSL wont be needed - start listening for input packets
-        self.socket.readData(withTimeout: -1, tag: 0)
+    public func readPackets() {
+        self.packetsExpected = -1
+        self.readNextPacket()
+    }
+    
+    public func close() {
+        self.socket.disconnect()
+        self.state = .Closed
     }
     
     
+    // MARK: GCDAsyncSocketDelegate
     
     public func socket(_ sock: GCDAsyncSocket, didConnectToHost host: String, port: UInt16) {
-        Swift.print("socket:didConnectToHost:port: \(sock) \(host) \(port)")
-        self.state = .Open
+        Swift.print("Connection.socket:didConnectToHost:port: \(sock) \(host) \(port)")
     }
     
     public func socket(_ sock: GCDAsyncSocket, didWriteDataWithTag tag: Int) {
-        Swift.print("socket:didWriteDataWithTag: \(sock) \(tag)")
+        Swift.print("Connection.socket:didWriteDataWithTag: \(sock) \(tag)")
         
         let indexOpt = self.packetsToSend.index { packet -> Bool in
             return Int(packet.id) == tag
@@ -121,56 +200,112 @@ public class Connection: NSObject, GCDAsyncSocketDelegate {
     }
     
     public func socket(_ sock: GCDAsyncSocket, didRead data: Data, withTag tag: Int) {
-        Swift.print("socket:didRead:withTag: \(sock) \(data) \(tag)")
+        Swift.print("Connection.socket:didRead:withTag: \(sock) \(data) \(tag)")
         
-        var splits: [AnySequence<UInt8>] = data.split(separator: UInt8(ascii: "\n"), maxSplits: Int.max, omittingEmptySubsequences: false)
-        for i in 0..<splits.count {
-            let split = splits[i]
-            self.readBuffers.append(split)
-
-            // The last split will contain incomplete packet data or be empty if packets where read completely
-            // The other splits will have data for complete packets and can be deserialized
-            if i < splits.count - 1 {
-                self.readPacket()
+        if data.count > 0 {
+            if let packet = DataPacket(data: data) {
+                self.handle(packet: packet)
+                if self.packetsExpected > 0 {
+                    self.packetsExpected = self.packetsExpected - 1
+                }
             }
+            else {
+                Swift.print("Could not deserialize DataPacket")
+            }
+        }
+    
+        if self.packetsExpected != 0 {
+            self.readNextPacket()
         }
     }
     
     public func socketDidSecure(_ sock: GCDAsyncSocket) {
-        Swift.print("socketDidSecure: \(sock)")
+        Swift.print("Connection.socketDidSecure: \(sock)")
+        self.waitingToSecure = false
+        if self.shouldFinishIntializationWhenSecured {
+            self.state = .Open
+        }
     }
     
     public func socketDidDisconnect(_ sock: GCDAsyncSocket, withError err: Error?) {
-        Swift.print("socketDidDisconnect:withError: \(sock) \(err)")
+        Swift.print("Connection.socketDidDisconnect:withError: \(sock) \(err)")
         self.close()
     }
     
     
+    // MARK: PairableDelegate
     
-    
-    private func close() {
-        self.socket.disconnect()
-        self.state = .Closed
+    public func pairable(_ pairable:Pairable, receivedRequest request:PairingRequest) {
+        self.pairingDelegate?.pairable(self, receivedRequest:request)
     }
     
-    private func readPacket() {
-        let joinedBuffers = self.readBuffers.joined(separator: [UInt8]())
-        var bytes = [UInt8](joinedBuffers)
-        self.readBuffers = []
-        
-        if bytes.count == 0 {
-            return
-        }
-        
-        if let packet = DataPacket(json: &bytes) {
-            self.delegate?.connection(self, didReadPacket: packet)
+    public func pairable(_ pairable:Pairable, failedWithError error:Error) {
+        self.pairingDelegate?.pairable(self, failedWithError:error)
+    }
+    
+    public func pairable(_ pairable:Pairable, statusChanged status:PairingStatus) {
+        self.pairingDelegate?.pairable(self, statusChanged: status)
+    }
+    
+    
+    // MARK: Pairable
+    
+    public var pairingStatus: PairingStatus {
+        if self.state == .Open {
+            return self.pairingHandler!.pairingStatus
         }
         else {
-            Swift.print("Could not deserialize DataPacket")
+            return .Unpaired
         }
+    }
+    
+    public func requestPairing() {
+        assert(self.state == .Open, "Connection expected to be open")
+        self.pairingHandler!.requestPairing()
+    }
+    
+    public func acceptPairing() {
+        assert(self.state == .Open, "Connection expected to be open")
+        self.pairingHandler!.acceptPairing()
+    }
+    
+    public func declinePairing() {
+        assert(self.state == .Open, "Connection expected to be open")
+        self.pairingHandler!.declinePairing()
+    }
+    
+    public func unpair() {
+        assert(self.state == .Open, "Connection expected to be open")
+        self.pairingHandler!.unpair()
+    }
+    
+    public func updatePairingStatus(globalStatus: PairingStatus) {
+        assert(self.state == .Open, "Connection expected to be open")
+        self.pairingHandler!.updatePairingStatus(globalStatus: globalStatus)
     }
 
     
+    // MARK: Private
+    
+    private func readNextPacket() {
+        self.socket.readData(to: Connection.packetsDelimiter, withTimeout: -1, tag: 0)
+    }
+    
+    private func handle(packet: DataPacket) {
+        // try to handle with registered handlers
+        for handler in self.packetHandlers {
+            let handled = handler.handleDataPacket(packet, onConnection: self)
+            if handled {
+                return
+            }
+        }
+        
+        // if not handled - pass to delegate
+        self.delegate?.connection(self, didReadPacket: packet)
+    }
+    
+    
+    // MARK: Private static
     
     private static func getSSLCertificates() -> [AnyObject]? {
         var error: NSError? = nil
@@ -179,8 +314,8 @@ public class Connection: NSObject, GCDAsyncSocketDelegate {
             var certificateOpt: SecCertificate? = nil
             SecIdentityCopyCertificate(identity, &certificateOpt)
         
-            if let certificate = certificateOpt {
-                
+//            if let certificate = certificateOpt {
+            
 //                var commonName:CFString? = nil
 //                SecCertificateCopyCommonName(certificate, &commonName)
 //                Swift.print("Using certificate with commonName: \(commonName)")
@@ -193,12 +328,12 @@ public class Connection: NSObject, GCDAsyncSocketDelegate {
 //                    Swift.print("Value: \(value)")
 //                }
                 
-                return [identity, certificate]
-            }
-            else {
-                Swift.print("Failed to extract certificate from identity")
-                return nil
-            }
+                return [identity]
+//            }
+//            else {
+//                Swift.print("Failed to extract certificate from identity")
+//                return nil
+//            }
         }
         else {
             Swift.print("Failed to get certificates for SSL: \(error)")

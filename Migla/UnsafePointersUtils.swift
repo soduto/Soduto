@@ -8,12 +8,12 @@
 
 import Foundation
 
-func bridge<T : AnyObject>(obj : T) -> UnsafeMutablePointer<Void> {
-    return UnsafeMutablePointer<Void>(Unmanaged.passUnretained(obj).toOpaque())
+func bridge<T : AnyObject>(obj : T) -> UnsafeMutableRawPointer {
+    return UnsafeMutableRawPointer(Unmanaged.passUnretained(obj).toOpaque())
     // return unsafeAddressOf(obj) // ***
 }
 
-func bridge<T : AnyObject>(ptr : UnsafePointer<Void>) -> T {
+func bridge<T : AnyObject>(ptr : UnsafeRawPointer) -> T {
     return Unmanaged<T>.fromOpaque(ptr).takeUnretainedValue()
     // return unsafeBitCast(ptr, T.self) // ***
 }

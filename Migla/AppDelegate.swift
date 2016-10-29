@@ -9,47 +9,46 @@
 import Cocoa
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
+    
+    @IBOutlet weak var statusBarMenuController: StatusBarMenuController!
 
-    @IBOutlet weak var window: NSWindow!
-
-    @IBOutlet weak var statusBarMenu: NSMenu!
+    let config = Configuration()
+    let connectionProvider: ConnectionProvider
+    let deviceManager: DeviceManager
     
-    let statusBarItem = NSStatusBar.system().statusItem(withLength: NSSquareStatusItemLength)
-    
-    let connectionProvider: ConnectionProvider = ConnectionProvider()
-    
-    func applicationDidFinishLaunching(_ aNotification: Notification) {
-        let statusBarIcon = #imageLiteral(resourceName: "statusBarIcon")
-        statusBarIcon.isTemplate = true
+    override init() {
+        self.connectionProvider = ConnectionProvider(config: config)
+        self.deviceManager = DeviceManager(config: config)
         
-        statusBarItem.image = statusBarIcon
-        statusBarItem.menu = statusBarMenu
-        
-        Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(AppDelegate.announceSelf), userInfo: nil, repeats: true)
+        super.init()
     }
     
-    func announceSelf() {
-//        KdeConnectConfig* config = KdeConnectConfig::instance();
-//        const QString id = config->deviceId();
-//        np->mId = QString::number(QDateTime::currentMSecsSinceEpoch());
-//        np->mType = PACKAGE_TYPE_IDENTITY;
-//        np->mPayload = QSharedPointer<QIODevice>();
-//        np->mPayloadSize = 0;
-//        np->set("deviceId", id);
-//        np->set("deviceName", config->name());
-//        np->set("deviceType", config->deviceType());
-//        np->set("protocolVersion", NetworkPackage::ProtocolVersion);
-        
-//        _ = self.udpClientSocket.send(str: "{\"id\":\(Int64(Date().timeIntervalSince1970*1000)),\"type\":\"kdeconnect.identity\",\"body\":{\"deviceId\":\"123456789012123\",\"deviceName\":\"Migla\",\"protocolVersion\":7,\"deviceType\":\"desktop\",\"tcpPort\":1716}}")
-        
-        _ = "{\"id\":\(Int64(Date().timeIntervalSince1970*1000)),\"type\":\"kdeconnect.identity\",\"body\":{\"deviceId\":\"123456789012123\",\"deviceName\":\"Migla\",\"protocolVersion\":7,\"deviceType\":\"desktop\",\"tcpPort\":1716}}"
-//        self.udpSocket.send(data: content., to: <#T##Address?#>)
+    
+    // MARK: NSApplicationDelegate
+    
+    func applicationDidFinishLaunching(_ aNotification: Notification) {
+        self.connectionProvider.delegate = self.deviceManager
+        self.statusBarMenuController.deviceDataSource = self.deviceManager
+        self.deviceManager.delegate = self
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
         // Insert code here to tear down your application
     }
 
+    
+    // MARK: DeviceManagerDelegate
+    
+    func deviceManager(_ manager: DeviceManager, didChangeDeviceState device: Device) {
+        self.statusBarMenuController.refreshDeviceLists()
+    }
+    
+    func deviceManager(_ manager: DeviceManager, didReceivePairingRequest request: PairingRequest, forDevice device: Device) {
+        Swift.print("AppDelegate.deviceManager:didReceivePairingRequest:forDevice: \(request) \(device)")
+        
+        device.acceptPairing()
+    }
+    
 }
 

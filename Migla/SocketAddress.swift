@@ -92,33 +92,39 @@ public struct SocketAddress: CustomStringConvertible {
         return "\(self.storage)"
     }
     
+    public var data: Data {
+        var mutableAddress = self
+        let ptr: UnsafeMutablePointer<UInt8> = mutableAddress.pointer()
+        return Data(bytes: ptr, count: Int(self.size))
+    }
+    
     
     
     init() {}
     
     init<T>(addr: T) {
-        assert(sizeofValue(self.storage) >= sizeofValue(addr), "Address does not fit into sockaddr_storage")
+        assert(MemoryLayout<sockaddr_storage>.size >= MemoryLayout<T>.size, "Address does not fit into sockaddr_storage")
         
         let dest: UnsafeMutablePointer<T> = cast(pointer: &self.storage)
         dest.pointee = addr
     }
     
-    init(addr: UnsafePointer<Void>!, size: socklen_t) {
-        assert(sizeofValue(self.storage) >= Int(size), "Address does not fit into sockaddr_storage")
+    init(addr: UnsafeRawPointer, size: socklen_t) {
+        assert(MemoryLayout<sockaddr_storage>.size >= Int(size), "Address does not fit into sockaddr_storage")
         
         let dest: UnsafeMutablePointer<UInt8> = cast(pointer: &self.storage)
         memcpy(dest, addr, Int(size))
     }
     
     init(data: Data) {
-        assert(sizeofValue(self.storage) >= data.count, "Data does not fit into sockaddr_storage")
+        assert(MemoryLayout<sockaddr_storage>.size >= data.count, "Data does not fit into sockaddr_storage")
         
         let dest: UnsafeMutablePointer<UInt8> = cast(pointer: &self.storage)
         data.copyBytes(to: dest, count: data.count)
     }
     
     init(bytes: [UInt8]) {
-        assert(sizeofValue(self.storage) >= bytes.count, "Bytes do not fit into sockaddr_storage")
+        assert(MemoryLayout<sockaddr_storage>.size >= bytes.count, "Bytes do not fit into sockaddr_storage")
         
         let dest: UnsafeMutablePointer<UInt8> = cast(pointer: &self.storage)
         _ = bytes.withUnsafeBufferPointer { buffer in
@@ -126,19 +132,25 @@ public struct SocketAddress: CustomStringConvertible {
         }
     }
     
-    
-    
-    mutating func pointer<T>() -> UnsafeMutablePointer<T> {
-        assert(sizeofValue(self.storage) >= sizeof(T.self), "Pointer type does not fit into sockaddr_storage")
+    init?(ipv4: String) {
+        let components = ipv4.components(separatedBy: CharacterSet(charactersIn: "."))
+        guard components.count == 4 else { return nil }
+        guard let byte1 = UInt8(components[0]) else { return nil }
+        guard let byte2 = UInt8(components[1]) else { return nil }
+        guard let byte3 = UInt8(components[2]) else { return nil }
+        guard let byte4 = UInt8(components[3]) else { return nil }
         
-        return cast(pointer: &self.storage)
+        let addr: UInt32 = (in_addr_t(byte4) << 24) | (in_addr_t(byte3) << 16) | (in_addr_t(byte2) << 8) | in_addr_t(byte1)
+        
+        let ptr: UnsafeMutablePointer<sockaddr_in> = self.pointer()
+        ptr.pointee.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)
+        ptr.pointee.sin_family = sa_family_t(AF_INET)
+        ptr.pointee.sin_addr = in_addr(s_addr: addr.bigEndian)
     }
     
     
     
-    func data() -> Data {
-        var mutableAddress = self
-        let ptr: UnsafeMutablePointer<UInt8> = mutableAddress.pointer()
-        return Data(bytes: ptr, count: Int(self.size))
+    mutating func pointer<T>() -> UnsafeMutablePointer<T> {
+        return cast(pointer: &self.storage)
     }
 }

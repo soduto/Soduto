@@ -379,8 +379,11 @@ static BOOL checkCertValid(SecCertificateRef cert, NSTimeInterval expirationInte
     return creationDate && -[creationDate timeIntervalSinceNow] < expirationInterval;
 #else
     CFArrayRef oids = (__bridge CFArrayRef)@[(__bridge id)kSecOIDX509V1ValidityNotAfter,
-                                             (__bridge id)kSecOIDX509V1ValidityNotBefore];
+                                             (__bridge id)kSecOIDX509V1ValidityNotBefore,
+                                             (__bridge id)kSecOIDCommonName];
+    
     NSDictionary* values = CFBridgingRelease(SecCertificateCopyValues(cert, oids, NULL));
+    NSLog(@"certificate values: %@", values);
     return relativeTimeFromOID(values, kSecOIDX509V1ValidityNotAfter) >= 0.0
         && relativeTimeFromOID(values, kSecOIDX509V1ValidityNotBefore) <= 0.0;
 #endif

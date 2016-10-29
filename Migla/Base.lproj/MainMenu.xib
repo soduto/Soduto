@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11173.2" systemVersion="15G31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11198.2" systemVersion="16A313a" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11173.2"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11198.2"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -14,13 +14,30 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="Migla" customModuleProvider="target">
             <connections>
-                <outlet property="statusBarMenu" destination="LIO-WS-395" id="7IY-On-7Sk"/>
+                <outlet property="statusBarMenuController" destination="vQj-dd-GoX" id="7Z5-SX-5qh"/>
             </connections>
         </customObject>
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
-        <customObject id="vQj-dd-GoX" userLabel="Status Bar Menu Controller" customClass="StatusBarMenuController" customModule="Migla" customModuleProvider="target"/>
+        <customObject id="vQj-dd-GoX" userLabel="Status Bar Menu Controller" customClass="StatusBarMenuController" customModule="Migla" customModuleProvider="target">
+            <connections>
+                <outlet property="pairedDevicesItem" destination="NHO-Gf-5Mq" id="ty7-uD-qZH"/>
+                <outlet property="statusBarMenu" destination="LIO-WS-395" id="8BX-ha-3Ci"/>
+                <outlet property="unpairedDevicesItem" destination="NNU-ep-Fgn" id="M7P-Uy-8mB"/>
+            </connections>
+        </customObject>
         <menu id="LIO-WS-395">
             <items>
+                <menuItem title="Available devices" enabled="NO" id="NHO-Gf-5Mq" userLabel="Paired Devices title">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="XN7-yK-oPR"/>
+                <menuItem title="Open Migla Preferences..." id="NNU-ep-Fgn" userLabel="Open Migla Preferences">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="openPreferences:" target="vQj-dd-GoX" id="rrW-aH-Gim"/>
+                    </connections>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="Zv9-hp-heD"/>
                 <menuItem title="Quit" id="LmP-mI-dDc" userLabel="Quit">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>

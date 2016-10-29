@@ -10,19 +10,11 @@ import Foundation
 
 public struct DataPacket: CustomStringConvertible {
     
-    typealias Body = Dictionary<String, AnyObject>
-    
-    enum PacketType: String {
-        case Identity = "kdeconnect.identity"
-    }
-    
-    enum BodyProperty: String {
-        case ProtocolVerion = "protocolVersion"
-    }
+    public typealias Body = Dictionary<String, AnyObject>
     
     
     
-    static let protocolVersion = 7
+    static let protocolVersion: UInt = 7
     
     var id: Int64
     var type: String
@@ -59,7 +51,7 @@ public struct DataPacket: CustomStringConvertible {
     
     init?(data: Data) {
         let deserializedObj = try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions())
-        guard let obj = deserializedObj,
+        guard let obj = deserializedObj as? [String: AnyObject],
             let id = obj["id"] as? NSNumber,
             let type = obj["type"] as? String,
             let body = obj["body"] as? [String: AnyObject] else {
@@ -83,30 +75,103 @@ public struct DataPacket: CustomStringConvertible {
     func serialize(options: JSONSerialization.WritingOptions) throws -> [UInt8] {
         let dict: [String: AnyObject] = [
             "id": NSNumber(value: self.id),
-            "type": self.type,
-            "body": self.body
+            "type": self.type as AnyObject,
+            "body": self.body as AnyObject
         ]
         let data = try JSONSerialization.data(withJSONObject: dict, options: options)
         var bytes = [UInt8](data)
         bytes.append(UInt8(ascii: "\n"))
         return bytes
     }
+}
+
+
+
+// Identity packet
+
+extension DataPacket {
+    
+    public static let IdentityPacketType = "kdeconnect.identity"
+    
+    public enum IdentityProperty: String {
+        case DeviceId = "deviceId"
+        case DeviceName = "deviceName"
+        case DeviceType = "deviceType"
+        case IncomingCapabilities = "incomingCapabilities"
+        case OutgoingCapabilities = "outgoingCapabilities"
+        case ProtocolVersion = "protocolVersion"
+        case TCPPort = "tcpPort"
+    }
+    
+    public enum IdentityError: Error {
+        case WrongType
+        case InvalidDeviceId
+        case InvalidDeviceName
+        case InvalidDeviceType
+        case InvalidProtocolVersion
+        case InvalidTCPPort
+    }
     
     
     
-    static func identity() -> DataPacket {
+    public static func identity() -> DataPacket {
+        return identity(additionalProperties: nil)
+    }
+    
+    public static func identity(additionalProperties:DataPacket.Body?) -> DataPacket {
         let outgoingCapabilities: [String] = ["kdeconnect.ping"]
         let incomingCapabilities: [String] = ["kdeconnect.ping"]
-        let body: Body = [
-            "deviceId": "12345678901234567890",
-            "deviceName": "Migla",
-            "deviceType": "desktop",
-            "protocolVersion": NSNumber(value: DataPacket.protocolVersion),
-//            "tcpPort": ConnectionProvider.port,
-            "outgoingCapabilities": outgoingCapabilities,
-            "incomingCapabilities": incomingCapabilities
+        var body: Body = [
+            IdentityProperty.DeviceId.rawValue: "12345678901234567890" as AnyObject,
+            IdentityProperty.DeviceName.rawValue: "Migla" as AnyObject,
+            IdentityProperty.DeviceType.rawValue: "desktop" as AnyObject,
+            IdentityProperty.ProtocolVersion.rawValue: NSNumber(value: DataPacket.protocolVersion),
+            IdentityProperty.OutgoingCapabilities.rawValue: outgoingCapabilities as AnyObject,
+            IdentityProperty.IncomingCapabilities.rawValue: incomingCapabilities as AnyObject
         ]
-        let packet = DataPacket(type: PacketType.Identity.rawValue, body: body)
+        if let properties = additionalProperties {
+            for (key, value) in properties {
+                body[key] = value
+            }
+        }
+        let packet = DataPacket(type: IdentityPacketType, body: body)
         return packet
+    }
+    
+    
+    
+    
+    public func getDeviceId() throws -> String {
+        try self.validateIdentityType()
+        guard let deviceId = body[IdentityProperty.DeviceId.rawValue] as? String else { throw IdentityError.InvalidDeviceId }
+        return deviceId
+    }
+    
+    public func getDeviceName() throws -> String {
+        try self.validateIdentityType()
+        guard let deviceName = body[IdentityProperty.DeviceName.rawValue] as? String else { throw IdentityError.InvalidDeviceName }
+        return deviceName
+    }
+    
+    public func getDeviceType() throws -> String {
+        try self.validateIdentityType()
+        guard let deviceType = body[IdentityProperty.DeviceType.rawValue] as? String else { throw IdentityError.InvalidDeviceType }
+        return deviceType
+    }
+    
+    public func getProtocolVersion() throws -> UInt {
+        try self.validateIdentityType()
+        guard let protocolVersion = body[IdentityProperty.ProtocolVersion.rawValue] as? NSNumber else { throw IdentityError.InvalidProtocolVersion }
+        return protocolVersion.uintValue
+    }
+    
+    public func getTCPPort() throws -> UInt16 {
+        try self.validateIdentityType()
+        guard let tcpPort = body[IdentityProperty.TCPPort.rawValue] as? NSNumber else { throw IdentityError.InvalidTCPPort }
+        return tcpPort.uint16Value
+    }
+    
+    public func validateIdentityType() throws {
+        guard type == DataPacket.IdentityPacketType else { throw IdentityError.WrongType }
     }
 }
