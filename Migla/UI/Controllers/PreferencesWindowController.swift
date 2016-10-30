@@ -13,6 +13,7 @@ public class PreferencesWindowController: NSWindowController {
     
     weak var deviceDataSource: DeviceDataSource?
     @IBOutlet weak var deviceList: NSTableView!
+    @IBOutlet weak var hostNameLabel: NSTextField!
     
     
     
@@ -27,7 +28,13 @@ public class PreferencesWindowController: NSWindowController {
     }
     
     override public func showWindow(_ sender: Any?) {
+        // make sure window is loaded
+        let _ = self.window
+        
         NSApp.activate(ignoringOtherApps: true)
+        
+        self.hostNameLabel.stringValue = Host.current().localizedName ?? "Migla"
+        
         super.showWindow(sender)
     }
     
@@ -37,6 +44,9 @@ public class PreferencesWindowController: NSWindowController {
     }
 }
 
+
+// MARK: -
+
 extension PreferencesWindowController : NSTableViewDataSource {
     
     public func numberOfRows(in tableView: NSTableView) -> Int {
@@ -45,6 +55,9 @@ extension PreferencesWindowController : NSTableViewDataSource {
     }
 
 }
+
+
+// MARK: -
 
 extension PreferencesWindowController: NSTableViewDelegate {
     

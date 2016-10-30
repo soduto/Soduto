@@ -9,6 +9,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowController" customModule="Migla" customModuleProvider="target">
             <connections>
                 <outlet property="deviceList" destination="rGR-Tz-p9g" id="mXz-q3-SBU"/>
+                <outlet property="hostNameLabel" destination="K6M-tV-QDh" id="oKi-BH-aHb"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="kOv-Zf-EXO"/>
             </connections>
         </customObject>
@@ -136,12 +137,23 @@
                         </constraints>
                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" image="logo120" id="CM1-h0-tW9"/>
                     </imageView>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="K6M-tV-QDh" userLabel="Host name">
+                        <rect key="frame" x="18" y="200" width="216" height="17"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Host name" id="4Ix-ar-u9G">
+                            <font key="font" metaFont="titleBar"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
                 </subviews>
                 <constraints>
                     <constraint firstItem="cGD-fd-PHP" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" id="4lx-gI-RMK"/>
                     <constraint firstItem="qhB-Kf-ybj" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" id="8Bk-HW-JZT"/>
                     <constraint firstAttribute="trailing" secondItem="cGD-fd-PHP" secondAttribute="trailing" constant="20" id="D2j-NP-QRh"/>
+                    <constraint firstItem="K6M-tV-QDh" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" id="Fu0-la-Fw3"/>
+                    <constraint firstItem="K6M-tV-QDh" firstAttribute="top" secondItem="qhB-Kf-ybj" secondAttribute="bottom" constant="8" id="GXT-kc-T54"/>
                     <constraint firstItem="cGD-fd-PHP" firstAttribute="leading" secondItem="qhB-Kf-ybj" secondAttribute="trailing" constant="8" id="RzK-4H-CpN"/>
+                    <constraint firstItem="cGD-fd-PHP" firstAttribute="leading" secondItem="K6M-tV-QDh" secondAttribute="trailing" constant="8" id="TAe-9K-nuv"/>
                     <constraint firstItem="qhB-Kf-ybj" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" id="ctJ-sR-Wjg"/>
                     <constraint firstAttribute="bottom" secondItem="cGD-fd-PHP" secondAttribute="bottom" constant="20" id="eeh-Xw-GiK"/>
                     <constraint firstItem="cGD-fd-PHP" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="240" id="xNP-MU-h9d"/>
