@@ -68,6 +68,7 @@ public class Configuration: ConnectionConfiguration, DeviceManagerConfiguration,
     enum Property: String {
         case hostName = "hostName"
         case hostDeviceId = "hostDeviceId"
+        case hostCertificateName = "hostCertificateName"
     }
     
     
@@ -80,8 +81,10 @@ public class Configuration: ConnectionConfiguration, DeviceManagerConfiguration,
         self.userDefaults = userDefaults
         
         if self.userDefaults.string(forKey: Property.hostDeviceId.rawValue) == nil {
-            // generate and store device ID for current device
             self.userDefaults.set(Configuration.generateDeviceId(), forKey: Property.hostDeviceId.rawValue)
+        }
+        if self.userDefaults.string(forKey: Property.hostCertificateName.rawValue) == nil {
+            self.userDefaults.set("Migla Host", forKey: Property.hostCertificateName.rawValue)
         }
     }
     
@@ -100,7 +103,20 @@ public class Configuration: ConnectionConfiguration, DeviceManagerConfiguration,
     }
     
     public var hostDeviceId: Device.Id {
-        get { return self.userDefaults.string(forKey: Property.hostDeviceId.rawValue)! }
+        return self.userDefaults.string(forKey: Property.hostDeviceId.rawValue)!
+    }
+    
+    public var hostCertificate: SecIdentity? {
+        let name = self.userDefaults.string(forKey: Property.hostCertificateName.rawValue)
+        let expirationInterval = 60.0 * 60.0 * 24.0 * 365.0 * 10.0
+        var error: NSError? = nil
+        if let identity = MYGetOrCreateAnonymousIdentity(name, expirationInterval, &error)?.takeUnretainedValue() {
+            return identity
+        }
+        else {
+            Swift.print("Failed to get host identity for SSL: \(error)")
+            return nil
+        }
     }
     
     public func deviceConfig(for deviceId: Device.Id) -> DeviceConfiguration {

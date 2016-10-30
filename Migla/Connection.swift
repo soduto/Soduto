@@ -21,6 +21,7 @@ public protocol ConnectionDelegate: class {
 }
 
 public protocol ConnectionConfiguration: HostConfiguration {
+    var hostCertificate: SecIdentity? { get }
     func deviceConfig(for deviceId:Device.Id) -> DeviceConfiguration
 }
 
@@ -67,13 +68,13 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     // MARK: Initialization / Deinitialization
     
     init?(address: SocketAddress, identityPacket packet: DataPacket, config: ConnectionConfiguration) {
-        guard let sslCertificates = Connection.getSSLCertificates() else { return nil }
+        guard let hostIdentity = config.hostCertificate else { return nil }
         
         setenv("CFNETWORK_DIAGNOSTICS", "3", 1);
         
         self.config = config
         self.socket = GCDAsyncSocket(delegate: nil, delegateQueue: DispatchQueue.main)
-        self.sslCertificates = sslCertificates
+        self.sslCertificates = [ hostIdentity ]
         self.state = .Initializing
 
         super.init()
@@ -91,11 +92,11 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     
     init?(socket: GCDAsyncSocket, config: ConnectionConfiguration) {
         guard socket.isConnected else { return nil }
-        guard let sslCertificates = Connection.getSSLCertificates() else { return nil }
+        guard let hostIdentity = config.hostCertificate else { return nil }
         
         self.config = config
         self.socket = socket
-        self.sslCertificates = sslCertificates
+        self.sslCertificates = [ hostIdentity ]
         self.state = .Initializing
         
         super.init()
@@ -162,6 +163,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
         if let bytes = try? packet.serialize() {
             let data = Data(bytes: bytes)
             self.socket.write(data, withTimeout: -1, tag: Int(packet.id))
+            self.socket.sslContext()
         }
     }
     
@@ -303,41 +305,5 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
         // if not handled - pass to delegate
         self.delegate?.connection(self, didReadPacket: packet)
     }
-    
-    
-    // MARK: Private static
-    
-    private static func getSSLCertificates() -> [AnyObject]? {
-        var error: NSError? = nil
-        if let identity = MYGetOrCreateAnonymousIdentity("Migla", 60.0 * 60.0 * 24.0 * 365.0 * 10.0, &error)?.takeUnretainedValue() {
-            
-            var certificateOpt: SecCertificate? = nil
-            SecIdentityCopyCertificate(identity, &certificateOpt)
-        
-//            if let certificate = certificateOpt {
-            
-//                var commonName:CFString? = nil
-//                SecCertificateCopyCommonName(certificate, &commonName)
-//                Swift.print("Using certificate with commonName: \(commonName)")
-                
-//                var error:Unmanaged<CFError>? = nil
-//                let values = (SecCertificateCopyValues(certificate!, nil, &error) as Dictionary?)
-//        
-//                for (key, value) in values! {
-//                    Swift.print("Key: \(key)")
-//                    Swift.print("Value: \(value)")
-//                }
-                
-                return [identity]
-//            }
-//            else {
-//                Swift.print("Failed to extract certificate from identity")
-//                return nil
-//            }
-        }
-        else {
-            Swift.print("Failed to get certificates for SSL: \(error)")
-            return nil
-        }
-    }
+
 }
