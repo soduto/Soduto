@@ -20,7 +20,7 @@ public protocol ConnectionDelegate: class {
     func connection(_ connection:Connection, didReadPacket:DataPacket)
 }
 
-public protocol ConnectionConfiguration {
+public protocol ConnectionConfiguration: HostConfiguration {
     func deviceConfig(for deviceId:Device.Id) -> DeviceConfiguration
 }
 

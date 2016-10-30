@@ -114,17 +114,17 @@ extension DataPacket {
     
     
     
-    public static func identity() -> DataPacket {
-        return identity(additionalProperties: nil)
+    public static func identity(config: HostConfiguration) -> DataPacket {
+        return identity(additionalProperties: nil, config: config)
     }
     
-    public static func identity(additionalProperties:DataPacket.Body?) -> DataPacket {
+    public static func identity(additionalProperties:DataPacket.Body?, config: HostConfiguration) -> DataPacket {
         let outgoingCapabilities: [String] = ["kdeconnect.ping"]
         let incomingCapabilities: [String] = ["kdeconnect.ping"]
         var body: Body = [
-            IdentityProperty.DeviceId.rawValue: "12345678901234567890" as AnyObject,
-            IdentityProperty.DeviceName.rawValue: "Migla" as AnyObject,
-            IdentityProperty.DeviceType.rawValue: "desktop" as AnyObject,
+            IdentityProperty.DeviceId.rawValue: config.hostDeviceId as AnyObject,
+            IdentityProperty.DeviceName.rawValue: config.hostDeviceName as AnyObject,
+            IdentityProperty.DeviceType.rawValue: config.hostDeviceType.rawValue as AnyObject,
             IdentityProperty.ProtocolVersion.rawValue: NSNumber(value: DataPacket.protocolVersion),
             IdentityProperty.OutgoingCapabilities.rawValue: outgoingCapabilities as AnyObject,
             IdentityProperty.IncomingCapabilities.rawValue: incomingCapabilities as AnyObject
