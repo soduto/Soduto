@@ -12,10 +12,32 @@ public class DeviceConfiguration {
     
     public enum Property: String {
         case isPaired = "isPaired"
+        case certificateName = "certificateName"
     }
     
     
+    
+    init(deviceId: Device.Id, userDefaults: UserDefaults) {
+        self.deviceId = deviceId
+        self.userDefaults = userDefaults
+        self.isPaired = false
+        self.certificateName = ""
+        
+        let key = DeviceConfiguration.configKey(for: deviceId)
+        if let attrs = self.userDefaults.dictionary(forKey: key) {
+            self.isPaired = attrs[Property.isPaired.rawValue] as? Bool ?? self.isPaired
+            self.certificateName = attrs[Property.certificateName.rawValue] as? String ?? self.certificateName
+        }
+    }
+    
+    
+    
+    private let userDefaults: UserDefaults
+    
+    
+    
     public let deviceId: Device.Id
+    
     public var isPaired: Bool {
         didSet {
             if self.isPaired != oldValue {
@@ -24,32 +46,47 @@ public class DeviceConfiguration {
         }
     }
     
-    private let userDefaults: UserDefaults
+    public private(set) var certificateName: String {
+        didSet {
+            if self.certificateName != oldValue {
+                self.save()
+            }
+        }
+    }
     
-    
-    
-    init(deviceId: Device.Id, userDefaults: UserDefaults) {
-        self.deviceId = deviceId
-        self.isPaired = false
-        self.userDefaults = userDefaults
-        
-        let key = type(of: self).configKey(forDevice: deviceId)
-        if let attrs = self.userDefaults.dictionary(forKey: key) {
-            self.isPaired = attrs[Property.isPaired.rawValue] as? Bool ?? false
+    public var certificate: SecCertificate? {
+        get {
+            guard !self.certificateName.isEmpty else { return nil }
+            
+            return nil
+        }
+        set {
+            if self.certificateName.isEmpty && newValue != nil {
+                self.certificateName = DeviceConfiguration.defaultCertificateName(for: deviceId)
+            }
+            else if newValue == nil {
+                self.certificateName = ""
+            }
         }
     }
     
     
     
-    class func configKey(forDevice deviceId: Device.Id) -> String {
+    class func defaultCertificateName(for deviceId: String) -> String {
+        let safeDeviceId = deviceId.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
+        return "Migla Client (\(safeDeviceId))"
+    }
+    
+    class func configKey(for deviceId: String) -> String {
         let safeDeviceId = deviceId.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
         return "com.migla.device.\(safeDeviceId)"
     }
     
     func save() {
-        let key = type(of: self).configKey(forDevice: deviceId)
+        let key = DeviceConfiguration.configKey(for: self.deviceId)
         let attrs:[String:AnyObject] = [
-            Property.isPaired.rawValue: self.isPaired as AnyObject
+            Property.isPaired.rawValue: self.isPaired as AnyObject,
+            Property.certificateName.rawValue: self.certificateName as AnyObject
         ]
         self.userDefaults.set(attrs, forKey: key)
     }

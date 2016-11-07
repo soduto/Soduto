@@ -23,6 +23,10 @@ SecIdentityRef MYGetOrCreateAnonymousIdentity(NSString* label,
                                               NSTimeInterval expirationInterval,
                                               NSError** outError);
 
+SecCertificateRef MYCreateAnonymousCertificate(NSString* label,
+                                               NSTimeInterval expirationInterval,
+                                               NSError** outError);
+
 /** Removes an identity created by MYGetOrCreateAnonymousIdentity from the keychain.
     @param label  Label given to the identity when it was created.
     @return  YES if an identity was removed, NO if not. */

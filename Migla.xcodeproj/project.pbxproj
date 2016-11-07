@@ -22,6 +22,7 @@
 		8456F4A81D7DE393006EFE19 /* Pairable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456F4A71D7DE393006EFE19 /* Pairable.swift */; };
 		8456F4AA1D7DEA47006EFE19 /* DefaultPairingHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456F4A91D7DEA47006EFE19 /* DefaultPairingHandler.swift */; };
 		8456F4AC1D7DEAC5006EFE19 /* DataPacketsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456F4AB1D7DEAC5006EFE19 /* DataPacketsHandler.swift */; };
+		847EF4C51DC9049D00360BBE /* MiglaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847EF4C41DC9049D00360BBE /* MiglaTests.swift */; };
 		848E3C8A1D51237C009A7EEA /* DataPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848E3C891D51237C009A7EEA /* DataPacket.swift */; };
 		848E3C8C1D5138CE009A7EEA /* ConnectionProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848E3C8B1D5138CE009A7EEA /* ConnectionProvider.swift */; };
 		849961B81D5726B0002B893A /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = 849961B41D5726B0002B893A /* LICENSE.txt */; };
@@ -31,10 +32,18 @@
 		849961C61D5728B2002B893A /* ExceptionUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 849961C51D5728B2002B893A /* ExceptionUtils.m */; };
 		8499620E1D5728EE002B893A /* Test_Assertions.m in Sources */ = {isa = PBXBuildFile; fileRef = 849961F31D5728EE002B893A /* Test_Assertions.m */; };
 		849962131D572B1F002B893A /* Logging.m in Sources */ = {isa = PBXBuildFile; fileRef = 849962121D572B1F002B893A /* Logging.m */; };
+		84D903A21DC696A600E61DA7 /* CertificateUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D903A11DC696A600E61DA7 /* CertificateUtils.swift */; };
 		8FC977F11D4778E9001ADF7E /* StatusBarMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC977F01D4778E9001ADF7E /* StatusBarMenuController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		847EF4C71DC9049D00360BBE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 843301581D2D8CB8008934BB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8433015F1D2D8CB8008934BB;
+			remoteInfo = Migla;
+		};
 		84E2F2F11D574A4F00EAA802 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8499621A1D57438E002B893A /* CocoaAsyncSocket.xcodeproj */;
@@ -85,6 +94,9 @@
 		8456F4A71D7DE393006EFE19 /* Pairable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pairable.swift; sourceTree = "<group>"; };
 		8456F4A91D7DEA47006EFE19 /* DefaultPairingHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultPairingHandler.swift; sourceTree = "<group>"; };
 		8456F4AB1D7DEAC5006EFE19 /* DataPacketsHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataPacketsHandler.swift; sourceTree = "<group>"; };
+		847EF4C21DC9049D00360BBE /* MiglaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MiglaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		847EF4C41DC9049D00360BBE /* MiglaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiglaTests.swift; sourceTree = "<group>"; };
+		847EF4C61DC9049D00360BBE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		848E3C891D51237C009A7EEA /* DataPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataPacket.swift; sourceTree = "<group>"; };
 		848E3C8B1D5138CE009A7EEA /* ConnectionProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionProvider.swift; sourceTree = "<group>"; };
 		849961B41D5726B0002B893A /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE.txt; path = MYUtilities/LICENSE.txt; sourceTree = "<group>"; };
@@ -101,11 +113,19 @@
 		849962121D572B1F002B893A /* Logging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Logging.m; path = MYUtilities/Logging.m; sourceTree = "<group>"; };
 		8499621A1D57438E002B893A /* CocoaAsyncSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CocoaAsyncSocket.xcodeproj; path = Migla/CocoaAsyncSocket/CocoaAsyncSocket.xcodeproj; sourceTree = "<group>"; };
 		849962271D574530002B893A /* CocoaAsyncSocket.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaAsyncSocket.framework; path = Migla/CocoaAsyncSocket/build/Debug/CocoaAsyncSocket.framework; sourceTree = "<group>"; };
+		84D903A11DC696A600E61DA7 /* CertificateUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CertificateUtils.swift; sourceTree = "<group>"; };
 		8FC977F01D4778E9001ADF7E /* StatusBarMenuController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusBarMenuController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		8433015D1D2D8CB8008934BB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		847EF4BF1DC9049D00360BBE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -157,6 +177,7 @@
 			children = (
 				8499621A1D57438E002B893A /* CocoaAsyncSocket.xcodeproj */,
 				843301621D2D8CB8008934BB /* Migla */,
+				847EF4C31DC9049D00360BBE /* MiglaTests */,
 				843301611D2D8CB8008934BB /* Products */,
 				849962261D574530002B893A /* Frameworks */,
 			);
@@ -166,6 +187,7 @@
 			isa = PBXGroup;
 			children = (
 				843301601D2D8CB8008934BB /* Migla.app */,
+				847EF4C21DC9049D00360BBE /* MiglaTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -199,8 +221,18 @@
 				8456F4A91D7DEA47006EFE19 /* DefaultPairingHandler.swift */,
 				8456F4AB1D7DEAC5006EFE19 /* DataPacketsHandler.swift */,
 				8450274A1DAABB9900C20247 /* Configuration.swift */,
+				84D903A11DC696A600E61DA7 /* CertificateUtils.swift */,
 			);
 			path = Core;
+			sourceTree = "<group>";
+		};
+		847EF4C31DC9049D00360BBE /* MiglaTests */ = {
+			isa = PBXGroup;
+			children = (
+				847EF4C41DC9049D00360BBE /* MiglaTests.swift */,
+				847EF4C61DC9049D00360BBE /* Info.plist */,
+			);
+			path = MiglaTests;
 			sourceTree = "<group>";
 		};
 		849961B31D572664002B893A /* MyUtilities */ = {
@@ -261,20 +293,38 @@
 			productReference = 843301601D2D8CB8008934BB /* Migla.app */;
 			productType = "com.apple.product-type.application";
 		};
+		847EF4C11DC9049D00360BBE /* MiglaTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 847EF4CD1DC9049D00360BBE /* Build configuration list for PBXNativeTarget "MiglaTests" */;
+			buildPhases = (
+				847EF4BE1DC9049D00360BBE /* Sources */,
+				847EF4BF1DC9049D00360BBE /* Frameworks */,
+				847EF4C01DC9049D00360BBE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				847EF4C81DC9049D00360BBE /* PBXTargetDependency */,
+			);
+			name = MiglaTests;
+			productName = MiglaTests;
+			productReference = 847EF4C21DC9049D00360BBE /* MiglaTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		843301581D2D8CB8008934BB /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0800;
+				LastSwiftUpdateCheck = 0810;
 				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = Migla;
 				TargetAttributes = {
 					8433015F1D2D8CB8008934BB = {
 						CreatedOnToolsVersion = 8.0;
-						DevelopmentTeam = 5K93S6HD22;
 						DevelopmentTeamName = "Giedrius Stanevicius (Personal Team)";
+						DevelopmentTeam = 5K93S6HD22;
 						LastSwiftMigration = 0800;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
@@ -282,6 +332,11 @@
 								enabled = 0;
 							};
 						};
+					};
+					847EF4C11DC9049D00360BBE = {
+						CreatedOnToolsVersion = 8.1;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 8433015F1D2D8CB8008934BB;
 					};
 				};
 			};
@@ -305,6 +360,7 @@
 			projectRoot = "";
 			targets = (
 				8433015F1D2D8CB8008934BB /* Migla */,
+				847EF4C11DC9049D00360BBE /* MiglaTests */,
 			);
 		};
 /* End PBXProject section */
@@ -345,6 +401,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		847EF4C01DC9049D00360BBE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -373,12 +436,26 @@
 				8421A8E71D761409008AC833 /* PreferencesWindowController.swift in Sources */,
 				843301641D2D8CB8008934BB /* AppDelegate.swift in Sources */,
 				8456F4A81D7DE393006EFE19 /* Pairable.swift in Sources */,
+				84D903A21DC696A600E61DA7 /* CertificateUtils.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		847EF4BE1DC9049D00360BBE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				847EF4C51DC9049D00360BBE /* MiglaTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		847EF4C81DC9049D00360BBE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8433015F1D2D8CB8008934BB /* Migla */;
+			targetProxy = 847EF4C71DC9049D00360BBE /* PBXContainerItemProxy */;
+		};
 		84E2F2F81D574A5900EAA802 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "Mac CocoaAsyncSocket";
@@ -541,6 +618,36 @@
 			};
 			name = Release;
 		};
+		847EF4C91DC9049D00360BBE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = MiglaTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.migla.MiglaTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Migla.app/Contents/MacOS/Migla";
+			};
+			name = Debug;
+		};
+		847EF4CA1DC9049D00360BBE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = MiglaTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.migla.MiglaTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Migla.app/Contents/MacOS/Migla";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -558,6 +665,15 @@
 			buildConfigurations = (
 				8433016E1D2D8CB8008934BB /* Debug */,
 				8433016F1D2D8CB8008934BB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		847EF4CD1DC9049D00360BBE /* Build configuration list for PBXNativeTarget "MiglaTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				847EF4C91DC9049D00360BBE /* Debug */,
+				847EF4CA1DC9049D00360BBE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

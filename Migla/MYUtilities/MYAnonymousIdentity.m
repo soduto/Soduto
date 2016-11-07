@@ -86,6 +86,25 @@ SecIdentityRef MYGetOrCreateAnonymousIdentity(NSString* label,
     return ident;
 }
 
+SecCertificateRef MYCreateAnonymousCertificate(NSString* label,
+                                               NSTimeInterval expirationInterval,
+                                               NSError** outError)
+{
+    SecKeyRef publicKey, privateKey;
+    if (!generateRSAKeyPair(kKeySizeInBits, YES, label, &publicKey, &privateKey, outError))
+        return NULL;
+    NSData* certData = generateAnonymousCert(publicKey,privateKey, expirationInterval, outError);
+    if (!certData)
+        return NULL;
+    SecCertificateRef certRef = SecCertificateCreateWithData(NULL, (__bridge CFDataRef)certData);
+    if (!certRef) {
+        checkErr(errSecIO, outError);
+        return NULL;
+    }
+    CFAutorelease(certRef);
+    return certRef;
+}
+
 
 static BOOL checkErr(OSStatus err, NSError** outError) {
     if (err == noErr)
