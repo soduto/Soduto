@@ -49,41 +49,49 @@ class MiglaCertificateTests: XCTestCase {
         super.tearDown()
     }
     
-    func testCreateIdentity() {
-        let _ = try! CertificateUtils.getOrCreateIdentity(identityName, expirationInterval: self.expirationInterval)
-    }
     
-    func testGetIdentity() {
+    
+    func testIdentityUseWorkflow() {
+        // Create identity
         let identity1 = try! CertificateUtils.getOrCreateIdentity(identityName, expirationInterval: self.expirationInterval)
+        
+        // Get identity
         let identity2 = try! CertificateUtils.getOrCreateIdentity(identityName, expirationInterval: self.expirationInterval)
         var certificate1: SecCertificate?
         var certificate2: SecCertificate?
         SecIdentityCopyCertificate(identity1, &certificate1)
         SecIdentityCopyCertificate(identity2, &certificate2)
         XCTAssert(CertificateUtils.compareCertificates(certificate1!, certificate2!), "Identity certificates expected to be equal")
-    }
-    
-    func testDeleteIdentity() {
-        let identity1 = try! CertificateUtils.getOrCreateIdentity(identityName, expirationInterval: self.expirationInterval)
+        
+        // Delete identity
         try! CertificateUtils.deleteIdentity(identityName)
-        let identity2 = try! CertificateUtils.getOrCreateIdentity(identityName, expirationInterval: self.expirationInterval)
-        var certificate1: SecCertificate?
-        var certificate2: SecCertificate?
-        SecIdentityCopyCertificate(identity1, &certificate1)
-        SecIdentityCopyCertificate(identity2, &certificate2)
-        XCTAssert(!CertificateUtils.compareCertificates(certificate1!, certificate2!), "Identity certificates expected to be different")
+        XCTAssert(CertificateUtils.findIdentity(identityName) == nil, "Identity with preference \(identityName) expected to be deleted")
+        XCTAssert(CertificateUtils.findCertificate(identityName) == nil, "Certificates with preference name '\(identityName)' expected to be deleted")
+        XCTAssert(try! CertificateUtils.findKey(identityName) == nil, "Keys with name '\(identityName)' expected to be deleted")
     }
     
-    func testCertificateSaveWorkflow() {
-        let certificate1 = try! CertificateUtils.createCertificate(name: certificateName, expirationInterval: self.expirationInterval)
+    func testCertificateUseWorkflow() {
+        // create a certificate
+        let identity = try! CertificateUtils.getOrCreateIdentity(identityName, expirationInterval: self.expirationInterval)
+        var identityCert: SecCertificate? = nil
+        let status = SecIdentityCopyCertificate(identity, &identityCert)
+        XCTAssert(status == errSecSuccess, "Identity expected to have a certificate")
+        let certData = SecCertificateCopyData(identityCert!)
+        identityCert = nil
+        try! CertificateUtils.deleteIdentity(identityName)
+        let certificate1 = SecCertificateCreateWithData(nil, certData)
         
-        try! CertificateUtils.addCertificate(certificate1, name: certificateName)
+        // Save certificate
+        try! CertificateUtils.addCertificate(certificate1!, name: certificateName)
+        
+        // Search certificate
         let certificate2 = CertificateUtils.findCertificate(certificateName)!
-        XCTAssert(CertificateUtils.compareCertificates(certificate1, certificate2), "Certificates expected to be equal")
+        XCTAssert(CertificateUtils.compareCertificates(certificate1!, certificate2), "Certificates expected to be equal")
         
+        // delete certificate
         try! CertificateUtils.deleteCertificate(certificateName)
-        let certificate3 = CertificateUtils.findCertificate(certificateName)
-        XCTAssert(certificate3 == nil, "Certificates expected to be nil")
+        XCTAssert(CertificateUtils.findCertificate(certificateName) == nil, "Certificates with preference name '\(certificateName)' expected to be deleted")
+        XCTAssert(try! CertificateUtils.findKey(certificateName) == nil, "Keys with name '\(certificateName)' expected to be deleted")
     }
     
     

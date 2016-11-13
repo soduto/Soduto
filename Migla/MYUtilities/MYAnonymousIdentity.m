@@ -91,7 +91,7 @@ SecCertificateRef MYCreateAnonymousCertificate(NSString* label,
                                                NSError** outError)
 {
     SecKeyRef publicKey, privateKey;
-    if (!generateRSAKeyPair(kKeySizeInBits, YES, label, &publicKey, &privateKey, outError))
+    if (!generateRSAKeyPair(kKeySizeInBits, NO, label, &publicKey, &privateKey, outError))
         return NULL;
     NSData* certData = generateAnonymousCert(publicKey,privateKey, expirationInterval, outError);
     if (!certData)

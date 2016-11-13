@@ -323,8 +323,8 @@
 				TargetAttributes = {
 					8433015F1D2D8CB8008934BB = {
 						CreatedOnToolsVersion = 8.0;
-						DevelopmentTeamName = "Giedrius Stanevicius (Personal Team)";
 						DevelopmentTeam = 5K93S6HD22;
+						DevelopmentTeamName = "Giedrius Stanevicius (Personal Team)";
 						LastSwiftMigration = 0800;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
@@ -587,7 +587,7 @@
 				);
 				INFOPLIST_FILE = Migla/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.migla.Migla;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Migla/Migla-Bridging-Header.h";
@@ -610,7 +610,7 @@
 				);
 				INFOPLIST_FILE = Migla/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.migla.Migla;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Migla/Migla-Bridging-Header.h";
