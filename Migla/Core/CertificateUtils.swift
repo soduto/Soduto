@@ -67,13 +67,19 @@ public class CertificateUtils {
     
     // MARK: Certificate functions
     
-    public class func addCertificate(_ certificate: SecCertificate, name: String) throws {
+    public class func addCertificate(_ certificateToAdd: SecCertificate, name: String) throws {
+        // Make a deep copy to avoid potential failures while adding (might happen with certificates from SecTrust)
+        let data = SecCertificateCopyData(certificateToAdd)
+        guard let certificate = SecCertificateCreateWithData(nil, data) else {
+            throw CertificateError.addCertificateFailure(error: NSError(domain: NSOSStatusErrorDomain, code: Int(errSecInvalidData), userInfo: nil))
+        }
+        
         let attrs: [String: AnyObject] = [
             kSecClass as String: kSecClassCertificate,
             kSecValueRef as String: certificate
         ]
         var status = SecItemAdd(attrs as CFDictionary, nil)
-        if status != noErr {
+        if status != noErr && status != errSecDuplicateItem {
             throw CertificateError.addCertificateFailure(error: NSError(domain: NSOSStatusErrorDomain, code: Int(status), userInfo: nil))
         }
         

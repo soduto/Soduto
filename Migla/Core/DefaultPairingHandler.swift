@@ -18,6 +18,8 @@ public protocol PairingHandlerDelegate: class {
     
     func send(_ packet: DataPacket)
     
+    var peerCertificate: SecCertificate? { get }
+    
 }
 
 
@@ -86,10 +88,13 @@ public class DefaultPairingHandler: DataPacketsHandler, Pairable {
      */
     public weak var impersonateAs: PairableClass? = nil
     
+    private let config: DeviceConfiguration
     
     
-    public init(paired: Bool) {
-        self.pairingStatus = paired ? .Paired : .Unpaired
+    
+    public init(config: DeviceConfiguration) {
+        self.config = config
+        self.pairingStatus = self.config.isPaired ? .Paired : .Unpaired
     }
     
     
@@ -105,14 +110,21 @@ public class DefaultPairingHandler: DataPacketsHandler, Pairable {
                 if pairFlag {
                     switch self.pairingStatus {
                     case .Unpaired:
-                        // Peer initiaites pairing
+                        // Peer initiates pairing
                         self.pairingStatus = .RequestedByPeer
                         let request = PairingRequest(connection: connection)
                         self.pairingDelegate?.pairable(self.impersonateAs ?? self, receivedRequest: request)
                         break
                     case .Requested:
                         // Peer has accepted our invite
+                        if self.config.certificate == nil {
+                            self.config.certificate = self.delegate!.peerCertificate
+                        }
                         self.pairingStatus = .Paired
+                        if self.pairingStatus != .Paired {
+                            // Failed to set pairingStatus - unpair
+                            self.delegate?.send(DataPacket.unpair())
+                        }
                         break
                     case .Paired:
                         // The peer does not know that we are already paired?
@@ -153,7 +165,15 @@ public class DefaultPairingHandler: DataPacketsHandler, Pairable {
     
     public private(set) var pairingStatus: PairingStatus {
         didSet {
+            if self.pairingStatus == .Paired && self.config.certificate == nil {
+                Swift.print("Can't set pairingStatus to .Paired because we dont have corresponding certificate for device \(self.config.deviceId)")
+                self.pairingStatus = .Unpaired
+                self.config.certificate = nil
+            }
             if self.pairingStatus != oldValue {
+                if self.pairingStatus == .Unpaired {
+                    self.config.certificate = nil
+                }
                 self.pairingDelegate?.pairable(self.impersonateAs ?? self, statusChanged: self.pairingStatus)
             }
         }
@@ -182,8 +202,11 @@ public class DefaultPairingHandler: DataPacketsHandler, Pairable {
     public func acceptPairing() {
         assert(self.delegate != nil, "Delegate required for \(type(of: self))")
         
+        if self.config.certificate == nil {
+            self.config.certificate = self.delegate!.peerCertificate
+        }
         self.pairingStatus = .Paired
-        self.delegate?.send(DataPacket.pair())
+        self.delegate?.send(self.pairingStatus == .Paired ? DataPacket.pair() : DataPacket.unpair())
     }
     
     public func declinePairing() {
@@ -203,6 +226,7 @@ public class DefaultPairingHandler: DataPacketsHandler, Pairable {
     public func updatePairingStatus(globalStatus: PairingStatus) {
         switch globalStatus {
         case .Paired:
+            // Beware that pairingStatus may not be set to .Paired if there is no corresponding certificate saved for the device
             self.pairingStatus = .Paired
             break
         case .Unpaired:

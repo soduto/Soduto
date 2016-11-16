@@ -51,6 +51,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     }
     
     public private(set) var identity: DataPacket? = nil
+    public private(set) var peerCertificate: SecCertificate? = nil
     
     private let config: ConnectionConfiguration
     private let socket: GCDAsyncSocket
@@ -116,7 +117,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
         let deviceConfig = self.config.deviceConfig(for: deviceId)
         
         self.identity = packet
-        self.pairingHandler = DefaultPairingHandler(paired: deviceConfig.isPaired)
+        self.pairingHandler = DefaultPairingHandler(config: deviceConfig)
         self.pairingHandler!.delegate = self
         self.pairingHandler!.pairingDelegate = self
         self.packetHandlers.append(self.pairingHandler!)
@@ -124,10 +125,12 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     
     public func secureServer() throws {
         assert(self.state == .Initializing, "Connection initialization already finished")
+        assert(self.identity != nil, "Identity expected to be known before securing connection")
         
         let settings: [String:NSObject] = [
             kCFStreamSSLCertificates as String: self.sslCertificates as NSArray,
-            kCFStreamSSLIsServer as String: NSNumber(value: true)
+            kCFStreamSSLIsServer as String: NSNumber(value: true),
+            GCDAsyncSocketManuallyEvaluateTrust as String: NSNumber(value: true)
         ]
         self.socket.startTLS(settings)
         self.waitingToSecure = true
@@ -135,9 +138,11 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     
     public func secureClient() throws {
         assert(self.state == .Initializing, "Connection initialization already finished")
+        assert(self.identity != nil, "Identity expected to be known before securing connection")
         
         let settings: [String:NSObject] = [
-            kCFStreamSSLCertificates as String: self.sslCertificates as NSArray
+            kCFStreamSSLCertificates as String: self.sslCertificates as NSArray,
+            GCDAsyncSocketManuallyEvaluateTrust as String: NSNumber(value: true)
         ]
         self.socket.startTLS(settings)
         self.waitingToSecure = true
@@ -163,7 +168,6 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
         if let bytes = try? packet.serialize() {
             let data = Data(bytes: bytes)
             self.socket.write(data, withTimeout: -1, tag: Int(packet.id))
-            self.socket.sslContext()
         }
     }
     
@@ -232,6 +236,10 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     public func socketDidDisconnect(_ sock: GCDAsyncSocket, withError err: Error?) {
         Swift.print("Connection.socketDidDisconnect:withError: \(sock) \(err)")
         self.close()
+    }
+    
+    public func socket(_ sock: GCDAsyncSocket, didReceive trust: SecTrust, completionHandler: @escaping (Bool) -> Swift.Void) {
+        completionHandler(self.shouldTrustPeer(trust))
     }
     
     
@@ -304,6 +312,22 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
         
         // if not handled - pass to delegate
         self.delegate?.connection(self, didReadPacket: packet)
+    }
+    
+    private func shouldTrustPeer(_ trust: SecTrust) -> Bool {
+        assert(self.identity != nil, "Identity expected to be known before securing connection and evaluating trust")
+        
+        guard let peerCertificate = SecTrustGetCertificateAtIndex(trust, 0) else { return false }
+        self.peerCertificate = peerCertificate
+        
+        if self.pairingStatus == .Paired {
+            guard let deviceId = try? self.identity!.getDeviceId() else { return false }
+            guard let savedCertificate = self.config.deviceConfig(for: deviceId).certificate else { return false }
+            return CertificateUtils.compareCertificates(savedCertificate, peerCertificate)
+        }
+        else {
+            return true
+        }
     }
 
 }

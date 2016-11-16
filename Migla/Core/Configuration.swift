@@ -58,14 +58,22 @@ public class DeviceConfiguration {
         get {
             guard !self.certificateName.isEmpty else { return nil }
             
-            return nil
+            return CertificateUtils.findCertificate(self.certificateName)
         }
         set {
-            if self.certificateName.isEmpty && newValue != nil {
-                self.certificateName = DeviceConfiguration.defaultCertificateName(for: deviceId)
+            do {
+                if !self.certificateName.isEmpty {
+                    try CertificateUtils.deleteCertificate(self.certificateName)
+                }
+                if self.certificateName.isEmpty && newValue != nil {
+                    self.certificateName = DeviceConfiguration.defaultCertificateName(for: deviceId)
+                }
+                if let newValue = newValue {
+                    try CertificateUtils.addCertificate(newValue, name: self.certificateName)
+                }
             }
-            else if newValue == nil {
-                self.certificateName = ""
+            catch {
+                Swift.print("Failed to update certificate: \(error)")
             }
         }
     }
@@ -73,7 +81,7 @@ public class DeviceConfiguration {
     
     
     class func defaultCertificateName(for deviceId: String) -> String {
-        let safeDeviceId = deviceId.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
+        let safeDeviceId = deviceId.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? "undefined-\(Configuration.generateDeviceId())"
         return "Migla Client (\(safeDeviceId))"
     }
     

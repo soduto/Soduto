@@ -166,6 +166,7 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
             guard let identity = connection.identity else { throw ConnectionProviderError.IdentityAbsent }
             let protocolVersion = try identity.getProtocolVersion()
             if protocolVersion >= ConnectionProvider.minVersionWithSSLSupport {
+                // Beware that securing as server while connection initiated by self
                 try connection.secureServer()
             }
             try connection.finishInitialization()
@@ -184,6 +185,7 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
             try connection.applyIdentity(packet: packet)
             let protocolVersion = try packet.getProtocolVersion()
             if protocolVersion >= ConnectionProvider.minVersionWithSSLSupport {
+                // Beware that securing as client while connection initiated by the peer
                 try connection.secureClient()
             }
             try connection.finishInitialization()

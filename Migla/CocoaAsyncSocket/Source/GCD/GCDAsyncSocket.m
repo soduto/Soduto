@@ -6808,13 +6808,14 @@ static OSStatus SSLWriteFunction(SSLConnectionRef connection, const void *data, 
 	BOOL shouldManuallyEvaluateTrust = [[tlsSettings objectForKey:GCDAsyncSocketManuallyEvaluateTrust] boolValue];
 	if (shouldManuallyEvaluateTrust)
 	{
-		if (isServer)
-		{
-			[self closeWithError:[self otherError:@"Manual trust validation is not supported for server sockets"]];
-			return;
-		}
-		
-		status = SSLSetSessionOption(sslContext, kSSLSessionOptionBreakOnServerAuth, true);
+        SSLSessionOption option = kSSLSessionOptionBreakOnServerAuth;
+        
+        if (isServer) {
+            option = kSSLSessionOptionBreakOnClientAuth;
+            SSLSetClientSideAuthenticate(sslContext, kAlwaysAuthenticate);
+        }
+        
+		status = SSLSetSessionOption(sslContext, option, true);
 		if (status != noErr)
 		{
 			[self closeWithError:[self otherError:@"Error in SSLSetSessionOption"]];
