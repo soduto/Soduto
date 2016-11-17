@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11198.2" systemVersion="16A313a" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11542" systemVersion="16C48b" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11198.2"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11542"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -20,9 +20,8 @@
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
         <customObject id="vQj-dd-GoX" userLabel="Status Bar Menu Controller" customClass="StatusBarMenuController" customModule="Migla" customModuleProvider="target">
             <connections>
-                <outlet property="pairedDevicesItem" destination="NHO-Gf-5Mq" id="ty7-uD-qZH"/>
+                <outlet property="availableDevicesItem" destination="NHO-Gf-5Mq" id="4VO-UZ-TwJ"/>
                 <outlet property="statusBarMenu" destination="LIO-WS-395" id="8BX-ha-3Ci"/>
-                <outlet property="unpairedDevicesItem" destination="NNU-ep-Fgn" id="M7P-Uy-8mB"/>
             </connections>
         </customObject>
         <menu id="LIO-WS-395">
@@ -45,6 +44,9 @@
                     </connections>
                 </menuItem>
             </items>
+            <connections>
+                <outlet property="delegate" destination="vQj-dd-GoX" id="TKv-5E-31g"/>
+            </connections>
         </menu>
     </objects>
 </document>
