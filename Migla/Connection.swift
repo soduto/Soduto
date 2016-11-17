@@ -130,6 +130,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
         let settings: [String:NSObject] = [
             kCFStreamSSLCertificates as String: self.sslCertificates as NSArray,
             kCFStreamSSLIsServer as String: NSNumber(value: true),
+            GCDAsyncSocketSSLClientSideAuthenticate as String: NSNumber(value: SSLAuthenticate.alwaysAuthenticate.rawValue),
             GCDAsyncSocketManuallyEvaluateTrust as String: NSNumber(value: true)
         ]
         self.socket.startTLS(settings)
