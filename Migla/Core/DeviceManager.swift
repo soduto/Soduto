@@ -20,6 +20,7 @@ public protocol DeviceDataSource: class {
 
 public protocol DeviceManagerConfiguration {
     func deviceConfig(for deviceId:Device.Id) -> DeviceConfiguration
+    var hostDeviceId: Device.Id { get }
 }
 
 public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDataSource {
@@ -48,7 +49,7 @@ public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDa
     // MARK: ConnectionProviderDelegate
     
     public func isNewConnectionNeeded(byProvider provider: ConnectionProvider, deviceId: Device.Id) -> Bool {
-        if deviceId == "12345678901234567890" { return false }
+        if deviceId == self.config.hostDeviceId { return false }
         if devices[deviceId] != nil { return false }
         return true
     }
