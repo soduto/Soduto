@@ -30,10 +30,10 @@
 		84FA45D91DDDCB3D00EF3992 /* DataPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA45D11DDDCB3D00EF3992 /* DataPacket.swift */; };
 		84FA45DA1DDDCB3D00EF3992 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA45D21DDDCB3D00EF3992 /* Device.swift */; };
 		84FA45DB1DDDCB3D00EF3992 /* DeviceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA45D31DDDCB3D00EF3992 /* DeviceManager.swift */; };
-		84FA45DC1DDDCB3D00EF3992 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA45D41DDDCB3D00EF3992 /* AppDelegate.swift */; };
 		84FA45DD1DDDCB3D00EF3992 /* SocketAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA45D51DDDCB3D00EF3992 /* SocketAddress.swift */; };
 		84FA45DE1DDDCB3D00EF3992 /* UnsafePointersUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA45D61DDDCB3D00EF3992 /* UnsafePointersUtils.swift */; };
 		84FA45E41DDDDB7F00EF3992 /* InterfaceElementTags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA45E31DDDDB7F00EF3992 /* InterfaceElementTags.swift */; };
+		84FA45E61DDDE87F00EF3992 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA45E51DDDE87F00EF3992 /* AppDelegate.swift */; };
 		8FC977F11D4778E9001ADF7E /* StatusBarMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC977F01D4778E9001ADF7E /* StatusBarMenuController.swift */; };
 /* End PBXBuildFile section */
 
@@ -112,10 +112,10 @@
 		84FA45D11DDDCB3D00EF3992 /* DataPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataPacket.swift; sourceTree = "<group>"; };
 		84FA45D21DDDCB3D00EF3992 /* Device.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		84FA45D31DDDCB3D00EF3992 /* DeviceManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceManager.swift; sourceTree = "<group>"; };
-		84FA45D41DDDCB3D00EF3992 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		84FA45D51DDDCB3D00EF3992 /* SocketAddress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketAddress.swift; sourceTree = "<group>"; };
 		84FA45D61DDDCB3D00EF3992 /* UnsafePointersUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnsafePointersUtils.swift; sourceTree = "<group>"; };
 		84FA45E31DDDDB7F00EF3992 /* InterfaceElementTags.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InterfaceElementTags.swift; sourceTree = "<group>"; };
+		84FA45E51DDDE87F00EF3992 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8FC977F01D4778E9001ADF7E /* StatusBarMenuController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusBarMenuController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -198,6 +198,7 @@
 		843301621D2D8CB8008934BB /* Migla */ = {
 			isa = PBXGroup;
 			children = (
+				84FA45E51DDDE87F00EF3992 /* AppDelegate.swift */,
 				841E814C1D809C360096A846 /* Migla.entitlements */,
 				8433016A1D2D8CB8008934BB /* Info.plist */,
 				8454D12C1D34228D00788632 /* Migla-Bridging-Header.h */,
@@ -212,19 +213,18 @@
 		8456F4A41D7DE31A006EFE19 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				84D903A11DC696A600E61DA7 /* CertificateUtils.swift */,
+				8450274A1DAABB9900C20247 /* Configuration.swift */,
 				84FA45CF1DDDCB3D00EF3992 /* Connection.swift */,
 				84FA45D01DDDCB3D00EF3992 /* ConnectionProvider.swift */,
 				84FA45D11DDDCB3D00EF3992 /* DataPacket.swift */,
+				8456F4AB1D7DEAC5006EFE19 /* DataPacketsHandler.swift */,
+				8456F4A91D7DEA47006EFE19 /* DefaultPairingHandler.swift */,
 				84FA45D21DDDCB3D00EF3992 /* Device.swift */,
 				84FA45D31DDDCB3D00EF3992 /* DeviceManager.swift */,
-				84FA45D41DDDCB3D00EF3992 /* AppDelegate.swift */,
+				8456F4A71D7DE393006EFE19 /* Pairable.swift */,
 				84FA45D51DDDCB3D00EF3992 /* SocketAddress.swift */,
 				84FA45D61DDDCB3D00EF3992 /* UnsafePointersUtils.swift */,
-				8456F4A71D7DE393006EFE19 /* Pairable.swift */,
-				8456F4A91D7DEA47006EFE19 /* DefaultPairingHandler.swift */,
-				8456F4AB1D7DEAC5006EFE19 /* DataPacketsHandler.swift */,
-				8450274A1DAABB9900C20247 /* Configuration.swift */,
-				84D903A11DC696A600E61DA7 /* CertificateUtils.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -426,7 +426,6 @@
 				849961C31D57287F002B893A /* Test.m in Sources */,
 				849961C11D57287F002B893A /* CollectionUtils.m in Sources */,
 				84FA45D91DDDCB3D00EF3992 /* DataPacket.swift in Sources */,
-				84FA45DC1DDDCB3D00EF3992 /* AppDelegate.swift in Sources */,
 				8FC977F11D4778E9001ADF7E /* StatusBarMenuController.swift in Sources */,
 				8450274B1DAABB9900C20247 /* Configuration.swift in Sources */,
 				84FA45DE1DDDCB3D00EF3992 /* UnsafePointersUtils.swift in Sources */,
@@ -441,6 +440,7 @@
 				84FA45D81DDDCB3D00EF3992 /* ConnectionProvider.swift in Sources */,
 				84D903A21DC696A600E61DA7 /* CertificateUtils.swift in Sources */,
 				84FA45DD1DDDCB3D00EF3992 /* SocketAddress.swift in Sources */,
+				84FA45E61DDDE87F00EF3992 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
