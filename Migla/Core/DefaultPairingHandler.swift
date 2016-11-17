@@ -78,6 +78,9 @@ public extension DataPacket {
  */
 public class DefaultPairingHandler: DataPacketsHandler, Pairable {
     
+    static let pairingTimoutInterval: TimeInterval = 30.0
+    
+    
     /** 
      A delegate object providing needed services for this handler (like packets sendings)
      */
@@ -89,6 +92,7 @@ public class DefaultPairingHandler: DataPacketsHandler, Pairable {
     public weak var impersonateAs: PairableClass? = nil
     
     private let config: DeviceConfiguration
+    private var pairingTimeout: Timer? = nil
     
     
     
@@ -164,6 +168,10 @@ public class DefaultPairingHandler: DataPacketsHandler, Pairable {
     public weak var pairingDelegate: PairableDelegate? = nil
     
     public private(set) var pairingStatus: PairingStatus {
+        willSet {
+            self.pairingTimeout?.invalidate()
+            self.pairingTimeout = nil
+        }
         didSet {
             if self.pairingStatus == .Paired && self.config.certificate == nil {
                 Swift.print("Can't set pairingStatus to .Paired because we dont have corresponding certificate for device \(self.config.deviceId)")
@@ -173,6 +181,14 @@ public class DefaultPairingHandler: DataPacketsHandler, Pairable {
             if self.pairingStatus != oldValue {
                 if self.pairingStatus == .Unpaired {
                     self.config.certificate = nil
+                }
+                if self.pairingStatus == .Requested {
+                    self.pairingTimeout = Timer(timeInterval: DefaultPairingHandler.pairingTimoutInterval, repeats: false, block: { (timer) in
+                        // Every change to pairingStatus should invalidate previous timeout, so if we are here, pairingStatus should still be the same
+                        assert(self.pairingStatus == .Requested, "pairingStatus expected to not be changed")
+                        self.declinePairing()
+                    })
+                    RunLoop.current.add(self.pairingTimeout!, forMode: .defaultRunLoopMode)
                 }
                 self.pairingDelegate?.pairable(self.impersonateAs ?? self, statusChanged: self.pairingStatus)
             }
