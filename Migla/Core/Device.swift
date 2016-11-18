@@ -9,17 +9,13 @@
 import Foundation
 
 
-/**
- 
- Supported device types.
- 
- - Unknown: Device type is not known. Usupported device types default to this.
- - Dektop: Device is desktop computer.
- - Laptop: Device is laptop computer.
- - Phone: Device is a mobile phone.
- - Tablet: Device is a tablet.
- 
- */
+/// Supported device types.
+///
+/// - Unknown: Device type is not known. Usupported device types default to this.
+/// - Dektop: Device is desktop computer.
+/// - Laptop: Device is laptop computer.
+/// - Phone: Device is a mobile phone.
+/// - Tablet: Device is a tablet.
 public enum DeviceType: String {
     case Unknown = "unknown"
     case Desktop = "desktop"
@@ -29,56 +25,40 @@ public enum DeviceType: String {
 }
 
 
-/**
- 
- Errors thrown by Device instances.
- 
- - InvalidConnection: provided connection has wrong state.
- 
- */
+/// Errors thrown by Device instances.
+///
+/// - InvalidConnection: provided connection has wrong state.
 public enum DeviceError: Error {
     case InvalidConnection
 }
 
-
-/**
- 
- State of the Device instance.
- 
- - Unavailable: Device is unreachable.
- - Unpaired: Device is reachable but not trusted (unpaired).
- - Paired: Device is reachable and trusted (paired).
- 
- */
-public enum DeviceState {
-    case Unavailable
-    case Unpaired
-    case Pairing
-    case Paired
-}
-
-
-/**
- 
- Protocol for Device delegates.
- 
- */
+/// Protocol for Device delegates.
 public protocol DeviceDelegate: class {
-    func device(_ device: Device, didChangeState state: DeviceState)
+    func device(_ device: Device, didChangeState state: Device.State)
     func device(_ device: Device, didReceivePairingRequest pairingRequest: PairingRequest)
 }
 
 
-/**
- 
- Device class represents a remote device. Multiple connections to the device may be used, but only one of the same kind (LAN, Bluetooth, etc.)
- 
- */
+/// Device class represents a remote device. Multiple connections to the device may be used, 
+/// but only one of the same kind (LAN, Bluetooth, etc.)
 public class Device: ConnectionDelegate, PairableDelegate, Pairable {
     
     // MARK: Types
     
+    /// Type for unique device identifier
     public typealias Id = String
+    
+    /// State of the Device instance.
+    ///
+    /// - Unavailable: Device is unreachable.
+    /// - Unpaired: Device is reachable but not trusted (unpaired).
+    /// - Paired: Device is reachable and trusted (paired).
+    public enum State {
+        case unavailable
+        case unpaired
+        case pairing
+        case paired
+    }
     
     
     // MARK: Properties
@@ -90,7 +70,7 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
     public let type: DeviceType
     public let config: DeviceConfiguration
     
-    public private(set) var state: DeviceState = .Unavailable {
+    public private(set) var state: State = .unavailable {
         didSet {
             if oldValue != self.state {
                 self.delegate?.device(self, didChangeState: self.state)
@@ -103,13 +83,16 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
     
     // MARK: Initialization / Deinitialization
     
-    /**
-      Initialize Device with connection object. Device properties are initialized with connection identity property values.
-     
-      - Parameter connection: Fully initialized (i.e. in Open state) connection to the device.
-      - Throws: `DeviceError.InvalidConnection` if connection state is not .Open or identity property is nil
-                  `DataPacket.IdentityError` if connections identity property is invalid
-     */
+    /// Initialize Device with connection object. Device properties are initialized with connection 
+    /// identity property values.
+    ///
+    /// - parameters:
+    ///     - connection: Fully initialized (i.e. in Open state) connection to the device.
+    ///     - config: Configuration instance for particular device
+    ///
+    /// - throws:
+    ///     `DeviceError.InvalidConnection` if connection state is not `.Open` or identity property is nil.
+    ///     `DataPacket.IdentityError` if connections identity property is invalid.
     public init(connection: Connection, config: DeviceConfiguration) throws {
         guard connection.state == .Open else { throw DeviceError.InvalidConnection }
         guard let identity = connection.identity else { throw DeviceError.InvalidConnection }
@@ -126,11 +109,10 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
     
     // MARK Public API
     
-    /**
-      Add additional connection to the device. If the device has already contained a connection of the same kind, the old one is removed.
-     
-      - Parameter connection: Fully initialized (i.e. in Open state) connection to the device.
-     */
+    /// Add additional connection to the device. If the device has already contained a connection 
+    /// of the same kind, the old one is removed.
+    ///
+    /// - Parameter connection: Fully initialized (i.e. in Open state) connection to the device.
     public func addConnection(_ connection: Connection) {
         connection.delegate = self
         connection.pairingDelegate = self
@@ -257,16 +239,16 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
     
     private func updateState() {
         if self.connections.count == 0 {
-            self.state = .Unavailable
+            self.state = .unavailable
         }
         else if self.pairingStatus == .Paired {
-            self.state = .Paired
+            self.state = .paired
         }
         else if self.pairingStatus == .Requested || self.pairingStatus == .RequestedByPeer {
-            self.state = .Pairing
+            self.state = .pairing
         }
         else {
-            self.state = .Unpaired
+            self.state = .unpaired
         }
     }
     

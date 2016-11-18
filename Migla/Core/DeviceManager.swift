@@ -28,12 +28,12 @@ public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDa
     public weak var delegate: DeviceManagerDelegate? = nil
     
     public var unpairedDevices: [Device] {
-        let filtered = self.devices.filter { $0.value.state == DeviceState.Unpaired || $0.value.state == DeviceState.Pairing }
+        let filtered = self.devices.filter { $0.value.state == Device.State.unpaired || $0.value.state == Device.State.pairing }
         return filtered.map { $0.value }
     }
     
     public var pairedDevices: [Device] {
-        let filtered = self.devices.filter { $0.value.state == DeviceState.Paired }
+        let filtered = self.devices.filter { $0.value.state == Device.State.paired }
         return filtered.map { $0.value }
     }
     
@@ -80,10 +80,10 @@ public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDa
     
     // MARK: DeviceDelegate
     
-    public func device(_ device: Device, didChangeState state: DeviceState) {
+    public func device(_ device: Device, didChangeState state: Device.State) {
         Swift.print("DeviceManager.device:didChangeState: \(device) \(state)")
         
-        if state == .Unavailable {
+        if state == .unavailable {
             self.devices.removeValue(forKey: device.id)
         }
         

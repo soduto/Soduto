@@ -18,10 +18,10 @@ public class DeviceListItemView: NSTableCellView {
         guard let device = self.device else { return }
         
         switch device.state {
-        case .Unpaired:
+        case .unpaired:
             device.requestPairing()
             break
-        case .Paired:
+        case .paired:
             device.unpair()
             break
         default:
@@ -34,8 +34,8 @@ public class DeviceListItemView: NSTableCellView {
             if let device = self.device {
                 self.textField?.stringValue = device.name
                 self.infoLabel.stringValue = device.type.rawValue
-                self.actionButton.title = device.state == .Paired ? NSLocalizedString("Unpair", comment: "action") : NSLocalizedString("Pair", comment: "action")
-                self.actionButton.isEnabled = device.state != .Pairing
+                self.actionButton.title = device.state == .paired ? NSLocalizedString("Unpair", comment: "action") : NSLocalizedString("Pair", comment: "action")
+                self.actionButton.isEnabled = device.state != .pairing
                 self.actionButton.isHidden = false
                 
                 switch device.type {

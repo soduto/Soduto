@@ -86,7 +86,7 @@ public class DeviceConfiguration {
     }
     
     class func configKey(for deviceId: String) -> String {
-        let safeDeviceId = deviceId.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
+        let safeDeviceId = deviceId.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? "undefined-\(Configuration.generateDeviceId())"
         return "com.migla.device.\(safeDeviceId)"
     }
     
