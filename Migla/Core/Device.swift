@@ -132,16 +132,20 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
         self.updateState()
     }
     
+    /// Register handler for incoming data packets. Most common handler would be Service instances
     public func addDataPacketHandler(_ handler: DeviceDataPacketHandler) {
         self.packetHandlers.append(handler)
     }
     
+    /// Register multiple handlers for incoming data packets. Most common handlers would be Service instances
     public func addDataPacketHandlers<S : Sequence>(_ handlers: S) where S.Iterator.Element == DeviceDataPacketHandler {
         for handler in handlers {
             self.addDataPacketHandler(handler)
         }
     }
     
+    /// Unregister data packet handler which was registered with such methods as 
+    /// `addDataPacketHandler(_:)` or `addDataPacketHandlers(_:)`
     public func removeDataPacketHandler(_ handler: DeviceDataPacketHandler) {
         let index = self.packetHandlers.index { $0 === handler }
         if index != nil {
@@ -149,6 +153,8 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
         }
     }
     
+    /// Send a data packet to remote device. A most appropriate connection for the task
+    /// would be chosen automatically
     public func send(_ packet: DataPacket) {
         if let connection = self.connectionForSending() {
             connection.send(packet)
@@ -301,6 +307,7 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
         self.updatePairingStatus(globalStatus: status)
     }
     
+    /// Choose a connection most appropriate for pairing. Return `nil` if pairing seems inapprorpiate.
     private func connectionForPairing() -> Connection? {
         var bestConnection: Connection? = nil
         for connection in self.connections {
@@ -321,6 +328,8 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
         return bestConnection
     }
     
+    /// Choose a connection most appropriate for sending packets. Connection may be chosen 
+    /// according its availability, reliability, speed, etc.
     private func connectionForSending() -> Connection? {
         for connection in self.connections {
             if connection.pairingStatus == .Paired {
@@ -330,6 +339,8 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
         return nil
     }
     
+    /// Pass received data packet to the handlers, registered with methods such as
+    /// `addDataPacketHandler(_:)` or `addDataPacketHandlers(_:)`
     private func handle(packet: DataPacket, onConnection connection: Connection) {
         for handler in self.packetHandlers {
             let handled = handler.handleDataPacket(packet, fromDevice: self, onConnection: connection)
