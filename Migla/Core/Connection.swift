@@ -25,6 +25,10 @@ public protocol ConnectionConfiguration: HostConfiguration {
     func deviceConfig(for deviceId:Device.Id) -> DeviceConfiguration
 }
 
+public protocol ConnectionDataPacketHandler {
+    func handleDataPacket(_ dataPacket:DataPacket, onConnection connection:Connection) -> Bool
+}
+
 public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegate, Pairable, PairableDelegate {
     
     // MARK: Types
@@ -61,7 +65,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     private var waitingToSecure: Bool = false
     private var shouldFinishIntializationWhenSecured: Bool = false
     private var pairingHandler: DefaultPairingHandler? = nil
-    private var packetHandlers: [DataPacketsHandler] = []
+    private var packetHandlers: [ConnectionDataPacketHandler] = []
     
     static private let packetsDelimiter: Data = Data(bytes: [UInt8(ascii: "\n")])
     

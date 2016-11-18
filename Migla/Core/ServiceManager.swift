@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class CapabilityManager {
+public class ServiceManager {
     
     public typealias CapabilityId = String
     

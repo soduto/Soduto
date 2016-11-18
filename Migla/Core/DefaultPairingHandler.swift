@@ -76,7 +76,7 @@ public extension DataPacket {
  Implement default data packets based pairing functionality
  
  */
-public class DefaultPairingHandler: DataPacketsHandler, Pairable {
+public class DefaultPairingHandler: ConnectionDataPacketHandler, Pairable {
     
     static let pairingTimoutInterval: TimeInterval = 30.0
     

@@ -24,7 +24,6 @@ public enum DeviceType: String {
     case Tablet = "tablet"
 }
 
-
 /// Errors thrown by Device instances.
 ///
 /// - InvalidConnection: provided connection has wrong state.
@@ -32,10 +31,15 @@ public enum DeviceError: Error {
     case InvalidConnection
 }
 
-/// Protocol for Device delegates.
+/// Functionality for handling Device notifications.
 public protocol DeviceDelegate: class {
     func device(_ device: Device, didChangeState state: Device.State)
     func device(_ device: Device, didReceivePairingRequest pairingRequest: PairingRequest)
+}
+
+/// Functionality for handling incoming data packets from devices.
+public protocol DeviceDataPacketHandler: class {
+    func handleDataPacket(_ dataPacket:DataPacket, fromDevice device:Device, onConnection connection:Connection) -> Bool
 }
 
 
@@ -79,6 +83,7 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
     }
     
     private var connections: [Connection] = []
+    private var packetHandlers: [DeviceDataPacketHandler] = []
     
     
     // MARK: Initialization / Deinitialization
@@ -127,6 +132,23 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
         self.updateState()
     }
     
+    public func addDataPacketHandler(_ handler: DeviceDataPacketHandler) {
+        self.packetHandlers.append(handler)
+    }
+    
+    public func removeDataPacketHandler(_ handler: DeviceDataPacketHandler) {
+        let index = self.packetHandlers.index { $0 === handler }
+        if index != nil {
+            self.packetHandlers.remove(at: index!)
+        }
+    }
+    
+    public func send(_ packet: DataPacket) {
+        if let connection = self.connectionForSending() {
+            connection.send(packet)
+        }
+    }
+    
     
     
     // MARK: ConnectionDelegate
@@ -152,7 +174,7 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
     }
     
     public func connection(_ connection: Connection, didReadPacket packet: DataPacket) {
-        
+        self.handle(packet: packet, onConnection: connection)
     }
     
     
@@ -291,5 +313,23 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
             }
         }
         return bestConnection
+    }
+    
+    private func connectionForSending() -> Connection? {
+        for connection in self.connections {
+            if connection.pairingStatus == .Paired {
+                return connection
+            }
+        }
+        return nil
+    }
+    
+    private func handle(packet: DataPacket, onConnection connection: Connection) {
+        for handler in self.packetHandlers {
+            let handled = handler.handleDataPacket(packet, fromDevice: self, onConnection: connection)
+            if handled {
+                return
+            }
+        }
     }
 }

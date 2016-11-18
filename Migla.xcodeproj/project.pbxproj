@@ -15,7 +15,6 @@
 		8450274B1DAABB9900C20247 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8450274A1DAABB9900C20247 /* Configuration.swift */; };
 		8456F4A81D7DE393006EFE19 /* Pairable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456F4A71D7DE393006EFE19 /* Pairable.swift */; };
 		8456F4AA1D7DEA47006EFE19 /* DefaultPairingHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456F4A91D7DEA47006EFE19 /* DefaultPairingHandler.swift */; };
-		8456F4AC1D7DEAC5006EFE19 /* DataPacketsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456F4AB1D7DEAC5006EFE19 /* DataPacketsHandler.swift */; };
 		847EF4C51DC9049D00360BBE /* MiglaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847EF4C41DC9049D00360BBE /* MiglaTests.swift */; };
 		849961B81D5726B0002B893A /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = 849961B41D5726B0002B893A /* LICENSE.txt */; };
 		849961B91D5726B0002B893A /* MYAnonymousIdentity.m in Sources */ = {isa = PBXBuildFile; fileRef = 849961B61D5726B0002B893A /* MYAnonymousIdentity.m */; };
@@ -34,7 +33,9 @@
 		84FA45DE1DDDCB3D00EF3992 /* UnsafePointersUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA45D61DDDCB3D00EF3992 /* UnsafePointersUtils.swift */; };
 		84FA45E41DDDDB7F00EF3992 /* InterfaceElementTags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA45E31DDDDB7F00EF3992 /* InterfaceElementTags.swift */; };
 		84FA45E61DDDE87F00EF3992 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA45E51DDDE87F00EF3992 /* AppDelegate.swift */; };
-		84FA45E81DDE088B00EF3992 /* CapabilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA45E71DDE088B00EF3992 /* CapabilityManager.swift */; };
+		84FA45E81DDE088B00EF3992 /* ServiceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA45E71DDE088B00EF3992 /* ServiceManager.swift */; };
+		84FA45EA1DDF433400EF3992 /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA45E91DDF433300EF3992 /* Service.swift */; };
+		84FA45ED1DDF525200EF3992 /* PingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA45EC1DDF525200EF3992 /* PingService.swift */; };
 		8FC977F11D4778E9001ADF7E /* StatusBarMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC977F01D4778E9001ADF7E /* StatusBarMenuController.swift */; };
 /* End PBXBuildFile section */
 
@@ -89,7 +90,6 @@
 		8454D12C1D34228D00788632 /* Migla-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Migla-Bridging-Header.h"; sourceTree = "<group>"; };
 		8456F4A71D7DE393006EFE19 /* Pairable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pairable.swift; sourceTree = "<group>"; };
 		8456F4A91D7DEA47006EFE19 /* DefaultPairingHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultPairingHandler.swift; sourceTree = "<group>"; };
-		8456F4AB1D7DEAC5006EFE19 /* DataPacketsHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataPacketsHandler.swift; sourceTree = "<group>"; };
 		847EF4C21DC9049D00360BBE /* MiglaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MiglaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		847EF4C41DC9049D00360BBE /* MiglaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiglaTests.swift; sourceTree = "<group>"; };
 		847EF4C61DC9049D00360BBE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -117,7 +117,9 @@
 		84FA45D61DDDCB3D00EF3992 /* UnsafePointersUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnsafePointersUtils.swift; sourceTree = "<group>"; };
 		84FA45E31DDDDB7F00EF3992 /* InterfaceElementTags.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InterfaceElementTags.swift; sourceTree = "<group>"; };
 		84FA45E51DDDE87F00EF3992 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		84FA45E71DDE088B00EF3992 /* CapabilityManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CapabilityManager.swift; sourceTree = "<group>"; };
+		84FA45E71DDE088B00EF3992 /* ServiceManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceManager.swift; sourceTree = "<group>"; };
+		84FA45E91DDF433300EF3992 /* Service.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
+		84FA45EC1DDF525200EF3992 /* PingService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PingService.swift; sourceTree = "<group>"; };
 		8FC977F01D4778E9001ADF7E /* StatusBarMenuController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusBarMenuController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -206,6 +208,7 @@
 				8454D12C1D34228D00788632 /* Migla-Bridging-Header.h */,
 				843301651D2D8CB8008934BB /* Assets.xcassets */,
 				8456F4A41D7DE31A006EFE19 /* Core */,
+				84FA45EB1DDF51EB00EF3992 /* Services */,
 				8421A8E31D76123E008AC833 /* UI */,
 				849961B31D572664002B893A /* MyUtilities */,
 			);
@@ -215,13 +218,13 @@
 		8456F4A41D7DE31A006EFE19 /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				84FA45E71DDE088B00EF3992 /* CapabilityManager.swift */,
+				84FA45E91DDF433300EF3992 /* Service.swift */,
+				84FA45E71DDE088B00EF3992 /* ServiceManager.swift */,
 				84D903A11DC696A600E61DA7 /* CertificateUtils.swift */,
 				8450274A1DAABB9900C20247 /* Configuration.swift */,
 				84FA45CF1DDDCB3D00EF3992 /* Connection.swift */,
 				84FA45D01DDDCB3D00EF3992 /* ConnectionProvider.swift */,
 				84FA45D11DDDCB3D00EF3992 /* DataPacket.swift */,
-				8456F4AB1D7DEAC5006EFE19 /* DataPacketsHandler.swift */,
 				8456F4A91D7DEA47006EFE19 /* DefaultPairingHandler.swift */,
 				84FA45D21DDDCB3D00EF3992 /* Device.swift */,
 				84FA45D31DDDCB3D00EF3992 /* DeviceManager.swift */,
@@ -276,6 +279,14 @@
 				84E2F2F61D574A4F00EAA802 /* CocoaAsyncSocket.framework */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		84FA45EB1DDF51EB00EF3992 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				84FA45EC1DDF525200EF3992 /* PingService.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -422,10 +433,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				84218DC81D789BAB00C7CEBE /* DeviceListItemView.swift in Sources */,
-				84FA45E81DDE088B00EF3992 /* CapabilityManager.swift in Sources */,
+				84FA45E81DDE088B00EF3992 /* ServiceManager.swift in Sources */,
 				84FA45DB1DDDCB3D00EF3992 /* DeviceManager.swift in Sources */,
 				849962131D572B1F002B893A /* Logging.m in Sources */,
 				849961B91D5726B0002B893A /* MYAnonymousIdentity.m in Sources */,
+				84FA45EA1DDF433400EF3992 /* Service.swift in Sources */,
 				84FA45DA1DDDCB3D00EF3992 /* Device.swift in Sources */,
 				849961C31D57287F002B893A /* Test.m in Sources */,
 				849961C11D57287F002B893A /* CollectionUtils.m in Sources */,
@@ -437,7 +449,6 @@
 				84FA45D71DDDCB3D00EF3992 /* Connection.swift in Sources */,
 				849961C61D5728B2002B893A /* ExceptionUtils.m in Sources */,
 				8456F4AA1D7DEA47006EFE19 /* DefaultPairingHandler.swift in Sources */,
-				8456F4AC1D7DEAC5006EFE19 /* DataPacketsHandler.swift in Sources */,
 				8499620E1D5728EE002B893A /* Test_Assertions.m in Sources */,
 				8421A8E71D761409008AC833 /* PreferencesWindowController.swift in Sources */,
 				8456F4A81D7DE393006EFE19 /* Pairable.swift in Sources */,
@@ -445,6 +456,7 @@
 				84D903A21DC696A600E61DA7 /* CertificateUtils.swift in Sources */,
 				84FA45DD1DDDCB3D00EF3992 /* SocketAddress.swift in Sources */,
 				84FA45E61DDDE87F00EF3992 /* AppDelegate.swift in Sources */,
+				84FA45ED1DDF525200EF3992 /* PingService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
