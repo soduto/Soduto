@@ -38,11 +38,13 @@ public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDa
     }
     
     private let config: DeviceManagerConfiguration
+    private let serviceManager: ServiceManager
     private var devices: [Device.Id:Device] = [:]
     
     
-    init(config: DeviceManagerConfiguration) {
+    init(config: DeviceManagerConfiguration, serviceManager: ServiceManager) {
         self.config = config
+        self.serviceManager = serviceManager
     }
     
     
@@ -66,10 +68,7 @@ public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDa
                 device.addConnection(connection)
             }
             else {
-                let device = try Device(connection: connection, config: self.config.deviceConfig(for: deviceId))
-                device.delegate = self
-                self.devices[device.id] = device
-                self.delegate?.deviceManager(self, didChangeDeviceState: device)
+                try self.addNewDevice(withId: deviceId, connection: connection)
             }
         }
         catch {
@@ -94,4 +93,19 @@ public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDa
         self.delegate?.deviceManager(self, didReceivePairingRequest: request, forDevice: device)
     }
     
+    
+    // MARK: Private methods
+    
+    private func addNewDevice(withId id: Device.Id, connection: Connection) throws {
+        let device = try Device(connection: connection, config: self.config.deviceConfig(for: id))
+        device.delegate = self
+        
+        guard let identity = connection.identity else { throw DeviceError.InvalidConnection }
+        let deviceOutgoingCapabilities = try identity.getOutgoingCapabilities()
+        let services: [DeviceDataPacketHandler] = self.serviceManager.services(supportingIncomingCapabilities: deviceOutgoingCapabilities)
+        device.addDataPacketHandlers(services)
+        
+        self.devices[device.id] = device
+        self.delegate?.deviceManager(self, didChangeDeviceState: device)
+    }
 }

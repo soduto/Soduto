@@ -136,6 +136,12 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
         self.packetHandlers.append(handler)
     }
     
+    public func addDataPacketHandlers<S : Sequence>(_ handlers: S) where S.Iterator.Element == DeviceDataPacketHandler {
+        for handler in handlers {
+            self.addDataPacketHandler(handler)
+        }
+    }
+    
     public func removeDataPacketHandler(_ handler: DeviceDataPacketHandler) {
         let index = self.packetHandlers.index { $0 === handler }
         if index != nil {

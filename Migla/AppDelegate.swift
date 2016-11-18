@@ -16,10 +16,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
     let config = Configuration()
     let connectionProvider: ConnectionProvider
     let deviceManager: DeviceManager
+    let serviceManager = ServiceManager()
     
     override init() {
         self.connectionProvider = ConnectionProvider(config: config)
-        self.deviceManager = DeviceManager(config: config)
+        self.deviceManager = DeviceManager(config: config, serviceManager: self.serviceManager)
         
         super.init()
     }
@@ -28,9 +29,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
     // MARK: NSApplicationDelegate
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        self.config.capabilitiesDataSource = self.serviceManager
         self.connectionProvider.delegate = self.deviceManager
         self.statusBarMenuController.deviceDataSource = self.deviceManager
         self.deviceManager.delegate = self
+        
+        self.serviceManager.add(service: PingService())
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {

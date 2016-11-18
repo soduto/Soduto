@@ -19,8 +19,8 @@ public extension DataPacket {
 
 public class PingService: Service {
     
-    public let incomingCapabilities: [Service.Capability] = [ "kdeconnect.ping" ]
-    public let outgoingCapabilities: [Service.Capability] = [ "kdeconnect.ping" ]
+    public let incomingCapabilities = Set<Service.Capability>([ "kdeconnect.ping" ])
+    public let outgoingCapabilities = Set<Service.Capability>([ "kdeconnect.ping" ])
     
     public func handleDataPacket(_ dataPacket: DataPacket, fromDevice device: Device, onConnection connection: Connection) -> Bool {
         

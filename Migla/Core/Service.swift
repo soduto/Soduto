@@ -12,8 +12,8 @@ public protocol Service: class, DeviceDataPacketHandler {
     
     typealias Capability = String
     
-    var incomingCapabilities: [Capability] { get }
-    var outgoingCapabilities: [Capability] { get }
+    var incomingCapabilities: Set<Capability> { get }
+    var outgoingCapabilities: Set<Capability> { get }
     
     
 }

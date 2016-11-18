@@ -82,10 +82,14 @@ public class CertificateUtils {
         if status != noErr && status != errSecDuplicateItem {
             throw CertificateError.addCertificateFailure(error: NSError(domain: NSOSStatusErrorDomain, code: Int(status), userInfo: nil))
         }
+        else if status == errSecDuplicateItem {
+            Swift.print("Could not add the certificate because that item is already added")
+        }
         
         status = SecCertificateSetPreferred(certificate, name as CFString, nil)
         if status != noErr {
             try? deleteCertificate(certificate)
+            SecCertificateSetPreferred(nil, name as CFString, nil)
             throw CertificateError.addCertificateFailure(error: NSError(domain: NSOSStatusErrorDomain, code: Int(status), userInfo: nil))
         }
     }

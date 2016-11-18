@@ -101,11 +101,17 @@ public class DeviceConfiguration {
 }
 
 
+public protocol CapabilitiesDataSource: class {
+    var incomingCapabilities: Set<Service.Capability> { get }
+    var outgoingCapabilities: Set<Service.Capability> { get }
+}
 
 public protocol HostConfiguration {
     var hostDeviceName: String { get }
     var hostDeviceType: DeviceType { get }
     var hostDeviceId: Device.Id { get }
+    var incomingCapabilities: Set<Service.Capability> { get }
+    var outgoingCapabilities: Set<Service.Capability> { get }
 }
 
 public class Configuration: ConnectionConfiguration, DeviceManagerConfiguration, HostConfiguration {
@@ -115,6 +121,12 @@ public class Configuration: ConnectionConfiguration, DeviceManagerConfiguration,
         case hostDeviceId = "hostDeviceId"
         case hostCertificateName = "hostCertificateName"
     }
+    
+    
+    
+    public weak var capabilitiesDataSource: CapabilitiesDataSource? = nil
+    
+    private let userDefaults: UserDefaults
     
     
    
@@ -132,10 +144,6 @@ public class Configuration: ConnectionConfiguration, DeviceManagerConfiguration,
             self.userDefaults.set("Migla Host", forKey: Property.hostCertificateName.rawValue)
         }
     }
-    
-    
-    
-    private let userDefaults: UserDefaults
     
     
     
@@ -166,6 +174,14 @@ public class Configuration: ConnectionConfiguration, DeviceManagerConfiguration,
     
     public func deviceConfig(for deviceId: Device.Id) -> DeviceConfiguration {
         return DeviceConfiguration(deviceId: deviceId, userDefaults: self.userDefaults)
+    }
+    
+    public var incomingCapabilities: Set<Service.Capability> {
+        return self.capabilitiesDataSource?.incomingCapabilities ?? Set()
+    }
+    
+    public var outgoingCapabilities: Set<Service.Capability> {
+        return self.capabilitiesDataSource?.outgoingCapabilities ?? Set()
     }
     
     

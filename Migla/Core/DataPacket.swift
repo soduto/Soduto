@@ -110,6 +110,8 @@ extension DataPacket {
         case InvalidDeviceType
         case InvalidProtocolVersion
         case InvalidTCPPort
+        case InvalidIncomingCapabilities
+        case InvalidOutgoingCapabilities
     }
     
     
@@ -119,15 +121,13 @@ extension DataPacket {
     }
     
     public static func identity(additionalProperties:DataPacket.Body?, config: HostConfiguration) -> DataPacket {
-        let outgoingCapabilities: [String] = ["kdeconnect.ping"]
-        let incomingCapabilities: [String] = ["kdeconnect.ping"]
         var body: Body = [
             IdentityProperty.DeviceId.rawValue: config.hostDeviceId as AnyObject,
             IdentityProperty.DeviceName.rawValue: config.hostDeviceName as AnyObject,
             IdentityProperty.DeviceType.rawValue: config.hostDeviceType.rawValue as AnyObject,
             IdentityProperty.ProtocolVersion.rawValue: NSNumber(value: DataPacket.protocolVersion),
-            IdentityProperty.OutgoingCapabilities.rawValue: outgoingCapabilities as AnyObject,
-            IdentityProperty.IncomingCapabilities.rawValue: incomingCapabilities as AnyObject
+            IdentityProperty.OutgoingCapabilities.rawValue: Array(config.outgoingCapabilities) as AnyObject,
+            IdentityProperty.IncomingCapabilities.rawValue: Array(config.incomingCapabilities) as AnyObject
         ]
         if let properties = additionalProperties {
             for (key, value) in properties {
@@ -169,6 +169,18 @@ extension DataPacket {
         try self.validateIdentityType()
         guard let tcpPort = body[IdentityProperty.TCPPort.rawValue] as? NSNumber else { throw IdentityError.InvalidTCPPort }
         return tcpPort.uint16Value
+    }
+    
+    public func getIncomingCapabilities() throws -> Set<Service.Capability> {
+        try self.validateIdentityType()
+        guard let capabilities = body[IdentityProperty.IncomingCapabilities.rawValue] as? [String] else { throw IdentityError.InvalidIncomingCapabilities }
+        return Set(capabilities)
+    }
+    
+    public func getOutgoingCapabilities() throws -> Set<Service.Capability> {
+        try self.validateIdentityType()
+        guard let capabilities = body[IdentityProperty.OutgoingCapabilities.rawValue] as? [String] else { throw IdentityError.InvalidOutgoingCapabilities }
+        return Set(capabilities)
     }
     
     public func validateIdentityType() throws {
