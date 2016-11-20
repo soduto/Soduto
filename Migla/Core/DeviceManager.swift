@@ -93,6 +93,14 @@ public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDa
         self.delegate?.deviceManager(self, didReceivePairingRequest: request, forDevice: device)
     }
     
+    public func serviceActions(for device: Device) -> [ServiceAction] {
+        let services = self.serviceManager.services(supportingOutgoingCapabilities: device.incomingCapabilities)
+        let actions = services.flatMap {
+            return $0.actions(for: device)
+        }
+        return actions
+    }
+    
     
     // MARK: Private methods
     
@@ -100,9 +108,7 @@ public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDa
         let device = try Device(connection: connection, config: self.config.deviceConfig(for: id))
         device.delegate = self
         
-        guard let identity = connection.identity else { throw DeviceError.InvalidConnection }
-        let deviceOutgoingCapabilities = try identity.getOutgoingCapabilities()
-        let services: [DeviceDataPacketHandler] = self.serviceManager.services(supportingIncomingCapabilities: deviceOutgoingCapabilities)
+        let services: [DeviceDataPacketHandler] = self.serviceManager.services(supportingIncomingCapabilities: device.outgoingCapabilities)
         device.addDataPacketHandlers(services)
         
         self.devices[device.id] = device

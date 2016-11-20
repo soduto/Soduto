@@ -42,7 +42,7 @@ public extension DataPacket {
         case InvalidPairFlag
     }
     
-    public static func pair() -> DataPacket {
+    public static func pairPacket() -> DataPacket {
         let body: Body = [
             PairingProperty.PairFlag.rawValue: NSNumber(value: true)
         ]
@@ -50,7 +50,7 @@ public extension DataPacket {
         return packet
     }
     
-    public static func unpair() -> DataPacket {
+    public static func unpairPacket() -> DataPacket {
         let body: Body = [
             PairingProperty.PairFlag.rawValue: NSNumber(value: false)
         ]
@@ -127,7 +127,7 @@ public class DefaultPairingHandler: ConnectionDataPacketHandler, Pairable {
                         self.pairingStatus = .Paired
                         if self.pairingStatus != .Paired {
                             // Failed to set pairingStatus - unpair
-                            self.delegate?.send(DataPacket.unpair())
+                            self.delegate?.send(DataPacket.unpairPacket())
                         }
                         break
                     case .Paired:
@@ -154,7 +154,7 @@ public class DefaultPairingHandler: ConnectionDataPacketHandler, Pairable {
             // While not paired - accept only identity packets
             // Also notify peer that we are unpaired if this is the case - we may be unpaired offline and peer might not know about it
             if self.pairingStatus == .Unpaired {
-                self.delegate!.send(DataPacket.unpair())
+                self.delegate!.send(DataPacket.unpairPacket())
             }
             return true
         }
@@ -201,7 +201,7 @@ public class DefaultPairingHandler: ConnectionDataPacketHandler, Pairable {
         switch self.pairingStatus {
         case .Unpaired:
             self.pairingStatus = .Requested
-            self.delegate!.send(DataPacket.pair())
+            self.delegate!.send(DataPacket.pairPacket())
             break
         case .RequestedByPeer:
             self.acceptPairing()
@@ -222,21 +222,21 @@ public class DefaultPairingHandler: ConnectionDataPacketHandler, Pairable {
             self.config.certificate = self.delegate!.peerCertificate
         }
         self.pairingStatus = .Paired
-        self.delegate?.send(self.pairingStatus == .Paired ? DataPacket.pair() : DataPacket.unpair())
+        self.delegate?.send(self.pairingStatus == .Paired ? DataPacket.pairPacket() : DataPacket.unpairPacket())
     }
     
     public func declinePairing() {
         assert(self.delegate != nil, "Delegate required for \(type(of: self))")
         
         self.pairingStatus = .Unpaired
-        self.delegate!.send(DataPacket.unpair())
+        self.delegate!.send(DataPacket.unpairPacket())
     }
     
     public func unpair() {
         assert(self.delegate != nil, "Delegate required for \(type(of: self))")
         
         self.pairingStatus = .Unpaired
-        self.delegate!.send(DataPacket.unpair())
+        self.delegate!.send(DataPacket.unpairPacket())
     }
     
     public func updatePairingStatus(globalStatus: PairingStatus) {

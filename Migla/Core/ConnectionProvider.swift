@@ -75,7 +75,7 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
         let properties: DataPacket.Body = [
             DataPacket.IdentityProperty.TCPPort.rawValue: Int(self.tcpSocket.localPort) as AnyObject
         ]
-        let packet = DataPacket.identity(additionalProperties: properties, config: self.config)
+        let packet = DataPacket.identityPacket(additionalProperties: properties, config: self.config)
         if let bytes = try? packet.serialize() {
             let data = Data(bytes: bytes)
             var address = SocketAddress(ipv4: "255.255.255.255")!
@@ -113,7 +113,7 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
             self.pendingConnections.insert(connection)
             
             // send initial identity packet
-            connection.send(DataPacket.identity(config: self.config))
+            connection.send(DataPacket.identityPacket(config: self.config))
         }
     }
     

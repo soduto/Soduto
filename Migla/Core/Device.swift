@@ -35,6 +35,7 @@ public enum DeviceError: Error {
 public protocol DeviceDelegate: class {
     func device(_ device: Device, didChangeState state: Device.State)
     func device(_ device: Device, didReceivePairingRequest pairingRequest: PairingRequest)
+    func serviceActions(for device: Device) -> [ServiceAction]
 }
 
 /// Functionality for handling incoming data packets from devices.
@@ -72,6 +73,8 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
     public let id: Id
     public let name: String
     public let type: DeviceType
+    public let incomingCapabilities: Set<Service.Capability>
+    public let outgoingCapabilities: Set<Service.Capability>
     public let config: DeviceConfiguration
     
     public private(set) var state: State = .unavailable {
@@ -105,6 +108,8 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
         self.id = try identity.getDeviceId()
         self.name = try identity.getDeviceName()
         self.type = DeviceType(rawValue: try identity.getDeviceType()) ?? DeviceType.Unknown
+        self.incomingCapabilities = try identity.getIncomingCapabilities()
+        self.outgoingCapabilities = try identity.getOutgoingCapabilities()
         self.config = config
         self.pairingStatus = self.config.isPaired ? .Paired : .Unpaired
         
@@ -151,6 +156,11 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
         if index != nil {
             self.packetHandlers.remove(at: index!)
         }
+    }
+    
+    /// Return all service actions available to this device
+    public func serviceActions() -> [ServiceAction] {
+        return self.delegate?.serviceActions(for: self) ?? []
     }
     
     /// Send a data packet to remote device. A most appropriate connection for the task

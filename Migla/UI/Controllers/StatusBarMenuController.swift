@@ -76,7 +76,7 @@ public class StatusBarMenuController: NSObject, NSMenuDelegate {
         for device in devices {
             let item = NSMenuItem(title: device.name, action: nil, keyEquivalent: "")
             item.tag = InterfaceElementTags.availableDeviceMenuItem.rawValue
-            item.submenu = NSMenu()
+            item.submenu = DeviceMenu(device: device)
             index += 1
             self.statusBarMenu.insertItem(item, at: index)
         }

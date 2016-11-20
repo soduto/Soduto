@@ -16,6 +16,9 @@
 		8456F4A81D7DE393006EFE19 /* Pairable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456F4A71D7DE393006EFE19 /* Pairable.swift */; };
 		8456F4AA1D7DEA47006EFE19 /* DefaultPairingHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456F4A91D7DEA47006EFE19 /* DefaultPairingHandler.swift */; };
 		847EF4C51DC9049D00360BBE /* MiglaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847EF4C41DC9049D00360BBE /* MiglaTests.swift */; };
+		849237991DE06EBC00D95BBA /* ServiceAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849237981DE06EBC00D95BBA /* ServiceAction.swift */; };
+		8492379D1DE1C55900D95BBA /* DeviceMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8492379C1DE1C55900D95BBA /* DeviceMenu.swift */; };
+		8492379F1DE1C87600D95BBA /* ServiceActionMenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8492379E1DE1C87600D95BBA /* ServiceActionMenuItem.swift */; };
 		849961B81D5726B0002B893A /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = 849961B41D5726B0002B893A /* LICENSE.txt */; };
 		849961B91D5726B0002B893A /* MYAnonymousIdentity.m in Sources */ = {isa = PBXBuildFile; fileRef = 849961B61D5726B0002B893A /* MYAnonymousIdentity.m */; };
 		849961C11D57287F002B893A /* CollectionUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 849961BC1D57287F002B893A /* CollectionUtils.m */; };
@@ -93,6 +96,9 @@
 		847EF4C21DC9049D00360BBE /* MiglaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MiglaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		847EF4C41DC9049D00360BBE /* MiglaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiglaTests.swift; sourceTree = "<group>"; };
 		847EF4C61DC9049D00360BBE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		849237981DE06EBC00D95BBA /* ServiceAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceAction.swift; sourceTree = "<group>"; };
+		8492379C1DE1C55900D95BBA /* DeviceMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceMenu.swift; sourceTree = "<group>"; };
+		8492379E1DE1C87600D95BBA /* ServiceActionMenuItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceActionMenuItem.swift; sourceTree = "<group>"; };
 		849961B41D5726B0002B893A /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE.txt; path = MYUtilities/LICENSE.txt; sourceTree = "<group>"; };
 		849961B51D5726B0002B893A /* MYAnonymousIdentity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYAnonymousIdentity.h; path = MYUtilities/MYAnonymousIdentity.h; sourceTree = "<group>"; };
 		849961B61D5726B0002B893A /* MYAnonymousIdentity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYAnonymousIdentity.m; path = MYUtilities/MYAnonymousIdentity.m; sourceTree = "<group>"; };
@@ -166,6 +172,8 @@
 			isa = PBXGroup;
 			children = (
 				84218DC71D789BAB00C7CEBE /* DeviceListItemView.swift */,
+				8492379C1DE1C55900D95BBA /* DeviceMenu.swift */,
+				8492379E1DE1C87600D95BBA /* ServiceActionMenuItem.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -218,8 +226,6 @@
 		8456F4A41D7DE31A006EFE19 /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				84FA45E91DDF433300EF3992 /* Service.swift */,
-				84FA45E71DDE088B00EF3992 /* ServiceManager.swift */,
 				84D903A11DC696A600E61DA7 /* CertificateUtils.swift */,
 				8450274A1DAABB9900C20247 /* Configuration.swift */,
 				84FA45CF1DDDCB3D00EF3992 /* Connection.swift */,
@@ -229,6 +235,9 @@
 				84FA45D21DDDCB3D00EF3992 /* Device.swift */,
 				84FA45D31DDDCB3D00EF3992 /* DeviceManager.swift */,
 				8456F4A71D7DE393006EFE19 /* Pairable.swift */,
+				84FA45E91DDF433300EF3992 /* Service.swift */,
+				849237981DE06EBC00D95BBA /* ServiceAction.swift */,
+				84FA45E71DDE088B00EF3992 /* ServiceManager.swift */,
 				84FA45D51DDDCB3D00EF3992 /* SocketAddress.swift */,
 				84FA45D61DDDCB3D00EF3992 /* UnsafePointersUtils.swift */,
 			);
@@ -449,8 +458,11 @@
 				84FA45D71DDDCB3D00EF3992 /* Connection.swift in Sources */,
 				849961C61D5728B2002B893A /* ExceptionUtils.m in Sources */,
 				8456F4AA1D7DEA47006EFE19 /* DefaultPairingHandler.swift in Sources */,
+				8492379F1DE1C87600D95BBA /* ServiceActionMenuItem.swift in Sources */,
+				8492379D1DE1C55900D95BBA /* DeviceMenu.swift in Sources */,
 				8499620E1D5728EE002B893A /* Test_Assertions.m in Sources */,
 				8421A8E71D761409008AC833 /* PreferencesWindowController.swift in Sources */,
+				849237991DE06EBC00D95BBA /* ServiceAction.swift in Sources */,
 				8456F4A81D7DE393006EFE19 /* Pairable.swift in Sources */,
 				84FA45D81DDDCB3D00EF3992 /* ConnectionProvider.swift in Sources */,
 				84D903A21DC696A600E61DA7 /* CertificateUtils.swift in Sources */,

@@ -13,14 +13,40 @@ public extension DataPacket {
     
     public static let PingPacketType = "kdeconnect.ping"
     
-    public var isPingPacket: Bool { return self.type == DataPacket.PingPacketType }
+    enum PingProperty: String {
+        case message = "message"
+    }
     
+    public static func pingPacket() -> DataPacket {
+        return DataPacket(type: PingPacketType, body: [
+            PingProperty.message.rawValue: "Testing connection." as AnyObject
+        ])
+    }
+    
+    public var isPingPacket: Bool { return self.type == DataPacket.PingPacketType }
 }
 
 public class PingService: Service {
     
-    public let incomingCapabilities = Set<Service.Capability>([ "kdeconnect.ping" ])
-    public let outgoingCapabilities = Set<Service.Capability>([ "kdeconnect.ping" ])
+    // MARK: Types
+    
+    enum ActionId: ServiceAction.Id {
+        case send
+    }
+    
+    
+    // MARK: Constants
+    
+    public static let pingCapability: Service.Capability = "kdeconnect.ping"
+    
+    
+    // MARK: Service properties
+    
+    public let incomingCapabilities = Set<Service.Capability>([ PingService.pingCapability ])
+    public let outgoingCapabilities = Set<Service.Capability>([ PingService.pingCapability ])
+    
+    
+    // MARK: Service methods
     
     public func handleDataPacket(_ dataPacket: DataPacket, fromDevice device: Device, onConnection connection: Connection) -> Bool {
         
@@ -31,4 +57,22 @@ public class PingService: Service {
         return true
     }
     
+    public func actions(for device: Device) -> [ServiceAction] {
+        guard device.incomingCapabilities.contains(PingService.pingCapability) else { return [] }
+        
+        return [
+            ServiceAction(id: ActionId.send.rawValue, title: "Test connection", description: "Send ping to the remote device to test connectivity", service: self, device: device)
+        ]
+    }
+    
+    public func performAction(_ id: ServiceAction.Id, forDevice device: Device) {
+        guard let actionId = ActionId(rawValue: id) else { return }
+        
+        switch actionId {
+        case .send:
+            device.send(DataPacket.pingPacket())
+            break
+        }
+        
+    }
 }

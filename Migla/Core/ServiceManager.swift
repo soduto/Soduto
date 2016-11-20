@@ -41,6 +41,13 @@ public class ServiceManager: CapabilitiesDataSource {
         }
     }
     
+    /// Return services filtered by outgoing capabilities
+    public func services(supportingOutgoingCapabilities capabilities: Set<Service.Capability>) -> [Service] {
+        return self.services.filter {
+            return !$0.outgoingCapabilities.isDisjoint(with: capabilities)
+        }
+    }
+    
     public func add(service: Service) {
         services.append(service)
     }

@@ -116,11 +116,11 @@ extension DataPacket {
     
     
     
-    public static func identity(config: HostConfiguration) -> DataPacket {
-        return identity(additionalProperties: nil, config: config)
+    public static func identityPacket(config: HostConfiguration) -> DataPacket {
+        return identityPacket(additionalProperties: nil, config: config)
     }
     
-    public static func identity(additionalProperties:DataPacket.Body?, config: HostConfiguration) -> DataPacket {
+    public static func identityPacket(additionalProperties:DataPacket.Body?, config: HostConfiguration) -> DataPacket {
         var body: Body = [
             IdentityProperty.DeviceId.rawValue: config.hostDeviceId as AnyObject,
             IdentityProperty.DeviceName.rawValue: config.hostDeviceName as AnyObject,
