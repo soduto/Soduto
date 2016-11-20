@@ -35,6 +35,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate, NSUse
         self.deviceManager.delegate = self
         
         self.serviceManager.add(service: PingService())
+        self.serviceManager.add(service: FindMyPhoneService())
         
         NSUserNotificationCenter.default.delegate = self
     }

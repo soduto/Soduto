@@ -11,7 +11,7 @@ import Foundation
 /// Ping service data packet utilities
 public extension DataPacket {
     
-    public static let PingPacketType = "kdeconnect.ping"
+    public static let pingPacketType = "kdeconnect.ping"
     
     enum PingError: Error {
         case wrongType
@@ -23,7 +23,7 @@ public extension DataPacket {
     }
     
     public static func pingPacket() -> DataPacket {
-        return DataPacket(type: PingPacketType, body: [
+        return DataPacket(type: pingPacketType, body: [
             PingProperty.message.rawValue: "Testing connection." as AnyObject
         ])
     }
@@ -35,7 +35,7 @@ public extension DataPacket {
         return message
     }
     
-    public var isPingPacket: Bool { return self.type == DataPacket.PingPacketType }
+    public var isPingPacket: Bool { return self.type == DataPacket.pingPacketType }
     
     public func validatePingType() throws {
         guard self.isPingPacket else { throw PingError.wrongType }
@@ -53,15 +53,10 @@ public class PingService: Service {
     }
     
     
-    // MARK: Constants
-    
-    public static let pingCapability: Service.Capability = "kdeconnect.ping"
-    
-    
     // MARK: Service properties
     
-    public let incomingCapabilities = Set<Service.Capability>([ PingService.pingCapability ])
-    public let outgoingCapabilities = Set<Service.Capability>([ PingService.pingCapability ])
+    public let incomingCapabilities = Set<Service.Capability>([ DataPacket.pingPacketType ])
+    public let outgoingCapabilities = Set<Service.Capability>([ DataPacket.pingPacketType ])
     
     
     // MARK: Service methods
@@ -76,7 +71,7 @@ public class PingService: Service {
     }
     
     public func actions(for device: Device) -> [ServiceAction] {
-        guard device.incomingCapabilities.contains(PingService.pingCapability) else { return [] }
+        guard device.incomingCapabilities.contains(DataPacket.pingPacketType) else { return [] }
         
         return [
             ServiceAction(id: ActionId.send.rawValue, title: "Test connection", description: "Send ping to the remote device to test connectivity", service: self, device: device)

@@ -19,6 +19,7 @@
 		849237991DE06EBC00D95BBA /* ServiceAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849237981DE06EBC00D95BBA /* ServiceAction.swift */; };
 		8492379D1DE1C55900D95BBA /* DeviceMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8492379C1DE1C55900D95BBA /* DeviceMenu.swift */; };
 		8492379F1DE1C87600D95BBA /* ServiceActionMenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8492379E1DE1C87600D95BBA /* ServiceActionMenuItem.swift */; };
+		849237A11DE224CF00D95BBA /* FindMyPhoneService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849237A01DE224CF00D95BBA /* FindMyPhoneService.swift */; };
 		849961B81D5726B0002B893A /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = 849961B41D5726B0002B893A /* LICENSE.txt */; };
 		849961B91D5726B0002B893A /* MYAnonymousIdentity.m in Sources */ = {isa = PBXBuildFile; fileRef = 849961B61D5726B0002B893A /* MYAnonymousIdentity.m */; };
 		849961C11D57287F002B893A /* CollectionUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 849961BC1D57287F002B893A /* CollectionUtils.m */; };
@@ -99,6 +100,7 @@
 		849237981DE06EBC00D95BBA /* ServiceAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceAction.swift; sourceTree = "<group>"; };
 		8492379C1DE1C55900D95BBA /* DeviceMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceMenu.swift; sourceTree = "<group>"; };
 		8492379E1DE1C87600D95BBA /* ServiceActionMenuItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceActionMenuItem.swift; sourceTree = "<group>"; };
+		849237A01DE224CF00D95BBA /* FindMyPhoneService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FindMyPhoneService.swift; sourceTree = "<group>"; };
 		849961B41D5726B0002B893A /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE.txt; path = MYUtilities/LICENSE.txt; sourceTree = "<group>"; };
 		849961B51D5726B0002B893A /* MYAnonymousIdentity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYAnonymousIdentity.h; path = MYUtilities/MYAnonymousIdentity.h; sourceTree = "<group>"; };
 		849961B61D5726B0002B893A /* MYAnonymousIdentity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYAnonymousIdentity.m; path = MYUtilities/MYAnonymousIdentity.m; sourceTree = "<group>"; };
@@ -294,6 +296,7 @@
 			isa = PBXGroup;
 			children = (
 				84FA45EC1DDF525200EF3992 /* PingService.swift */,
+				849237A01DE224CF00D95BBA /* FindMyPhoneService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -454,6 +457,7 @@
 				8FC977F11D4778E9001ADF7E /* StatusBarMenuController.swift in Sources */,
 				8450274B1DAABB9900C20247 /* Configuration.swift in Sources */,
 				84FA45DE1DDDCB3D00EF3992 /* UnsafePointersUtils.swift in Sources */,
+				849237A11DE224CF00D95BBA /* FindMyPhoneService.swift in Sources */,
 				84FA45E41DDDDB7F00EF3992 /* InterfaceElementTags.swift in Sources */,
 				84FA45D71DDDCB3D00EF3992 /* Connection.swift in Sources */,
 				849961C61D5728B2002B893A /* ExceptionUtils.m in Sources */,
