@@ -13,6 +13,11 @@ public extension DataPacket {
     
     public static let PingPacketType = "kdeconnect.ping"
     
+    enum PingError: Error {
+        case wrongType
+        case invalidMessage
+    }
+    
     enum PingProperty: String {
         case message = "message"
     }
@@ -23,9 +28,22 @@ public extension DataPacket {
         ])
     }
     
+    public func getMessage() throws -> String? {
+        try self.validatePingType()
+        guard body.keys.contains(PingProperty.message.rawValue) else { return nil }
+        guard let message = body[PingProperty.message.rawValue] as? String else { throw PingError.invalidMessage }
+        return message
+    }
+    
     public var isPingPacket: Bool { return self.type == DataPacket.PingPacketType }
+    
+    public func validatePingType() throws {
+        guard self.isPingPacket else { throw PingError.wrongType }
+    }
 }
 
+/// Service providing capability to send end receive "pings" - short messages that can be used to test 
+/// devices connectivity
 public class PingService: Service {
     
     // MARK: Types
@@ -52,7 +70,7 @@ public class PingService: Service {
         
         guard dataPacket.isPingPacket else { return false }
         
-        Swift.print("Ping packet received from device '\(device.name)': \(dataPacket)")
+        self.showNotification(for: dataPacket, from: device)
         
         return true
     }
@@ -74,5 +92,23 @@ public class PingService: Service {
             break
         }
         
+    }
+    
+    
+    // MARK: Private methods
+    
+    private func showNotification(for dataPacket: DataPacket, from device: Device) {
+        assert(dataPacket.isPingPacket, "Expected ping data packet")
+        
+        let notification = NSUserNotification()
+        notification.title = device.name
+        notification.informativeText = try? dataPacket.getMessage() ?? "Ping!"
+        notification.soundName = NSUserNotificationDefaultSoundName
+        notification.hasActionButton = false
+        NSUserNotificationCenter.default.scheduleNotification(notification)
+        
+        Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { _ in
+            NSUserNotificationCenter.default.removeDeliveredNotification(notification)
+        }
     }
 }

@@ -9,7 +9,7 @@
 import Cocoa
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate, NSUserNotificationCenterDelegate {
     
     @IBOutlet weak var statusBarMenuController: StatusBarMenuController!
 
@@ -35,6 +35,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
         self.deviceManager.delegate = self
         
         self.serviceManager.add(service: PingService())
+        
+        NSUserNotificationCenter.default.delegate = self
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -52,6 +54,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
         Swift.print("AppDelegate.deviceManager:didReceivePairingRequest:forDevice: \(request) \(device)")
         
         device.acceptPairing()
+    }
+    
+    
+    // MARK: NSUserNotificationCenterDelegate
+    
+    public func userNotificationCenter(_ center: NSUserNotificationCenter, shouldPresent notification: NSUserNotification) -> Bool {
+        return true
+    }
+    
+    public func userNotificationCenter(_ center: NSUserNotificationCenter, didActivate notification: NSUserNotification) {
+        NSUserNotificationCenter.default.removeDeliveredNotification(notification)
     }
     
 }
