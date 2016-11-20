@@ -18,7 +18,7 @@ public extension DataPacket {
     }
 }
 
-/// Send request to ring the phone even if it is silenced
+/// Ring a phone even if it is silenced
 public class FindMyPhoneService: Service {
     
     // MARK: Types
