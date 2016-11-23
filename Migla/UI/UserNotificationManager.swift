@@ -70,6 +70,7 @@ public class UserNotificationManager: NSObject, NSUserNotificationCenterDelegate
         if let identifier = notification.identifier {
             self.dismissCheckTimers[identifier] = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { timer in
                 guard !center.deliveredNotifications.contains(where: { n in n.identifier == identifier }) else { return }
+                
                 if notification.activationType == .none {
                     self.handleAction(for: notification)
                 }
