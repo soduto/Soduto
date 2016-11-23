@@ -25,6 +25,8 @@ public protocol DeviceManagerConfiguration {
 
 public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDataSource {
     
+    // MARK: Properties
+    
     public weak var delegate: DeviceManagerDelegate? = nil
     
     public var unpairedDevices: [Device] {
@@ -41,6 +43,8 @@ public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDa
     private let serviceManager: ServiceManager
     private var devices: [Device.Id:Device] = [:]
     
+    
+    // MARK: Init / Deinit
     
     init(config: DeviceManagerConfiguration, serviceManager: ServiceManager) {
         self.config = config
@@ -74,6 +78,13 @@ public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDa
         catch {
             Swift.print("Error adding new connection: \(error)")
         }
+    }
+    
+    
+    // MARK: Public methods
+    
+    public func device(withId id: Device.Id) -> Device? {
+        return self.devices[id]
     }
     
     

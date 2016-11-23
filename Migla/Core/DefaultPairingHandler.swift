@@ -182,10 +182,10 @@ public class DefaultPairingHandler: ConnectionDataPacketHandler, Pairable {
                 if self.pairingStatus == .Unpaired {
                     self.config.certificate = nil
                 }
-                if self.pairingStatus == .Requested {
+                if self.pairingStatus == .Requested || self.pairingStatus == .RequestedByPeer {
                     self.pairingTimeout = Timer(timeInterval: DefaultPairingHandler.pairingTimoutInterval, repeats: false, block: { (timer) in
                         // Every change to pairingStatus should invalidate previous timeout, so if we are here, pairingStatus should still be the same
-                        assert(self.pairingStatus == .Requested, "pairingStatus expected to not be changed")
+                        assert(self.pairingStatus == .Requested || self.pairingStatus == .RequestedByPeer, "pairingStatus expected to not be changed")
                         self.declinePairing()
                     })
                     RunLoop.current.add(self.pairingTimeout!, forMode: .defaultRunLoopMode)

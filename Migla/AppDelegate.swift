@@ -9,7 +9,7 @@
 import Cocoa
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate, NSUserNotificationCenterDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
     
     @IBOutlet weak var statusBarMenuController: StatusBarMenuController!
 
@@ -17,10 +17,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate, NSUse
     let connectionProvider: ConnectionProvider
     let deviceManager: DeviceManager
     let serviceManager = ServiceManager()
+    let userNotificationManager: UserNotificationManager
     
     override init() {
         self.connectionProvider = ConnectionProvider(config: config)
         self.deviceManager = DeviceManager(config: config, serviceManager: self.serviceManager)
+        self.userNotificationManager = UserNotificationManager(config: self.config, serviceManager: self.serviceManager, deviceManager: self.deviceManager)
         
         super.init()
     }
@@ -36,8 +38,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate, NSUse
         
         self.serviceManager.add(service: PingService())
         self.serviceManager.add(service: FindMyPhoneService())
-        
-        NSUserNotificationCenter.default.delegate = self
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -53,19 +53,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate, NSUse
     
     func deviceManager(_ manager: DeviceManager, didReceivePairingRequest request: PairingRequest, forDevice device: Device) {
         Swift.print("AppDelegate.deviceManager:didReceivePairingRequest:forDevice: \(request) \(device)")
-        
-        device.acceptPairing()
-    }
-    
-    
-    // MARK: NSUserNotificationCenterDelegate
-    
-    public func userNotificationCenter(_ center: NSUserNotificationCenter, shouldPresent notification: NSUserNotification) -> Bool {
-        return true
-    }
-    
-    public func userNotificationCenter(_ center: NSUserNotificationCenter, didActivate notification: NSUserNotification) {
-        NSUserNotificationCenter.default.removeDeliveredNotification(notification)
+        PairingInterfaceController.showPairingNotification(for: device)
     }
     
 }
