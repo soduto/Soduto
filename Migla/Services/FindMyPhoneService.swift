@@ -44,7 +44,7 @@ public class FindMyPhoneService: Service {
         guard device.incomingCapabilities.contains(DataPacket.findMyPhoneRequestPacketType) else { return [] }
         
         return [
-            ServiceAction(id: ActionId.findMyPhone.rawValue, title: "Find my phone", description: "Ring the phone even if it is silenced", service: self, device: device)
+            ServiceAction(id: ActionId.findMyPhone.rawValue, title: "Find my phone", description: "Ring the device so you can find it", service: self, device: device)
         ]
     }
     
