@@ -73,7 +73,7 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
         guard self.tcpSocket.localPort > 0 else { return }
         
         let properties: DataPacket.Body = [
-            DataPacket.IdentityProperty.TCPPort.rawValue: Int(self.tcpSocket.localPort) as AnyObject
+            DataPacket.IdentityProperty.tcpPort.rawValue: Int(self.tcpSocket.localPort) as AnyObject
         ]
         let packet = DataPacket.identityPacket(additionalProperties: properties, config: self.config)
         if let bytes = try? packet.serialize() {
