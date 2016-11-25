@@ -164,13 +164,14 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
     }
     
     /// Send a data packet to remote device. A most appropriate connection for the task
-    /// would be chosen automatically
-    public func send(_ packet: DataPacket) {
+    /// would be chosen automatically. Completion block may be provided - it would be called
+    /// when packet is successfully sent. On failure completion handler would not be called -
+    /// whole connection would be closed instead
+    public func send(_ packet: DataPacket, whenCompleted: Connection.SendingCompletionHandler? = nil) {
         if let connection = self.connectionForSending() {
-            connection.send(packet)
+            connection.send(packet, whenCompleted: whenCompleted)
         }
     }
-    
     
     
     // MARK: ConnectionDelegate

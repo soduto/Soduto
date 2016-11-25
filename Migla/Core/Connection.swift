@@ -39,6 +39,17 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
         case Closed
     }
     
+    public typealias SendingCompletionHandler = (() -> Void)
+    
+    private struct DataPacketSendingInfo {
+        let dataPacket: DataPacket
+        let completionHandler: SendingCompletionHandler?
+        init(dataPacket: DataPacket, completionHandler: SendingCompletionHandler?) {
+            self.dataPacket = dataPacket
+            self.completionHandler = completionHandler
+        }
+    }
+    
     
     // MARK: Properties
     
@@ -60,7 +71,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     private let config: ConnectionConfiguration
     private let socket: GCDAsyncSocket
     private let sslCertificates: [AnyObject]
-    private var packetsToSend: [DataPacket] = [] // queue of packets waiting to be sent
+    private var packetsToSend: [DataPacketSendingInfo] = [] // queue of packets waiting to be sent
     private var packetsExpected: Int = 0         // count of packets to read befor stopping automatic reading, -1 for unlimited count
     private var waitingToSecure: Bool = false
     private var shouldFinishIntializationWhenSecured: Bool = false
@@ -74,8 +85,6 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     
     init?(address: SocketAddress, identityPacket packet: DataPacket, config: ConnectionConfiguration) {
         guard let hostIdentity = config.hostCertificate else { return nil }
-        
-        setenv("CFNETWORK_DIAGNOSTICS", "3", 1);
         
         self.config = config
         self.socket = GCDAsyncSocket(delegate: nil, delegateQueue: DispatchQueue.main)
@@ -168,12 +177,17 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     
     // MARK: Public API
     
-    public func send(_ packet:DataPacket) {
-        self.packetsToSend.append(packet)
+    public func send(_ packet: DataPacket, whenCompleted: SendingCompletionHandler? = nil) {
+        let info = DataPacketSendingInfo(dataPacket: packet, completionHandler: whenCompleted)
+        self.packetsToSend.append(info)
         if let bytes = try? packet.serialize() {
             let data = Data(bytes: bytes)
             self.socket.write(data, withTimeout: -1, tag: Int(packet.id))
         }
+    }
+    
+    public func send(_ packet: DataPacket) {
+        self.send(packet, whenCompleted: nil)
     }
     
     public func readOnePacket() {
@@ -201,12 +215,15 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     public func socket(_ sock: GCDAsyncSocket, didWriteDataWithTag tag: Int) {
         Swift.print("Connection.socket:didWriteDataWithTag: \(sock) \(tag)")
         
-        let indexOpt = self.packetsToSend.index { packet -> Bool in
-            return Int(packet.id) == tag
+        let indexOpt = self.packetsToSend.index { packetInfo -> Bool in
+            return Int(packetInfo.dataPacket.id) == tag
         }
         if let index = indexOpt {
-            let packet = self.packetsToSend.remove(at: index)
-            self.delegate?.connection(self, didSendPacket: packet)
+            let packetInfo = self.packetsToSend.remove(at: index)
+            if let completionHandler = packetInfo.completionHandler {
+                completionHandler()
+            }
+            self.delegate?.connection(self, didSendPacket: packetInfo.dataPacket)
         }
     }
     
