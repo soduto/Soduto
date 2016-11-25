@@ -59,12 +59,11 @@ public struct DataPacket: CustomStringConvertible {
     
     init?(data: Data) {
         let deserializedObj = try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions())
-        guard let obj = deserializedObj as? [String: AnyObject],
-            let id = obj["id"] as? NSNumber,
-            let type = obj["type"] as? String,
-            let body = obj["body"] as? [String: AnyObject] else {
-                return nil
-        }
+        guard let obj = deserializedObj as? [String: AnyObject] else { return nil }
+        guard let id = obj["id"] as? NSNumber else { return nil }
+        guard let type = obj["type"] as? String else { return nil }
+        guard let body = obj["body"] as? Body else { return nil }
+        
         self.init(id: id.int64Value, type: type, body: body)
     }
     
