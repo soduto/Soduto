@@ -40,7 +40,12 @@ public class UserNotificationManager: NSObject, NSUserNotificationCenterDelegate
     // MARK: Private properties
     
     private let context: UserNotificationContext
-    private var dismissCheckTimers: [String:Timer] = [:]
+    
+    // Notification dissmissing is not reported by the system, so we use timers to manually check and report such events
+    private var fastTimer: Timer? = nil // more frequently firing timer for notifications needing faster response
+    private var slowTimer: Timer? = nil // less frequently firing timer for longer standing notifications that dont need fast response
+    private var fastNotifications: [String:NSUserNotification] = [:] // notifications monitored by fastTimer
+    private var slowNotifications: [String:NSUserNotification] = [:] // notifications monitored by slowTimer
     
     
     // MARK: Init / Deinit
@@ -68,23 +73,16 @@ public class UserNotificationManager: NSObject, NSUserNotificationCenterDelegate
     
     public func userNotificationCenter(_ center: NSUserNotificationCenter, didActivate notification: NSUserNotification) {
         self.handleAction(for: notification)
-        self.invalidateDismissCheckTimer(for: notification)
+        self.stopMonitoringNotification(notification)
         NSUserNotificationCenter.default.removeDeliveredNotification(notification)
     }
     
     public func userNotificationCenter(_ center: NSUserNotificationCenter, didDeliver notification: NSUserNotification) {
-        // A hack to detect notification dismissing by clicking on close (otherButton) button. In such case didActivate 
-        // delegate method does not get called. Notification needs to have identifier set for hack to work
-        self.invalidateDismissCheckTimer(for: notification)
-        if let identifier = notification.identifier {
-            self.dismissCheckTimers[identifier] = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { timer in
-                guard !center.deliveredNotifications.contains(where: { n in n.identifier == identifier }) else { return }
-                
-                if notification.activationType == .none {
-                    self.handleAction(for: notification)
-                }
-                timer.invalidate()
-            }
+        if notification.isPresented {
+            self.monitorFastNotification(notification)
+        }
+        else {
+            self.monitorSlowNotification(notification)
         }
     }
     
@@ -97,14 +95,64 @@ public class UserNotificationManager: NSObject, NSUserNotificationCenterDelegate
         handlerClass.handleAction(for: notification, context: self.context)
     }
     
-    private func invalidateDismissCheckTimer(for notification: NSUserNotification) {
-        guard let identifier = notification.identifier else { return }
+    private func monitorFastNotification(_ notification: NSUserNotification) {
+        guard let id = notification.identifier else { return }
         
-        if let timer = self.dismissCheckTimers.removeValue(forKey: identifier) {
-            timer.invalidate()
+        self.fastNotifications[id] = notification
+        
+        if self.fastTimer == nil {
+            self.fastTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { timer in
+                for id in self.fastNotifications.keys {
+                    if let n = NSUserNotificationCenter.default.deliveredNotifications.first(where: { n in n.identifier == id }) {
+                        if !n.isPresented {
+                            // if not showing - move to slow notifications
+                            self.stopMonitoringNotification(n)
+                            self.monitorSlowNotification(n)
+                        }
+                    }
+                    else {
+                        self.handleAction(for: notification)
+                        self.stopMonitoringNotification(notification)
+                    }
+                }
+            }
         }
     }
     
+    private func monitorSlowNotification(_ notification: NSUserNotification) {
+        guard let id = notification.identifier else { return }
+        
+        self.slowNotifications[id] = notification
+        
+        if self.slowTimer == nil {
+            self.slowTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { timer in
+                for id in self.fastNotifications.keys {
+                    guard NSUserNotificationCenter.default.deliveredNotifications.contains(where: { n in n.identifier == id }) else { continue }
+                    
+                    self.handleAction(for: notification)
+                    self.stopMonitoringNotification(notification)
+                }
+            }
+        }
+    }
+    
+    private func stopMonitoringNotification(_ notification: NSUserNotification) {
+        assert(notification.identifier != nil, "Only notifications with identifiers are monitored")
+        
+        guard let id = notification.identifier else { return }
+        
+        self.slowNotifications.removeValue(forKey: id)
+        if self.slowNotifications.count == 0 {
+            self.slowTimer?.invalidate()
+            self.slowTimer = nil
+        }
+        
+        self.fastNotifications.removeValue(forKey: id)
+        if self.fastNotifications.count == 0 {
+            self.fastTimer?.invalidate()
+            self.fastTimer = nil
+        }
+    }
 }
 
 extension NSUserNotification {
