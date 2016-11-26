@@ -29,9 +29,12 @@ public protocol UserNotificationActionHandler: class {
 
 public class UserNotificationManager: NSObject, NSUserNotificationCenterDelegate {
     
-    // MARK: Constants
+    // MARK: Types
     
-    public static let actionHandlerClassProperty = "com.migla.usernotificationmanager.actionhandlerclass"
+    enum Property: String {
+        case actionHandlerClass = "com.migla.usernotificationmanager.actionhandlerclass"
+        case dontPresent = "com.migla.usernotificationmanager.dontPresent"
+    }
     
     
     // MARK: Private properties
@@ -54,7 +57,13 @@ public class UserNotificationManager: NSObject, NSUserNotificationCenterDelegate
     // MARK: NSUserNotificationCenterDelegate
     
     public func userNotificationCenter(_ center: NSUserNotificationCenter, shouldPresent notification: NSUserNotification) -> Bool {
-        return true
+        // NOTE: This is not called for every notification - only for those that system thinks shouldnt be presented
+        if let dontPresent = notification.userInfo?[Property.dontPresent.rawValue] as? NSNumber {
+            return !dontPresent.boolValue
+        }
+        else {
+            return true
+        }
     }
     
     public func userNotificationCenter(_ center: NSUserNotificationCenter, didActivate notification: NSUserNotification) {
@@ -83,7 +92,7 @@ public class UserNotificationManager: NSObject, NSUserNotificationCenterDelegate
     // MARK: Private methods
     
     private func handleAction(for notification: NSUserNotification) {
-        guard let handlerClassName = notification.userInfo?[UserNotificationManager.actionHandlerClassProperty] as? String else { return }
+        guard let handlerClassName = notification.userInfo?[Property.actionHandlerClass.rawValue] as? String else { return }
         guard let handlerClass = NSClassFromString(handlerClassName) as? UserNotificationActionHandler.Type else { return }
         handlerClass.handleAction(for: notification, context: self.context)
     }
@@ -105,7 +114,7 @@ extension NSUserNotification {
         self.init()
         
         self.userInfo = [
-            UserNotificationManager.actionHandlerClassProperty: NSStringFromClass(actionHandlerClass)
+            UserNotificationManager.Property.actionHandlerClass.rawValue: NSStringFromClass(actionHandlerClass)
         ]
     }
     

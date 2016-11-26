@@ -93,6 +93,15 @@ public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDa
     public func device(_ device: Device, didChangeState state: Device.State) {
         Swift.print("DeviceManager.device:didChangeState: \(device) \(state)")
         
+        if state == .paired {
+            self.serviceManager.setup(for: device)
+        }
+        else {
+            // This needs to be done only when old state was paired. However we dont know previous state here
+            // Assuming cleanup is not that heavyweight that it should be done very cautiously
+            self.serviceManager.cleanup(for: device)
+        }
+        
         if state == .unavailable {
             self.devices.removeValue(forKey: device.id)
         }
@@ -123,6 +132,6 @@ public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDa
         device.addDataPacketHandlers(services)
         
         self.devices[device.id] = device
-        self.delegate?.deviceManager(self, didChangeDeviceState: device)
+        self.device(device, didChangeState: device.state)
     }
 }

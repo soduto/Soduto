@@ -40,8 +40,13 @@ public class FindMyPhoneService: Service {
         return false
     }
     
+    public func setup(for device: Device) {}
+    
+    public func cleanup(for device: Device) {}
+    
     public func actions(for device: Device) -> [ServiceAction] {
         guard device.incomingCapabilities.contains(DataPacket.findMyPhoneRequestPacketType) else { return [] }
+        guard device.state == .paired else { return [] }
         
         return [
             ServiceAction(id: ActionId.findMyPhone.rawValue, title: "Find my phone", description: "Ring the device so you can find it", service: self, device: device)
@@ -50,6 +55,7 @@ public class FindMyPhoneService: Service {
     
     public func performAction(_ id: ServiceAction.Id, forDevice device: Device) {
         guard let actionId = ActionId(rawValue: id) else { return }
+        guard device.state == .paired else { return }
         
         switch actionId {
         case .findMyPhone:

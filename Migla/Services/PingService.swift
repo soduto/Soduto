@@ -44,6 +44,10 @@ public extension DataPacket {
 
 /// Service providing capability to send end receive "pings" - short messages that can be used to test 
 /// devices connectivity
+///
+/// This service displays a notification to the user each time a package with type
+/// "kdeconnect.ping" is received. If the package has something in the "message"
+/// field, that will be displayed in the notification body.
 public class PingService: Service {
     
     // MARK: Types
@@ -70,8 +74,13 @@ public class PingService: Service {
         return true
     }
     
+    public func setup(for device: Device) {}
+    
+    public func cleanup(for device: Device) {}
+    
     public func actions(for device: Device) -> [ServiceAction] {
         guard device.incomingCapabilities.contains(DataPacket.pingPacketType) else { return [] }
+        guard device.state == .paired else { return [] }
         
         return [
             ServiceAction(id: ActionId.send.rawValue, title: "Test connection", description: "Send ping to the remote device to test connectivity", service: self, device: device)
@@ -80,6 +89,7 @@ public class PingService: Service {
     
     public func performAction(_ id: ServiceAction.Id, forDevice device: Device) {
         guard let actionId = ActionId(rawValue: id) else { return }
+        guard device.state == .paired else { return }
         
         switch actionId {
         case .send:

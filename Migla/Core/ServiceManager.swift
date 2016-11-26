@@ -48,8 +48,22 @@ public class ServiceManager: CapabilitiesDataSource {
         }
     }
     
+    /// Add a new service instance. This should be done on application start before any device connections are established
     public func add(service: Service) {
         services.append(service)
     }
     
+    /// Setup services for provided device. This is done when a new device becomes ready (accessible and paired)
+    public func setup(for device: Device) {
+        for service in self.services {
+            service.setup(for: device)
+        }
+    }
+    
+    /// Clenup services for provided device. This is done when device becomes unavailable or not unpaired
+    public func cleanup(for device: Device) {
+        for service in self.services {
+            service.cleanup(for: device)
+        }
+    }
 }

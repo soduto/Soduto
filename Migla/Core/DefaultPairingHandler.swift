@@ -169,14 +169,15 @@ public class DefaultPairingHandler: ConnectionDataPacketHandler, Pairable {
     
     public private(set) var pairingStatus: PairingStatus {
         willSet {
+            assert(newValue != .Paired || self.canSetPaired(), "Can't set pairingStatus to .Paired. Should always use trySetPaired method to safely set paierd status")
+            
             self.pairingTimeout?.invalidate()
             self.pairingTimeout = nil
         }
         didSet {
-            if self.pairingStatus == .Paired && self.config.certificate == nil {
-                Swift.print("Can't set pairingStatus to .Paired because we dont have corresponding certificate for device \(self.config.deviceId)")
+            if self.pairingStatus == .Paired && !self.canSetPaired() {
+                Swift.print("Can't set pairingStatus to .Paired. Should always use trySetPaired method to")
                 self.pairingStatus = .Unpaired
-                self.config.certificate = nil
             }
             if self.pairingStatus != oldValue {
                 if self.pairingStatus == .Unpaired {
@@ -221,8 +222,18 @@ public class DefaultPairingHandler: ConnectionDataPacketHandler, Pairable {
         if self.config.certificate == nil {
             self.config.certificate = self.delegate!.peerCertificate
         }
-        self.pairingStatus = .Paired
-        self.delegate?.send(self.pairingStatus == .Paired ? DataPacket.pairPacket() : DataPacket.unpairPacket())
+        
+        // We need to send pair packet before setting pairedStatus.
+        // Otherwise pairing status notifications might trigger other data packets to be sent and if 
+        // such packets are sent befor pairing, they might be discarded or even cause other device to unpair
+        if self.canSetPaired() {
+            self.delegate?.send(DataPacket.pairPacket())
+            self.trySetPaired()
+        }
+        
+        if self.pairingStatus != .Paired {
+            self.delegate?.send(DataPacket.unpairPacket())
+        }
     }
     
     public func declinePairing() {
@@ -242,8 +253,7 @@ public class DefaultPairingHandler: ConnectionDataPacketHandler, Pairable {
     public func updatePairingStatus(globalStatus: PairingStatus) {
         switch globalStatus {
         case .Paired:
-            // Beware that pairingStatus may not be set to .Paired if there is no corresponding certificate saved for the device
-            self.pairingStatus = .Paired
+            self.trySetPaired()
             break
         case .Unpaired:
             self.pairingStatus = .Unpaired
@@ -252,4 +262,19 @@ public class DefaultPairingHandler: ConnectionDataPacketHandler, Pairable {
         }
     }
     
+    
+    // MARK: Private methods
+    
+    private func canSetPaired() -> Bool {
+        return self.config.certificate != nil
+    }
+    
+    private func trySetPaired() {
+        if self.canSetPaired() {
+            self.pairingStatus = .Paired
+        }
+        else {
+            self.pairingStatus = .Unpaired
+        }
+    }
 }

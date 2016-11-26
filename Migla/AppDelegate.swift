@@ -38,6 +38,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
         
         self.serviceManager.add(service: PingService())
         self.serviceManager.add(service: FindMyPhoneService())
+        self.serviceManager.add(service: NotificationsService())
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {

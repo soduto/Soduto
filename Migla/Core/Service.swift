@@ -15,6 +15,9 @@ public protocol Service: class, DeviceDataPacketHandler {
     var incomingCapabilities: Set<Capability> { get }
     var outgoingCapabilities: Set<Capability> { get }
     
+    func setup(for device: Device)
+    func cleanup(for device: Device)
+    
     func actions(for device: Device) -> [ServiceAction]
     func performAction(_ id: ServiceAction.Id, forDevice device: Device)
 }
