@@ -133,19 +133,14 @@ public struct SocketAddress: CustomStringConvertible {
     }
     
     init?(ipv4: String) {
-        let components = ipv4.components(separatedBy: CharacterSet(charactersIn: "."))
-        guard components.count == 4 else { return nil }
-        guard let byte1 = UInt8(components[0]) else { return nil }
-        guard let byte2 = UInt8(components[1]) else { return nil }
-        guard let byte3 = UInt8(components[2]) else { return nil }
-        guard let byte4 = UInt8(components[3]) else { return nil }
-        
-        let addr: UInt32 = (in_addr_t(byte4) << 24) | (in_addr_t(byte3) << 16) | (in_addr_t(byte2) << 8) | in_addr_t(byte1)
+        var addr: in_addr_t = 0
+        guard let buffer: [Int8] = ipv4.cString(using: .ascii) else { return nil }
+        guard inet_pton(AF_INET, buffer, &addr) != 0 else { return nil }
         
         let ptr: UnsafeMutablePointer<sockaddr_in> = self.pointer()
         ptr.pointee.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)
         ptr.pointee.sin_family = sa_family_t(AF_INET)
-        ptr.pointee.sin_addr = in_addr(s_addr: addr.bigEndian)
+        ptr.pointee.sin_addr = in_addr(s_addr: addr)
     }
     
     
