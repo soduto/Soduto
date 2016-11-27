@@ -33,6 +33,10 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     
     // MARK: Types
     
+    public enum ConnectionError: Error {
+        case setSocketOptionFailed(code: Int32)
+    }
+    
     public enum State {
         case Initializing
         case Open
@@ -102,6 +106,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
             Swift.print("Could not connect to address \(address): \(error)")
             return nil
         }
+        self.configureSocket()
     }
     
     init?(socket: GCDAsyncSocket, config: ConnectionConfiguration) {
@@ -116,6 +121,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
         super.init()
         
         self.socket.delegate = self
+        self.configureSocket()
     }
     
     deinit {
@@ -318,6 +324,40 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
 
     
     // MARK: Private
+    
+    private func configureSocket() {
+        self.socket.perform {
+            if self.socket.isIPv4 {
+                do {
+                    let nativeSocket = self.socket.socket4FD()
+                    try self.setSockOpt(socket: nativeSocket, level: SOL_SOCKET, optionName: SO_KEEPALIVE, optionValue: 1)
+                    try self.setSockOpt(socket: nativeSocket, level: IPPROTO_TCP, optionName: TCP_KEEPALIVE, optionValue: 10)
+                }
+                catch {
+                    Swift.print("Failed to configure socket for connection \(self): \(error)")
+                }
+            }
+            
+            if self.socket.isIPv6 {
+                do {
+                    let nativeSocket = self.socket.socket6FD()
+                    try self.setSockOpt(socket: nativeSocket, level: SOL_SOCKET, optionName: SO_KEEPALIVE, optionValue: 1)
+                    try self.setSockOpt(socket: nativeSocket, level: IPPROTO_TCP, optionName: TCP_KEEPALIVE, optionValue: 10)
+                }
+                catch {
+                    Swift.print("Failed to configure socket for connection \(self): \(error)")
+                }
+            }
+        }
+    }
+    
+    private func setSockOpt(socket: Int32, level: Int32, optionName: Int32, optionValue: Int32) throws {
+        var value = optionValue // need writable value
+        let result = setsockopt(socket, level, optionName, &value, UInt32(MemoryLayout<Int32>.size))
+        if result != 0 {
+            throw ConnectionError.setSocketOptionFailed(code: errno)
+        }
+    }
     
     private func readNextPacket() {
         self.socket.readData(to: Connection.packetsDelimiter, withTimeout: -1, tag: 0)
