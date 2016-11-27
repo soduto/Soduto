@@ -8,12 +8,6 @@
 
 import Foundation
 
-public enum PairingHandlerError: Error {
-    case AlreadyPaired
-    case PairingAlreadyRequested
-    case DeclinedByPeer
-}
-
 public protocol PairingHandlerDelegate: class {
     
     func send(_ packet: DataPacket)
@@ -23,78 +17,33 @@ public protocol PairingHandlerDelegate: class {
 }
 
 
-
-/**
- 
- Pairing data packet utilities
- 
- */
-public extension DataPacket {
-    
-    public static let PairingPacketType = "kdeconnect.pair"
-    
-    public enum PairingProperty: String {
-        case PairFlag = "pair"
-    }
-    
-    public enum PairingError: Error {
-        case WrongType
-        case InvalidPairFlag
-    }
-    
-    public static func pairPacket() -> DataPacket {
-        let body: Body = [
-            PairingProperty.PairFlag.rawValue: NSNumber(value: true)
-        ]
-        let packet = DataPacket(type: PairingPacketType, body: body)
-        return packet
-    }
-    
-    public static func unpairPacket() -> DataPacket {
-        let body: Body = [
-            PairingProperty.PairFlag.rawValue: NSNumber(value: false)
-        ]
-        let packet = DataPacket(type: PairingPacketType, body: body)
-        return packet
-    }
-    
-    public func getPairFlag() throws -> Bool {
-        try self.validatePairingType()
-        guard let tcpPort = body[PairingProperty.PairFlag.rawValue] as? NSNumber else { throw PairingError.InvalidPairFlag }
-        return tcpPort.boolValue
-    }
-    
-    public func validatePairingType() throws {
-        guard type == DataPacket.PairingPacketType else { throw PairingError.WrongType }
-    }
-}
-
-
-
-/**
- 
- Implement default data packets based pairing functionality
- 
- */
+/// Implement default data packets based pairing functionality
 public class DefaultPairingHandler: ConnectionDataPacketHandler, Pairable {
+    
+    // MARK: Types
+    
+    public enum Error: Swift.Error {
+        case alreadyPaired
+        case pairingAlreadyRequested
+        case declinedByPeer
+    }
+    
+    
+    // MARK: Properties
     
     static let pairingTimoutInterval: TimeInterval = 30.0
     
-    
-    /** 
-     A delegate object providing needed services for this handler (like packets sendings)
-     */
+    /// A delegate object providing needed services for this handler (like packets sendings)
     public weak var delegate: PairingHandlerDelegate? = nil
     
-    /**
-     Identity to be used when calling `pairingDelegate` functions. If nil - self would be used
-     */
+    /// Identity to be used when calling `pairingDelegate` functions. If nil - self would be used
     public weak var impersonateAs: PairableClass? = nil
     
     private let config: DeviceConfiguration
     private var pairingTimeout: Timer? = nil
     
     
+    // MARK: Init / Deinit
     
     public init(config: DeviceConfiguration) {
         self.config = config
@@ -102,13 +51,12 @@ public class DefaultPairingHandler: ConnectionDataPacketHandler, Pairable {
     }
     
     
-    
     // MARK: DataPacketsHandler
     
     public func handleDataPacket(_ dataPacket:DataPacket, onConnection connection:Connection) -> Bool {
         assert(self.delegate != nil, "Delegate required for \(type(of: self))")
         
-        if dataPacket.type == DataPacket.PairingPacketType {
+        if dataPacket.isPairingPacket {
             do {
                 let pairFlag = try dataPacket.getPairFlag()
                 if pairFlag {
@@ -141,7 +89,7 @@ public class DefaultPairingHandler: ConnectionDataPacketHandler, Pairable {
                 }
                 else {
                     if self.pairingStatus == .Requested {
-                        self.pairingDelegate?.pairable(self.impersonateAs ?? self, failedWithError: PairingHandlerError.DeclinedByPeer)
+                        self.pairingDelegate?.pairable(self.impersonateAs ?? self, failedWithError: Error.declinedByPeer)
                     }
                     self.pairingStatus = .Unpaired
                 }
@@ -160,7 +108,6 @@ public class DefaultPairingHandler: ConnectionDataPacketHandler, Pairable {
         }
         return false
     }
-    
     
     
     // MARK: Pairable
@@ -208,10 +155,10 @@ public class DefaultPairingHandler: ConnectionDataPacketHandler, Pairable {
             self.acceptPairing()
             break
         case .Requested:
-            self.pairingDelegate?.pairable(self.impersonateAs ?? self, failedWithError: PairingHandlerError.PairingAlreadyRequested)
+            self.pairingDelegate?.pairable(self.impersonateAs ?? self, failedWithError: Error.pairingAlreadyRequested)
             break
         case .Paired:
-            self.pairingDelegate?.pairable(self.impersonateAs ?? self, failedWithError: PairingHandlerError.AlreadyPaired)
+            self.pairingDelegate?.pairable(self.impersonateAs ?? self, failedWithError: Error.alreadyPaired)
             break
         }
     }
@@ -276,5 +223,58 @@ public class DefaultPairingHandler: ConnectionDataPacketHandler, Pairable {
         else {
             self.pairingStatus = .Unpaired
         }
+    }
+}
+
+
+// MARK: - DataPacket (Pairing)
+
+/// Pairing data packet utilities
+public extension DataPacket {
+    
+    // MARK: Types
+    
+    public enum PairingProperty: String {
+        case pairFlag = "pair"
+    }
+    
+    public enum PairingError: Error {
+        case wrongType
+        case invalidPairFlag
+    }
+    
+    
+    // MARK: Properties
+    
+    public static let pairingPacketType = "kdeconnect.pair"
+    
+    public var isPairingPacket: Bool { return self.type == DataPacket.pairingPacketType }
+    
+    
+    // MARK: Public static methods
+    
+    public static func pairPacket() -> DataPacket {
+        return DataPacket(type: pairingPacketType, body: [
+            PairingProperty.pairFlag.rawValue: NSNumber(value: true)
+        ])
+    }
+    
+    public static func unpairPacket() -> DataPacket {
+        return DataPacket(type: pairingPacketType, body: [
+            PairingProperty.pairFlag.rawValue: NSNumber(value: false)
+        ])
+    }
+    
+    
+    // MARK: Public methods
+    
+    public func getPairFlag() throws -> Bool {
+        try self.validatePairingType()
+        guard let value = body[PairingProperty.pairFlag.rawValue] as? NSNumber else { throw PairingError.invalidPairFlag }
+        return value.boolValue
+    }
+    
+    public func validatePairingType() throws {
+        guard isPairingPacket else { throw PairingError.wrongType }
     }
 }

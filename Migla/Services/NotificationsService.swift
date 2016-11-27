@@ -216,7 +216,7 @@ public class NotificationsService: Service, UserNotificationActionHandler {
 }
 
 
-// MARK: - NotificationDataPacket
+// MARK: - DataPacket (Notifications)
 
 /// Notifications service data packet utilities
 public extension DataPacket {
@@ -255,6 +255,8 @@ public extension DataPacket {
     // MARK: Properties
     
     public static let notificationPacketType = "kdeconnect.notification"
+    
+    public var isNotificationPacket: Bool { return self.type == DataPacket.notificationPacketType }
     
     
     // MARK: Public static methods
@@ -336,8 +338,6 @@ public extension DataPacket {
         guard let value = body[NotificationProperty.requestAnswer.rawValue] as? NSNumber else { throw NotificationError.invalidAnswerFlag }
         return value.boolValue
     }
-    
-    public var isNotificationPacket: Bool { return self.type == DataPacket.notificationPacketType }
     
     public func validateNotificationType() throws {
         guard self.isNotificationPacket else { throw NotificationError.wrongType }
