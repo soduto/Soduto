@@ -47,7 +47,10 @@ public class DefaultPairingHandler: ConnectionDataPacketHandler, Pairable {
     
     public init(config: DeviceConfiguration) {
         self.config = config
-        self.pairingStatus = self.config.isPaired ? .Paired : .Unpaired
+        self.pairingStatus = .Unpaired
+        if self.config.isPaired {
+            self.trySetPaired()
+        }
     }
     
     
