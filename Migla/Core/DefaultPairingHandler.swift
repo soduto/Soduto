@@ -170,29 +170,29 @@ public class DefaultPairingHandler: ConnectionDataPacketHandler, Pairable {
     public private(set) var pairingStatus: PairingStatus {
         willSet {
             assert(newValue != .Paired || self.canSetPaired(), "Can't set pairingStatus to .Paired. Should always use trySetPaired method to safely set paierd status")
+        }
+        didSet {
+            guard self.pairingStatus != oldValue else { return }
+            
+            if self.pairingStatus == .Unpaired {
+                self.config.certificate = nil
+            }
             
             self.pairingTimeout?.invalidate()
             self.pairingTimeout = nil
-        }
-        didSet {
-            if self.pairingStatus == .Paired && !self.canSetPaired() {
-                Swift.print("Can't set pairingStatus to .Paired. Should always use trySetPaired method to")
-                self.pairingStatus = .Unpaired
-            }
-            if self.pairingStatus != oldValue {
-                if self.pairingStatus == .Unpaired {
-                    self.config.certificate = nil
+            
+            if self.pairingStatus == .Requested || self.pairingStatus == .RequestedByPeer {
+                let status = self.pairingStatus
+                let timeoutInterval = DefaultPairingHandler.pairingTimoutInterval
+                self.pairingTimeout = Timer.scheduledTimer(withTimeInterval: timeoutInterval, repeats: false) { (timer) in
+                    // Every change to pairingStatus should invalidate previous timeout, 
+                    // so if we are here, pairingStatus should still be the same
+                    assert(self.pairingStatus == status, "pairingStatus expected to not be changed")
+                    self.declinePairing()
                 }
-                if self.pairingStatus == .Requested || self.pairingStatus == .RequestedByPeer {
-                    self.pairingTimeout = Timer(timeInterval: DefaultPairingHandler.pairingTimoutInterval, repeats: false, block: { (timer) in
-                        // Every change to pairingStatus should invalidate previous timeout, so if we are here, pairingStatus should still be the same
-                        assert(self.pairingStatus == .Requested || self.pairingStatus == .RequestedByPeer, "pairingStatus expected to not be changed")
-                        self.declinePairing()
-                    })
-                    RunLoop.current.add(self.pairingTimeout!, forMode: .defaultRunLoopMode)
-                }
-                self.pairingDelegate?.pairable(self.impersonateAs ?? self, statusChanged: self.pairingStatus)
             }
+            
+            self.pairingDelegate?.pairable(self.impersonateAs ?? self, statusChanged: self.pairingStatus)
         }
     }
     
@@ -225,7 +225,7 @@ public class DefaultPairingHandler: ConnectionDataPacketHandler, Pairable {
         
         // We need to send pair packet before setting pairedStatus.
         // Otherwise pairing status notifications might trigger other data packets to be sent and if 
-        // such packets are sent befor pairing, they might be discarded or even cause other device to unpair
+        // such packets are sent befor pairing, they might be discarded or even cause other device to cancel pairing
         if self.canSetPaired() {
             self.delegate?.send(DataPacket.pairPacket())
             self.trySetPaired()
