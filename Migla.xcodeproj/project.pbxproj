@@ -16,6 +16,7 @@
 		8456F4A81D7DE393006EFE19 /* Pairable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456F4A71D7DE393006EFE19 /* Pairable.swift */; };
 		8456F4AA1D7DEA47006EFE19 /* DefaultPairingHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456F4A91D7DEA47006EFE19 /* DefaultPairingHandler.swift */; };
 		8468BDFB1DE8F10D003B9925 /* NotificationsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8468BDFA1DE8F10D003B9925 /* NotificationsService.swift */; };
+		8468BE001DEB7F97003B9925 /* NetworkUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8468BDFF1DEB7F97003B9925 /* NetworkUtils.swift */; };
 		847EF4C51DC9049D00360BBE /* MiglaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847EF4C41DC9049D00360BBE /* MiglaTests.swift */; };
 		849237991DE06EBC00D95BBA /* ServiceAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849237981DE06EBC00D95BBA /* ServiceAction.swift */; };
 		8492379D1DE1C55900D95BBA /* DeviceMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8492379C1DE1C55900D95BBA /* DeviceMenu.swift */; };
@@ -30,6 +31,7 @@
 		849961C61D5728B2002B893A /* ExceptionUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 849961C51D5728B2002B893A /* ExceptionUtils.m */; };
 		8499620E1D5728EE002B893A /* Test_Assertions.m in Sources */ = {isa = PBXBuildFile; fileRef = 849961F31D5728EE002B893A /* Test_Assertions.m */; };
 		849962131D572B1F002B893A /* Logging.m in Sources */ = {isa = PBXBuildFile; fileRef = 849962121D572B1F002B893A /* Logging.m */; };
+		84C613E31DECBF6C00CE7F7A /* UploadTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C613E21DECBF6B00CE7F7A /* UploadTask.swift */; };
 		84D903A21DC696A600E61DA7 /* CertificateUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D903A11DC696A600E61DA7 /* CertificateUtils.swift */; };
 		84FA45D71DDDCB3D00EF3992 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA45CF1DDDCB3D00EF3992 /* Connection.swift */; };
 		84FA45D81DDDCB3D00EF3992 /* ConnectionProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA45D01DDDCB3D00EF3992 /* ConnectionProvider.swift */; };
@@ -98,6 +100,7 @@
 		8456F4A71D7DE393006EFE19 /* Pairable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pairable.swift; sourceTree = "<group>"; };
 		8456F4A91D7DEA47006EFE19 /* DefaultPairingHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultPairingHandler.swift; sourceTree = "<group>"; };
 		8468BDFA1DE8F10D003B9925 /* NotificationsService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationsService.swift; sourceTree = "<group>"; };
+		8468BDFF1DEB7F97003B9925 /* NetworkUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkUtils.swift; sourceTree = "<group>"; };
 		847EF4C21DC9049D00360BBE /* MiglaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MiglaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		847EF4C41DC9049D00360BBE /* MiglaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiglaTests.swift; sourceTree = "<group>"; };
 		847EF4C61DC9049D00360BBE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -121,6 +124,7 @@
 		849962121D572B1F002B893A /* Logging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Logging.m; path = MYUtilities/Logging.m; sourceTree = "<group>"; };
 		8499621A1D57438E002B893A /* CocoaAsyncSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CocoaAsyncSocket.xcodeproj; path = Migla/CocoaAsyncSocket/CocoaAsyncSocket.xcodeproj; sourceTree = "<group>"; };
 		849962271D574530002B893A /* CocoaAsyncSocket.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaAsyncSocket.framework; path = Migla/CocoaAsyncSocket/build/Debug/CocoaAsyncSocket.framework; sourceTree = "<group>"; };
+		84C613E21DECBF6B00CE7F7A /* UploadTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadTask.swift; sourceTree = "<group>"; };
 		84D903A11DC696A600E61DA7 /* CertificateUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CertificateUtils.swift; sourceTree = "<group>"; };
 		84FA45CF1DDDCB3D00EF3992 /* Connection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
 		84FA45D01DDDCB3D00EF3992 /* ConnectionProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionProvider.swift; sourceTree = "<group>"; };
@@ -236,6 +240,7 @@
 		8456F4A41D7DE31A006EFE19 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				8468BDFE1DEB7F5F003B9925 /* Utils */,
 				84D903A11DC696A600E61DA7 /* CertificateUtils.swift */,
 				8450274A1DAABB9900C20247 /* Configuration.swift */,
 				84FA45CF1DDDCB3D00EF3992 /* Connection.swift */,
@@ -250,8 +255,17 @@
 				84FA45E71DDE088B00EF3992 /* ServiceManager.swift */,
 				84FA45D51DDDCB3D00EF3992 /* SocketAddress.swift */,
 				84FA45D61DDDCB3D00EF3992 /* UnsafePointersUtils.swift */,
+				84C613E21DECBF6B00CE7F7A /* UploadTask.swift */,
 			);
 			path = Core;
+			sourceTree = "<group>";
+		};
+		8468BDFE1DEB7F5F003B9925 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				8468BDFF1DEB7F97003B9925 /* NetworkUtils.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 		847EF4C31DC9049D00360BBE /* MiglaTests */ = {
@@ -455,6 +469,7 @@
 			files = (
 				8468BDFB1DE8F10D003B9925 /* NotificationsService.swift in Sources */,
 				84218DC81D789BAB00C7CEBE /* DeviceListItemView.swift in Sources */,
+				84C613E31DECBF6C00CE7F7A /* UploadTask.swift in Sources */,
 				84FA45E81DDE088B00EF3992 /* ServiceManager.swift in Sources */,
 				84FA45DB1DDDCB3D00EF3992 /* DeviceManager.swift in Sources */,
 				849962131D572B1F002B893A /* Logging.m in Sources */,
@@ -481,6 +496,7 @@
 				849237991DE06EBC00D95BBA /* ServiceAction.swift in Sources */,
 				8456F4A81D7DE393006EFE19 /* Pairable.swift in Sources */,
 				84FA45D81DDDCB3D00EF3992 /* ConnectionProvider.swift in Sources */,
+				8468BE001DEB7F97003B9925 /* NetworkUtils.swift in Sources */,
 				84D903A21DC696A600E61DA7 /* CertificateUtils.swift in Sources */,
 				84FA45DD1DDDCB3D00EF3992 /* SocketAddress.swift in Sources */,
 				84FA45E61DDDE87F00EF3992 /* AppDelegate.swift in Sources */,

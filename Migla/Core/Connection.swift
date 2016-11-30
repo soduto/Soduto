@@ -16,7 +16,7 @@ public enum ConnectionError: Error {
 
 public protocol ConnectionDelegate: class {
     func connection(_ connection:Connection, didSwitchToState:Connection.State)
-    func connection(_ connection:Connection, didSendPacket:DataPacket)
+    func connection(_ connection:Connection, didSendPacket:DataPacket, uploadedPayload: Bool)
     func connection(_ connection:Connection, didReadPacket:DataPacket)
 }
 
@@ -29,7 +29,7 @@ public protocol ConnectionDataPacketHandler {
     func handleDataPacket(_ dataPacket:DataPacket, onConnection connection:Connection) -> Bool
 }
 
-public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegate, Pairable, PairableDelegate {
+public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegate, Pairable, PairableDelegate, UploadTaskDelegate {
     
     // MARK: Types
     
@@ -43,14 +43,23 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
         case Closed
     }
     
-    public typealias SendingCompletionHandler = (() -> Void)
+    public typealias SendingCompletionHandler = ((_ packetSent: Bool, _ payloadSent: Bool) -> Void)
     
     private struct DataPacketSendingInfo {
+        
         let dataPacket: DataPacket
+        let uploadTask: UploadTask?
         let completionHandler: SendingCompletionHandler?
-        init(dataPacket: DataPacket, completionHandler: SendingCompletionHandler?) {
+        var packetSent: Bool? = nil
+        var payloadSent: Bool? = nil
+        
+        init(dataPacket: DataPacket, uploadTask: UploadTask?, completionHandler: SendingCompletionHandler?) {
             self.dataPacket = dataPacket
+            self.uploadTask = uploadTask
             self.completionHandler = completionHandler
+            if self.uploadTask == nil {
+                self.payloadSent = false
+            }
         }
     }
     
@@ -75,6 +84,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     private let config: ConnectionConfiguration
     private let socket: GCDAsyncSocket
     private let sslCertificates: [AnyObject]
+    private let uploadQueue = DispatchQueue(label: "Payload upload queue", qos: DispatchQoS.background, autoreleaseFrequency: .workItem)
     private var packetsToSend: [DataPacketSendingInfo] = [] // queue of packets waiting to be sent
     private var packetsExpected: Int = 0         // count of packets to read befor stopping automatic reading, -1 for unlimited count
     private var waitingToSecure: Bool = false
@@ -106,7 +116,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
             Swift.print("Could not connect to address \(address): \(error)")
             return nil
         }
-        self.configureSocket()
+//        self.configureSocket()
     }
     
     init?(socket: GCDAsyncSocket, config: ConnectionConfiguration) {
@@ -142,33 +152,23 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
         self.packetHandlers.append(self.pairingHandler!)
     }
     
-    public func secureServer() throws {
+    public func secureServer() {
         assert(self.state == .Initializing, "Connection initialization already finished")
         assert(self.identity != nil, "Identity expected to be known before securing connection")
         
-        let settings: [String:NSObject] = [
-            kCFStreamSSLCertificates as String: self.sslCertificates as NSArray,
-            kCFStreamSSLIsServer as String: NSNumber(value: true),
-            GCDAsyncSocketSSLClientSideAuthenticate as String: NSNumber(value: SSLAuthenticate.alwaysAuthenticate.rawValue),
-            GCDAsyncSocketManuallyEvaluateTrust as String: NSNumber(value: true)
-        ]
-        self.socket.startTLS(settings)
+        self.secureServerSocket(self.socket)
         self.waitingToSecure = true
     }
     
-    public func secureClient() throws {
+    public func secureClient() {
         assert(self.state == .Initializing, "Connection initialization already finished")
         assert(self.identity != nil, "Identity expected to be known before securing connection")
         
-        let settings: [String:NSObject] = [
-            kCFStreamSSLCertificates as String: self.sslCertificates as NSArray,
-            GCDAsyncSocketManuallyEvaluateTrust as String: NSNumber(value: true)
-        ]
-        self.socket.startTLS(settings)
+        self.secureClientSocket(self.socket)
         self.waitingToSecure = true
     }
     
-    public func finishInitialization() throws {
+    public func finishInitialization() {
         assert(self.state == .Initializing, "Connection initialization already finished")
         assert(self.identity != nil, "Connection identity must be set before finishing initialization")
         
@@ -183,13 +183,26 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     
     // MARK: Public API
     
-    public func send(_ packet: DataPacket, whenCompleted: SendingCompletionHandler? = nil) {
-        let info = DataPacketSendingInfo(dataPacket: packet, completionHandler: whenCompleted)
-        self.packetsToSend.append(info)
+    public func send(_ dataPacket: DataPacket, whenCompleted: SendingCompletionHandler? = nil) {
+        var packet = dataPacket
+        
+        let uploadTask: UploadTask?
+        if packet.hasPayload() {
+            uploadTask = UploadTask(packet: packet, connection: self, readQueue: self.uploadQueue)
+            uploadTask?.delegate = self
+            packet.payloadInfo = uploadTask?.payloadInfo
+        }
+        else {
+            uploadTask = nil
+        }
+        
         if let bytes = try? packet.serialize() {
             let data = Data(bytes: bytes)
             self.socket.write(data, withTimeout: -1, tag: Int(packet.id))
         }
+        
+        let info = DataPacketSendingInfo(dataPacket: packet, uploadTask: uploadTask, completionHandler: whenCompleted)
+        self.packetsToSend.append(info)
     }
     
     public func send(_ packet: DataPacket) {
@@ -211,6 +224,38 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
         self.state = .Closed
     }
     
+    /// Helper function to secure any server socket equivalently as this connection secures
+    /// its own socket - with same certificates and settings
+    public func secureServerSocket(_ socket: GCDAsyncSocket) {
+        let settings: [String:NSObject] = [
+            kCFStreamSSLCertificates as String: self.sslCertificates as NSArray,
+            kCFStreamSSLIsServer as String: NSNumber(value: true),
+            GCDAsyncSocketSSLClientSideAuthenticate as String: NSNumber(value: SSLAuthenticate.alwaysAuthenticate.rawValue),
+            GCDAsyncSocketManuallyEvaluateTrust as String: NSNumber(value: true)
+        ]
+        socket.startTLS(settings)
+    }
+    
+    /// Helper function to secure any client socket equivalently as this connection secures
+    /// its own socket - with same certificates and settings
+    public func secureClientSocket(_ socket: GCDAsyncSocket) {
+        let settings: [String:NSObject] = [
+            kCFStreamSSLCertificates as String: self.sslCertificates as NSArray,
+            GCDAsyncSocketManuallyEvaluateTrust as String: NSNumber(value: true)
+        ]
+        self.socket.startTLS(settings)
+    }
+    
+    /// Helper function to validate peer certificate equivalently as this connection validates
+    /// its own connections
+    public func shouldTrustPeerCertificate(_ peerCertificate: SecCertificate) -> Bool {
+        assert(self.identity != nil, "Identity expected to be known before securing connection and evaluating trust")
+        
+        guard let deviceId = try? self.identity!.getDeviceId() else { return false }
+        guard let savedCertificate = self.config.deviceConfig(for: deviceId).certificate else { return false }
+        return CertificateUtils.compareCertificates(savedCertificate, peerCertificate)
+    }
+    
     
     // MARK: GCDAsyncSocketDelegate
     
@@ -224,12 +269,16 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
         let indexOpt = self.packetsToSend.index { packetInfo -> Bool in
             return Int(packetInfo.dataPacket.id) == tag
         }
-        if let index = indexOpt {
+        guard let index = indexOpt else { return }
+        
+        self.packetsToSend[index].packetSent = true
+        
+        if let payloadSent = self.packetsToSend[index].payloadSent {
             let packetInfo = self.packetsToSend.remove(at: index)
             if let completionHandler = packetInfo.completionHandler {
-                completionHandler()
+                completionHandler(true, payloadSent)
             }
-            self.delegate?.connection(self, didSendPacket: packetInfo.dataPacket)
+            self.delegate?.connection(self, didSendPacket: packetInfo.dataPacket, uploadedPayload: payloadSent)
         }
     }
     
@@ -268,6 +317,27 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     
     public func socket(_ sock: GCDAsyncSocket, didReceive trust: SecTrust, completionHandler: @escaping (Bool) -> Swift.Void) {
         completionHandler(self.shouldTrustPeer(trust))
+    }
+    
+    
+    // MARK: UploadTaskDelegate
+    
+    public func uploadTask(_ task: UploadTask, finishedWithSuccess payloadSent: Bool) {
+        Swift.print("Connction.uploadTask:finishedWithSuccess: \(task) \(payloadSent)")
+        
+        guard let index = self.packetsToSend.index(where: { $0.uploadTask === task }) else { return }
+        
+        self.packetsToSend[index].payloadSent = true
+        
+        assert(self.packetsToSend[index].packetSent == true, "Payload expected to be uploaded after packet is sent (since payload info is in the packet)")
+        guard let packetSent = self.packetsToSend[index].packetSent else { return }
+        guard packetSent == true else { return }
+        
+        let packetInfo = self.packetsToSend.remove(at: index)
+        if let completionHandler = packetInfo.completionHandler {
+            completionHandler(true, payloadSent)
+        }
+        self.delegate?.connection(self, didSendPacket: packetInfo.dataPacket, uploadedPayload: payloadSent)
     }
     
     
@@ -383,9 +453,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
         self.peerCertificate = peerCertificate
         
         if self.pairingStatus == .Paired {
-            guard let deviceId = try? self.identity!.getDeviceId() else { return false }
-            guard let savedCertificate = self.config.deviceConfig(for: deviceId).certificate else { return false }
-            return CertificateUtils.compareCertificates(savedCertificate, peerCertificate)
+            return self.shouldTrustPeerCertificate(peerCertificate)
         }
         else {
             return true

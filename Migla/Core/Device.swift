@@ -192,7 +192,7 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
         }
     }
     
-    public func connection(_ connection: Connection, didSendPacket packet: DataPacket) {
+    public func connection(_ connection: Connection, didSendPacket packet: DataPacket, uploadedPayload: Bool) {
         
     }
     

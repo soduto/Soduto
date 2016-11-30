@@ -19,12 +19,13 @@ public struct DataPacket: CustomStringConvertible {
     // MARK: Properties
     
     static let protocolVersion: UInt = 7
+    static let payloadSizeUndefined: Int = -1
     
     var id: Int64
     var type: String
     var body: Body
-    var payload: Stream?
-    var payloadSize: Int?
+    var payload: InputStream?
+    var payloadSize: Int = 0
     var payloadInfo: PayloadInfo?
     
     public var description: String {
@@ -81,15 +82,23 @@ public struct DataPacket: CustomStringConvertible {
     }
     
     func serialize(options: JSONSerialization.WritingOptions) throws -> [UInt8] {
-        let dict: [String: AnyObject] = [
+        var dict: [String: AnyObject] = [
             "id": NSNumber(value: self.id),
             "type": self.type as AnyObject,
             "body": self.body as AnyObject
         ]
+        if self.hasPayload() {
+            dict["payloadSize"] = NSNumber(value: self.payloadSize)
+            dict["payloadTransferInfo"] = self.payloadInfo as AnyObject
+        }
         let data = try JSONSerialization.data(withJSONObject: dict, options: options)
         var bytes = [UInt8](data)
         bytes.append(UInt8(ascii: "\n"))
         return bytes
+    }
+    
+    public func hasPayload() -> Bool {
+        return self.payloadSize > 0 && self.payload != nil
     }
 }
 

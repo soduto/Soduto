@@ -82,6 +82,55 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
             address.port = ConnectionProvider.udpPort
             self.udpSocket.send(data, toAddress: address.data, withTimeout: 120, tag: Int(packet.id))
         }
+        
+        
+        //////
+        
+//        var connectionAddress = SocketAddress(ipv4: "192.168.0.102")!
+//        connectionAddress.port = 1716
+//        
+//        let body: DataPacket.Body = [
+//            DataPacket.IdentityProperty.deviceId.rawValue: "d43cf2509a41f10d" as AnyObject,
+//            DataPacket.IdentityProperty.deviceName.rawValue: "LG G2 (fake)" as AnyObject,
+//            DataPacket.IdentityProperty.deviceType.rawValue: "phone" as AnyObject,
+//            DataPacket.IdentityProperty.protocolVersion.rawValue: NSNumber(value: DataPacket.protocolVersion),
+//            DataPacket.IdentityProperty.outgoingCapabilities.rawValue: [
+//                "kdeconnect.ping",
+//                "kdeconnect.sftp",
+//                "kdeconnect.runcommand.request",
+//                "kdeconnect.share.request",
+//                "kdeconnect.mpris.request",
+//                "kdeconnect.notification.request",
+//                "kdeconnect.clipboard",
+//                "kdeconnect.telephony",
+//                "kdeconnect.mousepad.request",
+//                "kdeconnect.notification",
+//                "kdeconnect.battery"
+//            ] as AnyObject,
+//            DataPacket.IdentityProperty.incomingCapabilities.rawValue: [
+//                "kdeconnect.ping",
+//                "kdeconnect.share.request",
+//                "kdeconnect.mpris",
+//                "kdeconnect.notification.request",
+//                "kdeconnect.clipboard",
+//                "kdeconnect.sms.request",
+//                "kdeconnect.telephony.request",
+//                "kdeconnect.sftp.request",
+//                "kdeconnect.runcommand",
+//                "kdeconnect.notification",
+//                "kdeconnect.findmyphone.request",
+//                "kdeconnect.battery.request"
+//            ] as AnyObject
+//        ]
+//        let identity = DataPacket(type: DataPacket.identityPacketType, body: body)
+//        
+//        if let connection = Connection(address: connectionAddress, identityPacket: identity, config: self.config) {
+//            connection.delegate = self
+//            self.pendingConnections.insert(connection)
+//            
+//            // send initial identity packet
+//            connection.send(DataPacket.identityPacket(config: self.config))
+//        }
     }
     
     
@@ -159,7 +208,7 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
         }
     }
     
-    public func connection(_ connection: Connection, didSendPacket packet: DataPacket) {
+    public func connection(_ connection: Connection, didSendPacket packet: DataPacket, uploadedPayload: Bool) {
         Swift.print("ConnectionProvider.connection:didSendPacket: \(connection) \(packet)")
         
         do {
@@ -167,9 +216,9 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
             let protocolVersion = try identity.getProtocolVersion()
             if protocolVersion >= ConnectionProvider.minVersionWithSSLSupport {
                 // Beware that securing as server while connection initiated by self
-                try connection.secureServer()
+                connection.secureServer()
             }
-            try connection.finishInitialization()
+            connection.finishInitialization()
         }
         catch {
             Swift.print("Failed to initialize connection: \(error)")
@@ -186,9 +235,9 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
             let protocolVersion = try packet.getProtocolVersion()
             if protocolVersion >= ConnectionProvider.minVersionWithSSLSupport {
                 // Beware that securing as client while connection initiated by the peer
-                try connection.secureClient()
+                connection.secureClient()
             }
-            try connection.finishInitialization()
+            connection.finishInitialization()
         }
         catch {
             Swift.print("Failed to initialize connection: \(error)")

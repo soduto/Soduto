@@ -4,3 +4,8 @@
 
 #import "MyAnonymousIdentity.h"
 #import <CommonCrypto/CommonCrypto.h>
+
+#import <netinet/if_ether.h>
+#import <net/route.h>
+#import <net/if_arp.h>
+#import <net/if_dl.h>
