@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		840FC2F91DEF6AF400AC4824 /* ClipboardService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840FC2F81DEF6AF400AC4824 /* ClipboardService.swift */; };
 		84218DC81D789BAB00C7CEBE /* DeviceListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84218DC71D789BAB00C7CEBE /* DeviceListItemView.swift */; };
 		8421A8E21D75FF05008AC833 /* PreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8421A8E01D75FF05008AC833 /* PreferencesWindow.xib */; };
 		8421A8E71D761409008AC833 /* PreferencesWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8421A8E61D761409008AC833 /* PreferencesWindowController.swift */; };
@@ -87,6 +88,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		840FC2F81DEF6AF400AC4824 /* ClipboardService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClipboardService.swift; sourceTree = "<group>"; };
 		841E814C1D809C360096A846 /* Migla.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Migla.entitlements; sourceTree = "<group>"; };
 		84218DC71D789BAB00C7CEBE /* DeviceListItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceListItemView.swift; sourceTree = "<group>"; };
 		8421A8E11D75FF05008AC833 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindow.xib; sourceTree = "<group>"; };
@@ -320,6 +322,7 @@
 				84FA45EC1DDF525200EF3992 /* PingService.swift */,
 				849237A01DE224CF00D95BBA /* FindMyPhoneService.swift */,
 				8468BDFA1DE8F10D003B9925 /* NotificationsService.swift */,
+				840FC2F81DEF6AF400AC4824 /* ClipboardService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -472,6 +475,7 @@
 				84C613E31DECBF6C00CE7F7A /* UploadTask.swift in Sources */,
 				84FA45E81DDE088B00EF3992 /* ServiceManager.swift in Sources */,
 				84FA45DB1DDDCB3D00EF3992 /* DeviceManager.swift in Sources */,
+				840FC2F91DEF6AF400AC4824 /* ClipboardService.swift in Sources */,
 				849962131D572B1F002B893A /* Logging.m in Sources */,
 				849961B91D5726B0002B893A /* MYAnonymousIdentity.m in Sources */,
 				84FA45EA1DDF433400EF3992 /* Service.swift in Sources */,
