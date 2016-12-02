@@ -77,8 +77,6 @@ public class ShareService: Service {
                 guard let filename = url.pathComponents.last else { return }
                 guard let stream = InputStream(url: url) else { return }
                 
-                stream.open()
-                
                 let fileSize = self.fileSize(path: url.path)
                 device.send(DataPacket.sharePacket(fileStream: stream, fileSize: fileSize, fileName: filename))
             }

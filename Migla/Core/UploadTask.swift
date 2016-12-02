@@ -105,7 +105,7 @@ public class UploadTask: NSObject, GCDAsyncSocketDelegate {
     }
     
     public func socket(_ sock: GCDAsyncSocket, didWriteDataWithTag tag: Int) {
-        self.trySend(to: sock)
+        self.trySending(to: sock)
     }
     
     public func socketDidDisconnect(_ sock: GCDAsyncSocket, withError err: Error?) {
@@ -126,9 +126,7 @@ public class UploadTask: NSObject, GCDAsyncSocketDelegate {
     }
     
     public func socketDidSecure(_ sock: GCDAsyncSocket) {
-        // Try schedule 2 batches at once to exploit concurrency - one batch could be sent while another is being prepared
-        self.trySend(to: sock)
-        self.trySend(to: sock)
+        self.beginSending(to: sock)
     }
     
     public func socket(_ sock: GCDAsyncSocket, didReceive trust: SecTrust, completionHandler: @escaping (Bool) -> Swift.Void) {
@@ -138,7 +136,14 @@ public class UploadTask: NSObject, GCDAsyncSocketDelegate {
     
     // MARK: Private methods
     
-    private func trySend(to: GCDAsyncSocket) {
+    private func beginSending(to sock: GCDAsyncSocket) {
+        // Try schedule 2 batches at once to exploit concurrency - one batch could be sent while another is being prepared
+        self.payload.open()
+        self.trySending(to: sock)
+        self.trySending(to: sock)
+    }
+    
+    private func trySending(to sock: GCDAsyncSocket) {
         
         var batchBytesSent = 0 // bytes sent per this trySend call
         while self.payload.hasBytesAvailable {
@@ -156,7 +161,7 @@ public class UploadTask: NSObject, GCDAsyncSocketDelegate {
             guard read > 0 else { continue }
             
             let data = Data(bytes: &self.readBuffer, count: read)
-            self.uploadingSocket?.write(data, withTimeout: UploadTask.uploadTimeout, tag: Int(self.bytesSent + Int64(read)))
+            sock.write(data, withTimeout: UploadTask.uploadTimeout, tag: Int(self.bytesSent + Int64(read)))
             
             batchBytesSent += read
             self.bytesSent += Int64(read)
@@ -165,7 +170,7 @@ public class UploadTask: NSObject, GCDAsyncSocketDelegate {
         }
         
         if (self.payloadSize != nil && self.bytesSent >= self.payloadSize!) || !self.payload.hasBytesAvailable {
-            self.uploadingSocket?.disconnectAfterWriting()
+            sock.disconnectAfterWriting()
             self.payload.close()
         }
     }
