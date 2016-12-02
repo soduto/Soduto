@@ -43,7 +43,27 @@ public class ShareService: Service {
         guard dataPacket.isSharePacket else { return false }
         
         // TODO: implement proper handling of incoming packets
+        
         Swift.print("handleDataPacket:fromDevice:onConnection: \(dataPacket.description) \(device) \(connection)");
+        
+        do {
+            if let text = try dataPacket.getText() {
+                let directory = NSTemporaryDirectory()
+                let fileName = try dataPacket.getFilename() ?? "\(UUID().uuidString).txt"
+                let fullURL = URL(fileURLWithPath: fileName, relativeTo: URL(fileURLWithPath: directory, isDirectory: true))
+                try text.write(to: fullURL, atomically: true, encoding: .utf8)
+                NSWorkspace.shared().open(fullURL)
+            }
+            else if let urlString = try dataPacket.getUrl(), let url = URL(string: urlString) {
+                NSWorkspace.shared().open(url)
+            }
+            else {
+                // TODO: handle download payload
+            }
+        }
+        catch {
+            Swift.print("Error while handling share packet: \(error)")
+        }
         
         return true
     }
