@@ -40,6 +40,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
         self.serviceManager.add(service: FindMyPhoneService())
         self.serviceManager.add(service: NotificationsService())
         self.serviceManager.add(service: ClipboardService())
+        self.serviceManager.add(service: ShareService())
         
 //        try? NetworkUtils.accessibleAddresses()
     }

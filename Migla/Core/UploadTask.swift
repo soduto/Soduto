@@ -32,18 +32,19 @@ public class UploadTask: NSObject, GCDAsyncSocketDelegate {
     
     private static let startPort: UInt16 = 1739
     private static let endPort: UInt16 = 1764
-    private static let maxBufferSize = 1024 * 4
+    private static let maxBufferSize = 1024 * 64
     private static let listenTimeout = 30.0
     private static let uploadTimeout = 30.0
     
     private let connection: Connection
     private let payload: InputStream
-    private let payloadSize: Int
+    private let payloadSize: Int64?
     private let delegateQueue: DispatchQueue
     private let listenTimeoutTimer: Timer
     private let listeningSocket: GCDAsyncSocket
     private var uploadingSocket: GCDAsyncSocket? = nil
-    private var bytesSent = 0
+    private var bytesSent: Int64 = 0
+    private var lastBytesDone: UInt = 0
     private var readBuffer = [UInt8](repeating: 0, count: UploadTask.maxBufferSize)
     
     
@@ -62,6 +63,7 @@ public class UploadTask: NSObject, GCDAsyncSocketDelegate {
         self.listeningSocket = GCDAsyncSocket(delegate: nil, delegateQueue: readQueue)
         let listeningSocket = self.listeningSocket
         self.listenTimeoutTimer = Timer(timeInterval: UploadTask.listenTimeout, repeats: false, block: { _ in
+            guard listeningSocket.isConnected else { return }
             Swift.print("Serving payload for packet \(packet) on port \(listeningSocket.localPort) has timedout")
             listeningSocket.disconnect()
         })
@@ -69,14 +71,17 @@ public class UploadTask: NSObject, GCDAsyncSocketDelegate {
         super.init()
         
         self.listeningSocket.delegate = self
+        var listening = false
         for port: UInt16 in UploadTask.startPort...UploadTask.endPort {
             do {
                 try self.listeningSocket.accept(onPort: port)
+                listening = true
                 Swift.print("Providing payload on port \(port)")
+                break
             }
             catch {}
         }
-        guard self.listeningSocket.isConnected else { return nil }
+        guard listening else { return nil }
         
         RunLoop.current.add(self.listenTimeoutTimer, forMode: .commonModes)
     }
@@ -85,14 +90,17 @@ public class UploadTask: NSObject, GCDAsyncSocketDelegate {
         // Make sure we are clean
         self.listeningSocket.disconnect()
         self.uploadingSocket?.disconnect()
+        self.payload.close()
     }
     
     
     // MARK: GCDAsyncSocketDelegate
     
     public func socket(_ sock: GCDAsyncSocket, didAcceptNewSocket newSocket: GCDAsyncSocket) {
-        self.connection.secureServerSocket(sock)
-        self.uploadingSocket = sock
+        guard self.uploadingSocket == nil else { return }
+        
+        self.connection.secureServerSocket(newSocket)
+        self.uploadingSocket = newSocket
         self.listeningSocket.disconnect()
     }
     
@@ -118,11 +126,12 @@ public class UploadTask: NSObject, GCDAsyncSocketDelegate {
     }
     
     public func socketDidSecure(_ sock: GCDAsyncSocket) {
+        // Try schedule 2 batches at once to exploit concurrency - one batch could be sent while another is being prepared
+        self.trySend(to: sock)
         self.trySend(to: sock)
     }
     
     public func socket(_ sock: GCDAsyncSocket, didReceive trust: SecTrust, completionHandler: @escaping (Bool) -> Swift.Void) {
-        
         completionHandler(self.shoulTrustPeer(trust))
     }
     
@@ -134,27 +143,30 @@ public class UploadTask: NSObject, GCDAsyncSocketDelegate {
         var batchBytesSent = 0 // bytes sent per this trySend call
         while self.payload.hasBytesAvailable {
             let bytesToRead: Int
-            if self.payloadSize == DataPacket.payloadSizeUndefined {
-                bytesToRead = UploadTask.maxBufferSize
+            if let payloadSize = self.payloadSize {
+                bytesToRead = min(Int(payloadSize - self.bytesSent), UploadTask.maxBufferSize)
             }
             else {
-                bytesToRead = min(self.payloadSize - self.bytesSent, UploadTask.maxBufferSize)
+                bytesToRead = UploadTask.maxBufferSize
             }
             
             guard bytesToRead > 0 else { break }
             
             let read = self.payload.read(&self.readBuffer, maxLength: bytesToRead)
-            let data = Data(self.readBuffer.prefix(upTo: read))
-            self.uploadingSocket?.write(data, withTimeout: UploadTask.uploadTimeout, tag: self.bytesSent + read)
+            guard read > 0 else { continue }
+            
+            let data = Data(bytes: &self.readBuffer, count: read)
+            self.uploadingSocket?.write(data, withTimeout: UploadTask.uploadTimeout, tag: Int(self.bytesSent + Int64(read)))
             
             batchBytesSent += read
-            self.bytesSent += read
+            self.bytesSent += Int64(read)
             
-            guard batchBytesSent >= UploadTask.maxBufferSize else { break }
+            guard batchBytesSent < UploadTask.maxBufferSize else { break }
         }
         
-        if self.bytesSent >= self.payloadSize || !self.payload.hasBytesAvailable {
+        if (self.payloadSize != nil && self.bytesSent >= self.payloadSize!) || !self.payload.hasBytesAvailable {
             self.uploadingSocket?.disconnectAfterWriting()
+            self.payload.close()
         }
     }
     

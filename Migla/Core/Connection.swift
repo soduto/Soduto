@@ -195,6 +195,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
         else {
             uploadTask = nil
         }
+        Swift.print("send(dataPacket:whenCompleted:", packet.description)
         
         if let bytes = try? packet.serialize() {
             let data = Data(bytes: bytes)
@@ -243,7 +244,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
             kCFStreamSSLCertificates as String: self.sslCertificates as NSArray,
             GCDAsyncSocketManuallyEvaluateTrust as String: NSNumber(value: true)
         ]
-        self.socket.startTLS(settings)
+        socket.startTLS(settings)
     }
     
     /// Helper function to validate peer certificate equivalently as this connection validates
@@ -452,7 +453,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
         guard let peerCertificate = SecTrustGetCertificateAtIndex(trust, 0) else { return false }
         self.peerCertificate = peerCertificate
         
-        if self.pairingStatus == .Paired {
+        if self.pairingHandler!.pairingStatus == .Paired {
             return self.shouldTrustPeerCertificate(peerCertificate)
         }
         else {
