@@ -29,7 +29,8 @@ public class DownloadTask: NSObject, GCDAsyncSocketDelegate {
     
     public weak var delegate: DownloadTaskDelegate? = nil
     
-    private let connection: Connection
+    public var id: Int64
+    public let connection: Connection
     private let port: UInt16
     private let payloadSize: Int64?
     private let writeQueue: DispatchQueue
@@ -46,6 +47,7 @@ public class DownloadTask: NSObject, GCDAsyncSocketDelegate {
         
         guard let port = packet.payloadInfo?[PayloadInfoProperty.port.rawValue] as? NSNumber else { return nil }
         
+        self.id = packet.id
         self.connection = connection
         self.port = port.uint16Value
         self.payloadSize = packet.payloadSize

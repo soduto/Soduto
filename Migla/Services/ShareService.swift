@@ -21,7 +21,7 @@ import Cocoa
 ///
 /// If the content transferred is a url, it can be sent in a field "url" (string).
 /// In that case, this plugin opens that url in the default browser.
-public class ShareService: Service, DownloadTaskDelegate {
+public class ShareService: Service, DownloadTaskDelegate, UserNotificationActionHandler {
     
     // MARK: Types
     
@@ -31,6 +31,10 @@ public class ShareService: Service, DownloadTaskDelegate {
     
     private enum ActionId: ServiceAction.Id {
         case shareFile
+    }
+    
+    private enum NotificationProperty: String {
+        case downloadedFileUrl = "com.migla.ShareService.download.url"
     }
     
     private struct DownloadInfo {
@@ -131,13 +135,26 @@ public class ShareService: Service, DownloadTaskDelegate {
         
         do {
             if success {
-                try self.renamePartFile(url: info.url, to: info.fileName)
+                let finalUrl = try self.renamePartFile(url: info.url, to: info.fileName)
+                self.showDownloadFinishNotification(fileName: info.fileName, downloadTask: task, succeeded: success, finalUrl: finalUrl)
             }
-            self.showDownloadFinishNotification(fileName: info.fileName, succeeded: success)
+            else {
+                self.showDownloadFinishNotification(fileName: info.fileName, downloadTask: task, succeeded: success)
+            }
         }
         catch {
-            self.showDownloadFinishNotification(fileName: info.fileName, succeeded: false)
+            self.showDownloadFinishNotification(fileName: info.fileName, downloadTask: task, succeeded: false)
         }
+    }
+    
+    
+    // MARK: USerNotificationsActionHandler
+    
+    public static func handleAction(for notification: NSUserNotification, context: UserNotificationContext) {
+        guard let urlString = notification.userInfo?[NotificationProperty.downloadedFileUrl.rawValue] as? String else { return }
+        guard let url = URL(string: urlString) else { return }
+        
+        NSWorkspace.shared().open(url)
     }
     
     
@@ -166,7 +183,7 @@ public class ShareService: Service, DownloadTaskDelegate {
     
     private func downloadFile(_ fileName: String?, usingTask task: DownloadTask, from device: Device) {
         // FIXME: handle nil fileName correctly. The commented approach is wrong because download easily 
-        // expires - needs to start downloading in background while asking for file name 
+        // expires - needs to start downloading in background while asking for file name
         
 //        let askFileLocation = {
 //            NSApp.activate(ignoringOtherApps: true)
@@ -187,24 +204,24 @@ public class ShareService: Service, DownloadTaskDelegate {
             }
             else {
 //                askFileLocation()
-                self.showDownloadFinishNotification(fileName: fileName, succeeded: false)
+                self.showDownloadFinishNotification(fileName: fileName, downloadTask: task, succeeded: false)
             }
         }
         catch {
             // Failed to retrieve appropriate download destination - ask user to select
 //            askFileLocation()
-            self.showDownloadFinishNotification(fileName: fileName, succeeded: false)
+            self.showDownloadFinishNotification(fileName: fileName, downloadTask: task, succeeded: false)
         }
     }
     
-    private func downloadFile(downloadTask: DownloadTask, fileName: String, destUrl: URL) {
+    private func downloadFile(downloadTask task: DownloadTask, fileName: String, destUrl: URL) {
         if let (readyStream, partUrl) = self.streamForTempDownload(finalUrl: destUrl) {
-            self.downloadInfos.append(DownloadInfo(task: downloadTask, fileName: fileName, url: partUrl))
-            downloadTask.delegate = self
-            downloadTask.start(withStream: readyStream)
+            self.downloadInfos.append(DownloadInfo(task: task, fileName: fileName, url: partUrl))
+            task.delegate = self
+            task.start(withStream: readyStream)
         }
         else {
-            self.showDownloadFinishNotification(fileName: fileName, succeeded: false)
+            self.showDownloadFinishNotification(fileName: fileName, downloadTask: task, succeeded: false)
         }
     }
     
@@ -242,7 +259,7 @@ public class ShareService: Service, DownloadTaskDelegate {
         }
     }
     
-    private func renamePartFile(url partUrl: URL, to fileName: String) throws {
+    private func renamePartFile(url partUrl: URL, to fileName: String) throws -> URL {
         
         // Try rename file from temporary *.part name to final path based on original file name
         // NOTE: *.part name might not necesarily be equal to filename with appended .part suffix
@@ -251,7 +268,7 @@ public class ShareService: Service, DownloadTaskDelegate {
             if !FileManager.default.fileExists(atPath: finalUrl.path) {
                 do {
                     try FileManager.default.moveItem(at: partUrl, to: finalUrl)
-                    return
+                    return finalUrl
                 }
                 catch {}
             }
@@ -261,8 +278,32 @@ public class ShareService: Service, DownloadTaskDelegate {
         throw ShareError.partFileRenameFailed
     }
     
-    private func showDownloadFinishNotification(fileName: String?, succeeded: Bool) {
-        Swift.print("ShareService.showDownloadFinishNotification(fileName:\(fileName ?? "nil") succeeded:\(succeeded))")
+    private func showDownloadFinishNotification(fileName: String?, downloadTask task: DownloadTask, succeeded: Bool, finalUrl: URL? = nil) {
+        assert((try? task.connection.identity?.getDeviceName()) != nil, "Download task expected to have assigned a connection with proper identity info")
+        
+        let deviceName: String? = (try? task.connection.identity?.getDeviceName() ?? nil) ?? nil
+        let title = succeeded ? "Finished downloading file" : "File download failed"
+        let info: String
+        if let fileName = finalUrl?.lastPathComponent ?? fileName {
+            info = deviceName != nil ? "File '\(fileName)' sent from device '\(deviceName!)'" : "File: '\(fileName)'"
+        }
+        else {
+            info = deviceName != nil ? "File sent from device '\(deviceName!)'" : ""
+        }
+        
+        let notification = NSUserNotification(actionHandlerClass: ShareService.self)
+        if let url = finalUrl {
+            var userInfo = notification.userInfo
+            userInfo?[NotificationProperty.downloadedFileUrl.rawValue] = url.absoluteString as AnyObject
+            notification.userInfo = userInfo
+        }
+        notification.title = title
+        notification.informativeText = info
+        notification.soundName = NSUserNotificationDefaultSoundName
+        notification.hasActionButton = succeeded && finalUrl != nil
+        notification.actionButtonTitle = "Open"
+        notification.identifier = "com.migla.ShareService.download.\(task.id)"
+        NSUserNotificationCenter.default.scheduleNotification(notification)
     }
 }
 
