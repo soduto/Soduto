@@ -304,6 +304,12 @@ public class ShareService: Service, DownloadTaskDelegate, UserNotificationAction
         notification.actionButtonTitle = "Open"
         notification.identifier = "com.migla.ShareService.download.\(task.id)"
         NSUserNotificationCenter.default.scheduleNotification(notification)
+        
+        if !succeeded {
+            Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { _ in
+                NSUserNotificationCenter.default.removeDeliveredNotification(notification)
+            }
+        }
     }
 }
 
