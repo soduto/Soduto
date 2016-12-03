@@ -79,7 +79,7 @@ public class DownloadTask: NSObject, GCDAsyncSocketDelegate {
     }
     
     public func cancel() {
-        self.downloadFinished(success: false)
+        self.socket?.disconnect()
     }
     
     
@@ -96,10 +96,22 @@ public class DownloadTask: NSObject, GCDAsyncSocketDelegate {
     
     public func socketDidDisconnect(_ sock: GCDAsyncSocket, withError err: Error?) {
         if sock === self.socket {
-            if let error = err {
+            let finished: Bool
+            if let payloadSize = self.payloadSize {
+                finished = self.bytesRead >= payloadSize
+            }
+            else if let error = err as? NSError {
+                finished = error.domain == GCDAsyncSocketErrorDomain && error.code == GCDAsyncSocketError.closedError.rawValue
+            }
+            else {
+                finished = false
+            }
+            
+            if let error = err, !finished {
                 Swift.print("Download socket disconnected with error: \(error)")
             }
-            self.downloadFinished(success: err == nil)
+            
+            self.downloadFinished(success: finished)
         }
     }
     
@@ -123,12 +135,12 @@ public class DownloadTask: NSObject, GCDAsyncSocketDelegate {
     
     private func tryReading(from sock: GCDAsyncSocket) {
         if self.bytesRead >= (self.payloadSize ?? Int64.max) || (self.payloadSize == nil && sock.isDisconnected) {
-            self.downloadFinished(success: true)
+            sock.disconnect()
             return
         }
         
         if sock.isDisconnected || !sock.isSecure || !(self.stream?.hasSpaceAvailable ?? false) {
-            self.downloadFinished(success: false)
+            sock.disconnect()
             return
         }
         

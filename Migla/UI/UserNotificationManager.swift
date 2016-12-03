@@ -127,7 +127,7 @@ public class UserNotificationManager: NSObject, NSUserNotificationCenterDelegate
         if self.slowTimer == nil {
             self.slowTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { timer in
                 for id in self.slowNotifications.keys {
-                    guard NSUserNotificationCenter.default.deliveredNotifications.contains(where: { n in n.identifier == id }) else { continue }
+                    guard !NSUserNotificationCenter.default.deliveredNotifications.contains(where: { n in n.identifier == id }) else { continue }
                     
                     self.handleAction(for: notification)
                     self.stopMonitoringNotification(notification)

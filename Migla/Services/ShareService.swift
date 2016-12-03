@@ -25,15 +25,21 @@ public class ShareService: Service, DownloadTaskDelegate {
     
     // MARK: Types
     
+    private enum ShareError: Error {
+        case partFileRenameFailed
+    }
+    
     private enum ActionId: ServiceAction.Id {
         case shareFile
     }
     
     private struct DownloadInfo {
         let task: DownloadTask
+        let fileName: String
         let url: URL
-        init(task: DownloadTask, url: URL) {
+        init(task: DownloadTask, fileName: String, url: URL) {
             self.task = task
+            self.fileName = fileName
             self.url = url
         }
     }
@@ -58,7 +64,7 @@ public class ShareService: Service, DownloadTaskDelegate {
         do {
             if let downloadTask = dataPacket.downloadTask {
                 let fileName = try dataPacket.getFilename()
-                try self.downloadFile(downloadTask: downloadTask, fileName: fileName)
+                self.downloadFile(fileName, usingTask: downloadTask, from: device)
             }
             else if let text = try dataPacket.getText() {
                 let directory = NSTemporaryDirectory()
@@ -120,8 +126,18 @@ public class ShareService: Service, DownloadTaskDelegate {
     public func downloadTask(_ task: DownloadTask, finishedWithSuccess success: Bool) {
         Swift.print("ShareService.downloadTask:finishedWithSuccess: \(task) \(success)")
         
-        guard let info = self.downloadInfos.first(where: { $0.task === task }) else { return }
-        Swift.print("File downloaded: \(info.url.absoluteString)")
+        guard let index = self.downloadInfos.index(where: { $0.task === task }) else { return }
+        let info = self.downloadInfos.remove(at: index)
+        
+        do {
+            if success {
+                try self.renamePartFile(url: info.url, to: info.fileName)
+            }
+            self.showDownloadFinishNotification(fileName: info.fileName, succeeded: success)
+        }
+        catch {
+            self.showDownloadFinishNotification(fileName: info.fileName, succeeded: false)
+        }
     }
     
     
@@ -148,21 +164,105 @@ public class ShareService: Service, DownloadTaskDelegate {
         device.send(DataPacket.sharePacket(fileStream: stream, fileSize: fileSize, fileName: filename))
     }
     
-    private func downloadFile(downloadTask: DownloadTask, fileName: String?) throws {
-        let url = try self.destinationFileUrl(fileName: fileName)
+    private func downloadFile(_ fileName: String?, usingTask task: DownloadTask, from device: Device) {
+        // FIXME: handle nil fileName correctly. The commented approach is wrong because download easily 
+        // expires - needs to start downloading in background while asking for file name 
         
-        guard let stream = OutputStream(url: url, append: false) else { return }
+//        let askFileLocation = {
+//            NSApp.activate(ignoringOtherApps: true)
+//            let panel = NSSavePanel()
+//            panel.message = "Select save location for download received form device \"\(device.name)\""
+//            panel.nameFieldStringValue = fileName ?? ""
+//            panel.begin { result in
+//                guard result == NSFileHandlingPanelOKButton else { return }
+//                guard let url = panel.url else { return }
+//                self.downloadFile(downloadTask: task, fileName: url.lastPathComponent, destUrl: url)
+//            }
+//        }
         
-        self.downloadInfos.append(DownloadInfo(task: downloadTask, url: url))
-        downloadTask.delegate = self
-        downloadTask.start(withStream: stream)
+        do {
+            if let fileName = fileName {
+                let url = try URL(forDownloadedFile: fileName)
+                self.downloadFile(downloadTask: task, fileName: fileName, destUrl: url)
+            }
+            else {
+//                askFileLocation()
+                self.showDownloadFinishNotification(fileName: fileName, succeeded: false)
+            }
+        }
+        catch {
+            // Failed to retrieve appropriate download destination - ask user to select
+//            askFileLocation()
+            self.showDownloadFinishNotification(fileName: fileName, succeeded: false)
+        }
     }
     
-    private func destinationFileUrl(fileName: String?) throws -> URL {
-        let manager = FileManager()
-        let fileUrl = URL(fileURLWithPath: "").appendingPathComponent(fileName ?? "\(UUID().uuidString)", isDirectory: false).appendingPathExtension("part")
-        let dirUrl = try manager.url(for: .downloadsDirectory, in: .userDomainMask, appropriateFor: fileUrl, create: true)
-        return URL(fileURLWithPath: fileUrl.relativeString, relativeTo: dirUrl)
+    private func downloadFile(downloadTask: DownloadTask, fileName: String, destUrl: URL) {
+        if let (readyStream, partUrl) = self.streamForTempDownload(finalUrl: destUrl) {
+            self.downloadInfos.append(DownloadInfo(task: downloadTask, fileName: fileName, url: partUrl))
+            downloadTask.delegate = self
+            downloadTask.start(withStream: readyStream)
+        }
+        else {
+            self.showDownloadFinishNotification(fileName: fileName, succeeded: false)
+        }
+    }
+    
+    private func streamForTempDownload(finalUrl: URL) -> (OutputStream, URL)? {
+        // Try open stream for new file. Try alternative names on fail
+        var partUrl = finalUrl.appendingPathExtension("part")
+        var stream: OutputStream? = nil
+        for _ in 1...10000 {
+            if !FileManager.default.fileExists(atPath: partUrl.path) {
+                stream = OutputStream(url: partUrl, append: false)
+                stream?.open()
+                if stream?.hasSpaceAvailable ?? false {
+                    break
+                }
+            }
+            
+            partUrl = partUrl.alternativeForDuplicate()
+        }
+        
+        // Last attempt with completely random extension
+        if stream == nil {
+            partUrl = finalUrl.appendingPathExtension("part-\(UUID().uuidString)")
+            if !FileManager.default.fileExists(atPath: partUrl.path) {
+                stream = OutputStream(url: partUrl, append: false)
+                stream?.open()
+            }
+        }
+        
+        if let readyStream = stream, (stream?.hasSpaceAvailable ?? false) {
+            return (readyStream, partUrl)
+        }
+        else {
+            stream?.close()
+            return nil
+        }
+    }
+    
+    private func renamePartFile(url partUrl: URL, to fileName: String) throws {
+        
+        // Try rename file from temporary *.part name to final path based on original file name
+        // NOTE: *.part name might not necesarily be equal to filename with appended .part suffix
+        var finalUrl = partUrl.deletingLastPathComponent().appendingPathComponent(fileName)
+        for _ in 1...10000 {
+            if !FileManager.default.fileExists(atPath: finalUrl.path) {
+                do {
+                    try FileManager.default.moveItem(at: partUrl, to: finalUrl)
+                    return
+                }
+                catch {}
+            }
+            finalUrl = finalUrl.alternativeForDuplicate()
+        }
+
+        throw ShareError.partFileRenameFailed
+    }
+    
+    private func showDownloadFinishNotification(fileName: String?, succeeded: Bool) {
+        Swift.print("ShareService.showDownloadFinishNotification(fileName:\(fileName ?? "nil") succeeded:\(succeeded))")
     }
 }
 
