@@ -15,6 +15,14 @@ public struct DataPacket: CustomStringConvertible {
     public typealias Body = Dictionary<String, AnyObject>
     public typealias PayloadInfo = Dictionary<String, AnyObject>
     
+    public enum Property: String {
+        case id = "id"
+        case type = "type"
+        case body = "body"
+        case payloadSize = "payloadSize"
+        case payloadInfo = "payloadTransferInfo"
+    }
+    
     
     // MARK: Properties
     
@@ -26,6 +34,7 @@ public struct DataPacket: CustomStringConvertible {
     var payload: InputStream?
     var payloadSize: Int64? = nil
     var payloadInfo: PayloadInfo?
+    var downloadTask: DownloadTask? = nil
     
     public var description: String {
         do {
@@ -60,11 +69,18 @@ public struct DataPacket: CustomStringConvertible {
     init?(data: Data) {
         let deserializedObj = try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions())
         guard let obj = deserializedObj as? [String: AnyObject] else { return nil }
-        guard let id = obj["id"] as? NSNumber else { return nil }
-        guard let type = obj["type"] as? String else { return nil }
-        guard let body = obj["body"] as? Body else { return nil }
+        guard let id = obj[Property.id.rawValue] as? NSNumber else { return nil }
+        guard let type = obj[Property.type.rawValue] as? String else { return nil }
+        guard let body = obj[Property.body.rawValue] as? Body else { return nil }
         
         self.init(id: id.int64Value, type: type, body: body)
+        
+        if let payloadInfo = obj[Property.payloadInfo.rawValue] as? PayloadInfo {
+            self.payloadInfo = payloadInfo
+            if let payloadSize = obj[Property.payloadSize.rawValue] as? NSNumber {
+                self.payloadSize = payloadSize.int64Value > 0 ? payloadSize.int64Value : nil
+            }
+        }
     }
     
     private init(id: Int64, type: String, body: Body) {
@@ -82,13 +98,13 @@ public struct DataPacket: CustomStringConvertible {
     
     func serialize(options: JSONSerialization.WritingOptions) throws -> [UInt8] {
         var dict: [String: AnyObject] = [
-            "id": NSNumber(value: self.id),
-            "type": self.type as AnyObject,
-            "body": self.body as AnyObject
+            Property.id.rawValue: NSNumber(value: self.id),
+            Property.type.rawValue: self.type as AnyObject,
+            Property.body.rawValue: self.body as AnyObject
         ]
         if self.hasPayload() {
-            dict["payloadSize"] = NSNumber(value: self.payloadSize ?? -1)
-            dict["payloadTransferInfo"] = self.payloadInfo as AnyObject
+            dict[Property.payloadSize.rawValue] = NSNumber(value: self.payloadSize ?? -1)
+            dict[Property.payloadInfo.rawValue] = self.payloadInfo as AnyObject
         }
         let data = try JSONSerialization.data(withJSONObject: dict, options: options)
         var bytes = [UInt8](data)

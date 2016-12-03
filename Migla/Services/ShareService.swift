@@ -21,12 +21,21 @@ import Cocoa
 ///
 /// If the content transferred is a url, it can be sent in a field "url" (string).
 /// In that case, this plugin opens that url in the default browser.
-public class ShareService: Service {
+public class ShareService: Service, DownloadTaskDelegate {
     
     // MARK: Types
     
-    enum ActionId: ServiceAction.Id {
+    private enum ActionId: ServiceAction.Id {
         case shareFile
+    }
+    
+    private struct DownloadInfo {
+        let task: DownloadTask
+        let url: URL
+        init(task: DownloadTask, url: URL) {
+            self.task = task
+            self.url = url
+        }
     }
     
     
@@ -35,6 +44,8 @@ public class ShareService: Service {
     public let incomingCapabilities = Set<Service.Capability>([ DataPacket.sharePacketType ])
     public let outgoingCapabilities = Set<Service.Capability>([ DataPacket.sharePacketType ])
     
+    private var downloadInfos: [DownloadInfo] = []
+    
     
     // MARK: Service methods
     
@@ -42,12 +53,14 @@ public class ShareService: Service {
         
         guard dataPacket.isSharePacket else { return false }
         
-        // TODO: implement proper handling of incoming packets
-        
-        Swift.print("handleDataPacket:fromDevice:onConnection: \(dataPacket.description) \(device) \(connection)");
+        Swift.print("ShareService.handleDataPacket:fromDevice:onConnection: \(dataPacket.description) \(device) \(connection)");
         
         do {
-            if let text = try dataPacket.getText() {
+            if let downloadTask = dataPacket.downloadTask {
+                let fileName = try dataPacket.getFilename()
+                try self.downloadFile(downloadTask: downloadTask, fileName: fileName)
+            }
+            else if let text = try dataPacket.getText() {
                 let directory = NSTemporaryDirectory()
                 let fileName = try dataPacket.getFilename() ?? "\(UUID().uuidString).txt"
                 let fullURL = URL(fileURLWithPath: fileName, relativeTo: URL(fileURLWithPath: directory, isDirectory: true))
@@ -58,7 +71,7 @@ public class ShareService: Service {
                 NSWorkspace.shared().open(url)
             }
             else {
-                // TODO: handle download payload
+                Swift.print("Unknown shared content")
             }
         }
         catch {
@@ -94,15 +107,21 @@ public class ShareService: Service {
             openPanel.begin { result in
                 guard result == NSFileHandlingPanelOKButton else { return }
                 guard let url = openPanel.url else { return }
-                guard let filename = url.pathComponents.last else { return }
-                guard let stream = InputStream(url: url) else { return }
-                
-                let fileSize = self.fileSize(path: url.path)
-                device.send(DataPacket.sharePacket(fileStream: stream, fileSize: fileSize, fileName: filename))
+                self.uploadFile(url: url, to: device)
             }
             break
         }
         
+    }
+    
+    
+    // MARK: DownloadTaskDelegate
+    
+    public func downloadTask(_ task: DownloadTask, finishedWithSuccess success: Bool) {
+        Swift.print("ShareService.downloadTask:finishedWithSuccess: \(task) \(success)")
+        
+        guard let info = self.downloadInfos.first(where: { $0.task === task }) else { return }
+        Swift.print("File downloaded: \(info.url.absoluteString)")
     }
     
     
@@ -119,6 +138,31 @@ public class ShareService: Service {
         }
         
         return fileSize
+    }
+    
+    private func uploadFile(url: URL, to device: Device) {
+        guard let filename = url.pathComponents.last else { return }
+        guard let stream = InputStream(url: url) else { return }
+        
+        let fileSize = self.fileSize(path: url.path)
+        device.send(DataPacket.sharePacket(fileStream: stream, fileSize: fileSize, fileName: filename))
+    }
+    
+    private func downloadFile(downloadTask: DownloadTask, fileName: String?) throws {
+        let url = try self.destinationFileUrl(fileName: fileName)
+        
+        guard let stream = OutputStream(url: url, append: false) else { return }
+        
+        self.downloadInfos.append(DownloadInfo(task: downloadTask, url: url))
+        downloadTask.delegate = self
+        downloadTask.start(withStream: stream)
+    }
+    
+    private func destinationFileUrl(fileName: String?) throws -> URL {
+        let manager = FileManager()
+        let fileUrl = URL(fileURLWithPath: "").appendingPathComponent(fileName ?? "\(UUID().uuidString)", isDirectory: false).appendingPathExtension("part")
+        let dirUrl = try manager.url(for: .downloadsDirectory, in: .userDomainMask, appropriateFor: fileUrl, create: true)
+        return URL(fileURLWithPath: fileUrl.relativeString, relativeTo: dirUrl)
     }
 }
 

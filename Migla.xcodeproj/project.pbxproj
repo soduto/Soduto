@@ -14,6 +14,7 @@
 		843301661D2D8CB8008934BB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 843301651D2D8CB8008934BB /* Assets.xcassets */; };
 		843301691D2D8CB8008934BB /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 843301671D2D8CB8008934BB /* MainMenu.xib */; };
 		843B67041DF1E64A00289EC9 /* ShareService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843B67031DF1E64A00289EC9 /* ShareService.swift */; };
+		843B670A1DF2CEC400289EC9 /* DownloadTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843B67091DF2CEC400289EC9 /* DownloadTask.swift */; };
 		8450274B1DAABB9900C20247 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8450274A1DAABB9900C20247 /* Configuration.swift */; };
 		8456F4A81D7DE393006EFE19 /* Pairable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456F4A71D7DE393006EFE19 /* Pairable.swift */; };
 		8456F4AA1D7DEA47006EFE19 /* DefaultPairingHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456F4A91D7DEA47006EFE19 /* DefaultPairingHandler.swift */; };
@@ -99,6 +100,7 @@
 		843301681D2D8CB8008934BB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		8433016A1D2D8CB8008934BB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		843B67031DF1E64A00289EC9 /* ShareService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareService.swift; sourceTree = "<group>"; };
+		843B67091DF2CEC400289EC9 /* DownloadTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadTask.swift; sourceTree = "<group>"; };
 		8450274A1DAABB9900C20247 /* Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		8454D12C1D34228D00788632 /* Migla-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Migla-Bridging-Header.h"; sourceTree = "<group>"; };
 		8456F4A71D7DE393006EFE19 /* Pairable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pairable.swift; sourceTree = "<group>"; };
@@ -253,6 +255,7 @@
 				8456F4A91D7DEA47006EFE19 /* DefaultPairingHandler.swift */,
 				84FA45D21DDDCB3D00EF3992 /* Device.swift */,
 				84FA45D31DDDCB3D00EF3992 /* DeviceManager.swift */,
+				843B67091DF2CEC400289EC9 /* DownloadTask.swift */,
 				8456F4A71D7DE393006EFE19 /* Pairable.swift */,
 				84FA45E91DDF433300EF3992 /* Service.swift */,
 				849237981DE06EBC00D95BBA /* ServiceAction.swift */,
@@ -488,6 +491,7 @@
 				849961C11D57287F002B893A /* CollectionUtils.m in Sources */,
 				84FA45D91DDDCB3D00EF3992 /* DataPacket.swift in Sources */,
 				8FC977F11D4778E9001ADF7E /* StatusBarMenuController.swift in Sources */,
+				843B670A1DF2CEC400289EC9 /* DownloadTask.swift in Sources */,
 				8450274B1DAABB9900C20247 /* Configuration.swift in Sources */,
 				84FA45DE1DDDCB3D00EF3992 /* UnsafePointersUtils.swift in Sources */,
 				849237A11DE224CF00D95BBA /* FindMyPhoneService.swift in Sources */,

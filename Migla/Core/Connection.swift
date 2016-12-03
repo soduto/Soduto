@@ -80,11 +80,13 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     
     public private(set) var identity: DataPacket? = nil
     public private(set) var peerCertificate: SecCertificate? = nil
+    public private(set) var peerAddress: SocketAddress
     
     private let config: ConnectionConfiguration
     private let socket: GCDAsyncSocket
     private let sslCertificates: [AnyObject]
     private let uploadQueue = DispatchQueue(label: "Payload upload queue", qos: DispatchQoS.background, autoreleaseFrequency: .workItem)
+    private let downloadQueue = DispatchQueue(label: "Payload download queue", qos: DispatchQoS.background, autoreleaseFrequency: .workItem)
     private var packetsToSend: [DataPacketSendingInfo] = [] // queue of packets waiting to be sent
     private var packetsExpected: Int = 0         // count of packets to read befor stopping automatic reading, -1 for unlimited count
     private var waitingToSecure: Bool = false
@@ -100,6 +102,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     init?(address: SocketAddress, identityPacket packet: DataPacket, config: ConnectionConfiguration) {
         guard let hostIdentity = config.hostCertificate else { return nil }
         
+        self.peerAddress = address
         self.config = config
         self.socket = GCDAsyncSocket(delegate: nil, delegateQueue: DispatchQueue.main)
         self.sslCertificates = [ hostIdentity ]
@@ -121,8 +124,10 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     
     init?(socket: GCDAsyncSocket, config: ConnectionConfiguration) {
         guard socket.isConnected else { return nil }
+        guard let connectedAddress = socket.connectedAddress else { return nil }
         guard let hostIdentity = config.hostCertificate else { return nil }
         
+        self.peerAddress = SocketAddress(data: connectedAddress)
         self.config = config
         self.socket = socket
         self.sslCertificates = [ hostIdentity ]
@@ -195,7 +200,6 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
         else {
             uploadTask = nil
         }
-        Swift.print("send(dataPacket:whenCompleted:", packet.description)
         
         if let bytes = try? packet.serialize() {
             let data = Data(bytes: bytes)
@@ -288,7 +292,12 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
         
         if data.count > 0 {
             if let packet = DataPacket(data: data) {
-                self.handle(packet: packet)
+                var mutablePacket = packet
+                if mutablePacket.payloadInfo != nil {
+                    mutablePacket.downloadTask = DownloadTask(packet: mutablePacket, connection: self, writeQueue: self.downloadQueue)
+                }
+                
+                self.handle(packet: mutablePacket)
                 if self.packetsExpected > 0 {
                     self.packetsExpected = self.packetsExpected - 1
                 }
