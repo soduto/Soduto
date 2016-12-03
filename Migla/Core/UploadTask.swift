@@ -44,7 +44,6 @@ public class UploadTask: NSObject, GCDAsyncSocketDelegate {
     private let listeningSocket: GCDAsyncSocket
     private var uploadingSocket: GCDAsyncSocket? = nil
     private var bytesSent: Int64 = 0
-    private var lastBytesDone: UInt = 0
     private var readBuffer = [UInt8](repeating: 0, count: UploadTask.maxBufferSize)
     
     
@@ -88,6 +87,7 @@ public class UploadTask: NSObject, GCDAsyncSocketDelegate {
     
     deinit {
         // Make sure we are clean
+        self.delegate = nil
         self.listeningSocket.disconnect()
         self.uploadingSocket?.disconnect()
         self.payload.close()
@@ -176,7 +176,10 @@ public class UploadTask: NSObject, GCDAsyncSocketDelegate {
     }
     
     private func uploadFinished(success: Bool) {
-        self.delegate?.uploadTask(self, finishedWithSuccess: success)
+        self.delegateQueue.async { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.delegate?.uploadTask(strongSelf, finishedWithSuccess: success)
+        }
     }
     
     private func shoulTrustPeer(_ trust: SecTrust) -> Bool {
