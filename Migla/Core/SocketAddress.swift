@@ -53,12 +53,9 @@ public struct SocketAddress: CustomStringConvertible {
             // Print nice info about IPv4 address
             var mutableStorage = self.storage
             let ptr: UnsafePointer<sockaddr_in> = cast(pointer: &mutableStorage)
-            let byte1 = (ptr.pointee.sin_addr.s_addr & 0xff000000) >> 24
-            let byte2 = (ptr.pointee.sin_addr.s_addr & 0x00ff0000) >> 16
-            let byte3 = (ptr.pointee.sin_addr.s_addr & 0x0000ff00) >> 8
-            let byte4 = (ptr.pointee.sin_addr.s_addr & 0x000000ff)
+            let address = String(cString: inet_ntoa(ptr.pointee.sin_addr))
             let port = CFSwapInt16BigToHost(ptr.pointee.sin_port)
-            return "IPv4: \(byte1).\(byte2).\(byte3).\(byte4), port:\(port)"
+            return "IPv4: \(address), port:\(port)"
         }
         if (Int32(self.storage.ss_family) == AF_INET6) {
             // Print nice info about IPv6 address
