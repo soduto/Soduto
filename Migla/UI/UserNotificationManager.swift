@@ -101,21 +101,7 @@ public class UserNotificationManager: NSObject, NSUserNotificationCenterDelegate
         self.fastNotifications[id] = notification
         
         if self.fastTimer == nil {
-            self.fastTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { timer in
-                for id in self.fastNotifications.keys {
-                    if let n = NSUserNotificationCenter.default.deliveredNotifications.first(where: { n in n.identifier == id }) {
-                        if !n.isPresented {
-                            // if not showing - move to slow notifications
-                            self.stopMonitoringNotification(n)
-                            self.monitorSlowNotification(n)
-                        }
-                    }
-                    else {
-                        self.handleAction(for: notification)
-                        self.stopMonitoringNotification(notification)
-                    }
-                }
-            }
+            self.scheduleFastTimer()
         }
     }
     
@@ -125,14 +111,7 @@ public class UserNotificationManager: NSObject, NSUserNotificationCenterDelegate
         self.slowNotifications[id] = notification
         
         if self.slowTimer == nil {
-            self.slowTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { timer in
-                for id in self.slowNotifications.keys {
-                    guard !NSUserNotificationCenter.default.deliveredNotifications.contains(where: { n in n.identifier == id }) else { continue }
-                    
-                    self.handleAction(for: notification)
-                    self.stopMonitoringNotification(notification)
-                }
-            }
+            self.scheduleSlowTimer()
         }
     }
     
@@ -151,6 +130,41 @@ public class UserNotificationManager: NSObject, NSUserNotificationCenterDelegate
         if self.fastNotifications.count == 0 {
             self.fastTimer?.invalidate()
             self.fastTimer = nil
+        }
+    }
+    
+    private func scheduleFastTimer() {
+        guard self.fastNotifications.count > 0 else { return }
+        guard self.fastTimer == nil else { return }
+        
+        self.fastTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { timer in
+            for (id, notification) in self.fastNotifications {
+                if let n = NSUserNotificationCenter.default.deliveredNotifications.first(where: { n in n.identifier == id }) {
+                    if !n.isPresented {
+                        // if not showing - move to slow notifications
+                        self.stopMonitoringNotification(n)
+                        self.monitorSlowNotification(n)
+                    }
+                }
+                else {
+                    self.handleAction(for: notification)
+                    self.stopMonitoringNotification(notification)
+                }
+            }
+        }
+    }
+    
+    private func scheduleSlowTimer() {
+        guard self.slowNotifications.count > 0 else { return }
+        guard self.slowTimer == nil else { return }
+        
+        self.slowTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { timer in
+            for (id, notification) in self.slowNotifications {
+                guard !NSUserNotificationCenter.default.deliveredNotifications.contains(where: { n in n.identifier == id }) else { continue }
+                
+                self.handleAction(for: notification)
+                self.stopMonitoringNotification(notification)
+            }
         }
     }
 }
