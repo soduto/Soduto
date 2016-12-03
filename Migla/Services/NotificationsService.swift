@@ -147,6 +147,7 @@ public class NotificationsService: Service, UserNotificationActionHandler {
             guard let packetNotificationId = try dataPacket.getId() else { return }
             guard let notificationId = self.notificationId(for: dataPacket, from: device) else { return }
             guard let appName = try dataPacket.getAppName() else { return }
+            guard appName != "KDE Connect" else { return } // Ignore notifications shown be KDE Connect
             guard let ticker = try dataPacket.getTicker() else { return }
             let isAnswer = try dataPacket.getAnswerFlag()
             let isSilent = try dataPacket.getSilentFlag()
