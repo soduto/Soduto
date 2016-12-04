@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CleanroomLogger
 
 public class CertificateUtils {
     
@@ -83,7 +84,7 @@ public class CertificateUtils {
             throw CertificateError.addCertificateFailure(error: NSError(domain: NSOSStatusErrorDomain, code: Int(status), userInfo: nil))
         }
         else if status == errSecDuplicateItem {
-            Swift.print("Could not add the certificate because that item is already added")
+            Log.error?.message("Could not add the certificate because that item is already added")
         }
         
         status = SecCertificateSetPreferred(certificate, name as CFString, nil)

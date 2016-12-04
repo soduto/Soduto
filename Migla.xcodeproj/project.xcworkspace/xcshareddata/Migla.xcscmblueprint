@@ -1,0 +1,29 @@
+{
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "F9CB73B84AAC4DF4FDAC59E7AE333891CE32959C" : 9223372036854775807,
+    "D8B77186584699D3376BE96D8D99394FFE1062A4" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "D650631A-EE4B-41FF-9490-D07A55C4D341",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "F9CB73B84AAC4DF4FDAC59E7AE333891CE32959C" : "Migla\/Migla\/CleanroomLogger\/",
+    "D8B77186584699D3376BE96D8D99394FFE1062A4" : "Migla\/Migla\/CleanroomASL\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "Migla",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "Migla.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/giedrius-stanevicius\/CleanroomASL.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "D8B77186584699D3376BE96D8D99394FFE1062A4"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/giedrius-stanevicius\/CleanroomLogger.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "F9CB73B84AAC4DF4FDAC59E7AE333891CE32959C"
+    }
+  ]
+}

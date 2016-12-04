@@ -8,6 +8,7 @@
 
 import Foundation
 import CocoaAsyncSocket
+import CleanroomLogger
 
 public protocol DownloadTaskDelegate: class {
     func downloadTask(_ task: DownloadTask, finishedWithSuccess success: Bool)
@@ -110,7 +111,7 @@ public class DownloadTask: NSObject, GCDAsyncSocketDelegate {
             }
             
             if let error = err, !finished {
-                Swift.print("Download socket disconnected with error: \(error)")
+                Log.error?.message("Download socket disconnected with error: \(error)")
             }
             
             self.downloadFinished(success: finished)

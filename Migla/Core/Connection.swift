@@ -8,6 +8,7 @@
 
 import Foundation
 import CocoaAsyncSocket
+import CleanroomLogger
 
 public enum ConnectionError: Error {
     case InitializationAlreadyFinished
@@ -116,7 +117,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
             try self.socket.connect(toAddress: address.data)
         }
         catch {
-            Swift.print("Could not connect to address \(address): \(error)")
+            Log.error?.message("Could not connect to address \(address): \(error)")
             return nil
         }
 //        self.configureSocket()
@@ -265,11 +266,11 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     // MARK: GCDAsyncSocketDelegate
     
     public func socket(_ sock: GCDAsyncSocket, didConnectToHost host: String, port: UInt16) {
-        Swift.print("Connection.socket:didConnectToHost:port: \(sock) \(host) \(port)")
+        Log.debug?.message("socket(<\(sock)> didConnectToHost:<\(host)> port:<\(port)>)")
     }
     
     public func socket(_ sock: GCDAsyncSocket, didWriteDataWithTag tag: Int) {
-        Swift.print("Connection.socket:didWriteDataWithTag: \(sock) \(tag)")
+        Log.debug?.message("socket(<\(sock)> didWriteDataWithTag:<\(tag)>)")
         
         let indexOpt = self.packetsToSend.index { packetInfo -> Bool in
             return Int(packetInfo.dataPacket.id) == tag
@@ -288,7 +289,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     }
     
     public func socket(_ sock: GCDAsyncSocket, didRead data: Data, withTag tag: Int) {
-        Swift.print("Connection.socket:didRead:withTag: \(sock) \(data) \(tag)")
+        Log.debug?.message("socket(<\(sock)> didRead:<\(data)> withTag:<\(tag)>)")
         
         if data.count > 0 {
             if let packet = DataPacket(data: data) {
@@ -303,7 +304,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
                 }
             }
             else {
-                Swift.print("Could not deserialize DataPacket")
+                Log.error?.message("Could not deserialize received data packet")
             }
         }
     
@@ -313,7 +314,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     }
     
     public func socketDidSecure(_ sock: GCDAsyncSocket) {
-        Swift.print("Connection.socketDidSecure: \(sock)")
+        Log.debug?.message("socketDidSecure(<\(sock)>)")
         self.waitingToSecure = false
         if self.shouldFinishIntializationWhenSecured {
             self.state = .Open
@@ -321,7 +322,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     }
     
     public func socketDidDisconnect(_ sock: GCDAsyncSocket, withError err: Error?) {
-        Swift.print("Connection.socketDidDisconnect:withError: \(sock) \(err)")
+        Log.debug?.message("socketDidDisconnect(<\(sock)> withError:<\(err)>)")
         self.close()
     }
     
@@ -333,7 +334,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     // MARK: UploadTaskDelegate
     
     public func uploadTask(_ task: UploadTask, finishedWithSuccess payloadSent: Bool) {
-        Swift.print("Connction.uploadTask:finishedWithSuccess: \(task) \(payloadSent)")
+        Log.debug?.message("uploadTask(<\(task)> finishedWithSuccess:<\(payloadSent)>)")
         
         guard let index = self.packetsToSend.index(where: { $0.uploadTask === task }) else { return }
         
@@ -414,7 +415,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
                     try self.setSockOpt(socket: nativeSocket, level: IPPROTO_TCP, optionName: TCP_KEEPALIVE, optionValue: 10)
                 }
                 catch {
-                    Swift.print("Failed to configure socket for connection \(self): \(error)")
+                    Log.error?.message("Failed to configure socket for connection \(self): \(error)")
                 }
             }
             
@@ -425,7 +426,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
                     try self.setSockOpt(socket: nativeSocket, level: IPPROTO_TCP, optionName: TCP_KEEPALIVE, optionValue: 10)
                 }
                 catch {
-                    Swift.print("Failed to configure socket for connection \(self): \(error)")
+                    Log.error?.message("Failed to configure socket for connection \(self): \(error)")
                 }
             }
         }

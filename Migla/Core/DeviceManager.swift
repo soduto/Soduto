@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CleanroomLogger
 
 public protocol DeviceManagerDelegate: class {
     func deviceManager(_ manager: DeviceManager, didChangeDeviceState device: Device)
@@ -61,7 +62,7 @@ public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDa
     }
     
     public func connectionProvider(_ provider: ConnectionProvider, didCreateConnection connection: Connection) {
-        Swift.print("DeviceManager.connectionProvider:didCreateConnection: \(provider) \(connection)")
+        Log.debug?.message("connectionProvider(<\(provider)> didCreateConnection:<\(connection)>)")
         
         assert(connection.state == .Open, "Connection from connection provider expected to be in open state")
         assert(connection.identity != nil, "Connection identity expected to be not nil")
@@ -76,7 +77,7 @@ public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDa
             }
         }
         catch {
-            Swift.print("Error adding new connection: \(error)")
+            Log.error?.message("Error adding new connection: \(error)")
         }
     }
     
@@ -91,7 +92,7 @@ public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDa
     // MARK: DeviceDelegate
     
     public func device(_ device: Device, didChangeState state: Device.State) {
-        Swift.print("DeviceManager.device:didChangeState: \(device) \(state)")
+        Log.debug?.message("device(<\(device)> didChangeState:<\(state)>)")
         
         if state == .paired {
             self.serviceManager.setup(for: device)

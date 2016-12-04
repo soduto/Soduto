@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import CleanroomLogger
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
@@ -20,6 +21,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
     let userNotificationManager: UserNotificationManager
     
     override init() {
+        Log.enable(configuration: XcodeLogConfiguration(minimumSeverity: .debug, logToASL: false))
+        
         self.connectionProvider = ConnectionProvider(config: config)
         self.deviceManager = DeviceManager(config: config, serviceManager: self.serviceManager)
         self.userNotificationManager = UserNotificationManager(config: self.config, serviceManager: self.serviceManager, deviceManager: self.deviceManager)
@@ -41,8 +44,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
         self.serviceManager.add(service: NotificationsService())
         self.serviceManager.add(service: ClipboardService())
         self.serviceManager.add(service: ShareService())
-        
-//        try? NetworkUtils.accessibleAddresses()
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -57,7 +58,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
     }
     
     func deviceManager(_ manager: DeviceManager, didReceivePairingRequest request: PairingRequest, forDevice device: Device) {
-        Swift.print("AppDelegate.deviceManager:didReceivePairingRequest:forDevice: \(request) \(device)")
+        Log.debug?.message("deviceManager(<\(request)> didReceivePairingRequest:<\(request)> forDevice:<\(device)>)")
         PairingInterfaceController.showPairingNotification(for: device)
     }
     

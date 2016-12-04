@@ -8,6 +8,7 @@
 
 import Foundation
 import CocoaAsyncSocket
+import CleanroomLogger
 
 enum ConnectionProviderError: Error {
     case IdentityAbsent
@@ -41,15 +42,15 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
         // Listen for device announcement broadcasts
         self.udpSocket.setDelegate(self)
         do { try self.udpSocket.enableBroadcast(true) }
-        catch { Swift.print("Could not enable brodcast for udp socket: \(error)") }
+        catch { Log.error?.message("Could not enable brodcast for udp socket: \(error)") }
         do { try self.udpSocket.enableReusePort(true) }
-        catch { Swift.print("Could not enable port reuse for udp socket: \(error)") }
+        catch { Log.error?.message("Could not enable port reuse for udp socket: \(error)") }
         do {
             try self.udpSocket.bind(toPort: ConnectionProvider.udpPort)
             try self.udpSocket.beginReceiving()
         }
         catch {
-            Swift.print("Could not start listening for self-announcement broadcasts: \(error)")
+            Log.error?.message("Could not start listening for self-announcement broadcasts: \(error)")
         }
         
         // Listen for connections on TCP
@@ -58,7 +59,7 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
             do {
                 let port = ConnectionProvider.udpPort + i
                 try self.tcpSocket.accept(onPort: port)
-                Swift.print("Listening on port \(port)")
+                Log.info?.message("Listening on port \(port)")
             }
             catch {}
         }
@@ -137,11 +138,11 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
     // MARK: GCDAsyncUdpSocketDelegate
     
     public func udpSocket(_ sock: GCDAsyncUdpSocket, didSendDataWithTag tag: Int) {
-        Swift.print("ConnectionProvider.udpSocket:didSendDataWithTag: \(sock), \(tag)")
+        Log.debug?.message("udpSocket(<\(sock)> didSendDataWithTag:<\(tag)>)")
     }
     
     public func udpSocket(_ sock: GCDAsyncUdpSocket, didNotSendDataWithTag tag: Int, dueToError error: Error) {
-        Swift.print("ConnectionProvider.udpSocket:didNotSendDataWithTag:dueToError: \(sock), \(tag) \(error)")
+        Log.debug?.message("udpSocket(<\(sock)> didNotSendDataWithTag:<\(tag)> dueToError:<\(error)>)")
     }
     
     public func udpSocket(_ sock: GCDAsyncUdpSocket, didReceive data: Data, fromAddress address: Data, withFilterContext filterContext: Any?) {
@@ -151,7 +152,7 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
         guard let deviceId = try? packet.getDeviceId() else { return }
         guard delegate.isNewConnectionNeeded(byProvider: self, deviceId: deviceId) else { return }
         
-        Swift.print("ConnectionProvider.udpSocket:didReceive:fromAddress:withFilterContext: \(sock), \(address), \(packet)")
+        Log.debug?.message("udpSocket(<\(sock)> didReceive:<<Data>> fromAddress:<\(address)> withFilterContext:<\(packet)>)")
         
         // create a new address to connect - ip the same as source, port - from packet info
         var connectionAddress = SocketAddress(data: address)
@@ -167,14 +168,14 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
     }
     
     public func udpSocketDidClose(_ sock: GCDAsyncUdpSocket, withError error: Error) {
-        Swift.print("ConnectionProvider.udpSocketDidClose:withError: \(sock), \(error)")
+        Log.debug?.message("udpSocketDidClose(<\(sock)> withError:<\(error)>)")
     }
     
     
     // MARK: GCDAsyncSocketDelegate
     
     public func socket(_ sock: GCDAsyncSocket, didAcceptNewSocket newSocket: GCDAsyncSocket) {
-        Swift.print("ConnectionProvider.socket:didAcceptNewSocket: \(sock) \(newSocket)")
+        Log.debug?.message("socket(<\(sock)> didAcceptNewSocket:<\(newSocket)>)")
         
         if let connection = Connection(socket: newSocket, config: self.config) {
             connection.delegate = self
@@ -189,7 +190,7 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
     // MARK: ConnectionDelegate
     
     public func connection(_ connection: Connection, didSwitchToState state: Connection.State) {
-        Swift.print("ConnectionProvider.connection:switchedToState: \(connection), \(state)")
+        Log.debug?.message("connection(<\(connection)> switchedToState:<\(state)>)")
         switch state {
         case .Closed:
             self.pendingConnections.remove(connection)
@@ -200,7 +201,7 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
                 delegate.connectionProvider(self, didCreateConnection: connection)
             }
             else {
-                Swift.print("No connection provider delegate to take new connection - closing");
+                Log.error?.message("No connection provider delegate to take new connection - closing");
                 connection.close()
             }
         default:
@@ -209,7 +210,7 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
     }
     
     public func connection(_ connection: Connection, didSendPacket packet: DataPacket, uploadedPayload: Bool) {
-        Swift.print("ConnectionProvider.connection:didSendPacket: \(connection) \(packet)")
+        Log.debug?.message("connection(<\(connection)> didSendPacket:<\(packet)>)")
         
         do {
             guard let identity = connection.identity else { throw ConnectionProviderError.IdentityAbsent }
@@ -221,13 +222,13 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
             connection.finishInitialization()
         }
         catch {
-            Swift.print("Failed to initialize connection: \(error)")
+            Log.error?.message("Failed to initialize connection: \(error)")
             connection.close()
         }
     }
     
     public func connection(_ connection: Connection, didReadPacket packet: DataPacket) {
-        Swift.print("ConnectionProvider.connection:didReadPacket: \(connection) \(packet)")
+        Log.debug?.message("connection(<\(connection)> didReadPacket:<\(packet)>)")
         
         // The only packet we are waiting for is first identity packet to initialize connection with
         do {
@@ -240,7 +241,7 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
             connection.finishInitialization()
         }
         catch {
-            Swift.print("Failed to initialize connection: \(error)")
+            Log.error?.message("Failed to initialize connection: \(error)")
             connection.close()
         }
     }

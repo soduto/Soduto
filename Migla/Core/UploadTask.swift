@@ -8,6 +8,7 @@
 
 import Foundation
 import CocoaAsyncSocket
+import CleanroomLogger
 
 public protocol UploadTaskDelegate: class {
     func uploadTask(_ task: UploadTask, finishedWithSuccess success: Bool)
@@ -63,7 +64,7 @@ public class UploadTask: NSObject, GCDAsyncSocketDelegate {
         let listeningSocket = self.listeningSocket
         self.listenTimeoutTimer = Timer(timeInterval: UploadTask.listenTimeout, repeats: false, block: { _ in
             guard listeningSocket.isConnected else { return }
-            Swift.print("Serving payload for packet \(packet) on port \(listeningSocket.localPort) has timedout")
+            Log.info?.message("Serving payload for packet of type '\(packet.type)' on port \(listeningSocket.localPort) has timedout")
             listeningSocket.disconnect()
         })
         
@@ -75,7 +76,7 @@ public class UploadTask: NSObject, GCDAsyncSocketDelegate {
             do {
                 try self.listeningSocket.accept(onPort: port)
                 listening = true
-                Swift.print("Providing payload on port \(port)")
+                Log.debug?.message("Providing payload on port \(port)")
                 break
             }
             catch {}
@@ -111,7 +112,7 @@ public class UploadTask: NSObject, GCDAsyncSocketDelegate {
     public func socketDidDisconnect(_ sock: GCDAsyncSocket, withError err: Error?) {
         if sock === self.listeningSocket {
             if let error = err {
-                Swift.print("Upload listening socket disconnected with error: \(error)")
+                Log.error?.message("Upload listening socket disconnected with error: \(error)")
             }
             if self.uploadingSocket == nil {
                 self.uploadFinished(success: false)
@@ -119,7 +120,7 @@ public class UploadTask: NSObject, GCDAsyncSocketDelegate {
         }
         else if sock === self.uploadingSocket {
             if let error = err {
-                Swift.print("Upload listening socket disconnected with error: \(error)")
+                Log.error?.message("Upload listening socket disconnected with error: \(error)")
             }
             self.uploadFinished(success: err == nil)
         }

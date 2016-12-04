@@ -8,6 +8,7 @@
 
 import Foundation
 import Cocoa
+import CleanroomLogger
 
 /// Show notifications from other devices
 ///
@@ -69,7 +70,7 @@ public class NotificationsService: Service, UserNotificationActionHandler {
         
         guard dataPacket.isNotificationPacket else { return false }
         
-        Swift.print("got notification packet: \(dataPacket)")
+        Log.debug?.message("handleDataPacket(<\(dataPacket)> fromDevice:<\(device)> onConnection:<\(connection)>)")
         
         if (try? dataPacket.getRequestFlag()) ?? false {
             // Doing nothing as we dont (at least currently) provide our own notifications to other devices
@@ -173,7 +174,7 @@ public class NotificationsService: Service, UserNotificationActionHandler {
             self.addNotificationId(notificationId, from: device)
         }
         catch {
-            Swift.print("Error while showing notification: \(error)")
+            Log.error?.message("Error while showing notification: \(error)")
         }
     }
     

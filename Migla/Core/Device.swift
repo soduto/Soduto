@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+import CleanroomLogger
 
 /// Supported device types.
 ///
@@ -177,7 +177,7 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
     // MARK: ConnectionDelegate
     
     public func connection(_ connection: Connection, didSwitchToState state: Connection.State) {
-        Swift.print("Device.connection:didSwitchToState: \(connection) \(state)")
+        Log.debug?.message("connection(<\(connection)> didSwitchToState:<\(state)>)")
         switch state {
         case .Closed:
             if let index = self.connections.index(of: connection) {
@@ -185,10 +185,10 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
                 self.updateState()
             }
             else {
-                Swift.print("Connection not found in device connections list")
+                Log.error?.message("Connection not found in device connections list")
             }
         default:
-            Swift.print("Unexpected connection state switch: \(connection) \(state)")
+            Log.error?.message("Unexpected connection state switch: \(connection) -> \(state)")
         }
     }
     
@@ -208,7 +208,7 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
     }
     
     public func pairable(_ pairable:Pairable, failedWithError error:Error) {
-        Swift.print("Device.pairable:failedWithError: \(pairable) \(error)")
+        Log.debug?.message("pairable(<\(pairable)> failedWithError:<\(error)>)")
     }
     
     public func pairable(_ pairable:Pairable, statusChanged status:PairingStatus) {

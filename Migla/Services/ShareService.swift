@@ -8,6 +8,7 @@
 
 import Foundation
 import Cocoa
+import CleanroomLogger
 
 /// Service providing capability to send end receive files, links, etc
 ///
@@ -63,7 +64,7 @@ public class ShareService: Service, DownloadTaskDelegate, UserNotificationAction
         
         guard dataPacket.isSharePacket else { return false }
         
-        Swift.print("ShareService.handleDataPacket:fromDevice:onConnection: \(dataPacket.description) \(device) \(connection)");
+        Log.debug?.message("handleDataPacket(<\(dataPacket)> fromDevice:<\(device)> onConnection:<\(connection)>)");
         
         do {
             if let downloadTask = dataPacket.downloadTask {
@@ -81,11 +82,11 @@ public class ShareService: Service, DownloadTaskDelegate, UserNotificationAction
                 NSWorkspace.shared().open(url)
             }
             else {
-                Swift.print("Unknown shared content")
+                Log.error?.message("Unknown shared content")
             }
         }
         catch {
-            Swift.print("Error while handling share packet: \(error)")
+            Log.error?.message("Error while handling share packet: \(error)")
         }
         
         return true
@@ -128,7 +129,7 @@ public class ShareService: Service, DownloadTaskDelegate, UserNotificationAction
     // MARK: DownloadTaskDelegate
     
     public func downloadTask(_ task: DownloadTask, finishedWithSuccess success: Bool) {
-        Swift.print("ShareService.downloadTask:finishedWithSuccess: \(task) \(success)")
+        Log.debug?.message("downloadTask(<\(task)> finishedWithSuccess:<\(success)>)")
         
         guard let index = self.downloadInfos.index(where: { $0.task === task }) else { return }
         let info = self.downloadInfos.remove(at: index)
@@ -167,7 +168,7 @@ public class ShareService: Service, DownloadTaskDelegate, UserNotificationAction
             let attr = try FileManager.default.attributesOfItem(atPath: path)
             fileSize = attr[FileAttributeKey.size] as? Int64
         } catch {
-            print("Error: \(error)")
+            Log.error?.message("Failed to get file information: \(error)")
         }
         
         return fileSize

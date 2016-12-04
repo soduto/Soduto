@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CleanroomLogger
 
 public class DeviceConfiguration {
     
@@ -73,7 +74,7 @@ public class DeviceConfiguration {
                 }
             }
             catch {
-                Swift.print("Failed to update certificate: \(error)")
+                Log.error?.message("Failed to update certificate: \(error)")
             }
         }
     }
@@ -167,7 +168,7 @@ public class Configuration: ConnectionConfiguration, DeviceManagerConfiguration,
             return identity
         }
         else {
-            Swift.print("Failed to get host identity for SSL: \(error)")
+            Log.error?.message("Failed to get host identity for SSL: \(error)")
             return nil
         }
     }

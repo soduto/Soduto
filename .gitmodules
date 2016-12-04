@@ -1,0 +1,6 @@
+[submodule "Migla/CleanroomLogger"]
+	path = Migla/CleanroomLogger
+	url = https://github.com/giedrius-stanevicius/CleanroomLogger.git
+[submodule "Migla/CleanroomASL"]
+	path = Migla/CleanroomASL
+	url = https://github.com/giedrius-stanevicius/CleanroomASL.git
