@@ -55,37 +55,20 @@ public struct SocketAddress: CustomStringConvertible {
             var mutableStorage = self.storage
             let ptr: UnsafePointer<sockaddr_in> = cast(pointer: &mutableStorage)
             let address = String(cString: inet_ntoa(ptr.pointee.sin_addr))
-            let port = CFSwapInt16BigToHost(ptr.pointee.sin_port)
-            return "IPv4: \(address), port:\(port)"
+            return "\(address):\(self.port)"
         }
         if (Int32(self.storage.ss_family) == AF_INET6) {
             // Print nice info about IPv6 address
             var mutableStorage = self.storage
             let ptr: UnsafePointer<sockaddr_in6> = cast(pointer: &mutableStorage)
-            let (b1, b2, b3, b4, b5, b6, b7, b8) = ptr.pointee.sin6_addr.__u6_addr.__u6_addr16
-            let port = CFSwapInt16BigToHost(ptr.pointee.sin6_port)
-            let ipv4Mapping: String
-            if b1 == 0 && b2 == 0 && b3 == 0 && b4 == 0 && b5 == 0 && b6 == 0xffff {
-                let byte1 = b7 & 0xff
-                let byte2 = (b7 & 0xff00) >> 8
-                let byte3 = b8 & 0xff
-                let byte4 = (b8 & 0xff00) >> 8
-                ipv4Mapping = " (mapped IPv4: \(byte1).\(byte2).\(byte3).\(byte4))"
-            }
-            else {
-                ipv4Mapping = ""
-            }
-            return String(format: "IPv6: %X:%X:%X:%X:%X:%X:%X:%X,%@ port:%d",
-                          CFSwapInt16BigToHost(b1),
-                          CFSwapInt16BigToHost(b2),
-                          CFSwapInt16BigToHost(b3),
-                          CFSwapInt16BigToHost(b4),
-                          CFSwapInt16BigToHost(b5),
-                          CFSwapInt16BigToHost(b6),
-                          CFSwapInt16BigToHost(b7),
-                          CFSwapInt16BigToHost(b8),
-                          ipv4Mapping,
-                          port)
+            
+            var sin6Addr = ptr.pointee.sin6_addr
+            var cString = [Int8](repeating: 0, count: Int(INET6_ADDRSTRLEN))
+            inet_ntop(AF_INET6, &sin6Addr, &cString, socklen_t(cString.count));
+            let address = String(cString: cString)
+            
+            return "[\(address)]:\(self.port)"
+            
         }
         return "\(self.storage)"
     }
