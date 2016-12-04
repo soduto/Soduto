@@ -51,14 +51,12 @@ public struct SocketAddress: CustomStringConvertible {
     
     public var description: String {
         if (Int32(self.storage.ss_family) == AF_INET) {
-            // Print nice info about IPv4 address
             var mutableStorage = self.storage
             let ptr: UnsafePointer<sockaddr_in> = cast(pointer: &mutableStorage)
             let address = String(cString: inet_ntoa(ptr.pointee.sin_addr))
             return "\(address):\(self.port)"
         }
         if (Int32(self.storage.ss_family) == AF_INET6) {
-            // Print nice info about IPv6 address
             var mutableStorage = self.storage
             let ptr: UnsafePointer<sockaddr_in6> = cast(pointer: &mutableStorage)
             
