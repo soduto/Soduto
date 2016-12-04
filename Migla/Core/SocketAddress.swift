@@ -32,6 +32,7 @@ public struct SocketAddress: CustomStringConvertible {
                 return CFSwapInt16BigToHost(ptr.pointee.sin6_port)
             default:
                 assert(false, "Cant retrieve port for this type address")
+                return 0
             }
         }
         set {

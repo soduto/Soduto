@@ -21,7 +21,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
     let userNotificationManager: UserNotificationManager
     
     override init() {
-        Log.enable(configuration: XcodeLogConfiguration(minimumSeverity: .debug, logToASL: false))
+        #if DEBUG
+            Log.enable(configuration: XcodeLogConfiguration(minimumSeverity: .debug, logToASL: false))
+        #else
+            let formatter = FieldBasedLogFormatter(fields: [.severity(.simple), .delimiter(.spacedPipe), .payload])
+            let aslRecorder = ASLLogRecorder(formatter: formatter, echoToStdErr: true)
+            Log.enable(configuration: BasicLogConfiguration(minimumSeverity: .info, recorders: [aslRecorder]))
+        #endif
+        
         
         self.connectionProvider = ConnectionProvider(config: config)
         self.deviceManager = DeviceManager(config: config, serviceManager: self.serviceManager)
