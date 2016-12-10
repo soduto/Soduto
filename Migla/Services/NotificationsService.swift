@@ -221,7 +221,7 @@ public class NotificationsService: Service, UserNotificationActionHandler {
 // MARK: - DataPacket (Notifications)
 
 /// Notifications service data packet utilities
-public extension DataPacket {
+fileprivate extension DataPacket {
     
     // MARK: Types
     
@@ -256,20 +256,20 @@ public extension DataPacket {
     
     // MARK: Properties
     
-    public static let notificationPacketType = "kdeconnect.notification"
+    static let notificationPacketType = "kdeconnect.notification"
     
-    public var isNotificationPacket: Bool { return self.type == DataPacket.notificationPacketType }
+    var isNotificationPacket: Bool { return self.type == DataPacket.notificationPacketType }
     
     
     // MARK: Public static methods
     
-    public static func notificationRequestPacket() -> DataPacket {
+    static func notificationRequestPacket() -> DataPacket {
         return DataPacket(type: notificationPacketType, body: [
             NotificationProperty.request.rawValue: NSNumber(value: true)
         ])
     }
     
-    public static func notificationCancelPacket(forId id: String) -> DataPacket {
+    static func notificationCancelPacket(forId id: String) -> DataPacket {
         return DataPacket(type: notificationPacketType, body: [
             NotificationProperty.cancel.rawValue: id as AnyObject
         ])
@@ -278,70 +278,70 @@ public extension DataPacket {
     
     // MARK: Public methods
     
-    public func getRequestFlag() throws -> Bool {
+    func getRequestFlag() throws -> Bool {
         try self.validateNotificationType()
         guard body.keys.contains(NotificationProperty.request.rawValue) else { return false }
         guard let value = body[NotificationProperty.request.rawValue] as? NSNumber else { throw NotificationError.invalidRequest }
         return value.boolValue
     }
     
-    public func getCancelRequest() throws -> String? {
+    func getCancelRequest() throws -> String? {
         try self.validateNotificationType()
         guard body.keys.contains(NotificationProperty.cancel.rawValue) else { return nil }
         guard let value = body[NotificationProperty.cancel.rawValue] as? String else { throw NotificationError.invalidCancelRequest }
         return value
     }
     
-    public func getId() throws -> String? {
+    func getId() throws -> String? {
         try self.validateNotificationType()
         guard body.keys.contains(NotificationProperty.id.rawValue) else { return nil }
         guard let value = body[NotificationProperty.id.rawValue] as? String else { throw NotificationError.invalidId }
         return value
     }
     
-    public func getAppName() throws -> String? {
+    func getAppName() throws -> String? {
         try self.validateNotificationType()
         guard body.keys.contains(NotificationProperty.appName.rawValue) else { return nil }
         guard let value = body[NotificationProperty.appName.rawValue] as? String else { throw NotificationError.invalidAppName }
         return value
     }
     
-    public func getTicker() throws -> String? {
+    func getTicker() throws -> String? {
         try self.validateNotificationType()
         guard body.keys.contains(NotificationProperty.ticker.rawValue) else { return nil }
         guard let value = body[NotificationProperty.ticker.rawValue] as? String else { throw NotificationError.invalidTicker }
         return value
     }
     
-    public func getClearableFlag() throws -> Bool {
+    func getClearableFlag() throws -> Bool {
         try self.validateNotificationType()
         guard body.keys.contains(NotificationProperty.isClearable.rawValue) else { return false }
         guard let value = body[NotificationProperty.isClearable.rawValue] as? NSNumber else { throw NotificationError.invalidClearableFlag }
         return value.boolValue
     }
     
-    public func getCancelFlag() throws -> Bool {
+    func getCancelFlag() throws -> Bool {
         try self.validateNotificationType()
         guard body.keys.contains(NotificationProperty.isCancel.rawValue) else { return false }
         guard let value = body[NotificationProperty.isCancel.rawValue] as? NSNumber else { throw NotificationError.invalidCancelFlag }
         return value.boolValue
     }
     
-    public func getSilentFlag() throws -> Bool {
+    func getSilentFlag() throws -> Bool {
         try self.validateNotificationType()
         guard body.keys.contains(NotificationProperty.silent.rawValue) else { return false }
         guard let value = body[NotificationProperty.silent.rawValue] as? NSNumber else { throw NotificationError.invalidSilentFlag }
         return value.boolValue
     }
     
-    public func getAnswerFlag() throws -> Bool {
+    func getAnswerFlag() throws -> Bool {
         try self.validateNotificationType()
         guard body.keys.contains(NotificationProperty.requestAnswer.rawValue) else { return false }
         guard let value = body[NotificationProperty.requestAnswer.rawValue] as? NSNumber else { throw NotificationError.invalidAnswerFlag }
         return value.boolValue
     }
     
-    public func validateNotificationType() throws {
+    func validateNotificationType() throws {
         guard self.isNotificationPacket else { throw NotificationError.wrongType }
     }
 }

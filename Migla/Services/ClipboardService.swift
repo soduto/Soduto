@@ -114,7 +114,7 @@ public class ClipboardService: Service {
 // MARK: DataPacket (Clipboard)
 
 /// Clipboard service data packet utilities
-public extension DataPacket {
+fileprivate extension DataPacket {
     
     // MARK: Types
     
@@ -130,14 +130,14 @@ public extension DataPacket {
     
     // MARK: Properties
     
-    public static let clipboardPacketType = "kdeconnect.clipboard"
+    static let clipboardPacketType = "kdeconnect.clipboard"
     
-    public var isClipboardPacket: Bool { return self.type == DataPacket.clipboardPacketType }
+    var isClipboardPacket: Bool { return self.type == DataPacket.clipboardPacketType }
     
     
     // MARK: Public static methods
     
-    public static func clipboardPacket(withContent content: String) -> DataPacket {
+    static func clipboardPacket(withContent content: String) -> DataPacket {
         return DataPacket(type: clipboardPacketType, body: [
             ClipboardProperty.content.rawValue: content as AnyObject
         ])
@@ -146,14 +146,14 @@ public extension DataPacket {
     
     // MARK: Public methods
     
-    public func getContent() throws -> String {
+    func getContent() throws -> String {
         try self.validateClipboardType()
         guard body.keys.contains(ClipboardProperty.content.rawValue) else { throw ClipboardError.invalidContent }
         guard let value = body[ClipboardProperty.content.rawValue] as? String else { throw ClipboardError.invalidContent }
         return value
     }
     
-    public func validateClipboardType() throws {
+    func validateClipboardType() throws {
         guard self.isClipboardPacket else { throw ClipboardError.wrongType }
     }
 }

@@ -9,9 +9,9 @@
 import Foundation
 
 /// Ping service data packet utilities
-public extension DataPacket {
+fileprivate extension DataPacket {
     
-    public static let pingPacketType = "kdeconnect.ping"
+    static let pingPacketType = "kdeconnect.ping"
     
     enum PingError: Error {
         case wrongType
@@ -22,22 +22,22 @@ public extension DataPacket {
         case message = "message"
     }
     
-    public static func pingPacket() -> DataPacket {
+    static func pingPacket() -> DataPacket {
         return DataPacket(type: pingPacketType, body: [
             PingProperty.message.rawValue: "Testing connection." as AnyObject
         ])
     }
     
-    public func getMessage() throws -> String? {
+    func getMessage() throws -> String? {
         try self.validatePingType()
         guard body.keys.contains(PingProperty.message.rawValue) else { return nil }
         guard let message = body[PingProperty.message.rawValue] as? String else { throw PingError.invalidMessage }
         return message
     }
     
-    public var isPingPacket: Bool { return self.type == DataPacket.pingPacketType }
+    var isPingPacket: Bool { return self.type == DataPacket.pingPacketType }
     
-    public func validatePingType() throws {
+    func validatePingType() throws {
         guard self.isPingPacket else { throw PingError.wrongType }
     }
 }

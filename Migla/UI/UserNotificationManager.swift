@@ -171,6 +171,8 @@ public class UserNotificationManager: NSObject, NSUserNotificationCenterDelegate
 
 extension NSUserNotification {
     
+    typealias Id = String
+    
     /// Convenience notification initializer which appropriately setups action handling information
     convenience init<C>(actionHandlerClass: C.Type) where C: UserNotificationActionHandler {
         self.init()

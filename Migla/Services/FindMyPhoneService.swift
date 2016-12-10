@@ -9,11 +9,11 @@
 import Foundation
 
 /// Find my phone service data packet utilities
-public extension DataPacket {
+fileprivate extension DataPacket {
     
-    public static let findMyPhoneRequestPacketType = "kdeconnect.findmyphone.request"
+    static let findMyPhoneRequestPacketType = "kdeconnect.findmyphone.request"
     
-    public static func findMyPhonePacket() -> DataPacket {
+    static func findMyPhonePacket() -> DataPacket {
         return DataPacket(type: findMyPhoneRequestPacketType, body: Body())
     }
 }

@@ -154,6 +154,7 @@ public class ShareService: Service, DownloadTaskDelegate, UserNotificationAction
     public static func handleAction(for notification: NSUserNotification, context: UserNotificationContext) {
         guard let urlString = notification.userInfo?[NotificationProperty.downloadedFileUrl.rawValue] as? String else { return }
         guard let url = URL(string: urlString) else { return }
+        guard notification.activationType == .actionButtonClicked || notification.activationType == .contentsClicked else { return }
         
         NSWorkspace.shared().open(url)
     }
@@ -318,7 +319,7 @@ public class ShareService: Service, DownloadTaskDelegate, UserNotificationAction
 // MARK: DataPacket (Share)
 
 /// Ping service data packet utilities
-public extension DataPacket {
+fileprivate extension DataPacket {
     
     // MARK: Types
     
@@ -338,14 +339,14 @@ public extension DataPacket {
     
     // MARK: Properties
     
-    public static let sharePacketType = "kdeconnect.share.request"
+    static let sharePacketType = "kdeconnect.share.request"
     
-    public var isSharePacket: Bool { return self.type == DataPacket.sharePacketType }
+    var isSharePacket: Bool { return self.type == DataPacket.sharePacketType }
     
     
     // MARK: Public methods
     
-    public static func sharePacket(fileStream: InputStream, fileSize: Int64?, fileName: String?) -> DataPacket {
+    static func sharePacket(fileStream: InputStream, fileSize: Int64?, fileName: String?) -> DataPacket {
         var body: Body = [:]
         if let filename = fileName {
             body[ShareProperty.filename.rawValue] = filename as AnyObject
@@ -356,28 +357,28 @@ public extension DataPacket {
         return packet
     }
     
-    public func getFilename() throws -> String? {
+    func getFilename() throws -> String? {
         try self.validateShareType()
         guard body.keys.contains(ShareProperty.filename.rawValue) else { return nil }
         guard let value = body[ShareProperty.filename.rawValue] as? String else { throw ShareError.invalidFilename }
         return value
     }
     
-    public func getText() throws -> String? {
+    func getText() throws -> String? {
         try self.validateShareType()
         guard body.keys.contains(ShareProperty.text.rawValue) else { return nil }
         guard let value = body[ShareProperty.text.rawValue] as? String else { throw ShareError.invalidText }
         return value
     }
     
-    public func getUrl() throws -> String? {
+    func getUrl() throws -> String? {
         try self.validateShareType()
         guard body.keys.contains(ShareProperty.url.rawValue) else { return nil }
         guard let value = body[ShareProperty.url.rawValue] as? String else { throw ShareError.invalidUrl }
         return value
     }
     
-    public func validateShareType() throws {
+    func validateShareType() throws {
         guard self.isSharePacket else { throw ShareError.wrongType }
     }
 }
