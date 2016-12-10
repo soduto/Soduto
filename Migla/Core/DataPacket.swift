@@ -159,6 +159,8 @@ extension DataPacket {
     }
     
     public static func identityPacket(additionalProperties:DataPacket.Body?, config: HostConfiguration) -> DataPacket {
+        assert(!config.incomingCapabilities.isEmpty || !config.outgoingCapabilities.isEmpty, "Empty capabilities for identity packet, probably something is wrong")
+        
         var body: Body = [
             IdentityProperty.deviceId.rawValue: config.hostDeviceId as AnyObject,
             IdentityProperty.deviceName.rawValue: config.hostDeviceName as AnyObject,
