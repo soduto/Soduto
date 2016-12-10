@@ -34,13 +34,17 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
     
     
     init(config: ConnectionConfiguration) {
-        
         self.config = config
         
         super.init()
         
-        // Listen for device announcement broadcasts
         self.udpSocket.setDelegate(self)
+        self.tcpSocket.delegate = self
+    }
+    
+    public func start() {
+        
+        // Listen for device announcement broadcasts
         do { try self.udpSocket.enableBroadcast(true) }
         catch { Log.error?.message("Could not enable brodcast for udp socket: \(error)") }
         do { try self.udpSocket.enableReusePort(true) }
@@ -54,7 +58,6 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
         }
         
         // Listen for connections on TCP
-        self.tcpSocket.delegate = self
         for i: UInt16 in 0..<20 {
             do {
                 let port = ConnectionProvider.udpPort + i

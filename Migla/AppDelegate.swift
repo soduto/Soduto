@@ -51,6 +51,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
         self.serviceManager.add(service: NotificationsService())
         self.serviceManager.add(service: ClipboardService())
         self.serviceManager.add(service: ShareService())
+        
+        self.connectionProvider.start()
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
