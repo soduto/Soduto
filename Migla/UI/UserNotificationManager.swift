@@ -137,9 +137,10 @@ public class UserNotificationManager: NSObject, NSUserNotificationCenterDelegate
         guard self.fastNotifications.count > 0 else { return }
         guard self.fastTimer == nil else { return }
         
-        self.fastTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { timer in
+        self.fastTimer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true) { timer in
+            let deliveredNotifications = NSUserNotificationCenter.default.deliveredNotifications
             for (id, notification) in self.fastNotifications {
-                if let n = NSUserNotificationCenter.default.deliveredNotifications.first(where: { n in n.identifier == id }) {
+                if let n = deliveredNotifications.first(where: { n in n.identifier == id }) {
                     if !n.isPresented {
                         // if not showing - move to slow notifications
                         self.stopMonitoringNotification(n)
@@ -159,8 +160,9 @@ public class UserNotificationManager: NSObject, NSUserNotificationCenterDelegate
         guard self.slowTimer == nil else { return }
         
         self.slowTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { timer in
+            let deliveredNotifications = NSUserNotificationCenter.default.deliveredNotifications
             for (id, notification) in self.slowNotifications {
-                guard !NSUserNotificationCenter.default.deliveredNotifications.contains(where: { n in n.identifier == id }) else { continue }
+                guard !deliveredNotifications.contains(where: { n in n.identifier == id }) else { continue }
                 
                 self.handleAction(for: notification)
                 self.stopMonitoringNotification(notification)
