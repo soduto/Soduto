@@ -21,6 +21,7 @@
 		8456F4AA1D7DEA47006EFE19 /* DefaultPairingHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456F4A91D7DEA47006EFE19 /* DefaultPairingHandler.swift */; };
 		8468BDFB1DE8F10D003B9925 /* NotificationsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8468BDFA1DE8F10D003B9925 /* NotificationsService.swift */; };
 		8468BE001DEB7F97003B9925 /* NetworkUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8468BDFF1DEB7F97003B9925 /* NetworkUtils.swift */; };
+		847E9D2B1DF5E2640042D3CE /* TelephonyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847E9D2A1DF5E2640042D3CE /* TelephonyService.swift */; };
 		847EF4C51DC9049D00360BBE /* MiglaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847EF4C41DC9049D00360BBE /* MiglaTests.swift */; };
 		849237991DE06EBC00D95BBA /* ServiceAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849237981DE06EBC00D95BBA /* ServiceAction.swift */; };
 		8492379D1DE1C55900D95BBA /* DeviceMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8492379C1DE1C55900D95BBA /* DeviceMenu.swift */; };
@@ -39,6 +40,10 @@
 		84D903A21DC696A600E61DA7 /* CertificateUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D903A11DC696A600E61DA7 /* CertificateUtils.swift */; };
 		84E7320F1DF4714F001E1549 /* CleanroomLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84E732081DF46F94001E1549 /* CleanroomLogger.framework */; };
 		84E732101DF47186001E1549 /* CocoaAsyncSocket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84E2F2F41D574A4F00EAA802 /* CocoaAsyncSocket.framework */; };
+		84E7321A1DF55B67001E1549 /* CleanroomASL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84E732171DF47237001E1549 /* CleanroomASL.framework */; };
+		84E7321B1DF55B67001E1549 /* CleanroomASL.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84E732171DF47237001E1549 /* CleanroomASL.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		84E7321F1DF55B67001E1549 /* CleanroomLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84E732081DF46F94001E1549 /* CleanroomLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		84E732231DF55B67001E1549 /* CocoaAsyncSocket.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84E2F2F41D574A4F00EAA802 /* CocoaAsyncSocket.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84FA45D71DDDCB3D00EF3992 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA45CF1DDDCB3D00EF3992 /* Connection.swift */; };
 		84FA45D81DDDCB3D00EF3992 /* ConnectionProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA45D01DDDCB3D00EF3992 /* ConnectionProvider.swift */; };
 		84FA45D91DDDCB3D00EF3992 /* DataPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA45D11DDDCB3D00EF3992 /* DataPacket.swift */; };
@@ -125,7 +130,44 @@
 			remoteGlobalIDString = 3B90590C1DAECB5200B4EEC0;
 			remoteInfo = CleanroomASLTests;
 		};
+		84E7321C1DF55B67001E1549 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84E732111DF47237001E1549 /* CleanroomASL.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 3B9059021DAECB5200B4EEC0;
+			remoteInfo = CleanroomASL;
+		};
+		84E732201DF55B67001E1549 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84E732021DF46F93001E1549 /* CleanroomLogger.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 3B9059021DAECB5200B4EEC0;
+			remoteInfo = CleanroomLogger;
+		};
+		84E732241DF55B67001E1549 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8499621A1D57438E002B893A /* CocoaAsyncSocket.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 9FC41F121B9D965000578BEB;
+			remoteInfo = "Mac CocoaAsyncSocket";
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		84E732261DF55B68001E1549 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				84E732231DF55B67001E1549 /* CocoaAsyncSocket.framework in Embed Frameworks */,
+				84E7321B1DF55B67001E1549 /* CleanroomASL.framework in Embed Frameworks */,
+				84E7321F1DF55B67001E1549 /* CleanroomLogger.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		840FC2F81DEF6AF400AC4824 /* ClipboardService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClipboardService.swift; sourceTree = "<group>"; };
@@ -146,6 +188,7 @@
 		8456F4A91D7DEA47006EFE19 /* DefaultPairingHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultPairingHandler.swift; sourceTree = "<group>"; };
 		8468BDFA1DE8F10D003B9925 /* NotificationsService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationsService.swift; sourceTree = "<group>"; };
 		8468BDFF1DEB7F97003B9925 /* NetworkUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkUtils.swift; sourceTree = "<group>"; };
+		847E9D2A1DF5E2640042D3CE /* TelephonyService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TelephonyService.swift; sourceTree = "<group>"; };
 		847EF4C21DC9049D00360BBE /* MiglaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MiglaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		847EF4C41DC9049D00360BBE /* MiglaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiglaTests.swift; sourceTree = "<group>"; };
 		847EF4C61DC9049D00360BBE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -194,6 +237,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				84E732101DF47186001E1549 /* CocoaAsyncSocket.framework in Frameworks */,
+				84E7321A1DF55B67001E1549 /* CleanroomASL.framework in Frameworks */,
 				84E7320F1DF4714F001E1549 /* CleanroomLogger.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -393,6 +437,7 @@
 				8468BDFA1DE8F10D003B9925 /* NotificationsService.swift */,
 				840FC2F81DEF6AF400AC4824 /* ClipboardService.swift */,
 				843B67031DF1E64A00289EC9 /* ShareService.swift */,
+				847E9D2A1DF5E2640042D3CE /* TelephonyService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -407,12 +452,16 @@
 				8433015C1D2D8CB8008934BB /* Sources */,
 				8433015D1D2D8CB8008934BB /* Frameworks */,
 				8433015E1D2D8CB8008934BB /* Resources */,
+				84E732261DF55B68001E1549 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				84E7320E1DF47006001E1549 /* PBXTargetDependency */,
 				84E2F2F81D574A5900EAA802 /* PBXTargetDependency */,
+				84E7321D1DF55B67001E1549 /* PBXTargetDependency */,
+				84E732211DF55B67001E1549 /* PBXTargetDependency */,
+				84E732251DF55B67001E1549 /* PBXTargetDependency */,
 			);
 			name = Migla;
 			productName = Migla;
@@ -586,6 +635,7 @@
 				849962131D572B1F002B893A /* Logging.m in Sources */,
 				849961B91D5726B0002B893A /* MYAnonymousIdentity.m in Sources */,
 				84FA45EA1DDF433400EF3992 /* Service.swift in Sources */,
+				847E9D2B1DF5E2640042D3CE /* TelephonyService.swift in Sources */,
 				84FA45DA1DDDCB3D00EF3992 /* Device.swift in Sources */,
 				849237EC1DE5FC9600D95BBA /* PairingInterfaceController.swift in Sources */,
 				849961C31D57287F002B893A /* Test.m in Sources */,
@@ -643,6 +693,21 @@
 			isa = PBXTargetDependency;
 			name = CleanroomLogger;
 			targetProxy = 84E7320D1DF47006001E1549 /* PBXContainerItemProxy */;
+		};
+		84E7321D1DF55B67001E1549 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = CleanroomASL;
+			targetProxy = 84E7321C1DF55B67001E1549 /* PBXContainerItemProxy */;
+		};
+		84E732211DF55B67001E1549 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = CleanroomLogger;
+			targetProxy = 84E732201DF55B67001E1549 /* PBXContainerItemProxy */;
+		};
+		84E732251DF55B67001E1549 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Mac CocoaAsyncSocket";
+			targetProxy = 84E732241DF55B67001E1549 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -759,6 +824,7 @@
 		8433016E1D2D8CB8008934BB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Migla/Migla.entitlements;
@@ -778,6 +844,7 @@
 		8433016F1D2D8CB8008934BB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Migla/Migla.entitlements;
