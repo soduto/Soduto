@@ -202,6 +202,8 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
             uploadTask = nil
         }
         
+        Log.debug?.message("send(:\(dataPacket) whenCompleted:\(whenCompleted))")
+        
         if let bytes = try? packet.serialize() {
             let data = Data(bytes: bytes)
             self.socket.write(data, withTimeout: -1, tag: Int(packet.id))
@@ -445,6 +447,8 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     }
     
     private func handle(packet: DataPacket) {
+        Log.debug?.message("handle(packet: <\(packet)>)")
+        
         // try to handle with registered handlers
         for handler in self.packetHandlers {
             let handled = handler.handleDataPacket(packet, onConnection: self)
