@@ -120,7 +120,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
             Log.error?.message("Could not connect to address \(address): \(error)")
             return nil
         }
-//        self.configureSocket()
+        self.configureSocket()
     }
     
     init?(socket: GCDAsyncSocket, config: ConnectionConfiguration) {
