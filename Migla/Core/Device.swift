@@ -134,7 +134,7 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
             self.connections[index].close()
         }
         
-        self.updateState()
+        self.updatePairingStatus()
     }
     
     /// Register handler for incoming data packets. Most common handler would be Service instances
@@ -256,7 +256,7 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
     
     public func unpair() {
         for connection in self.connections {
-            switch connection.pairingStatus{
+            switch connection.pairingStatus {
             case .Paired, .Requested:
                 connection.unpair()
                 break
