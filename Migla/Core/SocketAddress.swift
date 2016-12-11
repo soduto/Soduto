@@ -20,6 +20,9 @@ public struct SocketAddress: CustomStringConvertible {
         return sa_family_t(self.storage.ss_family)
     }
     
+    public var isIPv4: Bool { return Int32(self.family) == AF_INET }
+    public var isIPv6: Bool { return Int32(self.family) == AF_INET6 }
+    
     public var port: in_port_t {
         get {
             var mutableSelf = self
@@ -75,6 +78,20 @@ public struct SocketAddress: CustomStringConvertible {
         var mutableAddress = self
         let ptr: UnsafeMutablePointer<UInt8> = mutableAddress.pointer()
         return Data(bytes: ptr, count: Int(self.size))
+    }
+    
+    public var ipv4: sockaddr_in {
+        assert(self.isIPv4, "It is not an IPv4 address - cannot return IPv4 address data")
+        var mutableStorage = self.storage
+        let ptr: UnsafePointer<sockaddr_in> = cast(pointer: &mutableStorage)
+        return ptr.pointee
+    }
+    
+    public var ipv6: sockaddr_in6 {
+        assert(self.isIPv6, "It is not an IPv6 address - cannot return IPv6 address data")
+        var mutableStorage = self.storage
+        let ptr: UnsafePointer<sockaddr_in6> = cast(pointer: &mutableStorage)
+        return ptr.pointee
     }
     
     

@@ -11,31 +11,16 @@ import CleanroomLogger
 
 public class DeviceConfiguration {
     
+    // MARK: Types
+    
     public enum Property: String {
         case isPaired = "isPaired"
         case certificateName = "certificateName"
+        case hwAddresses = "hwAddresses"
     }
     
     
-    
-    init(deviceId: Device.Id, userDefaults: UserDefaults) {
-        self.deviceId = deviceId
-        self.userDefaults = userDefaults
-        self.isPaired = false
-        self.certificateName = ""
-        
-        let key = DeviceConfiguration.configKey(for: deviceId)
-        if let attrs = self.userDefaults.dictionary(forKey: key) {
-            self.isPaired = attrs[Property.isPaired.rawValue] as? Bool ?? self.isPaired
-            self.certificateName = attrs[Property.certificateName.rawValue] as? String ?? self.certificateName
-        }
-    }
-    
-    
-    
-    private let userDefaults: UserDefaults
-    
-    
+    // MARK: Properties
     
     public let deviceId: Device.Id
     
@@ -63,11 +48,11 @@ public class DeviceConfiguration {
         }
         set {
             do {
-                if !self.certificateName.isEmpty {
-                    try CertificateUtils.deleteCertificate(self.certificateName)
-                }
                 if self.certificateName.isEmpty && newValue != nil {
                     self.certificateName = DeviceConfiguration.defaultCertificateName(for: deviceId)
+                }
+                if !self.certificateName.isEmpty {
+                    try CertificateUtils.deleteCertificate(self.certificateName)
                 }
                 if let newValue = newValue {
                     try CertificateUtils.addCertificate(newValue, name: self.certificateName)
@@ -79,7 +64,66 @@ public class DeviceConfiguration {
         }
     }
     
+    public var hwAddresses: [String] {
+        didSet {
+            if self.hwAddresses != oldValue {
+                self.save()
+            }
+        }
+    }
     
+    
+    private static let configKeyPrefix = "com.migla.device."
+    private let userDefaults: UserDefaults
+    
+    
+    // MARK: Init / Deinit
+    
+    init(deviceId: Device.Id, userDefaults: UserDefaults) {
+        self.deviceId = deviceId
+        self.userDefaults = userDefaults
+        self.isPaired = false
+        self.certificateName = ""
+        self.hwAddresses = []
+        
+        let key = DeviceConfiguration.configKey(for: deviceId)
+        if let attrs = self.userDefaults.dictionary(forKey: key) {
+            self.isPaired = attrs[Property.isPaired.rawValue] as? Bool ?? self.isPaired
+            self.certificateName = attrs[Property.certificateName.rawValue] as? String ?? self.certificateName
+            self.hwAddresses = attrs[Property.hwAddresses.rawValue] as? [String] ?? self.hwAddresses
+        }
+    }
+    
+    convenience init(configKey: String, userDefaults: UserDefaults) {
+        assert(DeviceConfiguration.isDeviceConfigKey(configKey), "configKey is not a valid device configuration key")
+    
+        let deviceId: Device.Id
+        if DeviceConfiguration.isDeviceConfigKey(configKey) {
+            deviceId = configKey.substring(from: configKey.index(configKey.startIndex, offsetBy: DeviceConfiguration.configKeyPrefix.characters.count))
+        }
+        else {
+            deviceId = ""
+        }
+        
+        self.init(deviceId: deviceId, userDefaults: userDefaults)
+    }
+    
+    
+    // MARK: Public functions
+    
+    public class func isDeviceConfigKey(_ key: String) -> Bool {
+        return key.hasPrefix(configKeyPrefix)
+    }
+    
+    public func addHwAddress(_ address: String) {
+        if !self.hwAddresses.contains(address) {
+            self.hwAddresses.append(address)
+            self.save()
+        }
+    }
+    
+    
+    // MARK: Private
     
     class func defaultCertificateName(for deviceId: String) -> String {
         let safeDeviceId = deviceId.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? "undefined-\(Configuration.generateDeviceId())"
@@ -88,14 +132,17 @@ public class DeviceConfiguration {
     
     class func configKey(for deviceId: String) -> String {
         let safeDeviceId = deviceId.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? "undefined-\(Configuration.generateDeviceId())"
-        return "com.migla.device.\(safeDeviceId)"
+        return "\(configKeyPrefix).\(safeDeviceId)"
     }
     
     func save() {
+        guard self.deviceId != "" else { return }
+        
         let key = DeviceConfiguration.configKey(for: self.deviceId)
         let attrs:[String:AnyObject] = [
             Property.isPaired.rawValue: self.isPaired as AnyObject,
-            Property.certificateName.rawValue: self.certificateName as AnyObject
+            Property.certificateName.rawValue: self.certificateName as AnyObject,
+            Property.hwAddresses.rawValue: self.hwAddresses as AnyObject
         ]
         self.userDefaults.set(attrs, forKey: key)
     }
@@ -175,6 +222,19 @@ public class Configuration: ConnectionConfiguration, DeviceManagerConfiguration,
     
     public func deviceConfig(for deviceId: Device.Id) -> DeviceConfiguration {
         return DeviceConfiguration(deviceId: deviceId, userDefaults: self.userDefaults)
+    }
+    
+    public func knownDeviceConfigs() -> [DeviceConfiguration] {
+        var configs: [DeviceConfiguration] = []
+        
+        let allSettings = self.userDefaults.dictionaryRepresentation()
+        let keys = allSettings.keys
+        for key in keys {
+            guard DeviceConfiguration.isDeviceConfigKey(key) else { continue }
+            configs.append(DeviceConfiguration(configKey: key, userDefaults: self.userDefaults))
+        }
+        
+        return configs
     }
     
     public var incomingCapabilities: Set<Service.Capability> {

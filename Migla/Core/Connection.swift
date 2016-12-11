@@ -24,6 +24,7 @@ public protocol ConnectionDelegate: class {
 public protocol ConnectionConfiguration: HostConfiguration {
     var hostCertificate: SecIdentity? { get }
     func deviceConfig(for deviceId:Device.Id) -> DeviceConfiguration
+    func knownDeviceConfigs() -> [DeviceConfiguration]
 }
 
 public protocol ConnectionDataPacketHandler {
@@ -75,6 +76,10 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
         didSet {
             if oldValue != self.state {
                 self.delegate?.connection(self, didSwitchToState: self.state)
+            }
+            
+            if self.state == .Open && self.pairingStatus == .Paired {
+                self.rememberHwAddress()
             }
         }
     }
@@ -366,6 +371,10 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     
     public func pairable(_ pairable:Pairable, statusChanged status:PairingStatus) {
         self.pairingDelegate?.pairable(self, statusChanged: status)
+        
+        if self.pairingStatus == .Paired {
+            self.rememberHwAddress()
+        }
     }
     
     
@@ -473,6 +482,14 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
         else {
             return true
         }
+    }
+    
+    private func rememberHwAddress() {
+        guard self.pairingStatus == .Paired else { return }
+        guard let deviceId = (try? self.identity?.getDeviceId()) ?? nil else { return }
+        guard let hwAddress = NetworkUtils.hwAddress(for: self.peerAddress) else { return }
+        
+        self.config.deviceConfig(for: deviceId).addHwAddress(hwAddress)
     }
 
 }

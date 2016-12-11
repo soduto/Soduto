@@ -82,59 +82,26 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
         let packet = DataPacket.identityPacket(additionalProperties: properties, config: self.config)
         if let bytes = try? packet.serialize() {
             let data = Data(bytes: bytes)
+            
             var address = SocketAddress(ipv4: "255.255.255.255")!
             address.port = ConnectionProvider.udpPort
             self.udpSocket.send(data, toAddress: address.data, withTimeout: 120, tag: Int(packet.id))
+            
+            // send explicit announcements to known hardware addresses
+            let knownDeviceConfigs = self.config.knownDeviceConfigs()
+            let accessibleAddresses = (try? NetworkUtils.accessibleIPv4Addresses()) ?? []
+            for accessibleAddress in accessibleAddresses {
+                guard let accessibleHwAddress = accessibleAddress.hwAddressString else { continue }
+                for deviceConfig in knownDeviceConfigs {
+                    guard deviceConfig.hwAddresses.contains(accessibleHwAddress) else { continue }
+                    guard let deviceAddress = SocketAddress(ipv4: accessibleAddress.ipAddressString) else { continue }
+                    var mutableDeviceAddress = deviceAddress
+                    mutableDeviceAddress.port = ConnectionProvider.udpPort
+                    self.udpSocket.send(data, toAddress: mutableDeviceAddress.data, withTimeout: 120, tag: Int(packet.id))
+                    break
+                }
+            }
         }
-        
-        
-        //////
-        
-//        var connectionAddress = SocketAddress(ipv4: "192.168.0.102")!
-//        connectionAddress.port = 1716
-//        
-//        let body: DataPacket.Body = [
-//            DataPacket.IdentityProperty.deviceId.rawValue: "d43cf2509a41f10d" as AnyObject,
-//            DataPacket.IdentityProperty.deviceName.rawValue: "LG G2 (fake)" as AnyObject,
-//            DataPacket.IdentityProperty.deviceType.rawValue: "phone" as AnyObject,
-//            DataPacket.IdentityProperty.protocolVersion.rawValue: NSNumber(value: DataPacket.protocolVersion),
-//            DataPacket.IdentityProperty.outgoingCapabilities.rawValue: [
-//                "kdeconnect.ping",
-//                "kdeconnect.sftp",
-//                "kdeconnect.runcommand.request",
-//                "kdeconnect.share.request",
-//                "kdeconnect.mpris.request",
-//                "kdeconnect.notification.request",
-//                "kdeconnect.clipboard",
-//                "kdeconnect.telephony",
-//                "kdeconnect.mousepad.request",
-//                "kdeconnect.notification",
-//                "kdeconnect.battery"
-//            ] as AnyObject,
-//            DataPacket.IdentityProperty.incomingCapabilities.rawValue: [
-//                "kdeconnect.ping",
-//                "kdeconnect.share.request",
-//                "kdeconnect.mpris",
-//                "kdeconnect.notification.request",
-//                "kdeconnect.clipboard",
-//                "kdeconnect.sms.request",
-//                "kdeconnect.telephony.request",
-//                "kdeconnect.sftp.request",
-//                "kdeconnect.runcommand",
-//                "kdeconnect.notification",
-//                "kdeconnect.findmyphone.request",
-//                "kdeconnect.battery.request"
-//            ] as AnyObject
-//        ]
-//        let identity = DataPacket(type: DataPacket.identityPacketType, body: body)
-//        
-//        if let connection = Connection(address: connectionAddress, identityPacket: identity, config: self.config) {
-//            connection.delegate = self
-//            self.pendingConnections.insert(connection)
-//            
-//            // send initial identity packet
-//            connection.send(DataPacket.identityPacket(config: self.config))
-//        }
     }
     
     

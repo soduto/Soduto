@@ -18,13 +18,15 @@ public struct NetworkUtils {
     }
     
     public struct ArpInfo {
-        
+        var sin_addr: in_addr
+        var ipAddressString: String
+        var hwAddressString: String?
     }
     
     
     // Public static methods
     
-    public static func accessibleAddresses() throws -> [ArpInfo] {
+    public static func accessibleIPv4Addresses() throws -> [ArpInfo] {
         
         // Check required buffer size
         var neededBufferSize: size_t = 0
@@ -48,7 +50,8 @@ public struct NetworkUtils {
                 let sin = UnsafeRawPointer(rtm.advanced(by: 1)).assumingMemoryBound(to: sockaddr_inarp.self)
                 let sdl = UnsafeRawPointer(sin.advanced(by: 1)).assumingMemoryBound(to: sockaddr_dl.self)
                 
-                let ipAddressString = String(cString: inet_ntoa(sin.pointee.sin_addr))
+                let sin_addr = sin.pointee.sin_addr
+                let ipAddressString = String(cString: inet_ntoa(sin_addr))
                 var hwAddressString: String? = nil
                 if sdl.pointee.sdl_alen > 0 {
                     var sdlCopy = sdl.pointee
@@ -63,14 +66,10 @@ public struct NetworkUtils {
                         sdlDataPtr.advanced(by: 3).pointee,
                         sdlDataPtr.advanced(by: 4).pointee,
                         sdlDataPtr.advanced(by: 5).pointee)
-                    
-//                    let caddr caddr_t =sdl.pointee.sdl_data
-//                    ((caddr_t)((s)->sdl_data + (s)->sdl_nlen))
-//                    let lladdr = LLADDR(sdl.pointee)
-//                    String(format: "%x:%x:%x:%x:%x:%x", cp[0], cp[1], cp[2], cp[3], cp[4], cp[5])
                 }
                 
-                Swift.print("Address: \(ipAddressString) -> \(hwAddressString)")
+                let info = ArpInfo(sin_addr: sin_addr, ipAddressString: ipAddressString, hwAddressString: hwAddressString)
+                addresses.append(info)
                 
                 pos = pos + Int(rtm.pointee.rtm_msglen)
             }
@@ -121,6 +120,18 @@ public struct NetworkUtils {
 //            }
 //            printf("\n");
 //        }
+    }
+    
+    public static func hwAddress(for socketAddress: SocketAddress) -> String? {
+        guard socketAddress.isIPv4 else { return nil }
+        
+        let arpInfos = (try? accessibleIPv4Addresses()) ?? []
+        for arpInfo in arpInfos {
+            if arpInfo.sin_addr.s_addr == socketAddress.ipv4.sin_addr.s_addr {
+                return arpInfo.hwAddressString
+            }
+        }
+        return nil
     }
     
 }
