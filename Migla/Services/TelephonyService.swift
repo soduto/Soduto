@@ -40,7 +40,7 @@ public class TelephonyService: Service, UserNotificationActionHandler {
     
     // MARK: Service properties
     
-    public let incomingCapabilities = Set<Service.Capability>([ DataPacket.telephonyRequestPacketType ])
+    public let incomingCapabilities = Set<Service.Capability>([ DataPacket.telephonyPacketType ])
     public let outgoingCapabilities = Set<Service.Capability>([ DataPacket.telephonyRequestPacketType, DataPacket.smsRequestPacketType ])
     
     
@@ -284,6 +284,7 @@ fileprivate extension DataPacket {
     
     // MARK: Properties
     
+    static let telephonyPacketType = "kdeconnect.telephony"
     static let telephonyRequestPacketType = "kdeconnect.telephony.request"
     static let smsRequestPacketType = "kdeconnect.sms.request"
     
