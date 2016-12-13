@@ -4,3 +4,6 @@
 [submodule "Migla/CleanroomASL"]
 	path = Migla/CleanroomASL
 	url = https://github.com/giedrius-stanevicius/CleanroomASL.git
+[submodule "Migla/Reachability.swift"]
+	path = Migla/Reachability.swift
+	url = https://github.com/giedrius-stanevicius/Reachability.swift.git

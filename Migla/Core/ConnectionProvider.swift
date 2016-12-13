@@ -7,8 +7,10 @@
 //
 
 import Foundation
+import Cocoa
 import CocoaAsyncSocket
 import CleanroomLogger
+import Reachability
 
 enum ConnectionProviderError: Error {
     case IdentityAbsent
@@ -23,13 +25,18 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
     
     static public let udpPort: UInt16 = 1716
     static public let minVersionWithSSLSupport: UInt = 6
+    static public let minAnnouncementInterval: TimeInterval = 30.0
     
     public weak var delegate: ConnectionProviderDelegate? = nil
     
     private let config: ConnectionConfiguration
+    private let reachability: Reachability? = Reachability()
     private let udpSocket: GCDAsyncUdpSocket = GCDAsyncUdpSocket(delegate: nil, delegateQueue: DispatchQueue.main)
     private let tcpSocket: GCDAsyncSocket = GCDAsyncSocket(delegate: nil, delegateQueue: DispatchQueue.main)
     private var pendingConnections: Set<Connection> = Set<Connection>()
+    private var isStarted: Bool = false
+    private var lastAnnouncementTime: TimeInterval = 0.0
+    private var announcementTimer: Timer? = nil
     
     
     
@@ -38,6 +45,14 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
         
         super.init()
         
+        self.reachability?.whenReachable =  { [unowned self] _ in self.becameReachable() }
+        self.reachability?.whenUnreachable =  { [unowned self] _ in self.becameUnreachable() }
+        do {
+            try self.reachability?.startNotifier()
+        }
+        catch {
+            Log.error?.message("Failed to start monitoring network reachability: \(error)")
+        }
         self.udpSocket.setDelegate(self)
         self.tcpSocket.delegate = self
     }
@@ -52,6 +67,7 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
         do {
             try self.udpSocket.bind(toPort: ConnectionProvider.udpPort)
             try self.udpSocket.beginReceiving()
+            Log.info?.message("Listening for UDP broadcasts on port \(self.udpSocket.localPort())")
         }
         catch {
             Log.error?.message("Could not start listening for self-announcement broadcasts: \(error)")
@@ -62,44 +78,86 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
             do {
                 let port = ConnectionProvider.udpPort + i
                 try self.tcpSocket.accept(onPort: port)
-                Log.info?.message("Listening on port \(port)")
+                Log.info?.message("Listening for TCP connections on port \(self.tcpSocket.localPort)")
             }
             catch {}
         }
         
+        self.isStarted = true
+        
         broadcastAnnouncement()
+        
+        // Speculative broadcast after some interval.
+        // When broadcasting imediately after internet connection becomes available, ARP table may be incomplete and not all known devices may be detected. After some time, theese undetected devices may become known and may receive the announcement
+        Timer.scheduledTimer(withTimeInterval: 60.0, repeats: false) { _ in
+            self.broadcastAnnouncement()
+        }
+    }
+    
+    public func stop() {
+        self.isStarted = false
+        self.udpSocket.close()
+        self.tcpSocket.disconnect()
+    }
+    
+    public func restart() {
+        guard self.isStarted else { return }
+        self.stop()
+        self.start()
     }
     
     
-    // MARK: Anouncements broadcasting
+    // MARK: Announcements broadcasting
     
-    func broadcastAnnouncement() {
+    public func broadcastAnnouncement() {
+        guard self.isStarted else { return }
         guard self.tcpSocket.localPort > 0 else { return }
+        guard self.announcementTimer == nil else { return }
         
-        let properties: DataPacket.Body = [
-            DataPacket.IdentityProperty.tcpPort.rawValue: Int(self.tcpSocket.localPort) as AnyObject
-        ]
-        let packet = DataPacket.identityPacket(additionalProperties: properties, config: self.config)
-        if let bytes = try? packet.serialize() {
-            let data = Data(bytes: bytes)
-            
-            var address = SocketAddress(ipv4: "255.255.255.255")!
-            address.port = ConnectionProvider.udpPort
-            self.udpSocket.send(data, toAddress: address.data, withTimeout: 120, tag: Int(packet.id))
-            
-            // send explicit announcements to known hardware addresses
-            let knownDeviceConfigs = self.config.knownDeviceConfigs()
-            let accessibleAddresses = (try? NetworkUtils.accessibleIPv4Addresses()) ?? []
-            for accessibleAddress in accessibleAddresses {
-                guard let accessibleHwAddress = accessibleAddress.hwAddressString else { continue }
-                for deviceConfig in knownDeviceConfigs {
-                    guard deviceConfig.hwAddresses.contains(accessibleHwAddress) else { continue }
-                    guard let deviceAddress = SocketAddress(ipv4: accessibleAddress.ipAddressString) else { continue }
-                    var mutableDeviceAddress = deviceAddress
-                    mutableDeviceAddress.port = ConnectionProvider.udpPort
-                    self.udpSocket.send(data, toAddress: mutableDeviceAddress.data, withTimeout: 120, tag: Int(packet.id))
-                    break
+        if self.lastAnnouncementTime + ConnectionProvider.minAnnouncementInterval < CACurrentMediaTime() {
+            let properties: DataPacket.Body = [
+                DataPacket.IdentityProperty.tcpPort.rawValue: Int(self.tcpSocket.localPort) as AnyObject
+            ]
+            let packet = DataPacket.identityPacket(additionalProperties: properties, config: self.config)
+            if let bytes = try? packet.serialize() {
+                let data = Data(bytes: bytes)
+                
+                var address = SocketAddress(ipv4: "255.255.255.255")!
+                address.port = ConnectionProvider.udpPort
+                self.udpSocket.send(data, toAddress: address.data, withTimeout: 120, tag: Int(packet.id))
+                
+                // send explicit announcements to known hardware addresses
+//                let knownDeviceConfigs = self.config.knownDeviceConfigs()
+//                let accessibleAddresses0 = (try? NetworkUtils.accessibleIPv4Addresses()) ?? []
+//                for info in accessibleAddresses0 {
+//                    guard info.hwAddressString == nil else { continue }
+//                    guard let socketAddress = SocketAddress(ipv4: info.ipAddressString) else { continue }
+//                    var mutableSocketAddress = socketAddress
+//                    let sock = Darwin.socket(AF_INET, SOCK_DGRAM, IPPROTO_ICMP)
+//                    _ = Darwin.bind(sock, mutableSocketAddress.pointer(), socklen_t(MemoryLayout<sockaddr_in>.size))
+//                    var byte: UInt8 = 123
+//                    write(sock, &byte, 1)
+//                    close(sock)
+//                }
+                let accessibleAddresses = (try? NetworkUtils.accessibleIPv4Addresses()) ?? []
+                for accessibleAddress in accessibleAddresses {
+//                    guard let accessibleHwAddress = accessibleAddress.hwAddressString else { continue }
+//                    for deviceConfig in knownDeviceConfigs {
+//                        guard deviceConfig.hwAddresses.contains(accessibleHwAddress) else { continue }
+                        guard let deviceAddress = SocketAddress(ipv4: accessibleAddress.ipAddressString) else { continue }
+                        var mutableDeviceAddress = deviceAddress
+                        mutableDeviceAddress.port = ConnectionProvider.udpPort
+                        self.udpSocket.send(data, toAddress: mutableDeviceAddress.data, withTimeout: 120, tag: Int(packet.id))
+//                        break
+//                    }
                 }
+            }
+            
+            self.lastAnnouncementTime = CACurrentMediaTime()
+        }
+        else {
+            self.announcementTimer = Timer.scheduledTimer(withTimeInterval: ConnectionProvider.minAnnouncementInterval, repeats: false) { _ in
+                self.broadcastAnnouncement()
             }
         }
     }
@@ -138,7 +196,7 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
     }
     
     public func udpSocketDidClose(_ sock: GCDAsyncUdpSocket, withError error: Error) {
-        Log.debug?.message("udpSocketDidClose(<\(sock)> withError:<\(error)>)")
+//        Log.debug?.message("udpSocketDidClose(<\(sock)> withError:<\(error)>)")
     }
     
     
@@ -214,6 +272,18 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
             Log.error?.message("Failed to initialize connection: \(error)")
             connection.close()
         }
+    }
+    
+    
+    // MARK: Private methrod
+    
+    private func becameReachable() {
+        Log.debug?.message("Became reachable")
+        self.restart()
+    }
+    
+    private func becameUnreachable() {
+        Log.debug?.message("Became unreachable")
     }
     
 }
