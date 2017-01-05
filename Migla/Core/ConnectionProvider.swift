@@ -115,6 +115,12 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
         guard self.announcementTimer == nil else { return }
         
         if self.lastAnnouncementTime + ConnectionProvider.minAnnouncementInterval < CACurrentMediaTime() {
+            
+            Log.debug?.message("Broadcasting self-announcement")
+            
+            // Try to fill ARP table with all reachable addresses
+            NetworkUtils.pingLocalNetwork()
+            
             let properties: DataPacket.Body = [
                 DataPacket.IdentityProperty.tcpPort.rawValue: Int(self.tcpSocket.localPort) as AnyObject
             ]
@@ -127,29 +133,18 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
                 self.udpSocket.send(data, toAddress: address.data, withTimeout: 120, tag: Int(packet.id))
                 
                 // send explicit announcements to known hardware addresses
-//                let knownDeviceConfigs = self.config.knownDeviceConfigs()
-//                let accessibleAddresses0 = (try? NetworkUtils.accessibleIPv4Addresses()) ?? []
-//                for info in accessibleAddresses0 {
-//                    guard info.hwAddressString == nil else { continue }
-//                    guard let socketAddress = SocketAddress(ipv4: info.ipAddressString) else { continue }
-//                    var mutableSocketAddress = socketAddress
-//                    let sock = Darwin.socket(AF_INET, SOCK_DGRAM, IPPROTO_ICMP)
-//                    _ = Darwin.bind(sock, mutableSocketAddress.pointer(), socklen_t(MemoryLayout<sockaddr_in>.size))
-//                    var byte: UInt8 = 123
-//                    write(sock, &byte, 1)
-//                    close(sock)
-//                }
+                let knownDeviceConfigs = self.config.knownDeviceConfigs()
                 let accessibleAddresses = (try? NetworkUtils.accessibleIPv4Addresses()) ?? []
                 for accessibleAddress in accessibleAddresses {
-//                    guard let accessibleHwAddress = accessibleAddress.hwAddressString else { continue }
-//                    for deviceConfig in knownDeviceConfigs {
-//                        guard deviceConfig.hwAddresses.contains(accessibleHwAddress) else { continue }
+                    guard let accessibleHwAddress = accessibleAddress.hwAddressString else { continue }
+                    for deviceConfig in knownDeviceConfigs {
+                        guard deviceConfig.hwAddresses.contains(accessibleHwAddress) else { continue }
                         guard let deviceAddress = SocketAddress(ipv4: accessibleAddress.ipAddressString) else { continue }
                         var mutableDeviceAddress = deviceAddress
                         mutableDeviceAddress.port = ConnectionProvider.udpPort
                         self.udpSocket.send(data, toAddress: mutableDeviceAddress.data, withTimeout: 120, tag: Int(packet.id))
-//                        break
-//                    }
+                        break
+                    }
                 }
             }
             

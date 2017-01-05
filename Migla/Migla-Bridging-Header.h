@@ -3,6 +3,7 @@
 //
 
 #import "MyAnonymousIdentity.h"
+#import "SimplePing.h"
 #import <CommonCrypto/CommonCrypto.h>
 
 #import <netinet/in.h>
@@ -10,3 +11,4 @@
 #import <net/route.h>
 #import <net/if_arp.h>
 #import <net/if_dl.h>
+#import <ifaddrs.h>
