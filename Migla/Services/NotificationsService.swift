@@ -162,7 +162,7 @@ public class NotificationsService: Service, UserNotificationActionHandler {
             userInfo?[UserInfoProperty.isCancelable.rawValue] = NSNumber(value: isCancelable)
             userInfo?[UserNotificationManager.Property.dontPresent.rawValue] = NSNumber(value: dontPresent)
             notification.userInfo = userInfo
-            notification.title = "\(device.name): \(appName)"
+            notification.title = "\(appName) | \(device.name)"
             notification.informativeText = ticker
             if !dontPresent {
                 notification.soundName = NSUserNotificationDefaultSoundName
