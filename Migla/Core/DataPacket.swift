@@ -69,11 +69,13 @@ public struct DataPacket: CustomStringConvertible {
     init?(data: Data) {
         let deserializedObj = try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions())
         guard let obj = deserializedObj as? [String: AnyObject] else { return nil }
-        guard let id = obj[Property.id.rawValue] as? NSNumber else { return nil }
+        let idString = obj[Property.id.rawValue] as? String
+        let idNumber: Int64? = (idString != nil) ? Int64.init(idString!) : (obj[Property.id.rawValue] as? NSNumber)?.int64Value
+        guard let id = idNumber else { return nil }
         guard let type = obj[Property.type.rawValue] as? String else { return nil }
         guard let body = obj[Property.body.rawValue] as? Body else { return nil }
         
-        self.init(id: id.int64Value, type: type, body: body)
+        self.init(id: id, type: type, body: body)
         
         if let payloadInfo = obj[Property.payloadInfo.rawValue] as? PayloadInfo {
             self.payloadInfo = payloadInfo
