@@ -48,31 +48,36 @@ public class TelephonyService: Service, UserNotificationActionHandler {
     
     public func handleDataPacket(_ dataPacket: DataPacket, fromDevice device: Device, onConnection connection: Connection) -> Bool {
         
-        guard dataPacket.isTelephonyRequestPacket else { return false }
+        guard dataPacket.isTelephonyPacket else { return false }
         
         Log.debug?.message("handleDataPacket(<\(dataPacket)> fromDevice:<\(device)> onConnection:<\(connection)>)")
         
-        if (try? dataPacket.getCancelFlag()) ?? false {
-            self.hideNotification(for: dataPacket, from: device)
-        }
-        else if let event = (try? dataPacket.getEvent()) ?? nil {
-            switch event {
-            case DataPacket.TelephonyEvent.ringing.rawValue:
-                self.showRingingNotification(for: dataPacket, from: device)
-                break
-            case DataPacket.TelephonyEvent.missedCall.rawValue:
-                self.showMissedCallNotification(for: dataPacket, from: device)
-                break
-            case DataPacket.TelephonyEvent.talking.rawValue:
+        do {
+            if try dataPacket.getCancelFlag() {
                 self.hideNotification(for: dataPacket, from: device)
-                break
-            case DataPacket.TelephonyEvent.sms.rawValue:
-                self.showSmsNotification(for: dataPacket, from: device)
-                break
-            default:
-                Log.error?.message("Unknown telephony event type: \(event)")
-                break
             }
+            else if let event = try dataPacket.getEvent() ?? nil {
+                switch event {
+                case DataPacket.TelephonyEvent.ringing.rawValue:
+                    self.showRingingNotification(for: dataPacket, from: device)
+                    break
+                case DataPacket.TelephonyEvent.missedCall.rawValue:
+                    self.showMissedCallNotification(for: dataPacket, from: device)
+                    break
+                case DataPacket.TelephonyEvent.talking.rawValue:
+                    self.hideNotification(for: dataPacket, from: device)
+                    break
+                case DataPacket.TelephonyEvent.sms.rawValue:
+                    self.showSmsNotification(for: dataPacket, from: device)
+                    break
+                default:
+                    Log.error?.message("Unknown telephony event type: \(event)")
+                    break
+                }
+            }
+        }
+        catch {
+            Log.error?.message("Error while handling telephony packet: \(error)")
         }
         
         return true
@@ -121,20 +126,26 @@ public class TelephonyService: Service, UserNotificationActionHandler {
     // MARK: Private methods
     
     private func notificationId(for dataPacket: DataPacket, from device: Device) -> NSUserNotification.Id? {
-        assert(dataPacket.isTelephonyRequestPacket, "Expected telephony request data packet")
+        assert(dataPacket.isTelephonyPacket, "Expected telephony data packet")
         assert(try! dataPacket.getEvent() != nil, "Expected telephony event property")
         
         guard let deviceId = device.id.addingPercentEncoding(withAllowedCharacters: .alphanumerics) else { return nil }
         guard let event = (try? dataPacket.getEvent() ?? nil) else { return nil }
         
-        let type = event == DataPacket.TelephonyEvent.sms.rawValue ? "sms" : "call"
-        let phoneNumber = (try? dataPacket.getPhoneNumber())??.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? "unknownPhoneNumber"
-        
-        return "com.migla.TelephonyService.\(deviceId).\(type).\(phoneNumber)"
+        if event == DataPacket.TelephonyEvent.sms.rawValue {
+            // For SMS notifications we want them to be uniqueue per contact 
+            // TODO: or should it be unique per message?
+            let phoneNumber = (try? dataPacket.getPhoneNumber())??.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? "unknownPhoneNumber"
+            return "com.migla.TelephonyService.\(deviceId).sms.\(phoneNumber)"
+        }
+        else {
+            // For calling notifications we use ids unique per device
+            return "com.migla.TelephonyService.\(deviceId).call"
+        }
     }
     
     private func showRingingNotification(for dataPacket: DataPacket, from device: Device) {
-        assert(dataPacket.isTelephonyRequestPacket, "Expected telephony request data packet")
+        assert(dataPacket.isTelephonyPacket, "Expected telephony data packet")
         assert(try! dataPacket.getEvent() == DataPacket.TelephonyEvent.ringing.rawValue, "Expected 'ringing' event type")
         
         do {
@@ -156,6 +167,8 @@ public class TelephonyService: Service, UserNotificationActionHandler {
             notification.actionButtonTitle = "Mute call"
             notification.identifier = notificationId
             NSUserNotificationCenter.default.scheduleNotification(notification)
+            
+            Log.debug?.message("Ringing notification shown: \(notification.identifier)")
         }
         catch {
             Log.error?.message("Error while showing ringing notification: \(error)")
@@ -163,7 +176,7 @@ public class TelephonyService: Service, UserNotificationActionHandler {
     }
     
     private func showMissedCallNotification(for dataPacket: DataPacket, from device: Device) {
-        assert(dataPacket.isTelephonyRequestPacket, "Expected telephony request data packet")
+        assert(dataPacket.isTelephonyPacket, "Expected telephony data packet")
         assert(try! dataPacket.getEvent() == DataPacket.TelephonyEvent.missedCall.rawValue, "Expected 'missedCall' event type")
         
         do {
@@ -173,29 +186,41 @@ public class TelephonyService: Service, UserNotificationActionHandler {
             let thumbnail = (try? dataPacket.getPhoneThumbnail() ?? nil) ?? nil
             
             let notification = NSUserNotification()
-            notification.title = "Missed call from \(contactName)"
+            notification.title = "Missed a call from \(contactName)"
             notification.subtitle = device.name
             notification.contentImage = thumbnail
             notification.soundName = NSUserNotificationDefaultSoundName
             notification.hasActionButton = false
             notification.identifier = notificationId
             NSUserNotificationCenter.default.scheduleNotification(notification)
+            
+            Log.debug?.message("Missed call notification shown: \(notification.identifier)")
         }
         catch {
-            Log.error?.message("Error while showing miseed call notification: \(error)")
+            Log.error?.message("Error while showing missed call notification: \(error)")
         }
     }
     
     private func showSmsNotification(for dataPacket: DataPacket, from device: Device) {
-        assert(dataPacket.isTelephonyRequestPacket, "Expected telephony request data packet")
+        assert(dataPacket.isTelephonyPacket, "Expected telephony data packet")
         assert(try! dataPacket.getEvent() == DataPacket.TelephonyEvent.sms.rawValue, "Expected 'sms' event type")
         
         do {
             guard let notificationId = self.notificationId(for: dataPacket, from: device) else { return }
+            
+            // One SMS might come in chunks - try concating them together. 
+            // However if time from last notification is big enough - add a new line when concatening - they probably are
+            // separate messages
+            let lastNotification = NSUserNotificationCenter.default.deliveredNotifications.first { notification in
+                return notification.identifier == notificationId
+            }
+            let lastNotificationIsOld = (lastNotification?.deliveryDate ?? Date()).timeIntervalSinceNow < -10.0
+            let lastMessageBody = (lastNotification?.informativeText ?? "") + (lastNotificationIsOld ? "\n" : "")
+            
             let hasPhoneNumber = try dataPacket.getPhoneNumber() != nil
             let phoneNumber = try dataPacket.getPhoneNumber() ?? "unknown number"
             let contactName = try dataPacket.getContactName() ?? phoneNumber
-            let messageBody = try dataPacket.getMessageBody() ?? ""
+            let messageBody = lastMessageBody + (try dataPacket.getMessageBody() ?? "")
             let thumbnail = (try? dataPacket.getPhoneThumbnail() ?? nil) ?? nil
             
             let notification = NSUserNotification(actionHandlerClass: type(of: self))
@@ -204,8 +229,7 @@ public class TelephonyService: Service, UserNotificationActionHandler {
             userInfo?[NotificationProperty.event.rawValue] = DataPacket.TelephonyEvent.sms.rawValue as AnyObject
             userInfo?[NotificationProperty.phoneNumber.rawValue] = phoneNumber as AnyObject
             notification.userInfo = userInfo
-            notification.title = "SMS from  \(contactName)"
-            notification.subtitle = device.name
+            notification.title = "SMS from  \(contactName) | \(device.name)"
             notification.informativeText = messageBody
             notification.contentImage = thumbnail
             notification.soundName = NSUserNotificationDefaultSoundName
@@ -214,6 +238,8 @@ public class TelephonyService: Service, UserNotificationActionHandler {
             notification.responsePlaceholder = "Write reply message"
             notification.identifier = notificationId
             NSUserNotificationCenter.default.scheduleNotification(notification)
+            
+            Log.debug?.message("SMS notification shown: \(notification.identifier)")
         }
         catch {
             Log.error?.message("Error while showing sms notification: \(error)")
@@ -221,7 +247,7 @@ public class TelephonyService: Service, UserNotificationActionHandler {
     }
     
     private func hideNotification(for dataPacket: DataPacket, from device: Device) {
-        assert(dataPacket.isTelephonyRequestPacket, "Expected telephony request data packet")
+        assert(dataPacket.isTelephonyPacket, "Expected telephony data packet")
         
         guard let id = self.notificationId(for: dataPacket, from: device) else { return }
         
@@ -238,6 +264,8 @@ public class TelephonyService: Service, UserNotificationActionHandler {
                 break
             }
         }
+        
+        Log.debug?.message("Notification hidden: \(id)")
     }
 }
 
@@ -288,6 +316,8 @@ fileprivate extension DataPacket {
     static let telephonyRequestPacketType = "kdeconnect.telephony.request"
     static let smsRequestPacketType = "kdeconnect.sms.request"
     
+    var isTelephonyPacket: Bool { return self.type == DataPacket.telephonyPacketType }
+    
     var isTelephonyRequestPacket: Bool { return self.type == DataPacket.telephonyRequestPacketType }
     
     var isSmsRequestPacket: Bool { return self.type == DataPacket.smsRequestPacketType }
@@ -313,35 +343,35 @@ fileprivate extension DataPacket {
     // MARK: Public methods
     
     func getEvent() throws -> String? {
-        try self.validateTelephonyRequestType()
+        try self.validateTelephonyType()
         guard body.keys.contains(TelephonyProperty.event.rawValue) else { return nil }
         guard let value = body[TelephonyProperty.event.rawValue] as? String else { throw TelephonyError.invalidEvent }
         return value
     }
     
     func getPhoneNumber() throws -> String? {
-        try self.validateTelephonyRequestType()
+        try self.validateTelephonyOrSmsRequestType()
         guard body.keys.contains(TelephonyProperty.phoneNumber.rawValue) else { return nil }
         guard let value = body[TelephonyProperty.phoneNumber.rawValue] as? String else { throw TelephonyError.invalidPhoneNumber }
         return value
     }
     
     func getContactName() throws -> String? {
-        try self.validateTelephonyRequestType()
+        try self.validateTelephonyType()
         guard body.keys.contains(TelephonyProperty.contactName.rawValue) else { return nil }
         guard let value = body[TelephonyProperty.contactName.rawValue] as? String else { throw TelephonyError.invalidContactName }
         return value
     }
     
     func getMessageBody() throws -> String? {
-        try self.validateTelephonyRequestType()
+        try self.validateTelephonyOrSmsRequestType()
         guard body.keys.contains(TelephonyProperty.messageBody.rawValue) else { return nil }
         guard let value = body[TelephonyProperty.messageBody.rawValue] as? String else { throw TelephonyError.invalidMessageBody }
         return value
     }
     
     func getPhoneThumbnail() throws -> NSImage? {
-        try self.validateTelephonyRequestType()
+        try self.validateTelephonyType()
         guard body.keys.contains(TelephonyProperty.phoneThumbnail.rawValue) else { return nil }
         guard let data = body[TelephonyProperty.phoneThumbnail.rawValue] as? Data else { throw TelephonyError.invalidEvent }
         guard let image = NSImage(data: data) else { throw TelephonyError.invalidEvent }
@@ -349,13 +379,20 @@ fileprivate extension DataPacket {
     }
     
     func getCancelFlag() throws -> Bool {
-        try self.validateTelephonyRequestType()
+        // Cancel flag might be (and actually is!) string instead of bool - handling both cases
+        try self.validateTelephonyType()
         guard body.keys.contains(TelephonyProperty.isCancel.rawValue) else { return false }
-        guard let value = body[TelephonyProperty.isCancel.rawValue] as? NSNumber else { throw TelephonyError.invalidCancelFlag }
-        return value.boolValue
+        let stringValue = body[TelephonyProperty.isCancel.rawValue] as? String
+        let boolValue: Bool? = (stringValue != nil) ? Bool(stringValue!) : (body[TelephonyProperty.isCancel.rawValue] as? NSNumber)?.boolValue
+        guard let value = boolValue else { throw TelephonyError.invalidCancelFlag }
+        return value
     }
     
-    func validateTelephonyRequestType() throws {
-        guard self.isTelephonyRequestPacket else { throw TelephonyError.wrongType }
+    func validateTelephonyType() throws {
+        guard self.isTelephonyPacket else { throw TelephonyError.wrongType }
+    }
+    
+    func validateTelephonyOrSmsRequestType() throws {
+        guard self.isTelephonyPacket || self.isSmsRequestPacket else { throw TelephonyError.wrongType }
     }
 }
