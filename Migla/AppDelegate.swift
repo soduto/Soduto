@@ -22,7 +22,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
     
     override init() {
         #if DEBUG
-            Log.enable(configuration: XcodeLogConfiguration(minimumSeverity: .debug, logToASL: true))
+            Log.enable(configuration: XcodeLogConfiguration(minimumSeverity: .debug, logToASL: false))
         #else
             let formatter = FieldBasedLogFormatter(fields: [.severity(.simple), .delimiter(.spacedPipe), .payload])
             let aslRecorder = ASLLogRecorder(formatter: formatter, echoToStdErr: true)
