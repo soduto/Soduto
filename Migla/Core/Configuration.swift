@@ -9,11 +9,13 @@
 import Foundation
 import CleanroomLogger
 
-public class DeviceConfiguration {
+public class DeviceConfiguration: NSObject {
     
     // MARK: Types
     
     public enum Property: String {
+        case name = "name"
+        case type = "type"
         case isPaired = "isPaired"
         case certificateName = "certificateName"
         case hwAddresses = "hwAddresses"
@@ -23,6 +25,22 @@ public class DeviceConfiguration {
     // MARK: Properties
     
     public let deviceId: Device.Id
+    
+    public var name: String {
+        didSet {
+            if self.name != oldValue {
+                self.save()
+            }
+        }
+    }
+    
+    public var type: DeviceType {
+        didSet {
+            if self.type != oldValue {
+                self.save()
+            }
+        }
+    }
     
     public var isPaired: Bool {
         didSet {
@@ -73,8 +91,9 @@ public class DeviceConfiguration {
     }
     
     
-    private static let configKeyPrefix = "com.migla.device."
+    private static let configKeyPrefix = "com/migla/device/"
     private let userDefaults: UserDefaults
+    private var isLoading: Bool = false
     
     
     // MARK: Init / Deinit
@@ -82,16 +101,16 @@ public class DeviceConfiguration {
     init(deviceId: Device.Id, userDefaults: UserDefaults) {
         self.deviceId = deviceId
         self.userDefaults = userDefaults
+        self.name = ""
+        self.type = .Unknown
         self.isPaired = false
         self.certificateName = ""
         self.hwAddresses = []
         
-        let key = DeviceConfiguration.configKey(for: deviceId)
-        if let attrs = self.userDefaults.dictionary(forKey: key) {
-            self.isPaired = attrs[Property.isPaired.rawValue] as? Bool ?? self.isPaired
-            self.certificateName = attrs[Property.certificateName.rawValue] as? String ?? self.certificateName
-            self.hwAddresses = attrs[Property.hwAddresses.rawValue] as? [String] ?? self.hwAddresses
-        }
+        super.init()
+        
+        self.load()
+        self.startObserving()
     }
     
     convenience init(configKey: String, userDefaults: UserDefaults) {
@@ -106,6 +125,23 @@ public class DeviceConfiguration {
         }
         
         self.init(deviceId: deviceId, userDefaults: userDefaults)
+    }
+    
+    deinit {
+        self.stopObserving()
+    }
+    
+    
+    // MARK: NSObject
+    
+    public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        let key = DeviceConfiguration.configKey(for: deviceId)
+        if keyPath == key {
+            self.load()
+        }
+        else {
+            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+        }
     }
     
     
@@ -131,20 +167,51 @@ public class DeviceConfiguration {
     }
     
     class func configKey(for deviceId: String) -> String {
-        let safeDeviceId = deviceId.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? "undefined-\(Configuration.generateDeviceId())"
-        return "\(configKeyPrefix).\(safeDeviceId)"
+        let safeDeviceId: String = deviceId.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? "undefined-\(Configuration.generateDeviceId())"
+        return "\(configKeyPrefix)\(safeDeviceId)"
+    }
+    
+    func load() {
+        assert(!self.isLoading, "Loading should not be recursive")
+        guard !self.isLoading else { return }
+        
+        isLoading = true
+        
+        let key = DeviceConfiguration.configKey(for: deviceId)
+        if let attrs = self.userDefaults.dictionary(forKey: key) {
+            self.name = attrs[Property.name.rawValue] as? String ?? self.name
+            self.type = DeviceType(rawValue: attrs[Property.type.rawValue] as? String ?? "") ?? self.type
+            self.isPaired = attrs[Property.isPaired.rawValue] as? Bool ?? self.isPaired
+            self.certificateName = attrs[Property.certificateName.rawValue] as? String ?? self.certificateName
+            self.hwAddresses = attrs[Property.hwAddresses.rawValue] as? [String] ?? self.hwAddresses
+        }
+        
+        isLoading = false
     }
     
     func save() {
+        guard !self.isLoading else { return }
         guard self.deviceId != "" else { return }
         
         let key = DeviceConfiguration.configKey(for: self.deviceId)
         let attrs:[String:AnyObject] = [
+            Property.name.rawValue: self.name as AnyObject,
+            Property.type.rawValue: self.type.rawValue as AnyObject,
             Property.isPaired.rawValue: self.isPaired as AnyObject,
             Property.certificateName.rawValue: self.certificateName as AnyObject,
             Property.hwAddresses.rawValue: self.hwAddresses as AnyObject
         ]
         self.userDefaults.set(attrs, forKey: key)
+    }
+    
+    func startObserving() {
+        let key = DeviceConfiguration.configKey(for: deviceId)
+        self.userDefaults.addObserver(self, forKeyPath: key, options: .old, context: nil)
+    }
+    
+    func stopObserving() {
+        let key = DeviceConfiguration.configKey(for: deviceId)
+        self.userDefaults.removeObserver(self, forKeyPath: key)
     }
 }
 
