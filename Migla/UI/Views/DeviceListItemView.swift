@@ -17,11 +17,11 @@ public class DeviceListItemView: NSTableCellView {
     @IBAction func actionButtonAction(sender: NSButton) {
         guard let device = self.device else { return }
         
-        switch device.state {
-        case .unpaired:
+        switch device.pairingStatus {
+        case .Unpaired:
             device.requestPairing()
             break
-        case .paired:
+        case .Paired:
             device.unpair()
             break
         default:
@@ -33,18 +33,36 @@ public class DeviceListItemView: NSTableCellView {
         didSet {
             if let device = self.device {
                 self.textField?.stringValue = device.name
-                self.infoLabel.stringValue = device.type.rawValue
-                self.actionButton.title = device.state == .paired ? NSLocalizedString("Unpair", comment: "action") : NSLocalizedString("Pair", comment: "action")
+                self.textField?.textColor = device.state == .unavailable ? NSColor.disabledControlTextColor : NSColor.controlTextColor
+                self.textField?.alphaValue = device.state == .unavailable ? 0.5 : 1.0
+                
+                let deviceTypeInfo = device.type != .Unknown ? NSLocalizedString(device.type.rawValue, comment: "Device type") : ""
+                let deviceStatusInfo = device.state == .unavailable ? NSLocalizedString("unreachable", comment: "Device status") : NSLocalizedString("reachable", comment: "Device status")
+                self.infoLabel.stringValue = deviceTypeInfo.isEmpty ? deviceStatusInfo : "\(deviceTypeInfo) - \(deviceStatusInfo)"
+                self.infoLabel?.alphaValue = device.state == .unavailable ? 0.5 : 1.0
+                
+                self.actionButton.title = device.pairingStatus == .Paired ? NSLocalizedString("Unpair", comment: "action") : NSLocalizedString("Pair", comment: "action")
                 self.actionButton.isEnabled = device.state != .pairing
                 self.actionButton.isHidden = false
                 
                 switch device.type {
                 case .Desktop:
                     self.imageView?.image = #imageLiteral(resourceName: "desktopIcon")
+                    break
+                case .Laptop:
+                    self.imageView?.image = #imageLiteral(resourceName: "laptopIcon")
+                    break
+                case .Tablet:
+                    self.imageView?.image = #imageLiteral(resourceName: "tabletIcon")
+                    break
                 case .Phone:
                     self.imageView?.image = #imageLiteral(resourceName: "phoneIcon")
-                default: break
+                    break
+                default:
+                    self.imageView?.image = nil
+                    break
                 }
+                self.imageView?.alphaValue = device.state == .unavailable ? 0.5 : 1.0
             }
             else {
                 self.textField?.stringValue = ""
