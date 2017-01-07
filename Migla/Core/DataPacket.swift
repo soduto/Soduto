@@ -115,7 +115,7 @@ public struct DataPacket: CustomStringConvertible {
     }
     
     public func hasPayload() -> Bool {
-        return self.payload != nil
+        return self.payload != nil || self.downloadTask != nil
     }
 }
 
