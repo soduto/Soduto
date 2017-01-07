@@ -51,7 +51,7 @@ extension PreferencesWindowController : NSTableViewDataSource {
     
     public func numberOfRows(in tableView: NSTableView) -> Int {
         guard let deviceDataSource = self.deviceDataSource else { return 0 }
-        return deviceDataSource.pairedDevices.count + deviceDataSource.unpairedDevices.count
+        return deviceDataSource.pairedDevices.count + deviceDataSource.unpairedDevices.count + deviceDataSource.unavailableDevices.count
     }
 
 }
@@ -76,7 +76,13 @@ extension PreferencesWindowController: NSTableViewDelegate {
                 device = deviceDataSource.unpairedDevices[i]
             }
             else {
-                return nil
+                i = i - deviceDataSource.unpairedDevices.count
+                if i < deviceDataSource.unavailableDevices.count {
+                    device = deviceDataSource.unavailableDevices[i]
+                }
+                else {
+                    return nil
+                }
             }
         }
         
