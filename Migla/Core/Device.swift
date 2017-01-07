@@ -114,6 +114,25 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
         self.pairingStatus = self.config.isPaired ? .Paired : .Unpaired
         
         self.addConnection(connection)
+        
+        // update config with lates device name and type
+        config.name = self.name
+        config.type = self.type
+    }
+    
+    /// Initialize Device only with configuration. This is mostly useful to create device instances for 
+    /// unavailable devices
+    ///
+    /// - parameters:
+    ///     - config: Configuration instance for particular device
+    public init(config: DeviceConfiguration) {
+        self.id = config.deviceId
+        self.name = config.name
+        self.type = config.type
+        self.incomingCapabilities = Set<Service.Capability>()
+        self.outgoingCapabilities = Set<Service.Capability>()
+        self.config = config
+        self.pairingStatus = self.config.isPaired ? .Paired : .Unpaired
     }
     
     
@@ -267,6 +286,9 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
                 break
             }
         }
+        
+        // Device might be unavailable and no connections present - update status once more to be sure
+        self.updatePairingStatus(globalStatus: .Unpaired)
     }
     
     public func updatePairingStatus(globalStatus: PairingStatus) {
@@ -275,6 +297,9 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
         }
         self.pairingStatus = globalStatus
         self.config.isPaired = globalStatus == .Paired
+        if !self.config.isPaired {
+            self.config.certificate = nil
+        }
         
         self.updateState()
     }

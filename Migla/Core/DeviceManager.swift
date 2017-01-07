@@ -17,10 +17,12 @@ public protocol DeviceManagerDelegate: class {
 public protocol DeviceDataSource: class {
     var unpairedDevices: [Device] { get }
     var pairedDevices: [Device] { get }
+    var unavailableDevices: [Device] { get }
 }
 
 public protocol DeviceManagerConfiguration {
     func deviceConfig(for deviceId:Device.Id) -> DeviceConfiguration
+    func knownDeviceConfigs() -> [DeviceConfiguration]
     var hostDeviceId: Device.Id { get }
 }
 
@@ -38,6 +40,11 @@ public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDa
     public var pairedDevices: [Device] {
         let filtered = self.devices.filter { $0.value.state == Device.State.paired }
         return filtered.map { $0.value }
+    }
+    
+    public var unavailableDevices: [Device] {
+        let configs = config.knownDeviceConfigs().filter { self.devices[$0.deviceId] == nil && $0.isPaired }
+        return configs.map { Device(config: $0) }
     }
     
     private let config: DeviceManagerConfiguration
