@@ -1,0 +1,36 @@
+{
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "BE6F11D2B0F7EBDD3A2A4B2F7B7F7393B556F9B2" : 9223372036854775807,
+    "F9CB73B84AAC4DF4FDAC59E7AE333891CE32959C" : 9223372036854775807,
+    "D8B77186584699D3376BE96D8D99394FFE1062A4" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "53658E66-C03F-45EA-B8F9-788108582FC0",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "BE6F11D2B0F7EBDD3A2A4B2F7B7F7393B556F9B2" : "Soduto\/Soduto\/Reachability.swift\/",
+    "F9CB73B84AAC4DF4FDAC59E7AE333891CE32959C" : "Soduto\/Soduto\/CleanroomLogger\/",
+    "D8B77186584699D3376BE96D8D99394FFE1062A4" : "Soduto\/Soduto\/CleanroomASL\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "Soduto",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "Soduto.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/giedrius-stanevicius\/Reachability.swift.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "BE6F11D2B0F7EBDD3A2A4B2F7B7F7393B556F9B2"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/giedrius-stanevicius\/CleanroomASL.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "D8B77186584699D3376BE96D8D99394FFE1062A4"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/giedrius-stanevicius\/CleanroomLogger.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "F9CB73B84AAC4DF4FDAC59E7AE333891CE32959C"
+    }
+  ]
+}

@@ -1,9 +1,9 @@
-[submodule "Migla/CleanroomLogger"]
-	path = Migla/CleanroomLogger
-	url = https://github.com/giedrius-stanevicius/CleanroomLogger.git
-[submodule "Migla/CleanroomASL"]
-	path = Migla/CleanroomASL
-	url = https://github.com/giedrius-stanevicius/CleanroomASL.git
-[submodule "Migla/Reachability.swift"]
-	path = Migla/Reachability.swift
-	url = https://github.com/giedrius-stanevicius/Reachability.swift.git
+[submodule "Soduto/CleanroomASL"]
+	path = Soduto/CleanroomASL
+	url = https://giedrius-stanevicius@github.com/giedrius-stanevicius/CleanroomASL.git
+[submodule "Soduto/CleanroomLogger"]
+	path = Soduto/CleanroomLogger
+	url = https://giedrius-stanevicius@github.com/giedrius-stanevicius/CleanroomLogger.git
+[submodule "Soduto/Reachability.swift"]
+	path = Soduto/Reachability.swift
+	url = https://giedrius-stanevicius@github.com/giedrius-stanevicius/Reachability.swift.git
