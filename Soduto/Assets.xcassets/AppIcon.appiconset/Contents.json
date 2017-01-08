@@ -6,8 +6,9 @@
       "scale" : "1x"
     },
     {
-      "idiom" : "mac",
       "size" : "16x16",
+      "idiom" : "mac",
+      "filename" : "AppIcon16@2x.png",
       "scale" : "2x"
     },
     {
