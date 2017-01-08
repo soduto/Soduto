@@ -88,10 +88,13 @@ public class CertificateUtils {
         }
         
         status = SecCertificateSetPreferred(certificate, name as CFString, nil)
-        if status != noErr {
+        if status != noErr && status != errSecDuplicateItem {
             try? deleteCertificate(certificate)
             SecCertificateSetPreferred(nil, name as CFString, nil)
             throw CertificateError.addCertificateFailure(error: NSError(domain: NSOSStatusErrorDomain, code: Int(status), userInfo: nil))
+        }
+        else if status == errSecDuplicateItem {
+            Log.error?.message("Could not set certificate preference because it is already set")
         }
     }
     
