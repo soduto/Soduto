@@ -87,11 +87,11 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
         
         broadcastAnnouncement()
         
-        // Speculative broadcast after some interval.
+        // Speculative broadcasts after some intervals.
         // When broadcasting imediately after internet connection becomes available, ARP table may be incomplete and not all known devices may be detected. After some time, theese undetected devices may become known and may receive the announcement
-        Timer.scheduledTimer(withTimeInterval: 60.0, repeats: false) { _ in
-            self.broadcastAnnouncement()
-        }
+        Timer.scheduledTimer(withTimeInterval: 40.0, repeats: false) { _ in self.broadcastAnnouncement() }
+        Timer.scheduledTimer(withTimeInterval: 80.0, repeats: false) { _ in self.broadcastAnnouncement() }
+        Timer.scheduledTimer(withTimeInterval: 120.0, repeats: false) { _ in self.broadcastAnnouncement() }
     }
     
     public func stop() {
