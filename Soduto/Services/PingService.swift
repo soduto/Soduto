@@ -80,7 +80,7 @@ public class PingService: Service {
     
     public func actions(for device: Device) -> [ServiceAction] {
         guard device.incomingCapabilities.contains(DataPacket.pingPacketType) else { return [] }
-        guard device.state == .paired else { return [] }
+        guard device.pairingStatus == .Paired else { return [] }
         
         return [
             ServiceAction(id: ActionId.send.rawValue, title: "Test connection", description: "Send ping to the remote device to test connectivity", service: self, device: device)
@@ -89,7 +89,7 @@ public class PingService: Service {
     
     public func performAction(_ id: ServiceAction.Id, forDevice device: Device) {
         guard let actionId = ActionId(rawValue: id) else { return }
-        guard device.state == .paired else { return }
+        guard device.pairingStatus == .Paired else { return }
         
         switch actionId {
         case .send:

@@ -98,7 +98,7 @@ public class ShareService: Service, DownloadTaskDelegate, UserNotificationAction
     
     public func actions(for device: Device) -> [ServiceAction] {
         guard device.incomingCapabilities.contains(DataPacket.sharePacketType) else { return [] }
-        guard device.state == .paired else { return [] }
+        guard device.pairingStatus == .Paired else { return [] }
         
         return [
             ServiceAction(id: ActionId.shareFile.rawValue, title: "Share a file", description: "Send a file with remote device", service: self, device: device)
@@ -107,7 +107,7 @@ public class ShareService: Service, DownloadTaskDelegate, UserNotificationAction
     
     public func performAction(_ id: ServiceAction.Id, forDevice device: Device) {
         guard let actionId = ActionId(rawValue: id) else { return }
-        guard device.state == .paired else { return }
+        guard device.pairingStatus == .Paired else { return }
         
         switch actionId {
         case .shareFile:

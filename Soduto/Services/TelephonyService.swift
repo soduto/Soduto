@@ -103,7 +103,7 @@ public class TelephonyService: Service, UserNotificationActionHandler {
         guard let userInfo = notification.userInfo else { return }
         guard let deviceId = userInfo[NotificationProperty.deviceId.rawValue] as? String else { return }
         guard let device = context.deviceManager.device(withId: deviceId) else { return }
-        guard device.state == .paired else { return }
+        guard device.pairingStatus == .Paired else { return }
         guard let event = userInfo[NotificationProperty.event.rawValue] as? String else { return }
         
         switch event {

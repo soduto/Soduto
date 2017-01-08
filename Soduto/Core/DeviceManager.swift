@@ -33,23 +33,27 @@ public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDa
     public weak var delegate: DeviceManagerDelegate? = nil
     
     public var unpairedDevices: [Device] {
-        let filtered = self.devices.filter { $0.value.state == Device.State.unpaired || $0.value.state == Device.State.pairing }
+        let filtered = self.devices.filter { $0.value.pairingStatus != PairingStatus.Paired }
         return filtered.map { $0.value }
     }
     
     public var pairedDevices: [Device] {
-        let filtered = self.devices.filter { $0.value.state == Device.State.paired }
+        let filtered = self.devices.filter { $0.value.pairingStatus == PairingStatus.Paired }
         return filtered.map { $0.value }
     }
     
     public var unavailableDevices: [Device] {
-        let configs = config.knownDeviceConfigs().filter { self.devices[$0.deviceId] == nil && $0.isPaired }
-        return configs.map { Device(config: $0) }
+        let configs = config.knownDeviceConfigs().filter { self.devices[$0.deviceId] == nil && $0.isPaired}
+        return configs.map {
+            let device = Device(config: $0)
+            device.delegate = self
+            return device
+        }
     }
     
     private let config: DeviceManagerConfiguration
     private let serviceManager: ServiceManager
-    private var devices: [Device.Id:Device] = [:]
+    private var devices: [Device.Id:Device] = [:] /// Reachable devices
     
     
     // MARK: Init / Deinit
@@ -98,10 +102,10 @@ public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDa
     
     // MARK: DeviceDelegate
     
-    public func device(_ device: Device, didChangeState state: Device.State) {
-        Log.debug?.message("device(<\(device)> didChangeState:<\(state)>)")
+    public func device(_ device: Device, didChangePairingStatus status: PairingStatus) {
+        Log.debug?.message("device(<\(device)> didChangePairingStatus:<\(status)>)")
         
-        if state == .paired {
+        if status == .Paired {
             self.serviceManager.setup(for: device)
         }
         else {
@@ -109,16 +113,21 @@ public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDa
             // Assuming cleanup is not that heavyweight that it should be done very cautiously
             self.serviceManager.cleanup(for: device)
         }
-        
-        if state == .unavailable {
-            self.devices.removeValue(forKey: device.id)
-        }
-        
         self.delegate?.deviceManager(self, didChangeDeviceState: device)
     }
     
     public func device(_ device: Device, didReceivePairingRequest request: PairingRequest) {
         self.delegate?.deviceManager(self, didReceivePairingRequest: request, forDevice: device)
+    }
+    
+    
+    public func device(_ device: Device, didChangeReachabilityStatus isReachable: Bool) {
+        Log.debug?.message("device(<\(device)> didChangeReachabilityStatus:<\(isReachable)>)")
+        
+        if !isReachable {
+            self.devices.removeValue(forKey: device.id)
+        }
+        self.delegate?.deviceManager(self, didChangeDeviceState: device)
     }
     
     public func serviceActions(for device: Device) -> [ServiceAction] {
@@ -140,6 +149,6 @@ public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDa
         device.addDataPacketHandlers(services)
         
         self.devices[device.id] = device
-        self.device(device, didChangeState: device.state)
+        self.device(device, didChangePairingStatus: device.pairingStatus)
     }
 }

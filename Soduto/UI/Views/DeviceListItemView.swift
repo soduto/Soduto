@@ -33,16 +33,16 @@ public class DeviceListItemView: NSTableCellView {
         didSet {
             if let device = self.device {
                 self.textField?.stringValue = device.name
-                self.textField?.textColor = device.state == .unavailable ? NSColor.disabledControlTextColor : NSColor.controlTextColor
-                self.textField?.alphaValue = device.state == .unavailable ? 0.5 : 1.0
+                self.textField?.textColor = device.isReachable ? NSColor.controlTextColor : NSColor.disabledControlTextColor
+                self.textField?.alphaValue = device.isReachable ? 1.0 : 0.5
                 
                 let deviceTypeInfo = device.type != .Unknown ? NSLocalizedString(device.type.rawValue, comment: "Device type") : ""
-                let deviceStatusInfo = device.state == .unavailable ? NSLocalizedString("unreachable", comment: "Device status") : NSLocalizedString("reachable", comment: "Device status")
+                let deviceStatusInfo = device.isReachable ? NSLocalizedString("reachable", comment: "Device status") : NSLocalizedString("unreachable", comment: "Device status")
                 self.infoLabel.stringValue = deviceTypeInfo.isEmpty ? deviceStatusInfo : "\(deviceTypeInfo) - \(deviceStatusInfo)"
-                self.infoLabel?.alphaValue = device.state == .unavailable ? 0.5 : 1.0
+                self.infoLabel?.alphaValue = device.isReachable ? 1.0 : 0.5
                 
                 self.actionButton.title = device.pairingStatus == .Paired ? NSLocalizedString("Unpair", comment: "action") : NSLocalizedString("Pair", comment: "action")
-                self.actionButton.isEnabled = device.state != .pairing
+                self.actionButton.isEnabled = device.pairingStatus != .Requested && device.pairingStatus != .RequestedByPeer
                 self.actionButton.isHidden = false
                 
                 switch device.type {
@@ -62,7 +62,7 @@ public class DeviceListItemView: NSTableCellView {
                     self.imageView?.image = nil
                     break
                 }
-                self.imageView?.alphaValue = device.state == .unavailable ? 0.5 : 1.0
+                self.imageView?.alphaValue = device.isReachable ? 1.0 : 0.5
             }
             else {
                 self.textField?.stringValue = ""

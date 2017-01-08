@@ -117,7 +117,7 @@ public class NotificationsService: Service, UserNotificationActionHandler {
         guard let notificationId = userInfo[UserInfoProperty.notificationId.rawValue] as? NotificationId else { return }
         guard let isCancelable = userInfo[UserInfoProperty.isCancelable.rawValue] as? NSNumber else { return }
         guard let device = context.deviceManager.device(withId: deviceId) else { return }
-        guard device.state == .paired else { return }
+        guard device.pairingStatus == .Paired else { return }
         
         if isCancelable.boolValue {
             device.send(DataPacket.notificationCancelPacket(forId: notificationId))

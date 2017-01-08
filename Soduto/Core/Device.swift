@@ -33,8 +33,9 @@ public enum DeviceError: Error {
 
 /// Functionality for handling Device notifications.
 public protocol DeviceDelegate: class {
-    func device(_ device: Device, didChangeState state: Device.State)
+    func device(_ device: Device, didChangePairingStatus pairingStatus: PairingStatus)
     func device(_ device: Device, didReceivePairingRequest pairingRequest: PairingRequest)
+    func device(_ device: Device, didChangeReachabilityStatus isReachable: Bool)
     func serviceActions(for device: Device) -> [ServiceAction]
 }
 
@@ -53,18 +54,6 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
     /// Type for unique device identifier
     public typealias Id = String
     
-    /// State of the Device instance.
-    ///
-    /// - Unavailable: Device is unreachable.
-    /// - Unpaired: Device is reachable but not trusted (unpaired).
-    /// - Paired: Device is reachable and trusted (paired).
-    public enum State {
-        case unavailable
-        case unpaired
-        case pairing
-        case paired
-    }
-    
     
     // MARK: Properties
     
@@ -77,10 +66,10 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
     public let outgoingCapabilities: Set<Service.Capability>
     public let config: DeviceConfiguration
     
-    public private(set) var state: State = .unavailable {
+    public private(set) var isReachable: Bool = false {
         didSet {
-            if oldValue != self.state {
-                self.delegate?.device(self, didChangeState: self.state)
+            if oldValue != self.isReachable {
+                self.delegate?.device(self, didChangeReachabilityStatus: self.isReachable)
             }
         }
     }
@@ -154,6 +143,7 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
         }
         
         self.updatePairingStatus()
+        self.updateReachabilityStatus()
     }
     
     /// Register handler for incoming data packets. Most common handler would be Service instances
@@ -201,7 +191,7 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
         case .Closed:
             if let index = self.connections.index(of: connection) {
                 self.connections.remove(at: index)
-                self.updateState()
+                self.updateReachabilityStatus()
             }
             else {
                 Log.error?.message("Connection not found in device connections list")
@@ -237,9 +227,16 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
     
     // MARK: Pairable
     
+    /// Not used - present only to comply Pairable protocol
     public var pairingDelegate: PairableDelegate? = nil
     
-    public var pairingStatus: PairingStatus
+    public var pairingStatus: PairingStatus {
+        didSet {
+            if pairingStatus != oldValue {
+                self.delegate?.device(self, didChangePairingStatus: self.pairingStatus)
+            }
+        }
+    }
     
     public func requestPairing() {
         if let connection = self.connectionForPairing() {
@@ -295,31 +292,18 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
         for connection in self.connections {
             connection.updatePairingStatus(globalStatus: globalStatus)
         }
-        self.pairingStatus = globalStatus
         self.config.isPaired = globalStatus == .Paired
         if !self.config.isPaired {
             self.config.certificate = nil
         }
-        
-        self.updateState()
+        self.pairingStatus = globalStatus
     }
     
     
     // MARK: Private
     
-    private func updateState() {
-        if self.connections.count == 0 {
-            self.state = .unavailable
-        }
-        else if self.pairingStatus == .Paired {
-            self.state = .paired
-        }
-        else if self.pairingStatus == .Requested || self.pairingStatus == .RequestedByPeer {
-            self.state = .pairing
-        }
-        else {
-            self.state = .unpaired
-        }
+    private func updateReachabilityStatus() {
+        self.isReachable = self.connections.count != 0
     }
     
     private func updatePairingStatus() {
