@@ -16,13 +16,14 @@
 		843B67041DF1E64A00289EC9 /* ShareService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843B67031DF1E64A00289EC9 /* ShareService.swift */; };
 		843B670A1DF2CEC400289EC9 /* DownloadTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843B67091DF2CEC400289EC9 /* DownloadTask.swift */; };
 		843B670C1DF3087800289EC9 /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843B670B1DF3087800289EC9 /* URL.swift */; };
+		843E16F11E2413CE001D0444 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 843E16F01E2413CE001D0444 /* libcrypto.a */; };
 		8450274B1DAABB9900C20247 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8450274A1DAABB9900C20247 /* Configuration.swift */; };
 		8456F4A81D7DE393006EFE19 /* Pairable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456F4A71D7DE393006EFE19 /* Pairable.swift */; };
 		8456F4AA1D7DEA47006EFE19 /* DefaultPairingHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456F4A91D7DEA47006EFE19 /* DefaultPairingHandler.swift */; };
 		8468BDFB1DE8F10D003B9925 /* NotificationsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8468BDFA1DE8F10D003B9925 /* NotificationsService.swift */; };
 		8468BE001DEB7F97003B9925 /* NetworkUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8468BDFF1DEB7F97003B9925 /* NetworkUtils.swift */; };
 		847E9D2B1DF5E2640042D3CE /* TelephonyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847E9D2A1DF5E2640042D3CE /* TelephonyService.swift */; };
-		847EF4C51DC9049D00360BBE /* SodutoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847EF4C41DC9049D00360BBE /* SodutoTests.swift */; };
+		847EF4C51DC9049D00360BBE /* SodutoaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847EF4C41DC9049D00360BBE /* SodutoaTests.swift */; };
 		849237991DE06EBC00D95BBA /* ServiceAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849237981DE06EBC00D95BBA /* ServiceAction.swift */; };
 		8492379D1DE1C55900D95BBA /* DeviceMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8492379C1DE1C55900D95BBA /* DeviceMenu.swift */; };
 		8492379F1DE1C87600D95BBA /* ServiceActionMenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8492379E1DE1C87600D95BBA /* ServiceActionMenuItem.swift */; };
@@ -63,6 +64,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		843E16EF1E2413CE001D0444 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 843E16DF1E240F46001D0444 /* OpenSSL.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9069D28C0FCE659A0042E34C;
+			remoteInfo = crypto;
+		};
 		847EF4C71DC9049D00360BBE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 843301581D2D8CB8008934BB /* Project object */;
@@ -235,6 +243,7 @@
 		843B67031DF1E64A00289EC9 /* ShareService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareService.swift; sourceTree = "<group>"; };
 		843B67091DF2CEC400289EC9 /* DownloadTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadTask.swift; sourceTree = "<group>"; };
 		843B670B1DF3087800289EC9 /* URL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
+		843E16DF1E240F46001D0444 /* OpenSSL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpenSSL.xcodeproj; path = Soduto/OpenSSL/OpenSSL.xcodeproj; sourceTree = "<group>"; };
 		8450274A1DAABB9900C20247 /* Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		8454D12C1D34228D00788632 /* Soduto-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Soduto-Bridging-Header.h"; sourceTree = "<group>"; };
 		8456F4A71D7DE393006EFE19 /* Pairable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pairable.swift; sourceTree = "<group>"; };
@@ -243,7 +252,7 @@
 		8468BDFF1DEB7F97003B9925 /* NetworkUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkUtils.swift; sourceTree = "<group>"; };
 		847E9D2A1DF5E2640042D3CE /* TelephonyService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TelephonyService.swift; sourceTree = "<group>"; };
 		847EF4C21DC9049D00360BBE /* SodutoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SodutoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		847EF4C41DC9049D00360BBE /* SodutoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SodutoaTests.swift; sourceTree = "<group>"; };
+		847EF4C41DC9049D00360BBE /* SodutoaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SodutoaTests.swift; sourceTree = "<group>"; };
 		847EF4C61DC9049D00360BBE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		849237981DE06EBC00D95BBA /* ServiceAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceAction.swift; sourceTree = "<group>"; };
 		8492379C1DE1C55900D95BBA /* DeviceMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceMenu.swift; sourceTree = "<group>"; };
@@ -292,6 +301,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				843E16F11E2413CE001D0444 /* libcrypto.a in Frameworks */,
 				84B4D0E91DFD756A00437CBB /* Reachability.framework in Frameworks */,
 				84E732101DF47186001E1549 /* CocoaAsyncSocket.framework in Frameworks */,
 				84E7321A1DF55B67001E1549 /* CleanroomASL.framework in Frameworks */,
@@ -354,6 +364,7 @@
 		843301571D2D8CB8008934BB = {
 			isa = PBXGroup;
 			children = (
+				843E16DF1E240F46001D0444 /* OpenSSL.xcodeproj */,
 				84B4D0CE1DFD754700437CBB /* Reachability.xcodeproj */,
 				84E732111DF47237001E1549 /* CleanroomASL.xcodeproj */,
 				84E732021DF46F93001E1549 /* CleanroomLogger.xcodeproj */,
@@ -387,8 +398,15 @@
 				8421A8E31D76123E008AC833 /* UI */,
 				849961B31D572664002B893A /* MyUtilities */,
 			);
-			name = Soduto;
 			path = Soduto;
+			sourceTree = "<group>";
+		};
+		843E16E01E240F46001D0444 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				843E16F01E2413CE001D0444 /* libcrypto.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		8456F4A41D7DE31A006EFE19 /* Core */ = {
@@ -429,10 +447,9 @@
 		847EF4C31DC9049D00360BBE /* SodutoTests */ = {
 			isa = PBXGroup;
 			children = (
-				847EF4C41DC9049D00360BBE /* SodutoTests.swift */,
+				847EF4C41DC9049D00360BBE /* SodutoaTests.swift */,
 				847EF4C61DC9049D00360BBE /* Info.plist */,
 			);
-			name = SodutoTests;
 			path = SodutoTests;
 			sourceTree = "<group>";
 		};
@@ -616,6 +633,10 @@
 					ProjectRef = 8499621A1D57438E002B893A /* CocoaAsyncSocket.xcodeproj */;
 				},
 				{
+					ProductGroup = 843E16E01E240F46001D0444 /* Products */;
+					ProjectRef = 843E16DF1E240F46001D0444 /* OpenSSL.xcodeproj */;
+				},
+				{
 					ProductGroup = 84B4D0CF1DFD754700437CBB /* Products */;
 					ProjectRef = 84B4D0CE1DFD754700437CBB /* Reachability.xcodeproj */;
 				},
@@ -629,6 +650,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		843E16F01E2413CE001D0444 /* libcrypto.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libcrypto.a;
+			remoteRef = 843E16EF1E2413CE001D0444 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		84B4D0DC1DFD754800437CBB /* Reachability.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -795,7 +823,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				847EF4C51DC9049D00360BBE /* SodutoTests.swift in Sources */,
+				847EF4C51DC9049D00360BBE /* SodutoaTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -963,6 +991,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.soduto.Soduto;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Soduto/OpenSSL/openssl/include";
 				SWIFT_OBJC_BRIDGING_HEADER = "Soduto/Soduto-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
@@ -983,6 +1012,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.soduto.Soduto;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Soduto/OpenSSL/openssl/include";
 				SWIFT_OBJC_BRIDGING_HEADER = "Soduto/Soduto-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
