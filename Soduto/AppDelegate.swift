@@ -35,6 +35,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
         self.userNotificationManager = UserNotificationManager(config: self.config, serviceManager: self.serviceManager, deviceManager: self.deviceManager)
         
         super.init()
+        
+        self.checkOneAppInstanceRunning()
     }
     
     
@@ -70,6 +72,21 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
     func deviceManager(_ manager: DeviceManager, didReceivePairingRequest request: PairingRequest, forDevice device: Device) {
         Log.debug?.message("deviceManager(<\(request)> didReceivePairingRequest:<\(request)> forDevice:<\(device)>)")
         PairingInterfaceController.showPairingNotification(for: device)
+    }
+    
+    
+    // MARK: Private
+    
+    private func checkOneAppInstanceRunning() {
+        let lockFileName = FileManager.default.temporaryDirectory.appendingPathComponent(self.config.hostDeviceId).appendingPathExtension("lock").path
+        if !tryLock(lockFileName) {
+            let alert = NSAlert()
+            alert.addButton(withTitle: "OK")
+            alert.informativeText = NSLocalizedString("Another instance of the app is already running. Exiting", comment: "")
+            alert.messageText = Bundle.main.bundleIdentifier?.components(separatedBy: ".").last ?? ""
+            alert.runModal()
+            NSApp.terminate(self)
+        }
     }
     
 }
