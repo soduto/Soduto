@@ -38,6 +38,11 @@ public class TelephonyService: Service, UserNotificationActionHandler {
     }
     
     
+    // MARK: Private properties
+    
+    private var pendingSMSPackets: [NSUserNotification.Id:([DataPacket], Timer)] = [:]
+    
+    
     // MARK: Service properties
     
     public let incomingCapabilities = Set<Service.Capability>([ DataPacket.telephonyPacketType ])
@@ -68,7 +73,7 @@ public class TelephonyService: Service, UserNotificationActionHandler {
                     self.hideNotification(for: dataPacket, from: device)
                     break
                 case DataPacket.TelephonyEvent.sms.rawValue:
-                    self.showSmsNotification(for: dataPacket, from: device)
+                    self.handleSMSPacket(dataPacket, from: device)
                     break
                 default:
                     Log.error?.message("Unknown telephony event type: \(event)")
@@ -269,6 +274,48 @@ public class TelephonyService: Service, UserNotificationActionHandler {
         }
         
         Log.debug?.message("Notification hidden: \(id)")
+    }
+    
+    private func handleSMSPacket(_ packet: DataPacket, from device: Device) {
+        // One SMS might come in chunks - try waiting for all chunks before showing notification.
+        // Although showSmsNotification(for:from) also performs concatenation, it is not enough.
+        // Packets may come out of order - the case that is not handled by showSmsNotification(for:from)
+        // So we are dealing with the later here
+        
+        guard let id = notificationId(for: packet, from: device) else { return }
+        
+        var packets: [DataPacket] = []
+        if let (prevPackets, prevTimer) = pendingSMSPackets[id] {
+            prevTimer.invalidate()
+            packets = prevPackets
+        }
+        packets.append(packet)
+        
+        let timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { _ in
+            do {
+                guard let (prevPackets, _) = self.pendingSMSPackets.removeValue(forKey: id) else { return }
+                
+                let sortedPackets = prevPackets.sorted(by: { (packet1, packet2) -> Bool in
+                    return packet1.id < packet2.id
+                })
+                let messages = try sortedPackets.map { try $0.getMessageBody() ?? "" }
+                let concatenedMessage = messages.joined()
+                
+                guard let lastPacket = sortedPackets.last else { return }
+                
+                var packet = lastPacket
+                var body = packet.body
+                body[DataPacket.TelephonyProperty.messageBody.rawValue] = concatenedMessage as AnyObject
+                packet.body = body
+                
+                self.showSmsNotification(for: packet, from: device)
+            }
+            catch {
+                Log.error?.message("Failed to handle SMS packets: \(error)")
+            }
+        }
+        
+        pendingSMSPackets[id] = (packets, timer)
     }
 }
 
