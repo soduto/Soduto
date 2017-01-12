@@ -46,6 +46,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
         self.config.capabilitiesDataSource = self.serviceManager
         self.connectionProvider.delegate = self.deviceManager
         self.statusBarMenuController.deviceDataSource = self.deviceManager
+        self.statusBarMenuController.config = self.config
         self.deviceManager.delegate = self
         
         self.serviceManager.add(service: PingService())

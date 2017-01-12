@@ -8,6 +8,7 @@
 
 import Foundation
 import CleanroomLogger
+import ServiceManagement
 
 public class DeviceConfiguration: NSObject {
     
@@ -235,6 +236,7 @@ public class Configuration: ConnectionConfiguration, DeviceManagerConfiguration,
         case hostName = "hostName"
         case hostDeviceId = "hostDeviceId"
         case hostCertificateName = "hostCertificateName"
+        case launchOnLogin = "launchOnLogin"
     }
     
     
@@ -312,6 +314,14 @@ public class Configuration: ConnectionConfiguration, DeviceManagerConfiguration,
         return self.capabilitiesDataSource?.outgoingCapabilities ?? Set()
     }
     
+    public var launchOnLogin: Bool {
+        get { return self.userDefaults.bool(forKey: Property.launchOnLogin.rawValue) }
+        set {
+            if SMLoginItemSetEnabled("com.soduto.SodutoLauncher" as CFString, newValue) {
+                self.userDefaults.set(newValue, forKey: Property.launchOnLogin.rawValue)
+            }
+        }
+    }
     
     
     class func generateDeviceId() -> Device.Id {

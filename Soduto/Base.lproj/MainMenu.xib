@@ -21,6 +21,7 @@
         <customObject id="vQj-dd-GoX" userLabel="Status Bar Menu Controller" customClass="StatusBarMenuController" customModule="Soduto" customModuleProvider="target">
             <connections>
                 <outlet property="availableDevicesItem" destination="NHO-Gf-5Mq" id="4VO-UZ-TwJ"/>
+                <outlet property="launchOnLoginItem" destination="tU8-jY-Cw3" id="v4B-wm-ctZ"/>
                 <outlet property="statusBarMenu" destination="LIO-WS-395" id="8BX-ha-3Ci"/>
             </connections>
         </customObject>
@@ -37,6 +38,13 @@
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="Zv9-hp-heD"/>
+                <menuItem title="Launch on login" id="tU8-jY-Cw3">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="toggleLaunchOnLogin:" target="vQj-dd-GoX" id="tjq-3a-oye"/>
+                    </connections>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="NAb-Li-52a"/>
                 <menuItem title="Quit" id="LmP-mI-dDc" userLabel="Quit">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>

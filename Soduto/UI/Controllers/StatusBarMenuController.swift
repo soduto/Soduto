@@ -13,8 +13,10 @@ public class StatusBarMenuController: NSObject, NSMenuDelegate {
     
     @IBOutlet weak var statusBarMenu: NSMenu!
     @IBOutlet weak var availableDevicesItem: NSMenuItem!
+    @IBOutlet weak var launchOnLoginItem: NSMenuItem!
     
     public var deviceDataSource: DeviceDataSource?
+    public var config: Configuration?
     
     let statusBarItem = NSStatusBar.system().statusItem(withLength: NSSquareStatusItemLength)
     
@@ -34,10 +36,15 @@ public class StatusBarMenuController: NSObject, NSMenuDelegate {
         NSApp.terminate(sender)
     }
     
+    @IBAction func toggleLaunchOnLogin(_ sender: AnyObject?) {
+        self.config?.launchOnLogin = !(self.config?.launchOnLogin ?? false)
+    }
+    
     @IBAction func openPreferences(_ sender: AnyObject?) {
         if self.preferencesWindowController == nil {
             self.preferencesWindowController = PreferencesWindowController.loadController()
             self.preferencesWindowController!.deviceDataSource = self.deviceDataSource
+            self.preferencesWindowController!.config = self.config
         }
         self.preferencesWindowController?.showWindow(nil)
     }
@@ -48,6 +55,7 @@ public class StatusBarMenuController: NSObject, NSMenuDelegate {
     public func menuNeedsUpdate(_ menu: NSMenu) {
         if menu == self.statusBarMenu {
             self.refreshMenuDeviceList()
+            self.launchOnLoginItem.state = (self.config?.launchOnLogin ?? false) ? NSOnState : NSOffState
         }
     }
     

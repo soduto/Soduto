@@ -11,7 +11,8 @@ import Cocoa
 
 public class PreferencesWindowController: NSWindowController {
     
-    weak var deviceDataSource: DeviceDataSource?
+    var deviceDataSource: DeviceDataSource?
+    var config: HostConfiguration?
     @IBOutlet weak var deviceList: NSTableView!
     @IBOutlet weak var hostNameLabel: NSTextField!
     
@@ -33,7 +34,8 @@ public class PreferencesWindowController: NSWindowController {
         
         NSApp.activate(ignoringOtherApps: true)
         
-        self.hostNameLabel.stringValue = Host.current().localizedName ?? "Soduto"
+        let hostName = config?.hostDeviceName
+        self.hostNameLabel.stringValue = hostName != nil ? NSLocalizedString("This device is discoverable as", comment: "") + ":\n\(hostName!)" : ""
         
         super.showWindow(sender)
     }

@@ -13,11 +13,17 @@
 		8421A8E71D761409008AC833 /* PreferencesWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8421A8E61D761409008AC833 /* PreferencesWindowController.swift */; };
 		843301661D2D8CB8008934BB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 843301651D2D8CB8008934BB /* Assets.xcassets */; };
 		843301691D2D8CB8008934BB /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 843301671D2D8CB8008934BB /* MainMenu.xib */; };
+		8435AEFA1E26DD27005CD719 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8435AEF91E26DD27005CD719 /* AppDelegate.m */; };
+		8435AEFD1E26DD27005CD719 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8435AEFC1E26DD27005CD719 /* main.m */; };
+		8435AEFF1E26DD27005CD719 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8435AEFE1E26DD27005CD719 /* Assets.xcassets */; };
+		8435AF021E26DD27005CD719 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8435AF001E26DD27005CD719 /* MainMenu.xib */; };
+		8435AF071E26DD83005CD719 /* SodutoLauncher.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8435AEF61E26DD27005CD719 /* SodutoLauncher.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		843B67041DF1E64A00289EC9 /* ShareService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843B67031DF1E64A00289EC9 /* ShareService.swift */; };
 		843B670A1DF2CEC400289EC9 /* DownloadTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843B67091DF2CEC400289EC9 /* DownloadTask.swift */; };
 		843B670C1DF3087800289EC9 /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843B670B1DF3087800289EC9 /* URL.swift */; };
 		843E16F11E2413CE001D0444 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 843E16F01E2413CE001D0444 /* libcrypto.a */; };
 		843E170E1E25851D001D0444 /* IO.m in Sources */ = {isa = PBXBuildFile; fileRef = 843E170D1E25851D001D0444 /* IO.m */; };
+		843E17891E26B56A001D0444 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 843E17881E26B56A001D0444 /* ServiceManagement.framework */; };
 		8450274B1DAABB9900C20247 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8450274A1DAABB9900C20247 /* Configuration.swift */; };
 		8456F4A81D7DE393006EFE19 /* Pairable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456F4A71D7DE393006EFE19 /* Pairable.swift */; };
 		8456F4AA1D7DEA47006EFE19 /* DefaultPairingHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456F4A91D7DEA47006EFE19 /* DefaultPairingHandler.swift */; };
@@ -215,6 +221,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		843E178A1E26B613001D0444 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Library/LoginItems;
+			dstSubfolderSpec = 1;
+			files = (
+				8435AF071E26DD83005CD719 /* SodutoLauncher.app in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		84E732261DF55B68001E1549 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -241,12 +257,21 @@
 		843301651D2D8CB8008934BB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		843301681D2D8CB8008934BB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		8433016A1D2D8CB8008934BB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8435AEF61E26DD27005CD719 /* SodutoLauncher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SodutoLauncher.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8435AEF81E26DD27005CD719 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		8435AEF91E26DD27005CD719 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		8435AEFC1E26DD27005CD719 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		8435AEFE1E26DD27005CD719 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		8435AF011E26DD27005CD719 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		8435AF031E26DD27005CD719 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8435AF081E26DE05005CD719 /* SodutoLauncher.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SodutoLauncher.entitlements; sourceTree = "<group>"; };
 		843B67031DF1E64A00289EC9 /* ShareService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareService.swift; sourceTree = "<group>"; };
 		843B67091DF2CEC400289EC9 /* DownloadTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadTask.swift; sourceTree = "<group>"; };
 		843B670B1DF3087800289EC9 /* URL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
 		843E16DF1E240F46001D0444 /* OpenSSL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpenSSL.xcodeproj; path = Soduto/OpenSSL/OpenSSL.xcodeproj; sourceTree = "<group>"; };
 		843E170C1E25851D001D0444 /* IO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IO.h; sourceTree = "<group>"; };
 		843E170D1E25851D001D0444 /* IO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IO.m; sourceTree = "<group>"; };
+		843E17881E26B56A001D0444 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
 		8450274A1DAABB9900C20247 /* Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		8454D12C1D34228D00788632 /* Soduto-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Soduto-Bridging-Header.h"; sourceTree = "<group>"; };
 		8456F4A71D7DE393006EFE19 /* Pairable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pairable.swift; sourceTree = "<group>"; };
@@ -304,11 +329,19 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				843E17891E26B56A001D0444 /* ServiceManagement.framework in Frameworks */,
 				843E16F11E2413CE001D0444 /* libcrypto.a in Frameworks */,
 				84B4D0E91DFD756A00437CBB /* Reachability.framework in Frameworks */,
 				84E732101DF47186001E1549 /* CocoaAsyncSocket.framework in Frameworks */,
 				84E7321A1DF55B67001E1549 /* CleanroomASL.framework in Frameworks */,
 				84E7320F1DF4714F001E1549 /* CleanroomLogger.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8435AEF31E26DD27005CD719 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -374,6 +407,7 @@
 				8499621A1D57438E002B893A /* CocoaAsyncSocket.xcodeproj */,
 				843301621D2D8CB8008934BB /* Soduto */,
 				847EF4C31DC9049D00360BBE /* SodutoTests */,
+				8435AEF71E26DD27005CD719 /* SodutoLauncher */,
 				843301611D2D8CB8008934BB /* Products */,
 				849962261D574530002B893A /* Frameworks */,
 			);
@@ -384,6 +418,7 @@
 			children = (
 				843301601D2D8CB8008934BB /* Soduto.app */,
 				847EF4C21DC9049D00360BBE /* SodutoTests.xctest */,
+				8435AEF61E26DD27005CD719 /* SodutoLauncher.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -402,6 +437,28 @@
 				849961B31D572664002B893A /* MyUtilities */,
 			);
 			path = Soduto;
+			sourceTree = "<group>";
+		};
+		8435AEF71E26DD27005CD719 /* SodutoLauncher */ = {
+			isa = PBXGroup;
+			children = (
+				8435AF081E26DE05005CD719 /* SodutoLauncher.entitlements */,
+				8435AEF81E26DD27005CD719 /* AppDelegate.h */,
+				8435AEF91E26DD27005CD719 /* AppDelegate.m */,
+				8435AEFE1E26DD27005CD719 /* Assets.xcassets */,
+				8435AF001E26DD27005CD719 /* MainMenu.xib */,
+				8435AF031E26DD27005CD719 /* Info.plist */,
+				8435AEFB1E26DD27005CD719 /* Supporting Files */,
+			);
+			path = SodutoLauncher;
+			sourceTree = "<group>";
+		};
+		8435AEFB1E26DD27005CD719 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				8435AEFC1E26DD27005CD719 /* main.m */,
+			);
+			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		843E16E01E240F46001D0444 /* Products */ = {
@@ -480,6 +537,7 @@
 		849962261D574530002B893A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				843E17881E26B56A001D0444 /* ServiceManagement.framework */,
 				849962271D574530002B893A /* CocoaAsyncSocket.framework */,
 			);
 			name = Frameworks;
@@ -550,6 +608,7 @@
 				8433015D1D2D8CB8008934BB /* Frameworks */,
 				8433015E1D2D8CB8008934BB /* Resources */,
 				84E732261DF55B68001E1549 /* Embed Frameworks */,
+				843E178A1E26B613001D0444 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -564,6 +623,23 @@
 			name = Soduto;
 			productName = Soduto;
 			productReference = 843301601D2D8CB8008934BB /* Soduto.app */;
+			productType = "com.apple.product-type.application";
+		};
+		8435AEF51E26DD27005CD719 /* SodutoLauncher */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8435AF041E26DD27005CD719 /* Build configuration list for PBXNativeTarget "SodutoLauncher" */;
+			buildPhases = (
+				8435AEF21E26DD27005CD719 /* Sources */,
+				8435AEF31E26DD27005CD719 /* Frameworks */,
+				8435AEF41E26DD27005CD719 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SodutoLauncher;
+			productName = SodutoLauncher;
+			productReference = 8435AEF61E26DD27005CD719 /* SodutoLauncher.app */;
 			productType = "com.apple.product-type.application";
 		};
 		847EF4C11DC9049D00360BBE /* SodutoTests */ = {
@@ -590,19 +666,29 @@
 		843301581D2D8CB8008934BB /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0810;
+				LastSwiftUpdateCheck = 0820;
 				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = Soduto;
 				TargetAttributes = {
 					8433015F1D2D8CB8008934BB = {
 						CreatedOnToolsVersion = 8.0;
-						DevelopmentTeam = 5K93S6HD22;
+						DevelopmentTeam = 4R6749AYRE;
 						DevelopmentTeamName = "Giedrius Stanevicius (Personal Team)";
 						LastSwiftMigration = 0800;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
 								enabled = 0;
+							};
+						};
+					};
+					8435AEF51E26DD27005CD719 = {
+						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = 4R6749AYRE;
+						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.Sandbox = {
+								enabled = 1;
 							};
 						};
 					};
@@ -650,6 +736,7 @@
 			targets = (
 				8433015F1D2D8CB8008934BB /* Soduto */,
 				847EF4C11DC9049D00360BBE /* SodutoTests */,
+				8435AEF51E26DD27005CD719 /* SodutoLauncher */,
 			);
 		};
 /* End PBXProject section */
@@ -767,6 +854,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8435AEF41E26DD27005CD719 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8435AEFF1E26DD27005CD719 /* Assets.xcassets in Resources */,
+				8435AF021E26DD27005CD719 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		847EF4C01DC9049D00360BBE /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -822,6 +918,15 @@
 				84FA45DD1DDDCB3D00EF3992 /* SocketAddress.swift in Sources */,
 				84FA45E61DDDE87F00EF3992 /* AppDelegate.swift in Sources */,
 				84FA45ED1DDF525200EF3992 /* PingService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8435AEF21E26DD27005CD719 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8435AEFD1E26DD27005CD719 /* main.m in Sources */,
+				8435AEFA1E26DD27005CD719 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -886,6 +991,14 @@
 			isa = PBXVariantGroup;
 			children = (
 				843301681D2D8CB8008934BB /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		8435AF001E26DD27005CD719 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8435AF011E26DD27005CD719 /* Base */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
@@ -992,6 +1105,7 @@
 				CODE_SIGN_ENTITLEMENTS = Soduto/Soduto.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 4R6749AYRE;
 				INFOPLIST_FILE = Soduto/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
@@ -1013,6 +1127,7 @@
 				CODE_SIGN_ENTITLEMENTS = Soduto/Soduto.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 4R6749AYRE;
 				INFOPLIST_FILE = Soduto/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
@@ -1021,6 +1136,38 @@
 				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Soduto/OpenSSL/openssl/include";
 				SWIFT_OBJC_BRIDGING_HEADER = "Soduto/Soduto-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
+		8435AF051E26DD27005CD719 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = SodutoLauncher/SodutoLauncher.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 4R6749AYRE;
+				INFOPLIST_FILE = SodutoLauncher/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.soduto.SodutoLauncher;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		8435AF061E26DD27005CD719 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = SodutoLauncher/SodutoLauncher.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 4R6749AYRE;
+				INFOPLIST_FILE = SodutoLauncher/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.soduto.SodutoLauncher;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
@@ -1071,6 +1218,15 @@
 			buildConfigurations = (
 				8433016E1D2D8CB8008934BB /* Debug */,
 				8433016F1D2D8CB8008934BB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8435AF041E26DD27005CD719 /* Build configuration list for PBXNativeTarget "SodutoLauncher" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8435AF051E26DD27005CD719 /* Debug */,
+				8435AF061E26DD27005CD719 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
