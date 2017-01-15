@@ -105,13 +105,13 @@ public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDa
     public func device(_ device: Device, didChangePairingStatus status: PairingStatus) {
         Log.debug?.message("device(<\(device)> didChangePairingStatus:<\(status)>)")
         
-        if status == .Paired {
-            self.serviceManager.setup(for: device)
-        }
-        else {
-            // This needs to be done only when old state was paired. However we dont know previous state here
-            // Assuming cleanup is not that heavyweight that it should be done very cautiously
-            self.serviceManager.cleanup(for: device)
+        if device.isReachable {
+            if status == .Paired {
+                self.serviceManager.setup(for: device)
+            }
+            else {
+                self.serviceManager.cleanup(for: device)
+            }
         }
         self.delegate?.deviceManager(self, didChangeDeviceState: device)
     }
@@ -124,6 +124,15 @@ public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDa
     public func device(_ device: Device, didChangeReachabilityStatus isReachable: Bool) {
         Log.debug?.message("device(<\(device)> didChangeReachabilityStatus:<\(isReachable)>)")
         
+        
+        if device.pairingStatus == .Paired {
+            if isReachable {
+                self.serviceManager.setup(for: device)
+            }
+            else {
+                self.serviceManager.cleanup(for: device)
+            }
+        }
         if !isReachable {
             self.devices.removeValue(forKey: device.id)
         }
