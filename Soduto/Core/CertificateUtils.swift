@@ -13,11 +13,15 @@ public class CertificateUtils {
     
     public enum CertificateError: Error {
         case getOrCreateIdentityFailure(error: NSError?)
+        case generateSelfSignedCert // FIXME: provide more information with error
+        case generateRSAKeyPairFailure(status: OSStatus)
+        case createIdentityFailure(status: OSStatus)
         case deleteIdentityFailure(status: OSStatus)
         case findCertificateFailed(status: OSStatus)
         case createCertificateFailure(error: NSError?)
         case addCertificateFailure(error: NSError?)
         case deleteCertificateFailure(status: OSStatus)
+        case addKeyFailure(status: OSStatus)
         case findKeyFailure(status: OSStatus)
         case deleteKeyFailure(status: OSStatus)
         case deleteItemFailure(status: OSStatus)
@@ -33,6 +37,9 @@ public class CertificateUtils {
                 if validate(certificate: certificate!) {
                     return identity
                 }
+                else {
+                    try? deleteIdentity(name)
+                }
             }
         }
         return nil
@@ -42,13 +49,19 @@ public class CertificateUtils {
         return SecIdentityCopyPreferred(name as CFString, nil, nil)
     }
     
-    public class func getOrCreateIdentity(_ name: String, expirationInterval: TimeInterval) throws -> SecIdentity {
-        var error: NSError? = nil
-        if let identity = MYGetOrCreateAnonymousIdentity(name, expirationInterval, &error)?.takeUnretainedValue() {
+    public class func getOrCreateIdentity(_ name: String, certCommonName: String, expirationInterval: TimeInterval) throws -> SecIdentity {
+        if let identity = findValidIdentity(name) {
             return identity
         }
         else {
-            throw CertificateError.getOrCreateIdentityFailure(error: error)
+            _ = try createIdentity(label: name, certCommonName: certCommonName, expirationInterval: expirationInterval)
+            if let identity = findValidIdentity(name) {
+                return identity
+            }
+            else {
+                try? deleteIdentity(name)
+                throw CertificateError.createIdentityFailure(status: 0)
+            }
         }
     }
     
@@ -68,11 +81,18 @@ public class CertificateUtils {
     
     // MARK: Certificate functions
     
-    public class func addCertificate(_ certificateToAdd: SecCertificate, name: String) throws {
-        // Make a deep copy to avoid potential failures while adding (might happen with certificates from SecTrust)
-        let data = SecCertificateCopyData(certificateToAdd)
-        guard let certificate = SecCertificateCreateWithData(nil, data) else {
-            throw CertificateError.addCertificateFailure(error: NSError(domain: NSOSStatusErrorDomain, code: Int(errSecInvalidData), userInfo: nil))
+    public class func addCertificate(_ certificateToAdd: SecCertificate, name: String, dontCopy: Bool = false) throws {
+        let certificate: SecCertificate
+        if dontCopy {
+            certificate = certificateToAdd
+        }
+        else {
+            // Make a deep copy to avoid potential failures while adding (might happen with certificates from SecTrust)
+            let data = SecCertificateCopyData(certificateToAdd)
+            guard let certificateCopy = SecCertificateCreateWithData(nil, data) else {
+                throw CertificateError.addCertificateFailure(error: NSError(domain: NSOSStatusErrorDomain, code: Int(errSecInvalidData), userInfo: nil))
+            }
+            certificate = certificateCopy
         }
         
         let attrs: [String: AnyObject] = [
@@ -226,4 +246,82 @@ public class CertificateUtils {
             throw CertificateError.deleteItemFailure(status: status)
         }
     }
+    
+    private class func generateRSAKeyPair(sizeInBits: Int, permanent: Bool, label: String) throws -> (SecKey, SecKey) {
+        #if os(iOS)
+            let keyAttrs: [String: AnyObject] = [
+                kSecAttrIsPermanent as String: permanent as AnyObject,
+                kSecAttrLabel as String: label as AnyObject
+            ]
+            let pairAttrs: [String: AnyObject] = [
+                kSecAttrKeyType as String: kSecAttrKeyTypeRSA,
+                kSecAttrKeySizeInBits as String: sizeInBits as AnyObject,
+                kSecAttrLabel as String: label as AnyObject,
+                kSecPublicKeyAttrs as String: keyAttrs as AnyObject,
+                kSecPrivateKeyAttrs as String: keyAttrs as AnyObject
+            ]
+        #else
+            let pairAttrs: [String: AnyObject] = [
+                kSecAttrKeyType as String: kSecAttrKeyTypeRSA,
+                kSecAttrKeySizeInBits as String: sizeInBits as AnyObject,
+                kSecAttrLabel as String: label as AnyObject,
+                kSecAttrIsPermanent as String: permanent as AnyObject
+            ]
+        #endif
+        var publicKey: SecKey? = nil
+        var privateKey: SecKey? = nil
+        let status = SecKeyGeneratePair(pairAttrs as CFDictionary, &publicKey, &privateKey)
+        if status == noErr {
+            return (publicKey!, privateKey!)
+        }
+        else {
+            throw CertificateError.generateRSAKeyPairFailure(status: status)
+        }
+    }
+    
+    public class func createIdentity(label: String, certCommonName: String, expirationInterval: TimeInterval) throws -> SecIdentity? {
+        let (publicKey, privateKey) = try generateRSAKeyPair(sizeInBits: 2048, permanent: true, label: label)
+        
+        try? deleteKey(publicKey) // public key not needed
+        
+        var privateKeyCFData: CFData? = nil
+        SecItemExport(privateKey, .formatOpenSSL, .pemArmour, nil, &privateKeyCFData)
+        
+        guard let data = generateIdentityWithPrivateKey(certCommonName, privateKeyCFData! as Data) else { throw CertificateError.createIdentityFailure(status: errSecInternalError) }
+        
+        var cfItems: CFArray? = nil
+        var format: SecExternalFormat = .formatPEMSequence
+        var type: SecExternalItemType = .itemTypeAggregate
+        let status = SecItemImport(data as CFData, "\(label).pem" as CFString, &format, &type, [], nil, nil, &cfItems)
+        guard status == noErr else { throw CertificateError.createIdentityFailure(status: status) }
+        guard let items = cfItems as? [Any] else { throw CertificateError.createIdentityFailure(status: status) }
+        guard items.count == 2 else { throw CertificateError.createIdentityFailure(status: status) }
+        
+        let certificate = items[1] as! SecCertificate
+        
+        do {
+            try addCertificate(certificate, name: label)
+            guard let savedCertificate = findCertificate(label) else { throw CertificateError.addCertificateFailure(error: nil) }
+            
+            var identity: SecIdentity? = nil
+            let status = SecIdentityCreateWithCertificate(nil, savedCertificate,  &identity)
+            if status == noErr {
+                let prefStatus = SecIdentitySetPreferred(identity, label as CFString, nil)
+                if prefStatus != noErr {
+                    try? deleteCertificate(label)
+                    throw CertificateError.createIdentityFailure(status: status)
+                }
+                return identity
+            }
+            else {
+                try? deleteCertificate(label)
+                throw CertificateError.createIdentityFailure(status: status)
+            }
+        }
+        catch {
+            try? deleteKey(privateKey)
+            throw error
+        }
+    }
+
 }

@@ -277,13 +277,15 @@ public class Configuration: ConnectionConfiguration, DeviceManagerConfiguration,
     }
     
     public var hostCertificate: SecIdentity? {
-        let name = self.userDefaults.string(forKey: Property.hostCertificateName.rawValue)
-        let expirationInterval = 60.0 * 60.0 * 24.0 * 365.0 * 10.0
-        var error: NSError? = nil
-        if let identity = MYGetOrCreateAnonymousIdentity(name, expirationInterval, &error)?.takeUnretainedValue() {
-            return identity
+        guard let name = self.userDefaults.string(forKey: Property.hostCertificateName.rawValue) else {
+            Log.error?.message("Failed to get host certificate name")
+            return nil
         }
-        else {
+        let expirationInterval = 60.0 * 60.0 * 24.0 * 365.0 * 10.0
+        do {
+            return try CertificateUtils.getOrCreateIdentity(name, certCommonName: hostDeviceId, expirationInterval: expirationInterval)
+        }
+        catch {
             Log.error?.message("Failed to get host identity for SSL: \(error)")
             return nil
         }

@@ -14,6 +14,7 @@ class SodutoCertificateTests: XCTestCase {
     var keychain: SecKeychain?
     var defaultKeychain: SecKeychain?
     let identityName = "com.soduto.testIdentity"
+    let certCommonName = "com.soduto.testCertCommonName"
     let certificateName = "com.soduto.testCertfificate"
     let expirationInterval: TimeInterval = 60 * 60 * 24 * 356
     
@@ -51,28 +52,9 @@ class SodutoCertificateTests: XCTestCase {
     
     
     
-    func testIdentityUseWorkflow() {
-        // Create identity
-        let identity1 = try! CertificateUtils.getOrCreateIdentity(identityName, expirationInterval: self.expirationInterval)
-        
-        // Get identity
-        let identity2 = try! CertificateUtils.getOrCreateIdentity(identityName, expirationInterval: self.expirationInterval)
-        var certificate1: SecCertificate?
-        var certificate2: SecCertificate?
-        SecIdentityCopyCertificate(identity1, &certificate1)
-        SecIdentityCopyCertificate(identity2, &certificate2)
-        XCTAssert(CertificateUtils.compareCertificates(certificate1!, certificate2!), "Identity certificates expected to be equal")
-        
-        // Delete identity
-        try! CertificateUtils.deleteIdentity(identityName)
-        XCTAssert(CertificateUtils.findIdentity(identityName) == nil, "Identity with preference \(identityName) expected to be deleted")
-        XCTAssert(CertificateUtils.findCertificate(identityName) == nil, "Certificates with preference name '\(identityName)' expected to be deleted")
-        XCTAssert(try! CertificateUtils.findKey(identityName) == nil, "Keys with name '\(identityName)' expected to be deleted")
-    }
-    
     func testCertificateUseWorkflow() {
         // create a certificate
-        let identity = try! CertificateUtils.getOrCreateIdentity(identityName, expirationInterval: self.expirationInterval)
+        let identity = try! CertificateUtils.getOrCreateIdentity(identityName, certCommonName: certCommonName, expirationInterval: self.expirationInterval)
         var identityCert: SecCertificate? = nil
         let status = SecIdentityCopyCertificate(identity, &identityCert)
         XCTAssert(status == errSecSuccess, "Identity expected to have a certificate")
@@ -94,6 +76,24 @@ class SodutoCertificateTests: XCTestCase {
         XCTAssert(try! CertificateUtils.findKey(certificateName) == nil, "Keys with name '\(certificateName)' expected to be deleted")
     }
     
+    func testIdentityUseWorkflow() {
+        // Create identity
+        let identity1 = try! CertificateUtils.getOrCreateIdentity(identityName, certCommonName: certCommonName,  expirationInterval: self.expirationInterval)
+        
+        // Get identity
+        let identity2 = try! CertificateUtils.getOrCreateIdentity(identityName, certCommonName: certCommonName, expirationInterval: self.expirationInterval)
+        var certificate1: SecCertificate?
+        var certificate2: SecCertificate?
+        SecIdentityCopyCertificate(identity1, &certificate1)
+        SecIdentityCopyCertificate(identity2, &certificate2)
+        XCTAssert(CertificateUtils.compareCertificates(certificate1!, certificate2!), "Identity certificates expected to be equal")
+        
+        // Delete identity
+        try! CertificateUtils.deleteIdentity(identityName)
+        XCTAssert(CertificateUtils.findIdentity(identityName) == nil, "Identity with preference \(identityName) expected to be deleted")
+        XCTAssert(CertificateUtils.findCertificate(identityName) == nil, "Certificates with preference name '\(identityName)' expected to be deleted")
+        XCTAssert(try! CertificateUtils.findKey(identityName) == nil, "Keys with name '\(identityName)' expected to be deleted")
+    }
     
     
     private func string(forStatus status: OSStatus) -> String {
