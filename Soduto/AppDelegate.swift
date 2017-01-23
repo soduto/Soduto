@@ -49,12 +49,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
         self.statusBarMenuController.config = self.config
         self.deviceManager.delegate = self
         
-        self.serviceManager.add(service: PingService())
         self.serviceManager.add(service: FindMyPhoneService())
         self.serviceManager.add(service: NotificationsService())
         self.serviceManager.add(service: ClipboardService())
         self.serviceManager.add(service: ShareService())
         self.serviceManager.add(service: TelephonyService())
+        self.serviceManager.add(service: PingService())
         
         self.connectionProvider.start()
     }

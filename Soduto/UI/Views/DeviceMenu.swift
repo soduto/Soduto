@@ -26,9 +26,23 @@ public class DeviceMenu: NSMenu {
         self.autoenablesItems = false
         
         let actions = device.serviceActions()
+        
+        var actionsByGroup: [ServiceAction.Group:[ServiceAction]] = [:]
         for action in actions {
-            let item = ServiceActionMenuItem(serviceAction: action)
-            self.addItem(item)
+            if actionsByGroup[action.group] != nil {
+                actionsByGroup[action.group]?.append(action)
+            }
+            else {
+                actionsByGroup[action.group] = [action]
+            }
+        }
+        
+        for groupActions in actionsByGroup {
+            for action in groupActions.value {
+                let item = ServiceActionMenuItem(serviceAction: action)
+                self.addItem(item)
+            }
+            self.addItem(NSMenuItem.separator())
         }
     }
     

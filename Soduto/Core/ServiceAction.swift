@@ -19,14 +19,20 @@ public struct ServiceAction {
     // MARK: Types
     
     public typealias Id = Int
+    public typealias Group = String
     
     
     // MARK: Public properties
+    
+    public static let defaultGroup: Group = "default"
     
     /// Action id uniquely defining concrete action to be performed on particular service.
     /// Same ids on different services may mean different actions, so only a pair of 
     /// id and service uniquely define an action.
     public let id: Id
+    
+    /// Action group identifier. It may be used to group or sort actions.
+    public let group: Group
     
     /// Short action title suitable to display in UI
     public let title: String
@@ -42,6 +48,16 @@ public struct ServiceAction {
     
     init(id: Id, title: String, description: String, service: Service, device: Device) {
         self.id = id
+        self.group = ServiceAction.defaultGroup
+        self.title = title
+        self.decription = description
+        self.service = service
+        self.device = device
+    }
+    
+    init(id: Id, group: Group, title: String, description: String, service: Service, device: Device) {
+        self.id = id
+        self.group = group
         self.title = title
         self.decription = description
         self.service = service
