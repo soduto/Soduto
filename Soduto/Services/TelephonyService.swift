@@ -38,6 +38,11 @@ public class TelephonyService: Service, UserNotificationActionHandler {
     }
     
     
+    enum ActionId: ServiceAction.Id {
+        case sendSms
+    }
+    
+    
     // MARK: Private properties
     
     private var pendingSMSPackets: [NSUserNotification.Id:([DataPacket], Timer)] = [:]
@@ -93,12 +98,25 @@ public class TelephonyService: Service, UserNotificationActionHandler {
     public func cleanup(for device: Device) {}
     
     public func actions(for device: Device) -> [ServiceAction] {
-        // no actions supported
+        guard device.incomingCapabilities.contains(DataPacket.smsRequestPacketType) else { return [] }
+        guard device.pairingStatus == .Paired else { return [] }
+        
+//        return [
+//            ServiceAction(id: ActionId.sendSms.rawValue, title: "Write a SMS", description: "Send a SMS", service: self, device: device)
+//        ]
         return []
     }
     
     public func performAction(_ id: ServiceAction.Id, forDevice device: Device) {
-        // no actions supported
+//        guard let actionId = ActionId(rawValue: id) else { return }
+//        guard device.pairingStatus == .Paired else { return }
+        
+//        switch actionId {
+//        case .sendSms:
+//            device.send(DataPacket.smsRequestPacket(phoneNumber: "", message: ""))
+//            break
+//        }
+            return
     }
     
     
