@@ -26,6 +26,7 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
     static public let udpPort: UInt16 = 1716
     static public let minVersionWithSSLSupport: UInt = 6
     static public let minAnnouncementInterval: TimeInterval = 30.0
+    static public let broadcastAnnouncementNotification: Notification.Name = Notification.Name(rawValue: "com.soduto.ConnectionProvider.broadcastAnnouncement")
     
     public weak var delegate: ConnectionProviderDelegate? = nil
     
@@ -55,6 +56,12 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
         }
         self.udpSocket.setDelegate(self)
         self.tcpSocket.delegate = self
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(broadcastAnnouncement), name: ConnectionProvider.broadcastAnnouncementNotification, object: nil)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     public func start() {
@@ -109,7 +116,7 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
     
     // MARK: Announcements broadcasting
     
-    public func broadcastAnnouncement() {
+    public dynamic func broadcastAnnouncement() {
         guard self.isStarted else { return }
         guard self.tcpSocket.localPort > 0 else { return }
         guard self.announcementTimer == nil else { return }
@@ -152,6 +159,7 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
         }
         else {
             self.announcementTimer = Timer.scheduledTimer(withTimeInterval: ConnectionProvider.minAnnouncementInterval, repeats: false) { _ in
+                self.announcementTimer = nil
                 self.broadcastAnnouncement()
             }
         }

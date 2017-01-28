@@ -37,12 +37,20 @@ public class PreferencesWindowController: NSWindowController {
         let hostName = config?.hostDeviceName
         self.hostNameLabel.stringValue = hostName != nil ? NSLocalizedString("This device is discoverable as", comment: "") + ":\n\(hostName!)" : ""
         
+        NotificationCenter.default.post(name: ConnectionProvider.broadcastAnnouncementNotification, object: nil)
+        
         super.showWindow(sender)
     }
     
     
     override public func windowDidLoad() {
         self.refreshDeviceList()
+    }
+    
+    override public func keyDown(with event: NSEvent) {
+        if event.charactersIgnoringModifiers?.lowercased() == "r" && event.modifierFlags.contains(.command) {
+            NotificationCenter.default.post(name: ConnectionProvider.broadcastAnnouncementNotification, object: nil)
+        }
     }
 }
 

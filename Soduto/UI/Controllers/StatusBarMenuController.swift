@@ -53,6 +53,8 @@ public class StatusBarMenuController: NSObject, NSMenuDelegate {
     // MARK: NSMenuDelegate
     
     public func menuNeedsUpdate(_ menu: NSMenu) {
+        NotificationCenter.default.post(name: ConnectionProvider.broadcastAnnouncementNotification, object: nil)
+        
         if menu == self.statusBarMenu {
             self.refreshMenuDeviceList()
             self.launchOnLoginItem.state = (self.config?.launchOnLogin ?? false) ? NSOnState : NSOffState
