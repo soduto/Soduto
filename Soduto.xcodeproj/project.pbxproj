@@ -677,7 +677,7 @@
 				TargetAttributes = {
 					8433015F1D2D8CB8008934BB = {
 						CreatedOnToolsVersion = 8.0;
-						DevelopmentTeam = 4R6749AYRE;
+						DevelopmentTeam = WW9LKQ5SH5;
 						DevelopmentTeamName = "Giedrius Stanevicius (Personal Team)";
 						LastSwiftMigration = 0800;
 						ProvisioningStyle = Automatic;
@@ -689,7 +689,7 @@
 					};
 					8435AEF51E26DD27005CD719 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = 4R6749AYRE;
+						DevelopmentTeam = WW9LKQ5SH5;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
@@ -1111,7 +1111,7 @@
 				CODE_SIGN_ENTITLEMENTS = Soduto/Soduto.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 4R6749AYRE;
+				DEVELOPMENT_TEAM = WW9LKQ5SH5;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/Soduto/OpenSSL/openssl/include";
 				INFOPLIST_FILE = Soduto/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
@@ -1134,7 +1134,7 @@
 				CODE_SIGN_ENTITLEMENTS = Soduto/Soduto.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 4R6749AYRE;
+				DEVELOPMENT_TEAM = WW9LKQ5SH5;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/Soduto/OpenSSL/openssl/include";
 				INFOPLIST_FILE = Soduto/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
@@ -1154,7 +1154,7 @@
 				CODE_SIGN_ENTITLEMENTS = SodutoLauncher/SodutoLauncher.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 4R6749AYRE;
+				DEVELOPMENT_TEAM = WW9LKQ5SH5;
 				INFOPLIST_FILE = SodutoLauncher/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.soduto.SodutoLauncher;
@@ -1170,7 +1170,7 @@
 				CODE_SIGN_ENTITLEMENTS = SodutoLauncher/SodutoLauncher.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 4R6749AYRE;
+				DEVELOPMENT_TEAM = WW9LKQ5SH5;
 				INFOPLIST_FILE = SodutoLauncher/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.soduto.SodutoLauncher;
