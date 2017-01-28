@@ -34,8 +34,19 @@ public class PreferencesWindowController: NSWindowController {
         
         NSApp.activate(ignoringOtherApps: true)
         
-        let hostName = config?.hostDeviceName
-        self.hostNameLabel.stringValue = hostName != nil ? NSLocalizedString("This device is discoverable as", comment: "") + ":\n\(hostName!)" : ""
+        if let hostName = config?.hostDeviceName {
+            let label = NSMutableAttributedString(string: NSLocalizedString("This device is discoverable as", comment: "") + ":")
+            label.addAttributes([
+                NSForegroundColorAttributeName: NSColor.disabledControlTextColor,
+                NSFontAttributeName: NSFont.systemFont(ofSize: NSFont.smallSystemFontSize()) 
+            ], range: NSMakeRange(0, label.length))
+            label.append(NSAttributedString(string: "\n\(hostName)"))
+            label.setAlignment(.center, range: NSMakeRange(0, label.length))
+            self.hostNameLabel.attributedStringValue = label
+        }
+        else {
+            self.hostNameLabel.stringValue = ""
+        }
         
         NotificationCenter.default.post(name: ConnectionProvider.broadcastAnnouncementNotification, object: nil)
         
