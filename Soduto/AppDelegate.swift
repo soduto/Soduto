@@ -50,7 +50,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
         self.deviceManager.delegate = self
         
         self.serviceManager.add(service: FindMyPhoneService())
-        self.serviceManager.add(service: NotificationsService())
+        //self.serviceManager.add(service: NotificationsService())
         self.serviceManager.add(service: ClipboardService())
         self.serviceManager.add(service: ShareService())
         self.serviceManager.add(service: TelephonyService())
