@@ -46,6 +46,7 @@ public class TelephonyService: Service, UserNotificationActionHandler {
     // MARK: Private properties
     
     private var pendingSMSPackets: [NSUserNotification.Id:([DataPacket], Timer)] = [:]
+    private lazy var sendMessageController = SendMessageWindowController.loadController()
     
     
     // MARK: Service properties
@@ -101,22 +102,20 @@ public class TelephonyService: Service, UserNotificationActionHandler {
         guard device.incomingCapabilities.contains(DataPacket.smsRequestPacketType) else { return [] }
         guard device.pairingStatus == .Paired else { return [] }
         
-//        return [
-//            ServiceAction(id: ActionId.sendSms.rawValue, title: "Write a SMS", description: "Send a SMS", service: self, device: device)
-//        ]
-        return []
+        return [
+            ServiceAction(id: ActionId.sendSms.rawValue, title: "Send SMS", description: "Send SMS text message", service: self, device: device)
+        ]
     }
     
     public func performAction(_ id: ServiceAction.Id, forDevice device: Device) {
-//        guard let actionId = ActionId(rawValue: id) else { return }
-//        guard device.pairingStatus == .Paired else { return }
+        guard let actionId = ActionId(rawValue: id) else { return }
+        guard device.pairingStatus == .Paired else { return }
         
-//        switch actionId {
-//        case .sendSms:
-//            device.send(DataPacket.smsRequestPacket(phoneNumber: "", message: ""))
-//            break
-//        }
-            return
+        switch actionId {
+        case .sendSms:
+            sendMessageController.showWindow(self)
+            break
+        }
     }
     
     

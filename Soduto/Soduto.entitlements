@@ -12,5 +12,7 @@
 	<true/>
 	<key>com.apple.security.network.server</key>
 	<true/>
+	<key>com.apple.security.personal-information.addressbook</key>
+	<true/>
 </dict>
 </plist>

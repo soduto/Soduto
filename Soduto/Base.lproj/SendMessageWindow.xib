@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="16E144f" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
+        <capability name="box content view" minToolsVersion="7.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+        <capability name="system font weights other than Regular or Bold" minToolsVersion="7.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="SendMessageWindowController" customModule="Soduto" customModuleProvider="target">
+            <connections>
+                <outlet property="bodyInput" destination="Hu0-KM-8LV" id="Tnj-7E-Y5s"/>
+                <outlet property="bodyInputPlaceholder" destination="T70-44-lTz" id="w4i-J2-arW"/>
+                <outlet property="toInput" destination="Rys-7l-dGE" id="vZ7-RO-Vzt"/>
+                <outlet property="window" destination="QvC-M9-y7g" id="f2w-se-zBd"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window title="Send SMS" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g" customClass="UnifiedTitlebarWindow" customModule="Soduto" customModuleProvider="target">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" unifiedTitleAndToolbar="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="196" y="240" width="480" height="297"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
+            <view key="contentView" wantsLayer="YES" id="EiT-Mj-1SZ">
+                <rect key="frame" x="0.0" y="0.0" width="480" height="297"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <box boxType="custom" borderType="none" borderWidth="0.0" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="SQh-Dw-Yaq" userLabel="Background">
+                        <rect key="frame" x="0.0" y="0.0" width="480" height="297"/>
+                        <view key="contentView" id="j5h-4O-hYE">
+                            <rect key="frame" x="0.0" y="0.0" width="480" height="297"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        </view>
+                        <color key="fillColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </box>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Oly-xg-c0u">
+                        <rect key="frame" x="18" y="269" width="23" height="17"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="To:" id="V4n-FS-2XP">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <comboBox focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Rys-7l-dGE">
+                        <rect key="frame" x="44" y="264" width="431" height="26"/>
+                        <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" focusRingType="none" placeholderString="" usesSingleLineMode="YES" bezelStyle="round" buttonBordered="NO" usesDataSource="YES" numberOfVisibleItems="5" id="yva-8r-feo">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </comboBoxCell>
+                        <connections>
+                            <outlet property="dataSource" destination="-2" id="NYk-oi-lNN"/>
+                            <outlet property="delegate" destination="-2" id="GK1-Ne-Dah"/>
+                        </connections>
+                    </comboBox>
+                    <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="h3a-tJ-lrJ">
+                        <rect key="frame" x="20" y="258" width="460" height="5"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="1" id="mqU-F9-Ud6"/>
+                        </constraints>
+                    </box>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="T70-44-lTz">
+                        <rect key="frame" x="18" y="236" width="444" height="17"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" placeholderString="Message text" id="djG-Km-YTn">
+                            <font key="font" metaFont="systemLight" size="13"/>
+                            <color key="textColor" name="tertiaryLabelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <scrollView borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nXz-aC-lCT">
+                        <rect key="frame" x="0.0" y="0.0" width="480" height="260"/>
+                        <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="SbT-nk-NGp">
+                            <rect key="frame" x="0.0" y="0.0" width="480" height="260"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <subviews>
+                                <textView drawsBackground="NO" importsGraphics="NO" richText="NO" horizontallyResizable="YES" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" grammarChecking="YES" smartInsertDelete="YES" id="Hu0-KM-8LV">
+                                    <rect key="frame" x="0.0" y="0.0" width="480" height="260"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <size key="minSize" width="480" height="260"/>
+                                    <size key="maxSize" width="480" height="10000000"/>
+                                    <color key="insertionPointColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <connections>
+                                        <outlet property="delegate" destination="-2" id="quS-1n-LeY"/>
+                                    </connections>
+                                </textView>
+                            </subviews>
+                            <color key="backgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
+                            <edgeInsets key="contentInsets" left="0.0" right="0.0" top="0.0" bottom="0.0"/>
+                        </clipView>
+                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="YES" id="awy-2W-yUl">
+                            <rect key="frame" x="-100" y="-100" width="87" height="18"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </scroller>
+                        <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="mzl-h2-2Fm">
+                            <rect key="frame" x="464" y="0.0" width="16" height="260"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </scroller>
+                    </scrollView>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="Rys-7l-dGE" firstAttribute="leading" secondItem="Oly-xg-c0u" secondAttribute="trailing" constant="5" id="Akb-q8-9Pi"/>
+                    <constraint firstItem="Oly-xg-c0u" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" id="Cet-G2-I6C"/>
+                    <constraint firstAttribute="trailing" secondItem="nXz-aC-lCT" secondAttribute="trailing" id="E1x-zS-xtD"/>
+                    <constraint firstItem="h3a-tJ-lrJ" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" id="EwP-fq-1gx"/>
+                    <constraint firstItem="Rys-7l-dGE" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="9" id="HQT-gw-oEi"/>
+                    <constraint firstItem="h3a-tJ-lrJ" firstAttribute="top" secondItem="Rys-7l-dGE" secondAttribute="bottom" constant="7" id="I5Y-av-a6E"/>
+                    <constraint firstAttribute="trailing" secondItem="T70-44-lTz" secondAttribute="trailing" constant="20" id="Pww-VE-5qd"/>
+                    <constraint firstItem="nXz-aC-lCT" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" id="QZb-lI-OCO"/>
+                    <constraint firstItem="nXz-aC-lCT" firstAttribute="top" secondItem="h3a-tJ-lrJ" secondAttribute="bottom" id="RKF-KW-sDW"/>
+                    <constraint firstItem="SQh-Dw-Yaq" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" id="SBc-8x-DJ4"/>
+                    <constraint firstAttribute="bottom" secondItem="SQh-Dw-Yaq" secondAttribute="bottom" id="Taj-eq-mrO"/>
+                    <constraint firstAttribute="trailing" secondItem="Rys-7l-dGE" secondAttribute="trailing" constant="8" id="WwJ-IF-Ga1"/>
+                    <constraint firstItem="T70-44-lTz" firstAttribute="top" secondItem="h3a-tJ-lrJ" secondAttribute="bottom" constant="7" id="bnL-Px-S51"/>
+                    <constraint firstItem="Rys-7l-dGE" firstAttribute="baseline" secondItem="Oly-xg-c0u" secondAttribute="baseline" constant="1" id="fGA-um-vAp"/>
+                    <constraint firstItem="T70-44-lTz" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" id="foc-AH-RcP"/>
+                    <constraint firstItem="SQh-Dw-Yaq" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" id="hVu-u5-488"/>
+                    <constraint firstAttribute="trailing" secondItem="h3a-tJ-lrJ" secondAttribute="trailing" id="lid-gq-y2v"/>
+                    <constraint firstAttribute="bottom" secondItem="nXz-aC-lCT" secondAttribute="bottom" id="sAm-rF-fbG"/>
+                    <constraint firstAttribute="trailing" secondItem="SQh-Dw-Yaq" secondAttribute="trailing" id="zXs-SK-32v"/>
+                </constraints>
+            </view>
+            <toolbar key="toolbar" implicitIdentifier="5BE39696-EFAC-49AF-9F6E-A29CE9AB6426" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="iconOnly" sizeMode="regular" id="Ym2-od-Q4Z">
+                <allowedToolbarItems>
+                    <toolbarItem implicitItemIdentifier="9DABCE89-A902-413F-951B-0085808A07A1" label="Custom View" paletteLabel="Custom View" image="sendIcon" id="0Jl-d3-6gn">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="20" height="17"/>
+                        <size key="maxSize" width="39" height="32"/>
+                        <button key="view" verticalHuggingPriority="750" id="yeu-Uf-cat">
+                            <rect key="frame" x="19" y="14" width="39" height="28"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="sendIcon" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="s0d-fH-Xnv">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                        </button>
+                    </toolbarItem>
+                </allowedToolbarItems>
+                <defaultToolbarItems>
+                    <toolbarItem reference="0Jl-d3-6gn"/>
+                </defaultToolbarItems>
+            </toolbar>
+            <point key="canvasLocation" x="-12" y="140"/>
+        </window>
+    </objects>
+    <resources>
+        <image name="sendIcon" width="22" height="22"/>
+    </resources>
+</document>
