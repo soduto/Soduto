@@ -15,8 +15,6 @@ class SendMessageWindowController: NSWindowController {
     
     // MARK: Properties
     
-    fileprivate static let delimiter = " — "
-    
     @IBOutlet weak var toInput: NSTokenField!
     @IBOutlet weak var bodyInput: NSTextView!
     @IBOutlet weak var bodyInputPlaceholder: NSTextField!
@@ -129,10 +127,7 @@ extension SendMessageWindowController: NSTokenFieldDelegate {
         
         let matchingContacts = self.filterContacts(substring)
         let suggestions = matchingContacts.map { contact -> String in
-            let fullName =  CNContactFormatter.string(from: contact, style: .fullName)
-            let prefix = fullName != nil ? "\(fullName!)\(SendMessageWindowController.delimiter)" : ""
-            let phoneNumber = contact.phoneNumbers[0].value.stringValue
-            return "\(prefix)\(phoneNumber)"
+            return Addressee(contact: contact)?.canonicalString ?? ""
         }
         
         selectedIndex?.pointee = -1
@@ -186,11 +181,20 @@ extension SendMessageWindowController: NSTokenFieldDelegate {
     
     // We put the string on the pasteboard before calling this delegate method.
     // By default, we write the NSStringPboardType as well as an array of NSStrings.
-//    func tokenField(_ tokenField: NSTokenField, writeRepresentedObjects objects: [Any], to pboard: NSPasteboard) -> Bool
+    func tokenField(_ tokenField: NSTokenField, writeRepresentedObjects objects: [Any], to pboard: NSPasteboard) -> Bool {
+        pboard.clearContents()
+        for obj in objects {
+            guard let writableObj = obj as? NSPasteboardWriting else { break }
+            pboard.writeObjects([writableObj])
+        }
+        return true
+    }
     
     
     // Return an array of represented objects to add to the token field.
-//    func tokenField(_ tokenField: NSTokenField, readFrom pboard: NSPasteboard) -> [Any]?
+    func tokenField(_ tokenField: NSTokenField, readFrom pboard: NSPasteboard) -> [Any]? {
+        return pboard.readObjects(forClasses: [Addressee.self, NSString.self], options: nil)
+    }
     
     
     // By default the tokens have no menu.
@@ -220,22 +224,26 @@ extension SendMessageWindowController: NSTokenFieldDelegate {
     
     
     // This method allows you to change the style for individual tokens as well as have mixed text and tokens.
-//    func tokenField(_ tokenField: NSTokenField, styleForRepresentedObject representedObject: Any) -> NSTokenStyle
+//    func tokenField(_ tokenField: NSTokenField, styleForRepresentedObject representedObject: Any) -> NSTokenStyle {}
     
 }
 
 
 // MARK: - 
 
-class Addressee {
+final class Addressee: NSObject {
     
     // MARK: Properties
     
+    fileprivate static let delimiter = " — "
+    fileprivate static let pboardType = "com.soduto.contactphone"
+    
     let contact: CNContact
     var selectedPhone: CNLabeledValue<CNPhoneNumber>
+    
     var displayString: String {
-        if let fullName = CNContactFormatter.string(from: contact, style: .fullName) {
-            if contact.phoneNumbers.count > 1, let label = selectedPhone.label {
+        if let fullName = CNContactFormatter.string(from: self.contact, style: .fullName) {
+            if contact.phoneNumbers.count > 1, let label = self.selectedPhone.label {
                 let localizedLabel = CNLabeledValue<CNPhoneNumber>.localizedString(forLabel: label)
                 return "\(fullName) (\(localizedLabel))"
             }
@@ -248,25 +256,40 @@ class Addressee {
         }
     }
     var phoneDisplayString: String {
-        return displayString(forPhone: selectedPhone)
+        return displayString(forPhone: self.selectedPhone)
     }
     var editingString: String {
         return selectedPhone.value.stringValue
+    }
+    var canonicalString: String {
+        let phoneNumber = selectedPhone.value.stringValue
+        if let fullName =  CNContactFormatter.string(from: contact, style: .fullName) {
+            return "\(fullName)\(Addressee.delimiter)\(phoneNumber)"
+        }
+        else {
+            return phoneNumber
+        }
     }
     
     
     // MARK: Init / Deinit
     
     init(addressee: Addressee) {
-        contact = addressee.contact
-        selectedPhone = addressee.selectedPhone
+        self.contact = addressee.contact
+        self.selectedPhone = addressee.selectedPhone
     }
     
-    init?(string: String) {
-        let components = string.components(separatedBy: SendMessageWindowController.delimiter)
+    init?(contact: CNContact) {
+        guard contact.phoneNumbers.count > 0 else { return nil }
+        self.contact = contact
+        self.selectedPhone = contact.phoneNumbers[0]
+    }
+    
+    required init?(string: String) {
+        let components = string.components(separatedBy: Addressee.delimiter)
         guard components.count >= 2 else { return nil }
         let phoneNumber = components.last!
-        let fullName = components.prefix(upTo: components.count-1).joined(separator: SendMessageWindowController.delimiter)
+        let fullName = components.prefix(upTo: components.count-1).joined(separator: Addressee.delimiter)
         
         let keysToFetch: [CNKeyDescriptor] = [CNContactFormatter.descriptorForRequiredKeys(for: .fullName),
                                               CNContactPhoneNumbersKey as CNKeyDescriptor,
@@ -314,4 +337,48 @@ class Addressee {
             return phoneNumber.value.stringValue
         }
     }
+}
+
+
+// MARK: NSPasteboardReading
+
+extension Addressee: NSPasteboardReading {
+    
+    static func readableTypes(for pasteboard: NSPasteboard) -> [String] {
+        return [Addressee.pboardType]
+    }
+    
+    static func readingOptions(forType type: String, pasteboard: NSPasteboard) -> NSPasteboardReadingOptions {
+        return NSPasteboardReadingOptions.asString
+    }
+    
+    convenience init?(pasteboardPropertyList propertyList: Any, ofType type: String) {
+        guard type == Addressee.pboardType else { return nil }
+        guard let str = propertyList as? String else { return nil }
+        self.init(string: str)
+    }
+    
+}
+
+
+// MARK: NSPasteboardWriting
+
+extension Addressee: NSPasteboardWriting {
+    
+    func writableTypes(for pasteboard: NSPasteboard) -> [String] {
+        return [Addressee.pboardType, kUTTypeText as String]
+    }
+    
+    func pasteboardPropertyList(forType type: String) -> Any? {
+        if type == Addressee.pboardType {
+            return canonicalString
+        }
+        else if type == kUTTypeText as String {
+            return canonicalString
+        }
+        else {
+            return nil
+        }
+    }
+    
 }
