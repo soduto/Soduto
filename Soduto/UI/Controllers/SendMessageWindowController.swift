@@ -82,16 +82,16 @@ class SendMessageWindowController: NSWindowController {
     
     dynamic fileprivate func selectPhoneMenuAction(_ sender: Any?) {
         guard let menuItem = sender as? NSMenuItem else { return }
-        guard let addressee = menuItem.representedObject as? Addressee else { return }
+        guard let contactPhoneNumber = menuItem.representedObject as? ContactPhoneNumber else { return }
         let phoneIndex = menuItem.tag
-        guard phoneIndex < addressee.contact.phoneNumbers.count else { return }
-        addressee.selectedPhone = addressee.contact.phoneNumbers[phoneIndex]
+        guard phoneIndex < contactPhoneNumber.contact.phoneNumbers.count else { return }
+        contactPhoneNumber.selectedPhone = contactPhoneNumber.contact.phoneNumbers[phoneIndex]
         
         guard let tokens = self.toInput.objectValue as? [Any] else { return }
-        // To properly refresh NSTokenInput, we need to recreate the modified Addressee
+        // To properly refresh NSTokenInput, we need to recreate the modified ContactPhoneNumber
         let updatedTokens: [Any] = tokens.map { token in
-            if let addr = token as? Addressee, addr === addressee {
-                return Addressee(addressee: addr)
+            if let phone = token as? ContactPhoneNumber, phone === contactPhoneNumber {
+                return ContactPhoneNumber(contactPhoneNumber: phone)
             }
             else {
                 return token
@@ -110,6 +110,7 @@ extension SendMessageWindowController: NSTextDelegate {
         guard let textView = notification.object as? NSTextView else { return }
         guard textView == self.bodyInput else { return }
         
+        // Show/Hide message body placeholder
         self.bodyInputPlaceholder.isHidden = self.bodyInput.string?.isEmpty != true
     }
 }
@@ -127,7 +128,7 @@ extension SendMessageWindowController: NSTokenFieldDelegate {
         
         let matchingContacts = self.filterContacts(substring)
         let suggestions = matchingContacts.map { contact -> String in
-            return Addressee(contact: contact)?.canonicalString ?? ""
+            return ContactPhoneNumber(contact: contact)?.canonicalString ?? ""
         }
         
         selectedIndex?.pointee = -1
@@ -146,8 +147,8 @@ extension SendMessageWindowController: NSTokenFieldDelegate {
     // If you return nil or don't implement these delegate methods, we will assume
     // editing string = display string = represented object
     func tokenField(_ tokenField: NSTokenField, displayStringForRepresentedObject representedObject: Any) -> String? {
-        if let addressee = representedObject as? Addressee {
-            return addressee.displayString
+        if let contactPhoneNumber = representedObject as? ContactPhoneNumber {
+            return contactPhoneNumber.displayString
         }
         else if let string = representedObject as? String {
             return string
@@ -158,8 +159,8 @@ extension SendMessageWindowController: NSTokenFieldDelegate {
     }
     
     func tokenField(_ tokenField: NSTokenField, editingStringForRepresentedObject representedObject: Any) -> String? {
-        if let addressee = representedObject as? Addressee {
-            return addressee.editingString
+        if let contactPhoneNumber = representedObject as? ContactPhoneNumber {
+            return contactPhoneNumber.editingString
         }
         else if let string = representedObject as? String {
             return string
@@ -170,8 +171,8 @@ extension SendMessageWindowController: NSTokenFieldDelegate {
     }
     
     func tokenField(_ tokenField: NSTokenField, representedObjectForEditing editingString: String) -> Any {
-        if let addressee = Addressee(string: editingString) {
-            return addressee
+        if let contactPhoneNumber = ContactPhoneNumber(string: editingString) {
+            return contactPhoneNumber
         }
         else {
             return editingString
@@ -193,33 +194,33 @@ extension SendMessageWindowController: NSTokenFieldDelegate {
     
     // Return an array of represented objects to add to the token field.
     func tokenField(_ tokenField: NSTokenField, readFrom pboard: NSPasteboard) -> [Any]? {
-        return pboard.readObjects(forClasses: [Addressee.self, NSString.self], options: nil)
+        return pboard.readObjects(forClasses: [ContactPhoneNumber.self, NSString.self], options: nil)
     }
     
     
     // By default the tokens have no menu.
     func tokenField(_ tokenField: NSTokenField, menuForRepresentedObject representedObject: Any) -> NSMenu? {
-        guard let addressee = representedObject as? Addressee else { return nil }
+        guard let contactPhoneNumber = representedObject as? ContactPhoneNumber else { return nil }
         
         let menu = NSMenu()
-        for phoneNumber in addressee.contact.phoneNumbers {
+        for phoneNumber in contactPhoneNumber.contact.phoneNumbers {
             let index = menu.items.count
-            let title = addressee.displayString(forPhone: phoneNumber)
+            let title = contactPhoneNumber.displayString(forPhone: phoneNumber)
             let key = index < 10 ? "\((index + 1) % 10)" : ""
             let item = NSMenuItem(title: title, action: nil, keyEquivalent: key)
             item.tag = index
-            item.representedObject = addressee
+            item.representedObject = contactPhoneNumber
             item.target = self
             item.action = #selector(selectPhoneMenuAction(_:))
-            item.state = addressee.selectedPhone === phoneNumber ? NSOnState : NSOffState
+            item.state = contactPhoneNumber.selectedPhone === phoneNumber ? NSOnState : NSOffState
             menu.addItem(item)
         }
         return menu
     }
     
     func tokenField(_ tokenField: NSTokenField, hasMenuForRepresentedObject representedObject: Any) -> Bool {
-        guard let addressee = representedObject as? Addressee else { return false }
-        return addressee.contact.phoneNumbers.count > 1
+        guard let contactPhoneNumber = representedObject as? ContactPhoneNumber else { return false }
+        return contactPhoneNumber.contact.phoneNumbers.count > 1
     }
     
     
@@ -231,12 +232,13 @@ extension SendMessageWindowController: NSTokenFieldDelegate {
 
 // MARK: - 
 
-final class Addressee: NSObject {
+/// Represents a phone number from contacts
+final class ContactPhoneNumber: NSObject {
     
     // MARK: Properties
     
     fileprivate static let delimiter = " — "
-    fileprivate static let pboardType = "com.soduto.contactphone"
+    fileprivate static let pboardType = "com.soduto.contactphonenumber"
     
     let contact: CNContact
     var selectedPhone: CNLabeledValue<CNPhoneNumber>
@@ -264,7 +266,7 @@ final class Addressee: NSObject {
     var canonicalString: String {
         let phoneNumber = selectedPhone.value.stringValue
         if let fullName =  CNContactFormatter.string(from: contact, style: .fullName) {
-            return "\(fullName)\(Addressee.delimiter)\(phoneNumber)"
+            return "\(fullName)\(ContactPhoneNumber.delimiter)\(phoneNumber)"
         }
         else {
             return phoneNumber
@@ -274,9 +276,9 @@ final class Addressee: NSObject {
     
     // MARK: Init / Deinit
     
-    init(addressee: Addressee) {
-        self.contact = addressee.contact
-        self.selectedPhone = addressee.selectedPhone
+    init(contactPhoneNumber: ContactPhoneNumber) {
+        self.contact = contactPhoneNumber.contact
+        self.selectedPhone = contactPhoneNumber.selectedPhone
     }
     
     init?(contact: CNContact) {
@@ -286,10 +288,10 @@ final class Addressee: NSObject {
     }
     
     required init?(string: String) {
-        let components = string.components(separatedBy: Addressee.delimiter)
+        let components = string.components(separatedBy: ContactPhoneNumber.delimiter)
         guard components.count >= 2 else { return nil }
         let phoneNumber = components.last!
-        let fullName = components.prefix(upTo: components.count-1).joined(separator: Addressee.delimiter)
+        let fullName = components.prefix(upTo: components.count-1).joined(separator: ContactPhoneNumber.delimiter)
         
         let keysToFetch: [CNKeyDescriptor] = [CNContactFormatter.descriptorForRequiredKeys(for: .fullName),
                                               CNContactPhoneNumbersKey as CNKeyDescriptor,
@@ -342,10 +344,10 @@ final class Addressee: NSObject {
 
 // MARK: NSPasteboardReading
 
-extension Addressee: NSPasteboardReading {
+extension ContactPhoneNumber: NSPasteboardReading {
     
     static func readableTypes(for pasteboard: NSPasteboard) -> [String] {
-        return [Addressee.pboardType]
+        return [ContactPhoneNumber.pboardType]
     }
     
     static func readingOptions(forType type: String, pasteboard: NSPasteboard) -> NSPasteboardReadingOptions {
@@ -353,7 +355,7 @@ extension Addressee: NSPasteboardReading {
     }
     
     convenience init?(pasteboardPropertyList propertyList: Any, ofType type: String) {
-        guard type == Addressee.pboardType else { return nil }
+        guard type == ContactPhoneNumber.pboardType else { return nil }
         guard let str = propertyList as? String else { return nil }
         self.init(string: str)
     }
@@ -363,14 +365,14 @@ extension Addressee: NSPasteboardReading {
 
 // MARK: NSPasteboardWriting
 
-extension Addressee: NSPasteboardWriting {
+extension ContactPhoneNumber: NSPasteboardWriting {
     
     func writableTypes(for pasteboard: NSPasteboard) -> [String] {
-        return [Addressee.pboardType, kUTTypeText as String]
+        return [ContactPhoneNumber.pboardType, kUTTypeText as String]
     }
     
     func pasteboardPropertyList(forType type: String) -> Any? {
-        if type == Addressee.pboardType {
+        if type == ContactPhoneNumber.pboardType {
             return canonicalString
         }
         else if type == kUTTypeText as String {
