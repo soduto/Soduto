@@ -19,8 +19,7 @@ class SendMessageWindowController: NSWindowController {
     @IBOutlet weak var bodyInput: NSTextView!
     @IBOutlet weak var bodyInputPlaceholder: NSTextField!
     
-    fileprivate var filteredContacts: [CNContact] = []
-    fileprivate var isConatctsAccessAllowed: Bool = false
+    fileprivate var isContactsAccessAllowed: Bool { return CNContactStore.authorizationStatus(for: .contacts) == .authorized }
     
     
     static func loadController() -> SendMessageWindowController {
@@ -32,9 +31,16 @@ class SendMessageWindowController: NSWindowController {
         // make sure window is loaded
         let _ = self.window
         
-        NSApp.activate(ignoringOtherApps: true)
-        
-        super.showWindow(sender)
+        if CNContactStore.authorizationStatus(for: .contacts) == .notDetermined {
+            CNContactStore().requestAccess(for: .contacts) { _,_ in
+                NSApp.activate(ignoringOtherApps: true)
+                super.showWindow(sender)
+            }
+        }
+        else {
+            NSApp.activate(ignoringOtherApps: true)
+            super.showWindow(sender)
+        }
     }
 
     public override func windowDidLoad() {
@@ -44,37 +50,6 @@ class SendMessageWindowController: NSWindowController {
     
     public override func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         return true
-    }
-    
-    
-    fileprivate func filterContacts(_ searchString: String) -> [CNContact] {
-        if !searchString.isEmpty {
-            do {
-                let keysToFetch: [CNKeyDescriptor] = [CNContactFormatter.descriptorForRequiredKeys(for: .fullName),
-                                   CNContactPhoneNumbersKey as CNKeyDescriptor,
-                                   CNContactImageDataAvailableKey as CNKeyDescriptor,
-                                   CNContactThumbnailImageDataKey as CNKeyDescriptor]
-                let store = CNContactStore()
-                let request = CNContactFetchRequest(keysToFetch: keysToFetch)
-                request.unifyResults = true
-                var results: [CNContact] = []
-                try store.enumerateContacts(with: request, usingBlock: { (contact: CNContact, result: UnsafeMutablePointer<ObjCBool>) in
-                    guard contact.phoneNumbers.count > 0 else { return }
-                    guard let fullName = CNContactFormatter.string(from: contact, style: .fullName) else { return }
-                    guard fullName.localizedCaseInsensitiveContains(searchString) else { return }
-                    results.append(contact)
-                })
-                self.filteredContacts = results
-            }
-            catch {
-                Log.error?.message("Failed to fetch contacts: \(error)")
-            }
-        }
-        else {
-            self.filteredContacts = []
-        }
-        
-        return self.filteredContacts
     }
     
     
@@ -126,9 +101,11 @@ extension SendMessageWindowController: NSTokenFieldDelegate {
     // The default behavior is not to have any completions.
     func tokenField(_ tokenField: NSTokenField, completionsForSubstring substring: String, indexOfToken tokenIndex: Int, indexOfSelectedItem selectedIndex: UnsafeMutablePointer<Int>?) -> [Any]? {
         
-        let matchingContacts = self.filterContacts(substring)
-        let suggestions = matchingContacts.map { contact -> String in
-            return ContactPhoneNumber(contact: contact)?.canonicalString ?? ""
+        guard self.isContactsAccessAllowed else { return nil }
+        
+        let matches = ContactPhoneNumber.queryList(withString: substring)
+        let suggestions = matches.map { contactPhoneNumber -> String in
+            return contactPhoneNumber.canonicalString
         }
         
         selectedIndex?.pointee = -1
@@ -171,7 +148,7 @@ extension SendMessageWindowController: NSTokenFieldDelegate {
     }
     
     func tokenField(_ tokenField: NSTokenField, representedObjectForEditing editingString: String) -> Any {
-        if let contactPhoneNumber = ContactPhoneNumber(string: editingString) {
+        if self.isContactsAccessAllowed, let contactPhoneNumber = ContactPhoneNumber(string: editingString) {
             return contactPhoneNumber
         }
         else {
@@ -194,7 +171,14 @@ extension SendMessageWindowController: NSTokenFieldDelegate {
     
     // Return an array of represented objects to add to the token field.
     func tokenField(_ tokenField: NSTokenField, readFrom pboard: NSPasteboard) -> [Any]? {
-        return pboard.readObjects(forClasses: [ContactPhoneNumber.self, NSString.self], options: nil)
+        let classes: [AnyClass]
+        if self.isContactsAccessAllowed {
+            classes = [ContactPhoneNumber.self, NSString.self]
+        }
+        else {
+            classes = [NSString.self]
+        }
+        return pboard.readObjects(forClasses: classes, options: nil)
     }
     
     
@@ -241,21 +225,29 @@ final class ContactPhoneNumber: NSObject {
     fileprivate static let pboardType = "com.soduto.contactphonenumber"
     
     let contact: CNContact
-    var selectedPhone: CNLabeledValue<CNPhoneNumber>
+    var selectedPhone: CNLabeledValue<CNPhoneNumber> {
+        didSet {
+            _displayString = nil
+        }
+    }
     
+    private var _displayString: String? = nil
     var displayString: String {
-        if let fullName = CNContactFormatter.string(from: self.contact, style: .fullName) {
-            if contact.phoneNumbers.count > 1, let label = self.selectedPhone.label {
-                let localizedLabel = CNLabeledValue<CNPhoneNumber>.localizedString(forLabel: label)
-                return "\(fullName) (\(localizedLabel))"
+        if _displayString == nil {
+            if let fullName = CNContactFormatter.string(from: self.contact, style: .fullName) {
+                if contact.phoneNumbers.count > 1, let label = self.selectedPhone.label {
+                    let localizedLabel = CNLabeledValue<CNPhoneNumber>.localizedString(forLabel: label)
+                    _displayString = "\(fullName) (\(localizedLabel))"
+                }
+                else {
+                    _displayString = fullName
+                }
             }
             else {
-                return fullName
+                _displayString = phoneDisplayString
             }
         }
-        else {
-            return phoneDisplayString
-        }
+        return _displayString!
     }
     var phoneDisplayString: String {
         return displayString(forPhone: self.selectedPhone)
@@ -381,6 +373,43 @@ extension ContactPhoneNumber: NSPasteboardWriting {
         else {
             return nil
         }
+    }
+    
+}
+
+
+// MARK: CNContacts querying
+
+extension ContactPhoneNumber {
+    
+    fileprivate static func queryList(withString string: String) -> [ContactPhoneNumber] {
+        let string = string.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !string.isEmpty else { return [] }
+        
+        var results: [ContactPhoneNumber] = []
+        do {
+            let keysToFetch: [CNKeyDescriptor] = [CNContactFormatter.descriptorForRequiredKeys(for: .fullName),
+                                                  CNContactPhoneNumbersKey as CNKeyDescriptor,
+                                                  CNContactImageDataAvailableKey as CNKeyDescriptor,
+                                                  CNContactThumbnailImageDataKey as CNKeyDescriptor]
+            let store = CNContactStore()
+            let request = CNContactFetchRequest(keysToFetch: keysToFetch)
+            request.unifyResults = true
+            try store.enumerateContacts(with: request, usingBlock: { (contact: CNContact, result: UnsafeMutablePointer<ObjCBool>) in
+                guard contact.phoneNumbers.count > 0 else { return }
+                guard let fullName = CNContactFormatter.string(from: contact, style: .fullName) else { return }
+                guard fullName.localizedCaseInsensitiveContains(string) else { return }
+                guard let contactPhoneNumber = ContactPhoneNumber(contact: contact) else { return }
+                results.append(contactPhoneNumber)
+            })
+        }
+        catch {
+            Log.error?.message("Failed to fetch contacts: \(error)")
+        }
+        
+        results.sort { (c1, c2) in c1.displayString.compare(c2.displayString) == .orderedAscending }
+        
+        return results
     }
     
 }
