@@ -15,6 +15,24 @@ class SendMessageWindowController: NSWindowController {
     
     // MARK: Properties
     
+    public var sendActionHandler: ((SendMessageWindowController) -> Void)? = nil
+    
+    public var phoneNumbers: [String] {
+        guard let tokens = toInput.objectValue as? [Any] else { return [] }
+        let numbers: [String] = tokens.map { token in
+            if let contactPhoneNumber = token as? ContactPhoneNumber {
+                return contactPhoneNumber.selectedPhone.value.stringValue
+            }
+            else {
+                return (token as? String) ?? ""
+            }
+        }
+        return numbers.filter({ !$0.isEmpty })
+    }
+    public var messageBody: String? { return self.bodyInput.string }
+    public var isReadyToSend: Bool { return self.messageBody?.isEmpty == false && self.phoneNumbers.count > 0 }
+    
+    @IBOutlet weak var sendButton: NSButton!
     @IBOutlet weak var toInput: NSTokenField!
     @IBOutlet weak var bodyInput: NSTextView!
     @IBOutlet weak var bodyInputPlaceholder: NSTextField!
@@ -23,14 +41,16 @@ class SendMessageWindowController: NSWindowController {
     
     
     static func loadController() -> SendMessageWindowController {
-        return SendMessageWindowController(windowNibName: "SendMessageWindow")
+        let controller = SendMessageWindowController(windowNibName: "SendMessageWindow")
+        
+        // make sure window is loaded
+        let _ = controller.window
+        
+        return controller
     }
     
     
     public override func showWindow(_ sender: Any?) {
-        // make sure window is loaded
-        let _ = self.window
-        
         if CNContactStore.authorizationStatus(for: .contacts) == .notDetermined {
             CNContactStore().requestAccess(for: .contacts) { _,_ in
                 NSApp.activate(ignoringOtherApps: true)
@@ -46,10 +66,31 @@ class SendMessageWindowController: NSWindowController {
     public override func windowDidLoad() {
         self.bodyInput.textContainerInset = NSSize(width: 15.0, height: 8.0)
         self.bodyInput.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .regular))
+        
+        if let screenSize = NSScreen.main()?.frame.size, let windowSize = self.window?.frame.size {
+            let pos = NSPoint(x: (screenSize.width - windowSize.width) * 0.5, y: (screenSize.height - windowSize.height) * 0.5)
+            self.window?.setFrameOrigin(pos)
+        }
     }
     
     public override func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         return true
+    }
+    
+    public override func controlTextDidChange(_ notification: Notification) {
+        guard let view = notification.object as? NSView else { return }
+        
+        // To input
+        if view === self.toInput {
+            self.sendButton.isEnabled = self.isReadyToSend
+        }
+    }
+    
+    public func clear() {
+        self.toInput.stringValue = ""
+        self.bodyInput.string = ""
+        self.sendButton.isEnabled = isReadyToSend
+        self.window?.makeFirstResponder(self.toInput)
     }
     
     
@@ -74,6 +115,11 @@ class SendMessageWindowController: NSWindowController {
         }
         self.toInput.objectValue = updatedTokens
     }
+    
+    @IBAction func send(_ sender: Any) {
+        guard self.isReadyToSend else { return }
+        self.sendActionHandler?(self)
+    }
 }
 
 
@@ -82,11 +128,14 @@ class SendMessageWindowController: NSWindowController {
 extension SendMessageWindowController: NSTextDelegate {
     
     public func textDidChange(_ notification: Notification) {
-        guard let textView = notification.object as? NSTextView else { return }
-        guard textView == self.bodyInput else { return }
+        guard let view = notification.object as? NSView else { return }
         
-        // Show/Hide message body placeholder
-        self.bodyInputPlaceholder.isHidden = self.bodyInput.string?.isEmpty != true
+        // Message body
+        if view === self.bodyInput {
+            self.bodyInputPlaceholder.isHidden = self.bodyInput.string?.isEmpty != true
+            self.sendButton.isEnabled = self.isReadyToSend
+        }
+        
     }
 }
 
@@ -233,31 +282,31 @@ final class ContactPhoneNumber: NSObject {
     
     private var _displayString: String? = nil
     var displayString: String {
-        if _displayString == nil {
+        if self._displayString == nil {
             if let fullName = CNContactFormatter.string(from: self.contact, style: .fullName) {
-                if contact.phoneNumbers.count > 1, let label = self.selectedPhone.label {
+                if self.contact.phoneNumbers.count > 1, let label = self.selectedPhone.label {
                     let localizedLabel = CNLabeledValue<CNPhoneNumber>.localizedString(forLabel: label)
-                    _displayString = "\(fullName) (\(localizedLabel))"
+                    self._displayString = "\(fullName) (\(localizedLabel))"
                 }
                 else {
-                    _displayString = fullName
+                    self._displayString = fullName
                 }
             }
             else {
-                _displayString = phoneDisplayString
+                self._displayString = self.phoneDisplayString
             }
         }
-        return _displayString!
+        return self._displayString!
     }
     var phoneDisplayString: String {
         return displayString(forPhone: self.selectedPhone)
     }
     var editingString: String {
-        return selectedPhone.value.stringValue
+        return self.selectedPhone.value.stringValue
     }
     var canonicalString: String {
-        let phoneNumber = selectedPhone.value.stringValue
-        if let fullName =  CNContactFormatter.string(from: contact, style: .fullName) {
+        let phoneNumber = self.selectedPhone.value.stringValue
+        if let fullName =  CNContactFormatter.string(from: self.contact, style: .fullName) {
             return "\(fullName)\(ContactPhoneNumber.delimiter)\(phoneNumber)"
         }
         else {
@@ -315,15 +364,15 @@ final class ContactPhoneNumber: NSObject {
         guard let matchedContact = contactMatch else { return nil }
         guard let matchedPhone = phoneMatch else { return nil }
         
-        contact = matchedContact
-        selectedPhone = matchedPhone
+        self.contact = matchedContact
+        self.selectedPhone = matchedPhone
     }
     
     
     // MARK: Public methods
     
     func displayString(forPhone phoneNumber: CNLabeledValue<CNPhoneNumber>) -> String {
-        if contact.phoneNumbers.count > 1, let label = phoneNumber.label {
+        if self.contact.phoneNumbers.count > 1, let label = phoneNumber.label {
             let localizedLabel = CNLabeledValue<CNPhoneNumber>.localizedString(forLabel: label)
             return "\(phoneNumber.value.stringValue) (\(localizedLabel))"
         }
@@ -365,10 +414,10 @@ extension ContactPhoneNumber: NSPasteboardWriting {
     
     func pasteboardPropertyList(forType type: String) -> Any? {
         if type == ContactPhoneNumber.pboardType {
-            return canonicalString
+            return self.canonicalString
         }
         else if type == kUTTypeText as String {
-            return canonicalString
+            return self.canonicalString
         }
         else {
             return nil

@@ -103,7 +103,7 @@ public class TelephonyService: Service, UserNotificationActionHandler {
         guard device.pairingStatus == .Paired else { return [] }
         
         return [
-            ServiceAction(id: ActionId.sendSms.rawValue, title: "Send SMS", description: "Send SMS text message", service: self, device: device)
+            ServiceAction(id: ActionId.sendSms.rawValue, title: "Send SMS", description: "Send text messages from the desktop", service: self, device: device)
         ]
     }
     
@@ -113,6 +113,17 @@ public class TelephonyService: Service, UserNotificationActionHandler {
         
         switch actionId {
         case .sendSms:
+            sendMessageController.sendActionHandler = { controller in
+                controller.sendActionHandler = nil
+                controller.window?.close()
+                guard device.pairingStatus == .Paired else { return }
+                guard let message = controller.messageBody else { return }
+                for phoneNumber in controller.phoneNumbers {
+                    let packet = DataPacket.smsRequestPacket(phoneNumber: phoneNumber, message: message)
+                    device.send(packet)
+                }
+            }
+            sendMessageController.clear()
             sendMessageController.showWindow(self)
             break
         }

@@ -56,6 +56,11 @@ public class PreferencesWindowController: NSWindowController {
     
     override public func windowDidLoad() {
         self.refreshDeviceList()
+        
+        if let screenSize = NSScreen.main()?.frame.size, let windowSize = self.window?.frame.size {
+            let pos = NSPoint(x: (screenSize.width - windowSize.width) * 0.5, y: (screenSize.height - windowSize.height) * 0.5)
+            self.window?.setFrameOrigin(pos)
+        }
     }
     
     override public func keyDown(with event: NSEvent) {
