@@ -15,18 +15,22 @@ class SendMessageWindowController: NSWindowController {
     
     // MARK: Properties
     
-    @IBOutlet weak var toInput: NSComboBox!
+    fileprivate static let delimiter = " — "
+    
+    @IBOutlet weak var toInput: NSTokenField!
     @IBOutlet weak var bodyInput: NSTextView!
     @IBOutlet weak var bodyInputPlaceholder: NSTextField!
     
     fileprivate var filteredContacts: [CNContact] = []
+    fileprivate var isConatctsAccessAllowed: Bool = false
     
     
     static func loadController() -> SendMessageWindowController {
         return SendMessageWindowController(windowNibName: "SendMessageWindow")
     }
     
-    override public func showWindow(_ sender: Any?) {
+    
+    public override func showWindow(_ sender: Any?) {
         // make sure window is loaded
         let _ = self.window
         
@@ -35,22 +39,17 @@ class SendMessageWindowController: NSWindowController {
         super.showWindow(sender)
     }
 
-    
-    override public func windowDidLoad() {
+    public override func windowDidLoad() {
         self.bodyInput.textContainerInset = NSSize(width: 15.0, height: 8.0)
         self.bodyInput.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .regular))
     }
     
-    public override func controlTextDidChange(_ notification: Notification) {
-        guard let obj = notification.object else { return }
-        if (obj as? NSComboBox) === self.toInput {
-            self.filterContacts(self.toInput.stringValue)
-            self.toInput.cell?.setAccessibilityExpanded(!self.toInput.stringValue.isEmpty)
-        }
+    public override func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+        return true
     }
     
     
-    fileprivate func filterContacts(_ searchString: String) {
+    fileprivate func filterContacts(_ searchString: String) -> [CNContact] {
         if !searchString.isEmpty {
             do {
                 let keysToFetch: [CNKeyDescriptor] = [CNContactFormatter.descriptorForRequiredKeys(for: .fullName),
@@ -77,12 +76,35 @@ class SendMessageWindowController: NSWindowController {
             self.filteredContacts = []
         }
         
-        self.toInput.reloadData()
+        return self.filteredContacts
+    }
+    
+    
+    // MARK: Actions
+    
+    dynamic fileprivate func selectPhoneMenuAction(_ sender: Any?) {
+        guard let menuItem = sender as? NSMenuItem else { return }
+        guard let addressee = menuItem.representedObject as? Addressee else { return }
+        let phoneIndex = menuItem.tag
+        guard phoneIndex < addressee.contact.phoneNumbers.count else { return }
+        addressee.selectedPhone = addressee.contact.phoneNumbers[phoneIndex]
+        
+        guard let tokens = self.toInput.objectValue as? [Any] else { return }
+        // To properly refresh NSTokenInput, we need to recreate the modified Addressee
+        let updatedTokens: [Any] = tokens.map { token in
+            if let addr = token as? Addressee, addr === addressee {
+                return Addressee(addressee: addr)
+            }
+            else {
+                return token
+            }
+        }
+        self.toInput.objectValue = updatedTokens
     }
 }
 
 
-// MARK: - NSTextDelegate
+// MARK: NSTextDelegate
 
 extension SendMessageWindowController: NSTextDelegate {
     
@@ -95,41 +117,201 @@ extension SendMessageWindowController: NSTextDelegate {
 }
 
 
-// MARK: - NSComboBoxDataSource
+// MARK: NSTokenFieldDelegate
 
-extension SendMessageWindowController: NSComboBoxDataSource {
+extension SendMessageWindowController: NSTokenFieldDelegate {
     
-    public func numberOfItems(in comboBox: NSComboBox) -> Int {
-        return self.filteredContacts.count
+    // Each element in the array should be an NSString or an array of NSStrings.
+    // substring is the partial string that is being completed.  tokenIndex is the index of the token being completed.
+    // selectedIndex allows you to return by reference an index specifying which of the completions should be selected initially.
+    // The default behavior is not to have any completions.
+    func tokenField(_ tokenField: NSTokenField, completionsForSubstring substring: String, indexOfToken tokenIndex: Int, indexOfSelectedItem selectedIndex: UnsafeMutablePointer<Int>?) -> [Any]? {
+        
+        let matchingContacts = self.filterContacts(substring)
+        let suggestions = matchingContacts.map { contact -> String in
+            let fullName =  CNContactFormatter.string(from: contact, style: .fullName)
+            let prefix = fullName != nil ? "\(fullName!)\(SendMessageWindowController.delimiter)" : ""
+            let phoneNumber = contact.phoneNumbers[0].value.stringValue
+            return "\(prefix)\(phoneNumber)"
+        }
+        
+        selectedIndex?.pointee = -1
+        return suggestions
     }
     
-    public func comboBox(_ comboBox: NSComboBox, objectValueForItemAt index: Int) -> Any? {
-        let contact = self.filteredContacts[index]
-        assert(contact.isKeyAvailable(CNContactPhoneNumbersKey))
-        assert(contact.phoneNumbers.count > 0)
-        let fullName = CNContactFormatter.string(from: contact, style: .fullName) ?? ""
-        let phoneNumber = contact.phoneNumbers[0]
-        let phoneNumberString = phoneNumber.value.stringValue
-        return "\(phoneNumberString) - \(fullName)"
+    
+    // return an array of represented objects you want to add.
+    // If you want to reject the add, return an empty array.
+    // returning nil will cause an error.
+    func tokenField(_ tokenField: NSTokenField, shouldAdd tokens: [Any], at index: Int) -> [Any] {
+        return tokens
     }
     
     
-//    public func comboBox(_ comboBox: NSComboBox, indexOfItemWithStringValue string: String) -> Int { return 0 }
+    // If you return nil or don't implement these delegate methods, we will assume
+    // editing string = display string = represented object
+    func tokenField(_ tokenField: NSTokenField, displayStringForRepresentedObject representedObject: Any) -> String? {
+        if let addressee = representedObject as? Addressee {
+            return addressee.displayString
+        }
+        else if let string = representedObject as? String {
+            return string
+        }
+        else {
+            return nil
+        }
+    }
     
-//    public func comboBox(_ comboBox: NSComboBox, completedString string: String) -> String? { return nil }
+    func tokenField(_ tokenField: NSTokenField, editingStringForRepresentedObject representedObject: Any) -> String? {
+        if let addressee = representedObject as? Addressee {
+            return addressee.editingString
+        }
+        else if let string = representedObject as? String {
+            return string
+        }
+        else {
+            return nil
+        }
+    }
+    
+    func tokenField(_ tokenField: NSTokenField, representedObjectForEditing editingString: String) -> Any {
+        if let addressee = Addressee(string: editingString) {
+            return addressee
+        }
+        else {
+            return editingString
+        }
+    }
+    
+    
+    // We put the string on the pasteboard before calling this delegate method.
+    // By default, we write the NSStringPboardType as well as an array of NSStrings.
+//    func tokenField(_ tokenField: NSTokenField, writeRepresentedObjects objects: [Any], to pboard: NSPasteboard) -> Bool
+    
+    
+    // Return an array of represented objects to add to the token field.
+//    func tokenField(_ tokenField: NSTokenField, readFrom pboard: NSPasteboard) -> [Any]?
+    
+    
+    // By default the tokens have no menu.
+    func tokenField(_ tokenField: NSTokenField, menuForRepresentedObject representedObject: Any) -> NSMenu? {
+        guard let addressee = representedObject as? Addressee else { return nil }
+        
+        let menu = NSMenu()
+        for phoneNumber in addressee.contact.phoneNumbers {
+            let index = menu.items.count
+            let title = addressee.displayString(forPhone: phoneNumber)
+            let key = index < 10 ? "\((index + 1) % 10)" : ""
+            let item = NSMenuItem(title: title, action: nil, keyEquivalent: key)
+            item.tag = index
+            item.representedObject = addressee
+            item.target = self
+            item.action = #selector(selectPhoneMenuAction(_:))
+            item.state = addressee.selectedPhone === phoneNumber ? NSOnState : NSOffState
+            menu.addItem(item)
+        }
+        return menu
+    }
+    
+    func tokenField(_ tokenField: NSTokenField, hasMenuForRepresentedObject representedObject: Any) -> Bool {
+        guard let addressee = representedObject as? Addressee else { return false }
+        return addressee.contact.phoneNumbers.count > 1
+    }
+    
+    
+    // This method allows you to change the style for individual tokens as well as have mixed text and tokens.
+//    func tokenField(_ tokenField: NSTokenField, styleForRepresentedObject representedObject: Any) -> NSTokenStyle
     
 }
 
 
-// MARK: - NSComboBoxDelegate
+// MARK: - 
 
-extension SendMessageWindowController: NSComboBoxDelegate {
+class Addressee {
     
-    public func comboBoxWillPopUp(_ notification: Notification) {
-        guard let obj = notification.object else { return }
-        if (obj as? NSComboBox) === self.toInput {
-            self.filterContacts(self.toInput.stringValue)
+    // MARK: Properties
+    
+    let contact: CNContact
+    var selectedPhone: CNLabeledValue<CNPhoneNumber>
+    var displayString: String {
+        if let fullName = CNContactFormatter.string(from: contact, style: .fullName) {
+            if contact.phoneNumbers.count > 1, let label = selectedPhone.label {
+                let localizedLabel = CNLabeledValue<CNPhoneNumber>.localizedString(forLabel: label)
+                return "\(fullName) (\(localizedLabel))"
+            }
+            else {
+                return fullName
+            }
+        }
+        else {
+            return phoneDisplayString
         }
     }
+    var phoneDisplayString: String {
+        return displayString(forPhone: selectedPhone)
+    }
+    var editingString: String {
+        return selectedPhone.value.stringValue
+    }
     
+    
+    // MARK: Init / Deinit
+    
+    init(addressee: Addressee) {
+        contact = addressee.contact
+        selectedPhone = addressee.selectedPhone
+    }
+    
+    init?(string: String) {
+        let components = string.components(separatedBy: SendMessageWindowController.delimiter)
+        guard components.count >= 2 else { return nil }
+        let phoneNumber = components.last!
+        let fullName = components.prefix(upTo: components.count-1).joined(separator: SendMessageWindowController.delimiter)
+        
+        let keysToFetch: [CNKeyDescriptor] = [CNContactFormatter.descriptorForRequiredKeys(for: .fullName),
+                                              CNContactPhoneNumbersKey as CNKeyDescriptor,
+                                              CNContactImageDataAvailableKey as CNKeyDescriptor,
+                                              CNContactThumbnailImageDataKey as CNKeyDescriptor]
+        let request = CNContactFetchRequest(keysToFetch: keysToFetch)
+        request.unifyResults = true
+        
+        var contactMatch: CNContact? = nil
+        var phoneMatch: CNLabeledValue<CNPhoneNumber>? = nil
+        do {
+            try CNContactStore().enumerateContacts(with: request, usingBlock: { (contact: CNContact, result: UnsafeMutablePointer<ObjCBool>) in
+                guard contact.phoneNumbers.count > 0 else { return }
+                guard let contactFullName = CNContactFormatter.string(from: contact, style: .fullName) else { return }
+                guard contactFullName == fullName else { return }
+                guard let phoneIndex = contact.phoneNumbers.index(where: { (number: CNLabeledValue) -> Bool in
+                    return number.value.stringValue == phoneNumber
+                }) else { return }
+                contactMatch = contact
+                phoneMatch = contact.phoneNumbers[phoneIndex]
+                result.pointee = true
+            })
+        }
+        catch {
+            Log.error?.message("Failed to fetch contacts: \(error)")
+            return nil
+        }
+        
+        guard let matchedContact = contactMatch else { return nil }
+        guard let matchedPhone = phoneMatch else { return nil }
+        
+        contact = matchedContact
+        selectedPhone = matchedPhone
+    }
+    
+    
+    // MARK: Public methods
+    
+    func displayString(forPhone phoneNumber: CNLabeledValue<CNPhoneNumber>) -> String {
+        if contact.phoneNumbers.count > 1, let label = phoneNumber.label {
+            let localizedLabel = CNLabeledValue<CNPhoneNumber>.localizedString(forLabel: label)
+            return "\(phoneNumber.value.stringValue) (\(localizedLabel))"
+        }
+        else {
+            return phoneNumber.value.stringValue
+        }
+    }
 }
