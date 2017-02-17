@@ -48,7 +48,7 @@
                     </textField>
                     <tokenField focusRingType="none" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1dD-lY-dVF" userLabel="To Input">
                         <rect key="frame" x="45" y="271" width="417" height="17"/>
-                        <tokenFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" focusRingType="none" alignment="left" placeholderString="" allowsEditingTextAttributes="YES" id="6II-o5-n4Y">
+                        <tokenFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" focusRingType="none" alignment="left" placeholderString="" allowsEditingTextAttributes="YES" usesSingleLineMode="YES" id="6II-o5-n4Y">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -137,6 +137,10 @@
                             <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="sendIcon" imagePosition="only" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="s0d-fH-Xnv">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
+                                <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                                <modifierMask key="keyEquivalentModifierMask" option="YES"/>
                             </buttonCell>
                             <connections>
                                 <action selector="send:" target="-2" id="Hib-Rk-Ki0"/>
@@ -152,7 +156,7 @@
                         <textField key="view" horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="ZJu-U7-ozD">
                             <rect key="frame" x="0.0" y="14" width="108" height="17"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Send a message" id="f9t-zX-ocX">
+                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Window title" id="f9t-zX-ocX">
                                 <font key="font" metaFont="system"/>
                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>

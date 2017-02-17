@@ -13,7 +13,8 @@ class StatusBarApplication: NSApplication {
     
     override func sendEvent(_ event: NSEvent) {
         if event.type == NSEventType.keyDown {
-            if event.modifierFlags.intersection(.deviceIndependentFlagsMask) == [.command] {
+            let modifiers = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+            if modifiers == [.command] {
                 switch event.charactersIgnoringModifiers!.lowercased() {
                 case "x":
                     if sendAction(#selector(NSText.cut(_:)), to:nil, from:self) { return }
@@ -29,13 +30,18 @@ class StatusBarApplication: NSApplication {
                     break
                 }
             }
-            else if event.modifierFlags.intersection(.deviceIndependentFlagsMask) == [.command, .shift] {
+            else if modifiers == [.command, .shift] {
                 if event.charactersIgnoringModifiers?.lowercased() == "z" {
                     if sendAction(Selector(("redo:")), to:nil, from:self) { return }
                 }
             }
+            
+            // Allow Modifier+Enter to be available for keyEquivalent properties
+            if !modifiers.isEmpty && event.charactersIgnoringModifiers == "\r" {
+                if keyWindow?.performKeyEquivalent(with: event) == true { return }
+            }
         }
-
+        
         return super.sendEvent(event)
     }
     
