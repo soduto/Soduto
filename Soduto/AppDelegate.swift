@@ -46,6 +46,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
         self.config.capabilitiesDataSource = self.serviceManager
         self.connectionProvider.delegate = self.deviceManager
         self.statusBarMenuController.deviceDataSource = self.deviceManager
+        self.statusBarMenuController.serviceManager = self.serviceManager
         self.statusBarMenuController.config = self.config
         self.deviceManager.delegate = self
         
@@ -55,6 +56,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
         self.serviceManager.add(service: ShareService())
         self.serviceManager.add(service: TelephonyService())
         self.serviceManager.add(service: PingService())
+        self.serviceManager.add(service: BatteryService())
         
         self.connectionProvider.start()
     }

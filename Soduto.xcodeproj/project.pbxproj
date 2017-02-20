@@ -31,6 +31,8 @@
 		8450274B1DAABB9900C20247 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8450274A1DAABB9900C20247 /* Configuration.swift */; };
 		8456F4A81D7DE393006EFE19 /* Pairable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456F4A71D7DE393006EFE19 /* Pairable.swift */; };
 		8456F4AA1D7DEA47006EFE19 /* DefaultPairingHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456F4A91D7DEA47006EFE19 /* DefaultPairingHandler.swift */; };
+		84651A721E599A3C00D17601 /* BatteryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84651A711E599A3C00D17601 /* BatteryService.swift */; };
+		84651A741E59F9C900D17601 /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84651A731E59F9C900D17601 /* MenuView.swift */; };
 		8468BDFB1DE8F10D003B9925 /* NotificationsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8468BDFA1DE8F10D003B9925 /* NotificationsService.swift */; };
 		8468BE001DEB7F97003B9925 /* NetworkUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8468BDFF1DEB7F97003B9925 /* NetworkUtils.swift */; };
 		847E9D2B1DF5E2640042D3CE /* TelephonyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847E9D2A1DF5E2640042D3CE /* TelephonyService.swift */; };
@@ -285,6 +287,8 @@
 		8454D12C1D34228D00788632 /* Soduto-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Soduto-Bridging-Header.h"; sourceTree = "<group>"; };
 		8456F4A71D7DE393006EFE19 /* Pairable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pairable.swift; sourceTree = "<group>"; };
 		8456F4A91D7DEA47006EFE19 /* DefaultPairingHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultPairingHandler.swift; sourceTree = "<group>"; };
+		84651A711E599A3C00D17601 /* BatteryService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BatteryService.swift; sourceTree = "<group>"; };
+		84651A731E59F9C900D17601 /* MenuView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
 		8468BDFA1DE8F10D003B9925 /* NotificationsService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationsService.swift; sourceTree = "<group>"; };
 		8468BDFF1DEB7F97003B9925 /* NetworkUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkUtils.swift; sourceTree = "<group>"; };
 		847E9D2A1DF5E2640042D3CE /* TelephonyService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TelephonyService.swift; sourceTree = "<group>"; };
@@ -396,6 +400,7 @@
 				8492379C1DE1C55900D95BBA /* DeviceMenu.swift */,
 				8492379E1DE1C87600D95BBA /* ServiceActionMenuItem.swift */,
 				842B50561E4295D200969AA7 /* UnifiedTitlebarWindow.swift */,
+				84651A731E59F9C900D17601 /* MenuView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -604,10 +609,11 @@
 		84FA45EB1DDF51EB00EF3992 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				84FA45EC1DDF525200EF3992 /* PingService.swift */,
+				84651A711E599A3C00D17601 /* BatteryService.swift */,
+				840FC2F81DEF6AF400AC4824 /* ClipboardService.swift */,
 				849237A01DE224CF00D95BBA /* FindMyPhoneService.swift */,
 				8468BDFA1DE8F10D003B9925 /* NotificationsService.swift */,
-				840FC2F81DEF6AF400AC4824 /* ClipboardService.swift */,
+				84FA45EC1DDF525200EF3992 /* PingService.swift */,
 				843B67031DF1E64A00289EC9 /* ShareService.swift */,
 				847E9D2A1DF5E2640042D3CE /* TelephonyService.swift */,
 			);
@@ -908,6 +914,7 @@
 				8438A9261E45145F00922155 /* StatusBarApplication.swift in Sources */,
 				847E9D2B1DF5E2640042D3CE /* TelephonyService.swift in Sources */,
 				84FA45DA1DDDCB3D00EF3992 /* Device.swift in Sources */,
+				84651A721E599A3C00D17601 /* BatteryService.swift in Sources */,
 				849237EC1DE5FC9600D95BBA /* PairingInterfaceController.swift in Sources */,
 				849961C31D57287F002B893A /* Test.m in Sources */,
 				849961C11D57287F002B893A /* CollectionUtils.m in Sources */,
@@ -939,6 +946,7 @@
 				84D903A21DC696A600E61DA7 /* CertificateUtils.swift in Sources */,
 				84FA45DD1DDDCB3D00EF3992 /* SocketAddress.swift in Sources */,
 				84FA45E61DDDE87F00EF3992 /* AppDelegate.swift in Sources */,
+				84651A741E59F9C900D17601 /* MenuView.swift in Sources */,
 				84FA45ED1DDF525200EF3992 /* PingService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

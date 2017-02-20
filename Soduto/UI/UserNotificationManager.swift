@@ -171,6 +171,36 @@ public class UserNotificationManager: NSObject, NSUserNotificationCenterDelegate
     }
 }
 
+extension NSUserNotificationCenter {
+    
+    func containsDeliveredNotification(withId id: NSUserNotification.Id) -> Bool {
+        return deliveredNotifications.first(where: { n in n.identifier == id }) != nil
+    }
+    
+    func removeNotification(withId id: NSUserNotification.Id) {
+        self.removeScheduledNotification(withId: id)
+        self.removeDeliveredNotification(withId: id)
+    }
+    
+    func removeScheduledNotification(withId id: NSUserNotification.Id) {
+        for notification in self.scheduledNotifications {
+            if notification.identifier == id {
+                self.removeScheduledNotification(notification)
+                break
+            }
+        }
+    }
+    
+    func removeDeliveredNotification(withId id: NSUserNotification.Id) {
+        for notification in self.deliveredNotifications {
+            if notification.identifier == id {
+                self.removeDeliveredNotification(notification)
+                break
+            }
+        }
+    }
+}
+
 extension NSUserNotification {
     
     typealias Id = String

@@ -16,6 +16,7 @@ public class StatusBarMenuController: NSObject, NSMenuDelegate {
     @IBOutlet weak var launchOnLoginItem: NSMenuItem!
     
     public var deviceDataSource: DeviceDataSource?
+    public var serviceManager: ServiceManager?
     public var config: Configuration?
     
     let statusBarItem = NSStatusBar.system().statusItem(withLength: NSSquareStatusItemLength)
@@ -87,8 +88,53 @@ public class StatusBarMenuController: NSObject, NSMenuDelegate {
             let item = NSMenuItem(title: device.name, action: nil, keyEquivalent: "")
             item.tag = InterfaceElementTags.availableDeviceMenuItem.rawValue
             item.submenu = DeviceMenu(device: device)
+            item.image = batteryImage(for: device)
             index += 1
             self.statusBarMenu.insertItem(item, at: index)
         }
+    }
+    
+    func batteryImage(for device: Device) -> NSImage? {
+        assert(self.serviceManager != nil, "serviceManager property is not setup correctly")
+        guard let serviceManager = self.serviceManager else { return nil }
+        guard let service = serviceManager.services.first(where: { $0 is BatteryService }) as? BatteryService else { return nil }
+        guard let batteryStatus = service.statuses.first(where: { $0.key == device.id })?.value else { return nil }
+        
+        var rect = NSRect(x: 0, y: 0, width: 24, height: 13)
+        let image = NSImage(size: rect.size, flipped: false) { _ in
+            let mainIcon = #imageLiteral(resourceName: "batteryStatusIcon")
+            assert(mainIcon.size == rect.size)
+            mainIcon.draw(in: rect)
+            
+            let fullWidth: CGFloat = 16
+            let chargedWidth = fullWidth * CGFloat(batteryStatus.currentCharge) / 100.0
+            NSColor.black.set()
+            NSRectFill(NSRect(x: 2, y: 2, width: chargedWidth, height: 8))
+            
+            if batteryStatus.isCharging {
+                let chargingIcon = #imageLiteral(resourceName: "batteryStatusChargingIcon")
+                let mask = NSImage(size: chargingIcon.size, flipped: false) { _ in
+                    NSColor.white.setFill()
+                    NSRectFill(rect)
+                    chargingIcon.draw(in: rect)
+                    return true
+                }
+                if let context = NSGraphicsContext.current(),
+                    let cgMask = mask.cgImage(forProposedRect: &rect, context: context, hints: nil),
+                    let cgMask2 = CGImage(maskWidth: cgMask.width, height: cgMask.height, bitsPerComponent: cgMask.bitsPerComponent, bitsPerPixel: cgMask.bitsPerPixel, bytesPerRow: cgMask.bytesPerRow, provider: cgMask.dataProvider!, decode: nil, shouldInterpolate: false) {
+                    
+                    chargingIcon.draw(in: rect, from: rect, operation: NSCompositingOperation.destinationOut, fraction: 1.0)
+                    
+                    context.cgContext.clip(to: rect, mask: cgMask2)
+                    NSColor.black.setFill()
+                    NSRectFill(rect)
+                }
+            }
+            
+            return true
+        }
+        
+        image.isTemplate = true
+        return image
     }
 }
