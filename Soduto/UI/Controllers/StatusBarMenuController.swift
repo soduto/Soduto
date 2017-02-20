@@ -32,6 +32,7 @@ public class StatusBarMenuController: NSObject, NSMenuDelegate {
     }
     
     
+    // MARK: Actions
     
     @IBAction func quit(_ sender: AnyObject?) {
         NSApp.terminate(sender)
@@ -68,7 +69,7 @@ public class StatusBarMenuController: NSObject, NSMenuDelegate {
         self.preferencesWindowController?.refreshDeviceList()
     }
     
-    func refreshMenuDeviceList() {
+    private func refreshMenuDeviceList() {
         // remove old device items
         
         var item = self.statusBarMenu.item(withTag: InterfaceElementTags.availableDeviceMenuItem.rawValue)
@@ -94,7 +95,7 @@ public class StatusBarMenuController: NSObject, NSMenuDelegate {
         }
     }
     
-    func batteryImage(for device: Device) -> NSImage? {
+    private func batteryImage(for device: Device) -> NSImage? {
         assert(self.serviceManager != nil, "serviceManager property is not setup correctly")
         guard let serviceManager = self.serviceManager else { return nil }
         guard let service = serviceManager.services.first(where: { $0 is BatteryService }) as? BatteryService else { return nil }
