@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import QuartzCore
 import CleanroomLogger
 
 public protocol DeviceManagerDelegate: class {
@@ -27,6 +28,14 @@ public protocol DeviceManagerConfiguration {
 }
 
 public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDataSource {
+    
+    // MARK: Types
+    
+    private struct RecentDeviceInfo {
+        let device: Device
+        let timestamp: TimeInterval
+    }
+    
     
     // MARK: Properties
     
@@ -54,6 +63,9 @@ public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDa
     private let config: DeviceManagerConfiguration
     private let serviceManager: ServiceManager
     private var devices: [Device.Id:Device] = [:] /// Reachable devices
+    private var recentDevices: [Device.Id:RecentDeviceInfo] = [:] /// Recently reachable devices that are no more - keeping references of them for a short time in case they became unavailable only transiently
+    
+    private static let recentDevicesTimout: TimeInterval = 15.0
     
     
     // MARK: Init / Deinit
@@ -82,6 +94,9 @@ public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDa
             let deviceId = try connection.identity!.getDeviceId() as Device.Id
             if let device = self.devices[deviceId] {
                 device.addConnection(connection)
+            }
+            else if let device = self.recentDevices.removeValue(forKey: deviceId)?.device {
+                self.readdDevice(device, connection: connection)
             }
             else {
                 try self.addNewDevice(withId: deviceId, connection: connection)
@@ -124,7 +139,6 @@ public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDa
     public func device(_ device: Device, didChangeReachabilityStatus isReachable: Bool) {
         Log.debug?.message("device(<\(device)> didChangeReachabilityStatus:<\(isReachable)>)")
         
-        
         if device.pairingStatus == .Paired {
             if isReachable {
                 self.serviceManager.setup(for: device)
@@ -134,7 +148,7 @@ public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDa
             }
         }
         if !isReachable {
-            self.devices.removeValue(forKey: device.id)
+            self.removeDevice(device)
         }
         self.delegate?.deviceManager(self, didChangeDeviceState: device)
     }
@@ -158,6 +172,28 @@ public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDa
         device.addDataPacketHandlers(services)
         
         self.devices[device.id] = device
-        self.device(device, didChangePairingStatus: device.pairingStatus)
+        self.device(device, didChangeReachabilityStatus: device.isReachable)
+    }
+    
+    private func removeDevice(_ device: Device) {
+        // Probably the only delegate event that can be called is `device(:didChangeReachabilityStatus:)`, but precisely this one
+        // we want to handle specially - without calling self.serviceManager.setup(for:)
+        device.delegate = nil
+        
+        self.devices.removeValue(forKey: device.id)
+        self.recentDevices[device.id] = RecentDeviceInfo(device: device, timestamp: CACurrentMediaTime())
+        Timer.scheduledTimer(withTimeInterval: type(of: self).recentDevicesTimout, repeats: false) { _ in
+            guard let info = self.recentDevices[device.id] else { return }
+            guard info.timestamp + type(of: self).recentDevicesTimout < CACurrentMediaTime() else { return }
+            self.recentDevices.removeValue(forKey: device.id)
+            self.serviceManager.cleanup(for: device)
+        }
+    }
+    
+    private func readdDevice(_ device: Device, connection: Connection) {
+        device.addConnection(connection)
+        device.delegate = self // this goes after connection adding intentionally - we handle event specially
+        self.devices[device.id] = device
+        self.device(device, didChangeReachabilityStatus: device.isReachable)
     }
 }
