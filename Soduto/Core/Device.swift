@@ -169,6 +169,7 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
     
     /// Return all service actions available to this device
     public func serviceActions() -> [ServiceAction] {
+        guard self.pairingStatus == .Paired else { return [] }
         return self.delegate?.serviceActions(for: self) ?? []
     }
     

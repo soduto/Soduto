@@ -154,6 +154,7 @@ public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDa
     }
     
     public func serviceActions(for device: Device) -> [ServiceAction] {
+        guard device.pairingStatus == .Paired else { return [] }
         let services = self.serviceManager.services(supportingOutgoingCapabilities: device.incomingCapabilities)
         let actions = services.flatMap {
             return $0.actions(for: device)

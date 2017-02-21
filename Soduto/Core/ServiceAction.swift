@@ -68,6 +68,7 @@ public struct ServiceAction {
     // MARK: Public methods
     
     public func perform() {
+        guard self.device.pairingStatus == .Paired else { return }
         service.performAction(self.id, forDevice: self.device)
     }
 }
