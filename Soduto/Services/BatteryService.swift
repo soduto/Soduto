@@ -96,7 +96,8 @@ public class BatteryService: Service {
         
         let notificationId = self.notificationId(for: device)
         let hasNotification = NSUserNotificationCenter.default.containsDeliveredNotification(withId: notificationId)
-        if thresholdEvent == .batteryLow || hasNotification {
+        let isCritical = !isCharging && currentCharge <= 2
+        if thresholdEvent == .batteryLow || hasNotification || isCritical {
             self.showNotification(for: device, withStatus: newStatus)
         }
         else if isCharging {
