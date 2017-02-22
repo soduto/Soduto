@@ -46,11 +46,11 @@ public class BatteryService: Service {
     public let outgoingCapabilities = Set<Service.Capability>([ DataPacket.batteryPacketType ])
     
     public func handleDataPacket(_ dataPacket: DataPacket, fromDevice device: Device, onConnection connection: Connection) -> Bool {
-        guard dataPacket.isBatteryPacket else { return false }
+        guard dataPacket.isBatteryPacket || dataPacket.isBatteryRequestPacket else { return false }
         
         do {
-            if try dataPacket.getRequestFlag() {
-                handle(requestPacket: dataPacket, fromDevice: device)
+            if dataPacket.isBatteryRequestPacket{
+                try handle(requestPacket: dataPacket, fromDevice: device)
             }
             else {
                 try handle(statusPacket: dataPacket, fromDevice: device)
@@ -83,7 +83,8 @@ public class BatteryService: Service {
     
     // MARK: Private methods
     
-    private func handle(requestPacket packet: DataPacket, fromDevice device: Device) {
+    private func handle(requestPacket packet: DataPacket, fromDevice device: Device) throws {
+        guard try packet.getRequestFlag() else { return }
         // TODO
     }
     
@@ -160,14 +161,16 @@ fileprivate extension DataPacket {
     // MARK: Properties
     
     static let batteryPacketType = "kdeconnect.battery"
+    static let batteryRequestPacketType = "kdeconnect.battery.request"
     
     var isBatteryPacket: Bool { return self.type == DataPacket.batteryPacketType }
+    var isBatteryRequestPacket: Bool { return self.type == DataPacket.batteryRequestPacketType }
     
     
     // MARK: Public static methods
     
     static func batteryRequestPacket() -> DataPacket {
-        return DataPacket(type: batteryPacketType, body: [
+        return DataPacket(type: batteryRequestPacketType, body: [
             BatteryProperty.request: true as AnyObject
         ])
     }
@@ -176,7 +179,7 @@ fileprivate extension DataPacket {
     // MARK: Public methods
     
     func getRequestFlag() throws -> Bool {
-        try self.validateBatteryType()
+        try self.validateBatteryRequestType()
         guard body.keys.contains(BatteryProperty.request) else { return false }
         guard let value = body[BatteryProperty.request] as? NSNumber else { throw BatteryError.invalidRequestFlag }
         return value.boolValue
@@ -206,5 +209,9 @@ fileprivate extension DataPacket {
     
     func validateBatteryType() throws {
         guard self.isBatteryPacket else { throw BatteryError.wrongType }
+    }
+    
+    func validateBatteryRequestType() throws {
+        guard self.isBatteryRequestPacket else { throw BatteryError.wrongType }
     }
 }
