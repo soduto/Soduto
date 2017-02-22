@@ -415,6 +415,21 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     }
 
     
+    // MARK: CustomStringConvertible
+    
+    public override var description: String {
+        // Extract socket address string
+        let socketString = self.socket.description
+        let endIndex = socketString.index(socketString.endIndex, offsetBy: -1)
+        let startIndex = socketString.index(endIndex, offsetBy: -11)
+        let socketAddress = socketString.substring(with: startIndex..<endIndex)
+        
+        let id: String = (try? self.identity?.getDeviceId() ?? "") ?? ""
+        let name: String = (try? self.identity?.getDeviceName() ?? "") ?? ""
+        return "<Connection:\(socketAddress):\(id):\(name)>"
+    }
+    
+    
     // MARK: Private
     
     private func configureSocket() {
@@ -456,7 +471,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     }
     
     private func handle(packet: DataPacket) {
-        Log.debug?.message("handle(packet: <\(packet)>)")
+        Log.debug?.message("handle(packet: <\(packet)>) [\(self)]")
         
         // try to handle with registered handlers
         for handler in self.packetHandlers {

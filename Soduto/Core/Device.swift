@@ -47,7 +47,7 @@ public protocol DeviceDataPacketHandler: class {
 
 /// Device class represents a remote device. Multiple connections to the device may be used, 
 /// but only one of the same kind (LAN, Bluetooth, etc.)
-public class Device: ConnectionDelegate, PairableDelegate, Pairable {
+public class Device: ConnectionDelegate, PairableDelegate, Pairable, CustomStringConvertible {
     
     // MARK: Types
     
@@ -298,6 +298,13 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable {
             self.config.certificate = nil
         }
         self.pairingStatus = globalStatus
+    }
+    
+    
+    // MARK: CustomStringConvertible
+    
+    public var description: String {
+        return "<Device:\(self.id):\(self.name)>"
     }
     
     
