@@ -25,17 +25,23 @@ public class UploadTask: NSObject, GCDAsyncSocketDelegate {
 
     // MARK: Properties
     
+    public static let portReleaseNotification: Notification.Name = Notification.Name(rawValue: "com.soduto.uploadTask.portReleasedNotification")
+    
     public weak var delegate: UploadTaskDelegate? = nil
     
     public var payloadInfo: DataPacket.PayloadInfo {
         return [ PayloadInfoProperty.port.rawValue: self.listeningSocket.localPort as AnyObject ]
     }
     
+    public var isStarted: Bool { return self.uploadingSocket != nil }
+    
     private static let startPort: UInt16 = 1739
     private static let endPort: UInt16 = 1764
     private static let maxBufferSize = 1024 * 64
     private static let listenTimeout = 30.0
     private static let uploadTimeout = 30.0
+    private static var portsManagementLock = NSLock()
+    private static var usedPorts: [UInt16] = []
     
     private let connection: Connection
     private let payload: InputStream
@@ -44,6 +50,7 @@ public class UploadTask: NSObject, GCDAsyncSocketDelegate {
     private let listenTimeoutTimer: Timer
     private let listeningSocket: GCDAsyncSocket
     private var uploadingSocket: GCDAsyncSocket? = nil
+    private var listeningPort: UInt16 = 0
     private var bytesSent: Int64 = 0
     private var readBuffer = [UInt8](repeating: 0, count: UploadTask.maxBufferSize)
     
@@ -63,7 +70,8 @@ public class UploadTask: NSObject, GCDAsyncSocketDelegate {
         self.listeningSocket = GCDAsyncSocket(delegate: nil, delegateQueue: readQueue)
         let listeningSocket = self.listeningSocket
         self.listenTimeoutTimer = Timer(timeInterval: UploadTask.listenTimeout, repeats: false, block: { _ in
-            guard listeningSocket.isConnected else { return }
+            // Dont check for listeningSocket.isConnected, because it is false for listening socket
+            guard !listeningSocket.isDisconnected else { return }
             Log.info?.message("Serving payload for packet of type '\(packet.type)' on port \(listeningSocket.localPort) has timedout")
             listeningSocket.disconnect()
         })
@@ -71,27 +79,79 @@ public class UploadTask: NSObject, GCDAsyncSocketDelegate {
         super.init()
         
         self.listeningSocket.delegate = self
-        var listening = false
         for port: UInt16 in UploadTask.startPort...UploadTask.endPort {
+            guard !type(of: self).isPortUsed(port) else { continue }
             do {
                 try self.listeningSocket.accept(onPort: port)
-                listening = true
-                Log.debug?.message("Providing payload on port \(port)")
+                self.listeningPort = port
+                type(of: self).usePort(port)
+                Log.debug?.message("Providing payload for packet with id <\(packet.id)> on port \(port). [\(self)]")
                 break
             }
             catch {}
         }
-        guard listening else { return nil }
+        guard listeningPort > 0 else {
+            return nil
+        }
         
         RunLoop.current.add(self.listenTimeoutTimer, forMode: .commonModes)
     }
     
     deinit {
         // Make sure we are clean
+        self.close()
+    }
+    
+    
+    // MARK: Public methods
+    
+    public func close() {
+        Log.debug?.message("close() [\(self)]")
+        
         self.delegate = nil
         self.listeningSocket.disconnect()
         self.uploadingSocket?.disconnect()
         self.payload.close()
+    }
+    
+    
+    // MARK: Ports managements
+    
+    public static func hasUsedPorts() -> Bool {
+        self.portsManagementLock.lock()
+        defer { self.portsManagementLock.unlock() }
+        
+        return self.usedPorts.count > 0
+    }
+    
+    public static func isPortUsed(_ port: UInt16) -> Bool {
+        self.portsManagementLock.lock()
+        defer { self.portsManagementLock.unlock() }
+        
+        return self.usedPorts.index(of: port) != nil
+    }
+    
+    public static func usePort(_ port: UInt16) {
+        self.portsManagementLock.lock()
+        defer { self.portsManagementLock.unlock() }
+        
+        assert(self.usedPorts.index(of: port) == nil)
+        self.usedPorts.append(port)
+    }
+    
+    public static func releasePort(_ port: UInt16) {
+        self.portsManagementLock.lock()
+        defer { self.portsManagementLock.unlock() }
+        
+        if let index = self.usedPorts.index(of: port) {
+            self.usedPorts.remove(at: index)
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(name: portReleaseNotification, object: port as AnyObject)
+            }
+        }
+        else {
+            assertionFailure("Could not release port (\(port)) which was not being used.")
+        }
     }
     
     
@@ -110,10 +170,13 @@ public class UploadTask: NSObject, GCDAsyncSocketDelegate {
     }
     
     public func socketDidDisconnect(_ sock: GCDAsyncSocket, withError err: Error?) {
+        Log.debug?.message("socketDidDisconnect(<\(sock)>, withError: <\(err)>) [\(self)]")
+        
         if sock === self.listeningSocket {
             if let error = err {
                 Log.error?.message("Upload listening socket disconnected with error: \(error)")
             }
+            self.listenTimeoutTimer.invalidate()
             if self.uploadingSocket == nil {
                 self.uploadFinished(success: false)
             }
@@ -177,6 +240,9 @@ public class UploadTask: NSObject, GCDAsyncSocketDelegate {
     }
     
     private func uploadFinished(success: Bool) {
+        Log.debug?.message("uploadFinished(<\(success)>) [\(self)]")
+        
+        type(of: self).releasePort(self.listeningPort)
         self.delegateQueue.async { [weak self] in
             guard let strongSelf = self else { return }
             strongSelf.delegate?.uploadTask(strongSelf, finishedWithSuccess: success)

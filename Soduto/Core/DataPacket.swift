@@ -27,6 +27,8 @@ public struct DataPacket: CustomStringConvertible {
     // MARK: Properties
     
     static let protocolVersion: UInt = 7
+    private static var idCounter: Int64 = 0
+    private static var idCounterLock: NSLock = NSLock()
     
     var id: Int64
     var type: String
@@ -57,7 +59,7 @@ public struct DataPacket: CustomStringConvertible {
     // MARK: Init / Deinit
     
     init(type: String, body: Body) {
-        let id = Int64(Date().timeIntervalSince1970 * 1000)
+        let id = DataPacket.nextId()
         self.init(id: id, type: type, body: body)
     }
     
@@ -116,6 +118,17 @@ public struct DataPacket: CustomStringConvertible {
     
     public func hasPayload() -> Bool {
         return self.payload != nil || self.downloadTask != nil
+    }
+    
+    
+    // MARK: Private static
+    
+    private static func nextId() -> Int64 {
+        self.idCounterLock.lock()
+        defer { self.idCounterLock.unlock() }
+        
+        self.idCounter += 1
+        return self.idCounter
     }
 }
 

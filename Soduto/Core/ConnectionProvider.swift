@@ -24,6 +24,8 @@ public protocol ConnectionProviderDelegate: class {
 public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSocketDelegate, ConnectionDelegate {
     
     static public let udpPort: UInt16 = 1716
+    static public let minTcpPort: UInt16 = 1716
+    static public let maxTcpPort: UInt16 = 1764
     static public let minVersionWithSSLSupport: UInt = 6
     static public let minAnnouncementInterval: TimeInterval = 30.0
     static public let broadcastAnnouncementNotification: Notification.Name = Notification.Name(rawValue: "com.soduto.ConnectionProvider.broadcastAnnouncement")
@@ -81,13 +83,15 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
         }
         
         // Listen for connections on TCP
-        for i: UInt16 in 0..<20 {
+        for port: UInt16 in ConnectionProvider.minTcpPort...ConnectionProvider.maxTcpPort {
             do {
-                let port = ConnectionProvider.udpPort + i
                 try self.tcpSocket.accept(onPort: port)
                 Log.info?.message("Listening for TCP connections on port \(self.tcpSocket.localPort)")
             }
             catch {}
+        }
+        if self.tcpSocket.isDisconnected {
+            Log.error?.message("Failed to start listening TCP connections on ports in range \(ConnectionProvider.minTcpPort)-\(ConnectionProvider.maxTcpPort)")
         }
         
         self.isStarted = true
@@ -194,7 +198,7 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
             self.pendingConnections.insert(connection)
             
             // send initial identity packet
-            connection.send(DataPacket.identityPacket(config: self.config))
+            _ = connection.send(DataPacket.identityPacket(config: self.config))
         }
     }
     
@@ -204,6 +208,10 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
     
     
     // MARK: GCDAsyncSocketDelegate
+    
+    public func newSocketQueueForConnection(fromAddress address: Data, on sock: GCDAsyncSocket) -> DispatchQueue? {
+        return DispatchQueue.main
+    }
     
     public func socket(_ sock: GCDAsyncSocket, didAcceptNewSocket newSocket: GCDAsyncSocket) {
         Log.debug?.message("socket(<\(sock)> didAcceptNewSocket:<\(newSocket)>)")
@@ -226,8 +234,8 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
         case .Closed:
             self.pendingConnections.remove(connection)
         case .Open:
-            connection.readPackets()
             if let delegate = self.delegate {
+                connection.readPackets()
                 self.pendingConnections.remove(connection)
                 delegate.connectionProvider(self, didCreateConnection: connection)
             }
@@ -276,6 +284,8 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
             connection.close()
         }
     }
+    
+    public func connectionCapacityChanged(_ connection: Connection) { }
     
     
     // MARK: Private methrod

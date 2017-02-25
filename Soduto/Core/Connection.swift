@@ -19,6 +19,7 @@ public protocol ConnectionDelegate: class {
     func connection(_ connection:Connection, didSwitchToState:Connection.State)
     func connection(_ connection:Connection, didSendPacket:DataPacket, uploadedPayload: Bool)
     func connection(_ connection:Connection, didReadPacket:DataPacket)
+    func connectionCapacityChanged(_ connection:Connection) // Informs receiver that it can try to resend previously declined packets
 }
 
 public protocol ConnectionConfiguration: HostConfiguration {
@@ -47,7 +48,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     
     public typealias SendingCompletionHandler = ((_ packetSent: Bool, _ payloadSent: Bool) -> Void)
     
-    private struct DataPacketSendingInfo {
+    public struct DataPacketSendingInfo {
         
         let dataPacket: DataPacket
         let uploadTask: UploadTask?
@@ -93,7 +94,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     private let sslCertificates: [AnyObject]
     private let uploadQueue = DispatchQueue(label: "Payload upload queue", qos: DispatchQoS.background, autoreleaseFrequency: .workItem)
     private let downloadQueue = DispatchQueue(label: "Payload download queue", qos: DispatchQoS.background, autoreleaseFrequency: .workItem)
-    private var packetsToSend: [DataPacketSendingInfo] = [] // queue of packets waiting to be sent
+    private var packetsSending: [DataPacketSendingInfo] = []  // array of packets being sent
     private var packetsExpected: Int = 0         // count of packets to read befor stopping automatic reading, -1 for unlimited count
     private var waitingToSecure: Bool = false
     private var shouldFinishIntializationWhenSecured: Bool = false
@@ -146,7 +147,8 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     }
     
     deinit {
-        self.close()
+        NotificationCenter.default.removeObserver(self)
+        self.state = .Closed
     }
     
     public func applyIdentity(packet: DataPacket) throws {
@@ -189,37 +191,27 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
         else {
             self.shouldFinishIntializationWhenSecured = true
         }
+        
+        self.observeNotifications()
     }
     
     
     // MARK: Public API
     
-    public func send(_ dataPacket: DataPacket, whenCompleted: SendingCompletionHandler? = nil) {
-        var packet = dataPacket
-        
-        let uploadTask: UploadTask?
-        if packet.hasPayload() {
-            uploadTask = UploadTask(packet: packet, connection: self, readQueue: self.uploadQueue)
-            uploadTask?.delegate = self
-            packet.payloadInfo = uploadTask?.payloadInfo
+    /// Try sending a packed with completion handler. Returns false if sending is declined because of capacity exceeded.
+    /// In such case the sender may try resending the packet when connection capacity changes. In other cases 
+    /// true is returned even if sending does not succeed - sending failure is reported through completion handler.
+    public func send(_ dataPacket: DataPacket, whenCompleted: SendingCompletionHandler? = nil) -> Bool {
+        if dataPacket.hasPayload() {
+            return self.sendPayloadPacket(dataPacket, whenCompleted: whenCompleted)
         }
         else {
-            uploadTask = nil
+            return self.sendSimplePacket(dataPacket, whenCompleted: whenCompleted)
         }
-        
-        Log.debug?.message("send(:\(dataPacket) whenCompleted:\(whenCompleted))")
-        
-        if let bytes = try? packet.serialize() {
-            let data = Data(bytes: bytes)
-            self.socket.write(data, withTimeout: -1, tag: Int(packet.id))
-        }
-        
-        let info = DataPacketSendingInfo(dataPacket: packet, uploadTask: uploadTask, completionHandler: whenCompleted)
-        self.packetsToSend.append(info)
     }
     
-    public func send(_ packet: DataPacket) {
-        self.send(packet, whenCompleted: nil)
+    public func send(_ packet: DataPacket) -> Bool {
+        return self.send(packet, whenCompleted: nil)
     }
     
     public func readOnePacket() {
@@ -232,9 +224,23 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
         self.readNextPacket()
     }
     
+    /// Discard and return unsent packets, so that they can be resent with other connection. This can be done only when 
+    /// connection is already closed, otherwise behaviour is undefined
+    public func reclaimUnsentPackets() -> [(dataPacket: DataPacket, completionHandler: SendingCompletionHandler?)] {
+        assert(self.state == .Closed)
+        return self.discardUnsentPackets(silently: true)
+    }
+    
+    /// Disconnect underlying socket, effectively discarded all unfinished packet writings. State change however is not
+    /// performed imediately, but in the near future when diconnect event is received
     public func close() {
         self.socket.disconnect()
-        self.state = .Closed
+    }
+    
+    /// Wait for all packet writes are finished and then discard. State change however is not
+    /// performed imediately, but in the near future when diconnect event is received
+    public func closeAfterWriting() {
+        self.socket.disconnectAfterWriting()
     }
     
     /// Helper function to secure any server socket equivalently as this connection secures
@@ -279,19 +285,14 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     public func socket(_ sock: GCDAsyncSocket, didWriteDataWithTag tag: Int) {
         Log.debug?.message("socket(<\(sock)> didWriteDataWithTag:<\(tag)>)")
         
-        let indexOpt = self.packetsToSend.index { packetInfo -> Bool in
-            return Int(packetInfo.dataPacket.id) == tag
-        }
-        guard let index = indexOpt else { return }
+        assert(self.packetsSending.index(where: { Int($0.dataPacket.id) == tag }) != nil, "Data packet is not in the packetsSending list.")
+        guard let index = self.packetsSending.index(where: { Int($0.dataPacket.id) == tag }) else { return }
         
-        self.packetsToSend[index].packetSent = true
+        self.packetsSending[index].packetSent = true
         
-        if let payloadSent = self.packetsToSend[index].payloadSent {
-            let packetInfo = self.packetsToSend.remove(at: index)
-            if let completionHandler = packetInfo.completionHandler {
-                completionHandler(true, payloadSent)
-            }
-            self.delegate?.connection(self, didSendPacket: packetInfo.dataPacket, uploadedPayload: payloadSent)
+        if let payloadSent = self.packetsSending[index].payloadSent {
+            let packetInfo = self.packetsSending.remove(at: index)
+            self.finalizeSending(packet: packetInfo.dataPacket, completionHandler: packetInfo.completionHandler, packetSent: true, payloadSent: payloadSent)
         }
     }
     
@@ -330,7 +331,12 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     
     public func socketDidDisconnect(_ sock: GCDAsyncSocket, withError err: Error?) {
         Log.debug?.message("socketDidDisconnect(<\(sock)> withError:<\(err)>)")
-        self.close()
+    
+        // Execute state change before packets dicarding, so that delegate could reclaim unsent packets
+        self.state = .Closed
+        
+        // Discard unsent packets, leaving only those packets that have uploads in progress.
+        _ = self.discardUnsentPackets(silently: true)
     }
     
     public func socket(_ sock: GCDAsyncSocket, didReceive trust: SecTrust, completionHandler: @escaping (Bool) -> Swift.Void) {
@@ -343,19 +349,16 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     public func uploadTask(_ task: UploadTask, finishedWithSuccess payloadSent: Bool) {
         Log.debug?.message("uploadTask(<\(task)> finishedWithSuccess:<\(payloadSent)>)")
         
-        guard let index = self.packetsToSend.index(where: { $0.uploadTask === task }) else { return }
+        assert(self.packetsSending.index(where: { $0.uploadTask === task }) != nil, "Data packet is not in the packetsSending list.")
+        guard let index = self.packetsSending.index(where: { $0.uploadTask === task }) else { return }
         
-        self.packetsToSend[index].payloadSent = true
+        self.packetsSending[index].payloadSent = true
         
-        assert(self.packetsToSend[index].packetSent == true, "Payload expected to be uploaded after packet is sent (since payload info is in the packet)")
-        guard let packetSent = self.packetsToSend[index].packetSent else { return }
-        guard packetSent == true else { return }
-        
-        let packetInfo = self.packetsToSend.remove(at: index)
-        if let completionHandler = packetInfo.completionHandler {
-            completionHandler(true, payloadSent)
+//        assert(self.packetsSending[index].packetSent == true, "Payload expected to be uploaded after packet is sent (since payload info is in the packet)")
+        if let packetSent = self.packetsSending[index].packetSent {
+            let packetInfo = self.packetsSending.remove(at: index)
+            self.finalizeSending(packet: packetInfo.dataPacket, completionHandler: packetInfo.completionHandler, packetSent: packetSent, payloadSent: payloadSent)
         }
-        self.delegate?.connection(self, didSendPacket: packetInfo.dataPacket, uploadedPayload: payloadSent)
     }
     
     
@@ -466,6 +469,67 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
         }
     }
     
+    private func sendSimplePacket(_ packet: DataPacket, whenCompleted: SendingCompletionHandler? = nil) -> Bool {
+        assert(!packet.hasPayload())
+        
+        Log.debug?.message("send(:\(packet) whenCompleted:\(whenCompleted)) [\(self)]")
+        
+        if let bytes = try? packet.serialize() {
+            let data = Data(bytes: bytes)
+            self.socket.write(data, withTimeout: -1, tag: Int(packet.id))
+            let info = DataPacketSendingInfo(dataPacket: packet, uploadTask: nil, completionHandler: whenCompleted)
+            self.packetsSending.append(info)
+        }
+        else {
+            Log.error?.message("Failed to serialize packet: \(packet).")
+            self.finalizeSending(packet: packet, completionHandler: whenCompleted, packetSent: false, payloadSent: false)
+        }
+        
+        return true
+    }
+    
+    private func sendPayloadPacket(_ packet: DataPacket, whenCompleted: SendingCompletionHandler? = nil) -> Bool {
+        assert(packet.hasPayload())
+        
+        if let uploadTask = UploadTask(packet: packet, connection: self, readQueue: self.uploadQueue) {
+            
+            Log.debug?.message("send(:\(packet) whenCompleted:\(whenCompleted)) [\(self)]")
+            
+            var packet = packet
+            packet.payloadInfo = uploadTask.payloadInfo
+            uploadTask.delegate = self
+            
+            if let bytes = try? packet.serialize() {
+                let data = Data(bytes: bytes)
+                self.socket.write(data, withTimeout: -1, tag: Int(packet.id))
+                let info = DataPacketSendingInfo(dataPacket: packet, uploadTask: uploadTask, completionHandler: whenCompleted)
+                self.packetsSending.append(info)
+            }
+            else {
+                Log.error?.message("Failed to serialize packet: \(packet).")
+                self.finalizeSending(packet: packet, completionHandler: whenCompleted, packetSent: false, payloadSent: false)
+            }
+            return true
+        }
+        else if !UploadTask.hasUsedPorts() {
+            // We dont have any ports in use, so no will become available and no point of waiting - fail immediately
+            Log.error?.message("Failed to initialize upload task for packet \(packet).")
+            self.finalizeSending(packet: packet, completionHandler: whenCompleted, packetSent: false, payloadSent: false)
+            return true
+        }
+        else {
+            // Tell caller to wait
+            return false
+        }
+    }
+    
+    private func finalizeSending(packet: DataPacket, completionHandler: SendingCompletionHandler?, packetSent: Bool, payloadSent: Bool) {
+        completionHandler?(packetSent, payloadSent)
+        if packetSent {
+            self.delegate?.connection(self, didSendPacket: packet, uploadedPayload: payloadSent)
+        }
+    }
+    
     private func readNextPacket() {
         self.socket.readData(to: Connection.packetsDelimiter, withTimeout: -1, tag: 0)
     }
@@ -505,6 +569,36 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
         guard let hwAddress = NetworkUtils.hwAddress(for: self.peerAddress) else { return }
         
         self.config.deviceConfig(for: deviceId).addHwAddress(hwAddress)
+    }
+    
+    private func observeNotifications() {
+        NotificationCenter.default.addObserver(forName: UploadTask.portReleaseNotification, object: nil, queue: nil) { [weak self] notification in
+            if let strongSelf = self {
+                strongSelf.delegate?.connectionCapacityChanged(strongSelf)
+            }
+        }
+    }
+    
+    private func discardUnsentPackets(silently: Bool) -> [(dataPacket: DataPacket, completionHandler: SendingCompletionHandler?)] {
+        var results: [(dataPacket: DataPacket, completionHandler: SendingCompletionHandler?)] = []
+        for info in self.packetsSending {
+            guard info.packetSent == nil && info.uploadTask?.isStarted != true else { continue }
+            info.uploadTask?.close()
+            if !silently {
+                self.finalizeSending(packet: info.dataPacket, completionHandler: info.completionHandler, packetSent: false, payloadSent: false)
+            }
+            results.append((dataPacket: info.dataPacket, completionHandler: info.completionHandler))
+            
+            let taskString: String = info.uploadTask != nil ? "\(info.uploadTask!)" : "nil"
+            if silently {
+                Log.debug?.message("Reclaiming data packet <\(info.dataPacket.id)> with upload task <\(taskString)>. [\(self)]")
+            }
+            else {
+                Log.debug?.message("Discarding data packet <\(info.dataPacket.id)> with upload task <\(taskString)>. [\(self)]")
+            }
+        }
+        self.packetsSending = self.packetsSending.filter { $0.packetSent != nil || $0.uploadTask?.isStarted == true }
+        return results
     }
 
 }

@@ -54,6 +54,11 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable, CustomStrin
     /// Type for unique device identifier
     public typealias Id = String
     
+    private struct PendingDataPacket {
+        let packet: DataPacket
+        let completionHandler: Connection.SendingCompletionHandler?
+    }
+    
     
     // MARK: Properties
     
@@ -74,8 +79,10 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable, CustomStrin
         }
     }
     
-    private var connections: [Connection] = []
+    private var connections: [Connection] = [] // Active connections
+    private var lingeringConnections: [Connection] = [] // Dismissed connections, waiting to finish its work and completely close
     private var packetHandlers: [DeviceDataPacketHandler] = []
+    private var pendingPackets: [PendingDataPacket] = []
     
     
     // MARK: Initialization / Deinitialization
@@ -124,6 +131,10 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable, CustomStrin
         self.pairingStatus = self.config.isPaired ? .Paired : .Unpaired
     }
     
+    deinit {
+        self.discardPendingPackets()
+    }
+    
     
     // MARK Public API
     
@@ -139,7 +150,9 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable, CustomStrin
         // remove connection of the same type if present
         // do it after new connection added to avoid unnecessary device state switches (especially to .Unavailable) 
         if let index = self.connections.index(where: { return (type(of: $0) == type(of: connection)) && ($0 !== connection) }) {
-            self.connections[index].close()
+            let dismissedConnection = self.connections.remove(at: index)
+            self.lingeringConnections.append(dismissedConnection)
+            dismissedConnection.closeAfterWriting()
         }
         
         self.updatePairingStatus()
@@ -176,11 +189,26 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable, CustomStrin
     /// Send a data packet to remote device. A most appropriate connection for the task
     /// would be chosen automatically. Completion block may be provided - it would be called
     /// when packet is successfully sent. On failure completion handler would not be called -
-    /// whole connection would be closed instead
+    /// whole connection would be closed instead.
     public func send(_ packet: DataPacket, whenCompleted: Connection.SendingCompletionHandler? = nil) {
         if let connection = self.connectionForSending() {
-            connection.send(packet, whenCompleted: whenCompleted)
+            let accepted = connection.send(packet, whenCompleted: whenCompleted)
+            if !accepted {
+                let pendingPacket = PendingDataPacket(packet: packet, completionHandler: whenCompleted)
+                self.pendingPackets.insert(pendingPacket, at: 0)
+            }
         }
+        else {
+            whenCompleted?(false, false)
+        }
+    }
+    
+    /// Cleanup all pending to send packets, executing their completion handlers if any.
+    public func discardPendingPackets() {
+        for pendingPacket in self.pendingPackets {
+            pendingPacket.completionHandler?(false, false)
+        }
+        self.pendingPackets = []
     }
     
     
@@ -190,15 +218,26 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable, CustomStrin
         Log.debug?.message("connection(<\(connection)> didSwitchToState:<\(state)>)")
         switch state {
         case .Closed:
+            // Remove closed connection from containing list and reclaim its unsent packets
+            // to be sent with another connection.
+            // NOTE: Reclaiming unsent packets handle only those packets, that are unsent itself,
+            // not the ones that have uploading in progress. However it is ok to remove connections with
+            // uploads in progress as upload tasks and connections keep references to each other,
+            // so connection will be alive until all uploads are finished and all completion handlers are executed
             if let index = self.connections.index(of: connection) {
-                self.connections.remove(at: index)
+                let connection = self.connections.remove(at: index)
+                self.reclaimUnsentPackets(from: connection)
                 self.updateReachabilityStatus()
             }
+            else if let index = self.lingeringConnections.index(of: connection) {
+                let connection = self.lingeringConnections.remove(at: index)
+                self.reclaimUnsentPackets(from: connection)
+            }
             else {
-                Log.error?.message("Connection not found in device connections list")
+                assertionFailure("Connection not found in device connections list")
             }
         default:
-            Log.error?.message("Unexpected connection state switch: \(connection) -> \(state)")
+            assertionFailure("Unexpected connection state switch: \(connection) -> \(state)")
         }
     }
     
@@ -208,6 +247,10 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable, CustomStrin
     
     public func connection(_ connection: Connection, didReadPacket packet: DataPacket) {
         self.handle(packet: packet, onConnection: connection)
+    }
+    
+    public func connectionCapacityChanged(_ connection: Connection) {
+        self.sendPendingPackets()
     }
     
     
@@ -376,5 +419,30 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable, CustomStrin
                 return
             }
         }
+    }
+    
+    /// Try sending packets from pendingPackets list, send as many as possible until no connection accepts any.
+    private func sendPendingPackets() {
+        while let pendingPacket = self.pendingPackets.popLast() {
+            let connection = self.connectionForSending()
+            let accepted = connection?.send(pendingPacket.packet, whenCompleted: pendingPacket.completionHandler) ?? false
+            if !accepted {
+                self.pendingPackets.append(pendingPacket)
+                break
+            }
+        }
+    }
+    
+    /// Take unsent packets from a closed connection, put them into pendingPackets list and try resend them if possible.
+    private func reclaimUnsentPackets(from connection: Connection) {
+        assert(connection.state == .Closed, "Connection needs to be closed in order to reclaim its packets: \(connection)")
+        
+        let unsentPackets = connection.reclaimUnsentPackets()
+        for unsentPacket in unsentPackets {
+            let pendingPacket = PendingDataPacket(packet: unsentPacket.dataPacket, completionHandler: unsentPacket.completionHandler)
+            self.pendingPackets.append(pendingPacket)
+        }
+        
+        self.sendPendingPackets()
     }
 }
