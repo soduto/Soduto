@@ -31,7 +31,7 @@ public class ShareService: Service, DownloadTaskDelegate, UserNotificationAction
     }
     
     private enum ActionId: ServiceAction.Id {
-        case shareFile
+        case shareFiles
     }
     
     private enum NotificationProperty: String {
@@ -101,7 +101,7 @@ public class ShareService: Service, DownloadTaskDelegate, UserNotificationAction
         guard device.pairingStatus == .Paired else { return [] }
         
         return [
-            ServiceAction(id: ActionId.shareFile.rawValue, title: "Share a file", description: "Send a file with remote device", service: self, device: device)
+            ServiceAction(id: ActionId.shareFiles.rawValue, title: "Share file(s)", description: "Send file(s) to the peer device.", service: self, device: device)
         ]
     }
     
@@ -110,15 +110,16 @@ public class ShareService: Service, DownloadTaskDelegate, UserNotificationAction
         guard device.pairingStatus == .Paired else { return }
         
         switch actionId {
-        case .shareFile:
+        case .shareFiles:
             NSApp.activate(ignoringOtherApps: true)
             let openPanel = NSOpenPanel()
             openPanel.canChooseFiles = true
-            openPanel.allowsMultipleSelection = false
+            openPanel.allowsMultipleSelection = true
             openPanel.begin { result in
                 guard result == NSFileHandlingPanelOKButton else { return }
-                guard let url = openPanel.url else { return }
-                self.uploadFile(url: url, to: device)
+                for url in openPanel.urls {
+                    self.uploadFile(url: url, to: device)
+                }
             }
             break
         }

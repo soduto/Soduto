@@ -40,7 +40,6 @@ public class MenuView: NSButton {
             self.bezelColor = NSColor.selectedMenuItemColor
         }
         self.font = self.label.font
-        self
         self.title = menuItem.title
         self.label.stringValue = menuItem.title
 //        self.label.frame = self.cell.titleRect(forBounds: self.bounds)
