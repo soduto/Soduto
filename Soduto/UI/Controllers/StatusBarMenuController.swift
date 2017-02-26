@@ -9,7 +9,7 @@
 import Foundation
 import AppKit
 
-public class StatusBarMenuController: NSObject, NSMenuDelegate {
+public class StatusBarMenuController: NSObject, NSWindowDelegate, NSMenuDelegate, NSDraggingDestination {
     
     @IBOutlet weak var statusBarMenu: NSMenu!
     @IBOutlet weak var availableDevicesItem: NSMenuItem!
@@ -28,7 +28,11 @@ public class StatusBarMenuController: NSObject, NSMenuDelegate {
         statusBarIcon.isTemplate = true
         
         self.statusBarItem.image = statusBarIcon
-        self.statusBarItem.menu = statusBarMenu
+        self.statusBarItem.menu = self.statusBarMenu
+        
+        let dragTypes: [String] = [kUTTypeURL as String, kUTTypeText as String]
+        self.statusBarItem.button?.window?.registerForDraggedTypes(dragTypes)
+        self.statusBarItem.button?.window?.delegate = self
     }
     
     
@@ -52,6 +56,52 @@ public class StatusBarMenuController: NSObject, NSMenuDelegate {
     }
     
     
+    // MARK: Drag'n'Drop
+    
+    public dynamic func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
+        for service in self.serviceManager?.services ?? [] {
+            guard let destination = service as? NSDraggingDestination else { continue }
+            guard let operation = destination.draggingEntered?(sender) else { continue }
+            guard !operation.isEmpty else { continue }
+            return operation
+        }
+        return []
+    }
+    
+    public dynamic func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
+        for service in self.serviceManager?.services ?? [] {
+            guard let destination = service as? NSDraggingDestination else { continue }
+            guard destination.performDragOperation?(sender) == true else { continue }
+            return true
+        }
+        return false
+    }
+    
+//    optional public func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation
+//    
+//    optional public func draggingUpdated(_ sender: NSDraggingInfo) -> NSDragOperation /* if the destination responded to draggingEntered: but not to draggingUpdated: the return value from draggingEntered: is used */
+//    
+//    optional public func draggingExited(_ sender: NSDraggingInfo?)
+//    
+//    optional public func prepareForDragOperation(_ sender: NSDraggingInfo) -> Bool
+//    
+//    optional public func performDragOperation(_ sender: NSDraggingInfo) -> Bool
+//    
+//    optional public func concludeDragOperation(_ sender: NSDraggingInfo?)
+//    
+//    /* draggingEnded: is implemented as of Mac OS 10.5 */
+//    optional public func draggingEnded(_ sender: NSDraggingInfo?)
+//    
+//    /* the receiver of -wantsPeriodicDraggingUpdates should return NO if it does not require periodic -draggingUpdated messages (eg. not autoscrolling or otherwise dependent on draggingUpdated: sent while mouse is stationary) */
+//    optional public func wantsPeriodicDraggingUpdates() -> Bool
+//    
+//    
+//    /* While a destination may change the dragging images at any time, it is recommended to wait until this method is called before updating the dragging image. This allows the system to delay changing the dragging images until it is likely that the user will drop on this destination. Otherwise, the dragging images will change too often during the drag which would be distracting to the user. The destination may update the dragging images by calling one of the -enumerateDraggingItems methods on the sender.
+//     */
+//    @available(OSX 10.7, *)
+//    optional public func updateDraggingItemsForDrag(_ sender: NSDraggingInfo?)
+    
+    
     // MARK: NSMenuDelegate
     
     public func menuNeedsUpdate(_ menu: NSMenu) {
@@ -64,10 +114,14 @@ public class StatusBarMenuController: NSObject, NSMenuDelegate {
     }
     
     
+    // MARK: Public methods
     
     func refreshDeviceLists() {
         self.preferencesWindowController?.refreshDeviceList()
     }
+    
+    
+    // MARK: Private methods
     
     private func refreshMenuDeviceList() {
         // remove old device items

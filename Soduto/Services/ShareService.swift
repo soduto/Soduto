@@ -22,7 +22,7 @@ import CleanroomLogger
 ///
 /// If the content transferred is a url, it can be sent in a field "url" (string).
 /// In that case, this plugin opens that url in the default browser.
-public class ShareService: Service, DownloadTaskDelegate, UserNotificationActionHandler {
+public class ShareService: NSObject, Service, DownloadTaskDelegate, UserNotificationActionHandler, NSDraggingDestination {
     
     // MARK: Types
     
@@ -49,13 +49,22 @@ public class ShareService: Service, DownloadTaskDelegate, UserNotificationAction
         }
     }
     
+    private struct DragDestination {
+        let dataPackets: [DataPacket]
+        let device: Device
+    }
+    
     
     // MARK: Service properties
+    
+    private static let dragTypes: [String] = [kUTTypeURL as String, kUTTypeText as String]
     
     public let incomingCapabilities = Set<Service.Capability>([ DataPacket.sharePacketType ])
     public let outgoingCapabilities = Set<Service.Capability>([ DataPacket.sharePacketType ])
     
     private var downloadInfos: [DownloadInfo] = []
+    private var devices: [Device.Id:Device] = [:]
+    private var validDevices: [Device] { return self.devices.values.filter { $0.isReachable && $0.pairingStatus == .Paired } }
     
     
     // MARK: Service methods
@@ -92,16 +101,20 @@ public class ShareService: Service, DownloadTaskDelegate, UserNotificationAction
         return true
     }
     
-    public func setup(for device: Device) {}
+    public func setup(for device: Device) {
+        self.devices[device.id] = device
+    }
     
-    public func cleanup(for device: Device) {}
+    public func cleanup(for device: Device) {
+        _ = self.devices.removeValue(forKey: device.id)
+    }
     
     public func actions(for device: Device) -> [ServiceAction] {
         guard device.incomingCapabilities.contains(DataPacket.sharePacketType) else { return [] }
         guard device.pairingStatus == .Paired else { return [] }
         
         return [
-            ServiceAction(id: ActionId.shareFiles.rawValue, title: "Share file(s)", description: "Send file(s) to the peer device.", service: self, device: device)
+            ServiceAction(id: ActionId.shareFiles.rawValue, title: "Upload file(s)", description: "Upload file(s) to the peer device.", service: self, device: device)
         ]
     }
     
@@ -150,7 +163,7 @@ public class ShareService: Service, DownloadTaskDelegate, UserNotificationAction
     }
     
     
-    // MARK: USerNotificationsActionHandler
+    // MARK: UserNotificationsActionHandler
     
     public static func handleAction(for notification: NSUserNotification, context: UserNotificationContext) {
         guard let urlString = notification.userInfo?[NotificationProperty.downloadedFileUrl.rawValue] as? String else { return }
@@ -158,6 +171,74 @@ public class ShareService: Service, DownloadTaskDelegate, UserNotificationAction
         guard notification.activationType == .actionButtonClicked || notification.activationType == .contentsClicked else { return }
         
         NSWorkspace.shared().open(url)
+    }
+    
+    
+    // MARK: NSDraggingDestination
+    
+    public dynamic func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
+        guard self.validDevices.count > 0 else { return [] }
+        
+        let types: [String] = type(of: self).dragTypes
+        let canRead: Bool = sender.draggingPasteboard().canReadItem(withDataConformingToTypes: types)
+        return canRead ? [.copy] : []
+    }
+    
+    public dynamic func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
+        guard self.validDevices.count > 0 else { return false }
+        
+        var filePackets: [DataPacket] = []
+        var urlPackets: [DataPacket] = []
+        var textPackets: [DataPacket] = []
+        
+        let types = type(of: self).dragTypes
+        let items: [NSPasteboardItem] = sender.draggingPasteboard().pasteboardItems ?? []
+        for item in items {
+            guard let type = item.availableType(from: types) else { continue }
+            switch type {
+                
+            case String(kUTTypeFileURL):
+                guard let urlString = item.string(forType: type) else { break }
+                guard let url = URL(string: urlString) else { break }
+                guard let dataPacket = self.dataPacket(forFileUrl: url) else { break }
+                filePackets.append(dataPacket)
+                break
+                
+            case String(kUTTypeURL):
+                guard let urlString = item.string(forType: type) else { break }
+                guard let url = URL(string: urlString) else { break }
+                let dataPacket = self.dataPacket(forUrl: url)
+                urlPackets.append(dataPacket)
+                break
+                
+            case type where UTTypeConformsTo(type as CFString, kUTTypeText):
+                guard let text = item.string(forType: type) else { break }
+                let dataPacket = self.dataPacket(forText: text)
+                textPackets.append(dataPacket)
+                break
+                
+            default:
+                break
+            }
+        }
+        
+        guard filePackets.count > 0 || urlPackets.count > 0 || textPackets.count > 0 else { return false }
+        
+        return self.popUpDragDestinationMenu(forFilePackets: filePackets, urlPackets: urlPackets, textPackets: textPackets, sender: sender)
+    }
+    
+    
+    // MARK: Actions
+    
+    private dynamic func dragDestinationMenuItemAction(_ sender: Any?) {
+        guard let menuItem = sender as? NSMenuItem else { return }
+        
+        if let obj = menuItem.representedObject as? DragDestination {
+            guard obj.device.isReachable && obj.device.pairingStatus == .Paired else { return }
+            for packet in obj.dataPackets {
+                obj.device.send(packet)
+            }
+        }
     }
     
     
@@ -177,11 +258,8 @@ public class ShareService: Service, DownloadTaskDelegate, UserNotificationAction
     }
     
     private func uploadFile(url: URL, to device: Device) {
-        guard let filename = url.pathComponents.last else { return }
-        guard let stream = InputStream(url: url) else { return }
-        
-        let fileSize = self.fileSize(path: url.path)
-        device.send(DataPacket.sharePacket(fileStream: stream, fileSize: fileSize, fileName: filename))
+        guard let dataPacket = self.dataPacket(forFileUrl: url) else { return }
+        device.send(dataPacket)
     }
     
     private func downloadFile(_ fileName: String?, usingTask task: DownloadTask, from device: Device) {
@@ -314,6 +392,79 @@ public class ShareService: Service, DownloadTaskDelegate, UserNotificationAction
             }
         }
     }
+    
+    private func popUpDragDestinationMenu(forFilePackets filePackets: [DataPacket], urlPackets: [DataPacket], textPackets: [DataPacket], sender: NSDraggingInfo) -> Bool {
+        
+        let packets: [DataPacket]
+        let title: String
+        if filePackets.count > 0 {
+            packets = filePackets
+            title = packets.count == 1 ?
+                String(format: NSLocalizedString("Upload file to:", comment: "Drag destinations menu title"), packets.count) :
+                String(format: NSLocalizedString("Upload %d file(s) to:", comment: "Drag destinations menu title"), packets.count)
+        }
+        else if urlPackets.count > 0 {
+            packets = urlPackets
+            title = packets.count == 1 ?
+                String(format: NSLocalizedString("Open link on:", comment: "Drag destinations menu title"), packets.count) :
+                String(format: NSLocalizedString("Open %d link(s) on:", comment: "Drag destinations menu title"), packets.count)
+        }
+        else if textPackets.count > 0 {
+            packets = textPackets
+            title = packets.count == 1 ?
+                String(format: NSLocalizedString("Send text snippet to:", comment: "Drag destinations menu title"), packets.count) :
+                String(format: NSLocalizedString("Send %d text snippet(s) to:", comment: "Drag destinations menu title"), packets.count)
+        }
+        else {
+            return false
+        }
+        
+        
+        let menu = NSMenu()
+        menu.autoenablesItems = false
+        
+        let titleItem = NSMenuItem(title: title, action: nil, keyEquivalent: "")
+        titleItem.isEnabled = false
+        menu.addItem(titleItem)
+        
+        for device in self.validDevices {
+            let keyEquivalent: String = menu.items.count <= 10 ? "\(menu.items.count % 10)" : ""
+            let item = NSMenuItem(title: device.name, action: nil, keyEquivalent: keyEquivalent)
+            item.target = self
+            item.action = #selector(dragDestinationMenuItemAction(_:))
+            item.representedObject = DragDestination(dataPackets: packets, device: device)
+            menu.addItem(item)
+        }
+        
+        let position = sender.draggingDestinationWindow()?.frame.origin ?? NSEvent.mouseLocation()
+        return menu.popUp(positioning: nil, at: position, in: nil)
+    }
+    
+    private func dataPacket(forFileName fileName: String) -> DataPacket? {
+        let url = URL(fileURLWithPath: fileName)
+        let dataPacket = self.dataPacket(forFileUrl: url)
+        return dataPacket
+    }
+    
+    private func dataPacket(forFileUrl url: URL) -> DataPacket? {
+        var isDirectory: ObjCBool = false
+        guard FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory) else { return nil }
+        guard !isDirectory.boolValue else { return nil }
+        guard let filename = url.pathComponents.last else { return nil }
+        guard let stream = InputStream(url: url) else { return nil }
+        
+        let fileSize = self.fileSize(path: url.path)
+        let dataPacket = DataPacket.sharePacket(fileStream: stream, fileSize: fileSize, fileName: filename)
+        return dataPacket
+    }
+    
+    private func dataPacket(forUrl url: URL) -> DataPacket {
+        return DataPacket.sharePacket(url: url)
+    }
+    
+    private func dataPacket(forText text: String) -> DataPacket {
+        return DataPacket.sharePacket(text: text)
+    }
 }
 
 
@@ -331,10 +482,10 @@ fileprivate extension DataPacket {
         case invalidUrl
     }
     
-    enum ShareProperty: String {
-        case filename = "filename"
-        case text = "text"
-        case url = "url"
+    struct ShareProperty {
+        static let filename = "filename"
+        static let text = "text"
+        static let url = "url"
     }
     
     
@@ -350,7 +501,7 @@ fileprivate extension DataPacket {
     static func sharePacket(fileStream: InputStream, fileSize: Int64?, fileName: String?) -> DataPacket {
         var body: Body = [:]
         if let filename = fileName {
-            body[ShareProperty.filename.rawValue] = filename as AnyObject
+            body[ShareProperty.filename] = filename as AnyObject
         }
         var packet = DataPacket(type: sharePacketType, body: body)
         packet.payload = fileStream
@@ -358,24 +509,40 @@ fileprivate extension DataPacket {
         return packet
     }
     
+    static func sharePacket(url: URL) -> DataPacket {
+        let body: Body = [
+            ShareProperty.url: url.absoluteString as AnyObject
+        ]
+        let packet = DataPacket(type: sharePacketType, body: body)
+        return packet
+    }
+    
+    static func sharePacket(text: String) -> DataPacket {
+        let body: Body = [
+            ShareProperty.text: text as AnyObject
+        ]
+        let packet = DataPacket(type: sharePacketType, body: body)
+        return packet
+    }
+    
     func getFilename() throws -> String? {
         try self.validateShareType()
-        guard body.keys.contains(ShareProperty.filename.rawValue) else { return nil }
-        guard let value = body[ShareProperty.filename.rawValue] as? String else { throw ShareError.invalidFilename }
+        guard body.keys.contains(ShareProperty.filename) else { return nil }
+        guard let value = body[ShareProperty.filename] as? String else { throw ShareError.invalidFilename }
         return value
     }
     
     func getText() throws -> String? {
         try self.validateShareType()
-        guard body.keys.contains(ShareProperty.text.rawValue) else { return nil }
-        guard let value = body[ShareProperty.text.rawValue] as? String else { throw ShareError.invalidText }
+        guard body.keys.contains(ShareProperty.text) else { return nil }
+        guard let value = body[ShareProperty.text] as? String else { throw ShareError.invalidText }
         return value
     }
     
     func getUrl() throws -> String? {
         try self.validateShareType()
-        guard body.keys.contains(ShareProperty.url.rawValue) else { return nil }
-        guard let value = body[ShareProperty.url.rawValue] as? String else { throw ShareError.invalidUrl }
+        guard body.keys.contains(ShareProperty.url) else { return nil }
+        guard let value = body[ShareProperty.url] as? String else { throw ShareError.invalidUrl }
         return value
     }
     
