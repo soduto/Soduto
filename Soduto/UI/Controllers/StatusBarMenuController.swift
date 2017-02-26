@@ -108,7 +108,7 @@ public class StatusBarMenuController: NSObject, NSMenuDelegate {
             mainIcon.draw(in: rect)
             
             let fullWidth: CGFloat = 16
-            let chargedWidth = fullWidth * CGFloat(batteryStatus.currentCharge) / 100.0
+            let chargedWidth: CGFloat = fullWidth * CGFloat(batteryStatus.currentCharge) / 100.0
             NSColor.black.set()
             NSRectFill(NSRect(x: 2, y: 2, width: chargedWidth, height: 8))
             

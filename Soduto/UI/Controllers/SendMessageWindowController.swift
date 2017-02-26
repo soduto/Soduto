@@ -23,8 +23,11 @@ class SendMessageWindowController: NSWindowController {
             if let contactPhoneNumber = token as? ContactPhoneNumber {
                 return contactPhoneNumber.selectedPhone.value.stringValue
             }
+            else if let tokenString = token as? String {
+                return tokenString
+            }
             else {
-                return (token as? String) ?? ""
+                return ""
             }
         }
         return numbers.filter({ !$0.isEmpty })

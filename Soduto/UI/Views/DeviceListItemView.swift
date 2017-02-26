@@ -36,8 +36,8 @@ public class DeviceListItemView: NSTableCellView {
                 self.textField?.textColor = device.isReachable ? NSColor.controlTextColor : NSColor.disabledControlTextColor
                 self.textField?.alphaValue = device.isReachable ? 1.0 : 0.5
                 
-                let deviceTypeInfo = device.type != .Unknown ? NSLocalizedString(device.type.rawValue, comment: "Device type") : ""
-                let deviceStatusInfo = device.isReachable ? NSLocalizedString("reachable", comment: "Device status") : NSLocalizedString("unreachable", comment: "Device status")
+                let deviceTypeInfo: String = device.type != .Unknown ? NSLocalizedString(device.type.rawValue, comment: "Device type") : ""
+                let deviceStatusInfo: String = device.isReachable ? NSLocalizedString("reachable", comment: "Device status") : NSLocalizedString("unreachable", comment: "Device status")
                 self.infoLabel.stringValue = deviceTypeInfo.isEmpty ? deviceStatusInfo : "\(deviceTypeInfo) - \(deviceStatusInfo)"
                 self.infoLabel?.alphaValue = device.isReachable ? 1.0 : 0.5
                 
