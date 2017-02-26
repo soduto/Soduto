@@ -26,7 +26,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
         #else
             let formatter = FieldBasedLogFormatter(fields: [.severity(.simple), .delimiter(.spacedPipe), .payload])
             let aslRecorder = ASLLogRecorder(formatter: formatter, echoToStdErr: true)
-            Log.enable(configuration: BasicLogConfiguration(minimumSeverity: .debug, recorders: [aslRecorder]))
+            Log.enable(configuration: BasicLogConfiguration(minimumSeverity: .info, recorders: [aslRecorder]))
         #endif
         
         
