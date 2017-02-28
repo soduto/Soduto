@@ -20,13 +20,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
     let serviceManager = ServiceManager()
     let userNotificationManager: UserNotificationManager
     
+    static let logLevelConfigurationKey = "com.soduto.logLevel"
+    
     override init() {
+        UserDefaults.standard.register(defaults: [AppDelegate.logLevelConfigurationKey: LogSeverity.info.rawValue])
+        
         #if DEBUG
             Log.enable(configuration: XcodeLogConfiguration(minimumSeverity: .debug, logToASL: false))
         #else
             let formatter = FieldBasedLogFormatter(fields: [.severity(.simple), .delimiter(.spacedPipe), .payload])
             let aslRecorder = ASLLogRecorder(formatter: formatter, echoToStdErr: true)
-            Log.enable(configuration: BasicLogConfiguration(minimumSeverity: .info, recorders: [aslRecorder]))
+            let severity: LogSeverity = LogSeverity(rawValue: UserDefaults.standard.integer(forKey: AppDelegate.logLevelConfigurationKey)) ?? .info
+            Log.enable(configuration: BasicLogConfiguration(minimumSeverity: severity, recorders: [aslRecorder]))
         #endif
         
         
