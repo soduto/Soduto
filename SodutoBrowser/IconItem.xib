@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="16E154a" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="box content view" minToolsVersion="7.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="IconViewItem" customModule="SodutoBrowser" customModuleProvider="target"/>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <box autoresizesSubviews="NO" boxType="custom" borderType="none" titlePosition="noTitle" transparent="YES" id="JHA-eZ-Ccs" customClass="IconItemView" customModule="SodutoBrowser" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="255" height="187"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <view key="contentView" id="ThL-Go-grX">
+                <rect key="frame" x="0.0" y="0.0" width="255" height="187"/>
+                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                <subviews>
+                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="5sU-sT-9Cj" userLabel="Icon Background View">
+                        <rect key="frame" x="55" y="38" width="145" height="145"/>
+                        <subviews>
+                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="HuO-iI-RRe">
+                                <rect key="frame" x="4" y="4" width="137" height="137"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="HuO-iI-RRe" secondAttribute="height" multiplier="1:1" id="26s-Iz-rGD"/>
+                                </constraints>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" id="F98-ww-tXl"/>
+                            </imageView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="HuO-iI-RRe" firstAttribute="top" secondItem="5sU-sT-9Cj" secondAttribute="top" constant="4" id="Fhz-HJ-CNk"/>
+                            <constraint firstAttribute="bottom" secondItem="HuO-iI-RRe" secondAttribute="bottom" constant="4" id="Yz4-oN-ZTT"/>
+                            <constraint firstItem="HuO-iI-RRe" firstAttribute="leading" secondItem="5sU-sT-9Cj" secondAttribute="leading" constant="4" id="cv0-NE-aHE"/>
+                            <constraint firstAttribute="trailing" secondItem="HuO-iI-RRe" secondAttribute="trailing" constant="4" id="oDR-EW-Djg"/>
+                        </constraints>
+                    </customView>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3lS-bo-163">
+                        <rect key="frame" x="2" y="0.0" width="251" height="36"/>
+                        <textFieldCell key="cell" lineBreakMode="charWrapping" truncatesLastVisibleLine="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" title="labellabellabellabellabellabellabellabellabellabellabellabellabellabellabellabellabellabellabellabellabellabellabellabe" id="rSo-jv-gY5">
+                            <font key="font" metaFont="cellTitle"/>
+                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="3lS-bo-163" secondAttribute="trailing" constant="3" id="7fO-hI-7hg"/>
+                    <constraint firstItem="3lS-bo-163" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="ThL-Go-grX" secondAttribute="leading" constant="3" id="OP4-Ha-cmH"/>
+                    <constraint firstItem="3lS-bo-163" firstAttribute="centerX" secondItem="ThL-Go-grX" secondAttribute="centerX" id="PHc-Kt-bXe"/>
+                    <constraint firstAttribute="bottom" secondItem="5sU-sT-9Cj" secondAttribute="bottom" constant="38" id="Tfw-7a-qkS"/>
+                    <constraint firstItem="5sU-sT-9Cj" firstAttribute="top" secondItem="ThL-Go-grX" secondAttribute="top" constant="4" id="Vyf-UU-T5Y"/>
+                    <constraint firstItem="3lS-bo-163" firstAttribute="top" secondItem="5sU-sT-9Cj" secondAttribute="bottom" constant="2" id="rq5-se-hfW"/>
+                </constraints>
+            </view>
+            <constraints>
+                <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="3lS-bo-163" secondAttribute="bottom" id="aSI-n4-Pf7"/>
+                <constraint firstItem="5sU-sT-9Cj" firstAttribute="width" relation="lessThanOrEqual" secondItem="JHA-eZ-Ccs" secondAttribute="width" id="tBW-g0-q12"/>
+                <constraint firstItem="5sU-sT-9Cj" firstAttribute="centerX" secondItem="JHA-eZ-Ccs" secondAttribute="centerX" id="viM-RC-oJ1"/>
+            </constraints>
+            <color key="fillColor" name="selectedControlColor" catalog="System" colorSpace="catalog"/>
+            <connections>
+                <outlet property="iconBackgroundView" destination="5sU-sT-9Cj" id="I7A-9V-9kc"/>
+                <outlet property="labelView" destination="3lS-bo-163" id="wJJ-B7-Ail"/>
+            </connections>
+            <point key="canvasLocation" x="231.5" y="492.5"/>
+        </box>
+        <collectionViewItem id="Wfu-Me-bfV" customClass="IconItem" customModule="SodutoBrowser" customModuleProvider="target">
+            <connections>
+                <outlet property="imageView" destination="HuO-iI-RRe" id="mf8-Ef-bvK"/>
+                <outlet property="textField" destination="3lS-bo-163" id="aGZ-W7-Ihq"/>
+                <outlet property="view" destination="JHA-eZ-Ccs" id="fFd-TM-Eio"/>
+            </connections>
+        </collectionViewItem>
+    </objects>
+</document>

@@ -10,3 +10,12 @@
 [submodule "Soduto/OpenSSL/openssl"]
 	path = Soduto/OpenSSL/openssl
 	url = https://github.com/openssl/openssl.git
+[submodule "Soduto/NMSSH"]
+	path = Soduto/NMSSH
+	url = https://giedrius-stanevicius@github.com/giedrius-stanevicius/NMSSH.git
+[submodule "Soduto/LibSSH2/libssh2"]
+	path = Soduto/LibSSH2/libssh2
+	url = https://github.com/libssh2/libssh2.git
+[submodule "Soduto/LibSSH2/build-scripts"]
+	path = Soduto/LibSSH2/build-scripts
+	url = https://giedrius-stanevicius@github.com/giedrius-stanevicius/iSSH2.git

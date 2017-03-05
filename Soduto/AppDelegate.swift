@@ -62,6 +62,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
         self.serviceManager.add(service: TelephonyService())
         self.serviceManager.add(service: PingService())
         self.serviceManager.add(service: BatteryService())
+        self.serviceManager.add(service: SftpService())
         
         self.connectionProvider.start()
     }

@@ -28,11 +28,23 @@
 		843E16F11E2413CE001D0444 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 843E16F01E2413CE001D0444 /* libcrypto.a */; };
 		843E170E1E25851D001D0444 /* IO.m in Sources */ = {isa = PBXBuildFile; fileRef = 843E170D1E25851D001D0444 /* IO.m */; };
 		843E17891E26B56A001D0444 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 843E17881E26B56A001D0444 /* ServiceManagement.framework */; };
+		8440FCF71E6CA68300E5BFA9 /* FileSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8440FCF61E6CA68300E5BFA9 /* FileSystem.swift */; };
+		8440FD071E6CA6CA00E5BFA9 /* LocalFileSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8440FD061E6CA6CA00E5BFA9 /* LocalFileSystem.swift */; };
 		8450274B1DAABB9900C20247 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8450274A1DAABB9900C20247 /* Configuration.swift */; };
 		8456F4A81D7DE393006EFE19 /* Pairable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456F4A71D7DE393006EFE19 /* Pairable.swift */; };
 		8456F4AA1D7DEA47006EFE19 /* DefaultPairingHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456F4A91D7DEA47006EFE19 /* DefaultPairingHandler.swift */; };
+		845BC6C31E68C4BF00DC9B81 /* NMSSH.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 845BC6A21E68C26B00DC9B81 /* NMSSH.framework */; };
+		845BC70D1E69F00E00DC9B81 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845BC70C1E69F00E00DC9B81 /* AppDelegate.swift */; };
+		845BC70F1E69F00E00DC9B81 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 845BC70E1E69F00E00DC9B81 /* Assets.xcassets */; };
+		845BC7121E69F00E00DC9B81 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 845BC7101E69F00E00DC9B81 /* MainMenu.xib */; };
+		845BC7261E69F25F00DC9B81 /* BrowserWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845BC7251E69F25F00DC9B81 /* BrowserWindowController.swift */; };
+		845BC7281E6A062900DC9B81 /* BrowserWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 845BC7271E6A062800DC9B81 /* BrowserWindow.xib */; };
+		845BC72A1E6A0CF100DC9B81 /* IconItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845BC7291E6A0CF100DC9B81 /* IconItemView.swift */; };
 		84651A721E599A3C00D17601 /* BatteryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84651A711E599A3C00D17601 /* BatteryService.swift */; };
 		84651A741E59F9C900D17601 /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84651A731E59F9C900D17601 /* MenuView.swift */; };
+		84651A761E5AEBE100D17601 /* SftpService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84651A751E5AEBE100D17601 /* SftpService.swift */; };
+		84651A791E5C50FD00D17601 /* SftpMounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84651A781E5C50FD00D17601 /* SftpMounter.swift */; };
+		84651A7B1E5CA69300D17601 /* OSXFUSE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84651A7A1E5CA69300D17601 /* OSXFUSE.framework */; };
 		8468BDFB1DE8F10D003B9925 /* NotificationsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8468BDFA1DE8F10D003B9925 /* NotificationsService.swift */; };
 		8468BE001DEB7F97003B9925 /* NetworkUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8468BDFF1DEB7F97003B9925 /* NetworkUtils.swift */; };
 		847E9D2B1DF5E2640042D3CE /* TelephonyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847E9D2A1DF5E2640042D3CE /* TelephonyService.swift */; };
@@ -43,6 +55,9 @@
 		849237A11DE224CF00D95BBA /* FindMyPhoneService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849237A01DE224CF00D95BBA /* FindMyPhoneService.swift */; };
 		849237A31DE4E76E00D95BBA /* UserNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849237A21DE4E76E00D95BBA /* UserNotificationManager.swift */; };
 		849237EC1DE5FC9600D95BBA /* PairingInterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849237EB1DE5FC9600D95BBA /* PairingInterfaceController.swift */; };
+		849927801E6C5CA600AF8CF4 /* IconItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8499277E1E6C5CA600AF8CF4 /* IconItem.swift */; };
+		849927811E6C5CA600AF8CF4 /* IconItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8499277F1E6C5CA600AF8CF4 /* IconItem.xib */; };
+		849927831E6C5CD600AF8CF4 /* FileItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849927821E6C5CD600AF8CF4 /* FileItem.swift */; };
 		849961B81D5726B0002B893A /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = 849961B41D5726B0002B893A /* LICENSE.txt */; };
 		849961B91D5726B0002B893A /* MYAnonymousIdentity.m in Sources */ = {isa = PBXBuildFile; fileRef = 849961B61D5726B0002B893A /* MYAnonymousIdentity.m */; };
 		849961C11D57287F002B893A /* CollectionUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 849961BC1D57287F002B893A /* CollectionUtils.m */; };
@@ -84,6 +99,27 @@
 			proxyType = 2;
 			remoteGlobalIDString = 9069D28C0FCE659A0042E34C;
 			remoteInfo = crypto;
+		};
+		845BC6A11E68C26B00DC9B81 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 845BC6971E68C26B00DC9B81 /* NMSSH.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E4E96D84158E10FD002E6E0A;
+			remoteInfo = NMSSH;
+		};
+		845BC6A31E68C26B00DC9B81 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 845BC6971E68C26B00DC9B81 /* NMSSH.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E4E96D9C158E10FD002E6E0A;
+			remoteInfo = NMSSHTests;
+		};
+		845BC6C51E68C4BF00DC9B81 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 843E16DF1E240F46001D0444 /* OpenSSL.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 845BC6BB1E68C3B000DC9B81;
+			remoteInfo = ssl;
 		};
 		847EF4C71DC9049D00360BBE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -140,6 +176,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 00C54B101C09CD9C001C3F12;
 			remoteInfo = ReachabilityMac;
+		};
+		84BEF72F1E660E2800D839D3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84BEF7271E660E2600D839D3 /* LibSSH2.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 84BEF7201E660E2600D839D3;
+			remoteInfo = LibSSH2;
 		};
 		84E2F2F11D574A4F00EAA802 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -283,12 +326,26 @@
 		843E170C1E25851D001D0444 /* IO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IO.h; sourceTree = "<group>"; };
 		843E170D1E25851D001D0444 /* IO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IO.m; sourceTree = "<group>"; };
 		843E17881E26B56A001D0444 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
+		8440FCF61E6CA68300E5BFA9 /* FileSystem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileSystem.swift; sourceTree = "<group>"; };
+		8440FD061E6CA6CA00E5BFA9 /* LocalFileSystem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalFileSystem.swift; sourceTree = "<group>"; };
 		8450274A1DAABB9900C20247 /* Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		8454D12C1D34228D00788632 /* Soduto-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Soduto-Bridging-Header.h"; sourceTree = "<group>"; };
 		8456F4A71D7DE393006EFE19 /* Pairable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pairable.swift; sourceTree = "<group>"; };
 		8456F4A91D7DEA47006EFE19 /* DefaultPairingHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultPairingHandler.swift; sourceTree = "<group>"; };
+		845BC6971E68C26B00DC9B81 /* NMSSH.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = NMSSH.xcodeproj; path = Soduto/NMSSH/NMSSH.xcodeproj; sourceTree = "<group>"; };
+		845BC70A1E69F00E00DC9B81 /* SodutoBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SodutoBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		845BC70C1E69F00E00DC9B81 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		845BC70E1E69F00E00DC9B81 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		845BC7111E69F00E00DC9B81 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		845BC7131E69F00E00DC9B81 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		845BC7251E69F25F00DC9B81 /* BrowserWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrowserWindowController.swift; sourceTree = "<group>"; };
+		845BC7271E6A062800DC9B81 /* BrowserWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BrowserWindow.xib; sourceTree = "<group>"; };
+		845BC7291E6A0CF100DC9B81 /* IconItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IconItemView.swift; sourceTree = "<group>"; };
 		84651A711E599A3C00D17601 /* BatteryService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BatteryService.swift; sourceTree = "<group>"; };
 		84651A731E59F9C900D17601 /* MenuView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
+		84651A751E5AEBE100D17601 /* SftpService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SftpService.swift; sourceTree = "<group>"; };
+		84651A781E5C50FD00D17601 /* SftpMounter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SftpMounter.swift; sourceTree = "<group>"; };
+		84651A7A1E5CA69300D17601 /* OSXFUSE.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OSXFUSE.framework; path = ../../../../Library/Frameworks/OSXFUSE.framework; sourceTree = "<group>"; };
 		8468BDFA1DE8F10D003B9925 /* NotificationsService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationsService.swift; sourceTree = "<group>"; };
 		8468BDFF1DEB7F97003B9925 /* NetworkUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkUtils.swift; sourceTree = "<group>"; };
 		847E9D2A1DF5E2640042D3CE /* TelephonyService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TelephonyService.swift; sourceTree = "<group>"; };
@@ -301,6 +358,9 @@
 		849237A01DE224CF00D95BBA /* FindMyPhoneService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FindMyPhoneService.swift; sourceTree = "<group>"; };
 		849237A21DE4E76E00D95BBA /* UserNotificationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserNotificationManager.swift; sourceTree = "<group>"; };
 		849237EB1DE5FC9600D95BBA /* PairingInterfaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PairingInterfaceController.swift; sourceTree = "<group>"; };
+		8499277E1E6C5CA600AF8CF4 /* IconItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IconItem.swift; sourceTree = "<group>"; };
+		8499277F1E6C5CA600AF8CF4 /* IconItem.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IconItem.xib; sourceTree = "<group>"; };
+		849927821E6C5CD600AF8CF4 /* FileItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileItem.swift; sourceTree = "<group>"; };
 		849961B41D5726B0002B893A /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE.txt; path = MYUtilities/LICENSE.txt; sourceTree = "<group>"; };
 		849961B51D5726B0002B893A /* MYAnonymousIdentity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYAnonymousIdentity.h; path = MYUtilities/MYAnonymousIdentity.h; sourceTree = "<group>"; };
 		849961B61D5726B0002B893A /* MYAnonymousIdentity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYAnonymousIdentity.m; path = MYUtilities/MYAnonymousIdentity.m; sourceTree = "<group>"; };
@@ -318,6 +378,7 @@
 		84B4D0CE1DFD754700437CBB /* Reachability.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Reachability.xcodeproj; path = Soduto/Reachability.swift/Reachability.xcodeproj; sourceTree = "<group>"; };
 		84B933EE1E281AB40071DEFF /* CertificateUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CertificateUtils.m; sourceTree = "<group>"; };
 		84B9340D1E2A56EA0071DEFF /* CertificateUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CertificateUtils.h; sourceTree = "<group>"; };
+		84BEF7271E660E2600D839D3 /* LibSSH2.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = LibSSH2.xcodeproj; path = Soduto/LibSSH2/LibSSH2.xcodeproj; sourceTree = "<group>"; };
 		84C613E21DECBF6B00CE7F7A /* UploadTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadTask.swift; sourceTree = "<group>"; };
 		84D903A11DC696A600E61DA7 /* CertificateUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CertificateUtils.swift; sourceTree = "<group>"; };
 		84E732021DF46F93001E1549 /* CleanroomLogger.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CleanroomLogger.xcodeproj; path = Soduto/CleanroomLogger/CleanroomLogger.xcodeproj; sourceTree = "<group>"; };
@@ -344,6 +405,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				845BC6C31E68C4BF00DC9B81 /* NMSSH.framework in Frameworks */,
+				84651A7B1E5CA69300D17601 /* OSXFUSE.framework in Frameworks */,
 				843E17891E26B56A001D0444 /* ServiceManagement.framework in Frameworks */,
 				843E16F11E2413CE001D0444 /* libcrypto.a in Frameworks */,
 				84B4D0E91DFD756A00437CBB /* Reachability.framework in Frameworks */,
@@ -354,6 +417,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		8435AEF31E26DD27005CD719 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		845BC7071E69F00E00DC9B81 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -419,6 +489,8 @@
 		843301571D2D8CB8008934BB = {
 			isa = PBXGroup;
 			children = (
+				845BC6971E68C26B00DC9B81 /* NMSSH.xcodeproj */,
+				84BEF7271E660E2600D839D3 /* LibSSH2.xcodeproj */,
 				843E16DF1E240F46001D0444 /* OpenSSL.xcodeproj */,
 				84B4D0CE1DFD754700437CBB /* Reachability.xcodeproj */,
 				84E732111DF47237001E1549 /* CleanroomASL.xcodeproj */,
@@ -427,6 +499,7 @@
 				843301621D2D8CB8008934BB /* Soduto */,
 				847EF4C31DC9049D00360BBE /* SodutoTests */,
 				8435AEF71E26DD27005CD719 /* SodutoLauncher */,
+				845BC70B1E69F00E00DC9B81 /* SodutoBrowser */,
 				843301611D2D8CB8008934BB /* Products */,
 				849962261D574530002B893A /* Frameworks */,
 			);
@@ -438,6 +511,7 @@
 				843301601D2D8CB8008934BB /* Soduto.app */,
 				847EF4C21DC9049D00360BBE /* SodutoTests.xctest */,
 				8435AEF61E26DD27005CD719 /* SodutoLauncher.app */,
+				845BC70A1E69F00E00DC9B81 /* SodutoBrowser.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -485,6 +559,7 @@
 			isa = PBXGroup;
 			children = (
 				843E16F01E2413CE001D0444 /* libcrypto.a */,
+				845BC6C61E68C4BF00DC9B81 /* libssl.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -511,6 +586,42 @@
 				84C613E21DECBF6B00CE7F7A /* UploadTask.swift */,
 			);
 			path = Core;
+			sourceTree = "<group>";
+		};
+		845BC6981E68C26B00DC9B81 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				845BC6A21E68C26B00DC9B81 /* NMSSH.framework */,
+				845BC6A41E68C26B00DC9B81 /* NMSSHTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		845BC70B1E69F00E00DC9B81 /* SodutoBrowser */ = {
+			isa = PBXGroup;
+			children = (
+				845BC70C1E69F00E00DC9B81 /* AppDelegate.swift */,
+				845BC70E1E69F00E00DC9B81 /* Assets.xcassets */,
+				845BC7271E6A062800DC9B81 /* BrowserWindow.xib */,
+				845BC7251E69F25F00DC9B81 /* BrowserWindowController.swift */,
+				849927821E6C5CD600AF8CF4 /* FileItem.swift */,
+				8440FCF61E6CA68300E5BFA9 /* FileSystem.swift */,
+				8499277E1E6C5CA600AF8CF4 /* IconItem.swift */,
+				8499277F1E6C5CA600AF8CF4 /* IconItem.xib */,
+				845BC7291E6A0CF100DC9B81 /* IconItemView.swift */,
+				845BC7131E69F00E00DC9B81 /* Info.plist */,
+				8440FD061E6CA6CA00E5BFA9 /* LocalFileSystem.swift */,
+				845BC7101E69F00E00DC9B81 /* MainMenu.xib */,
+			);
+			path = SodutoBrowser;
+			sourceTree = "<group>";
+		};
+		84651A771E5C4FEE00D17601 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				84651A781E5C50FD00D17601 /* SftpMounter.swift */,
+			);
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 		8468BDFE1DEB7F5F003B9925 /* Utils */ = {
@@ -559,6 +670,7 @@
 		849962261D574530002B893A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				84651A7A1E5CA69300D17601 /* OSXFUSE.framework */,
 				843E17881E26B56A001D0444 /* ServiceManagement.framework */,
 				849962271D574530002B893A /* CocoaAsyncSocket.framework */,
 			);
@@ -574,6 +686,14 @@
 				84B4D0E21DFD754800437CBB /* ReachabilitySample.app */,
 				84B4D0E41DFD754800437CBB /* ReachabilityMacSample.app */,
 				84B4D0E61DFD754800437CBB /* ReachabilityAppleTVSample.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		84BEF7281E660E2600D839D3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				84BEF7301E660E2800D839D3 /* libssh2.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -609,11 +729,13 @@
 		84FA45EB1DDF51EB00EF3992 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				84651A771E5C4FEE00D17601 /* Utilities */,
 				84651A711E599A3C00D17601 /* BatteryService.swift */,
 				840FC2F81DEF6AF400AC4824 /* ClipboardService.swift */,
 				849237A01DE224CF00D95BBA /* FindMyPhoneService.swift */,
 				8468BDFA1DE8F10D003B9925 /* NotificationsService.swift */,
 				84FA45EC1DDF525200EF3992 /* PingService.swift */,
+				84651A751E5AEBE100D17601 /* SftpService.swift */,
 				843B67031DF1E64A00289EC9 /* ShareService.swift */,
 				847E9D2A1DF5E2640042D3CE /* TelephonyService.swift */,
 			);
@@ -663,6 +785,23 @@
 			name = SodutoLauncher;
 			productName = SodutoLauncher;
 			productReference = 8435AEF61E26DD27005CD719 /* SodutoLauncher.app */;
+			productType = "com.apple.product-type.application";
+		};
+		845BC7091E69F00E00DC9B81 /* SodutoBrowser */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 845BC7241E69F00E00DC9B81 /* Build configuration list for PBXNativeTarget "SodutoBrowser" */;
+			buildPhases = (
+				845BC7061E69F00E00DC9B81 /* Sources */,
+				845BC7071E69F00E00DC9B81 /* Frameworks */,
+				845BC7081E69F00E00DC9B81 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SodutoBrowser;
+			productName = SodutoBrowser;
+			productReference = 845BC70A1E69F00E00DC9B81 /* SodutoBrowser.app */;
 			productType = "com.apple.product-type.application";
 		};
 		847EF4C11DC9049D00360BBE /* SodutoTests */ = {
@@ -715,6 +854,11 @@
 							};
 						};
 					};
+					845BC7091E69F00E00DC9B81 = {
+						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = WW9LKQ5SH5;
+						ProvisioningStyle = Automatic;
+					};
 					847EF4C11DC9049D00360BBE = {
 						CreatedOnToolsVersion = 8.1;
 						ProvisioningStyle = Automatic;
@@ -747,6 +891,14 @@
 					ProjectRef = 8499621A1D57438E002B893A /* CocoaAsyncSocket.xcodeproj */;
 				},
 				{
+					ProductGroup = 84BEF7281E660E2600D839D3 /* Products */;
+					ProjectRef = 84BEF7271E660E2600D839D3 /* LibSSH2.xcodeproj */;
+				},
+				{
+					ProductGroup = 845BC6981E68C26B00DC9B81 /* Products */;
+					ProjectRef = 845BC6971E68C26B00DC9B81 /* NMSSH.xcodeproj */;
+				},
+				{
 					ProductGroup = 843E16E01E240F46001D0444 /* Products */;
 					ProjectRef = 843E16DF1E240F46001D0444 /* OpenSSL.xcodeproj */;
 				},
@@ -760,6 +912,7 @@
 				8433015F1D2D8CB8008934BB /* Soduto */,
 				847EF4C11DC9049D00360BBE /* SodutoTests */,
 				8435AEF51E26DD27005CD719 /* SodutoLauncher */,
+				845BC7091E69F00E00DC9B81 /* SodutoBrowser */,
 			);
 		};
 /* End PBXProject section */
@@ -770,6 +923,27 @@
 			fileType = archive.ar;
 			path = libcrypto.a;
 			remoteRef = 843E16EF1E2413CE001D0444 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		845BC6A21E68C26B00DC9B81 /* NMSSH.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = NMSSH.framework;
+			remoteRef = 845BC6A11E68C26B00DC9B81 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		845BC6A41E68C26B00DC9B81 /* NMSSHTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = NMSSHTests.xctest;
+			remoteRef = 845BC6A31E68C26B00DC9B81 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		845BC6C61E68C4BF00DC9B81 /* libssl.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libssl.a;
+			remoteRef = 845BC6C51E68C4BF00DC9B81 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		84B4D0DC1DFD754800437CBB /* Reachability.framework */ = {
@@ -812,6 +986,13 @@
 			fileType = wrapper.application;
 			path = ReachabilityAppleTVSample.app;
 			remoteRef = 84B4D0E51DFD754800437CBB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		84BEF7301E660E2800D839D3 /* libssh2.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libssh2.a;
+			remoteRef = 84BEF72F1E660E2800D839D3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		84E2F2F21D574A4F00EAA802 /* CocoaAsyncSocket.framework */ = {
@@ -887,6 +1068,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		845BC7081E69F00E00DC9B81 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				849927811E6C5CA600AF8CF4 /* IconItem.xib in Resources */,
+				845BC7281E6A062900DC9B81 /* BrowserWindow.xib in Resources */,
+				845BC70F1E69F00E00DC9B81 /* Assets.xcassets in Resources */,
+				845BC7121E69F00E00DC9B81 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		847EF4C01DC9049D00360BBE /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -927,6 +1119,7 @@
 				849237A11DE224CF00D95BBA /* FindMyPhoneService.swift in Sources */,
 				84FA45E41DDDDB7F00EF3992 /* InterfaceElementTags.swift in Sources */,
 				849237A31DE4E76E00D95BBA /* UserNotificationManager.swift in Sources */,
+				84651A761E5AEBE100D17601 /* SftpService.swift in Sources */,
 				84FA45D71DDDCB3D00EF3992 /* Connection.swift in Sources */,
 				84FFDA2A1E1D8D370069AC9A /* SimplePing.m in Sources */,
 				849961C61D5728B2002B893A /* ExceptionUtils.m in Sources */,
@@ -935,6 +1128,7 @@
 				843B670C1DF3087800289EC9 /* URL.swift in Sources */,
 				8492379D1DE1C55900D95BBA /* DeviceMenu.swift in Sources */,
 				8499620E1D5728EE002B893A /* Test_Assertions.m in Sources */,
+				84651A791E5C50FD00D17601 /* SftpMounter.swift in Sources */,
 				8421A8E71D761409008AC833 /* PreferencesWindowController.swift in Sources */,
 				849237991DE06EBC00D95BBA /* ServiceAction.swift in Sources */,
 				8456F4A81D7DE393006EFE19 /* Pairable.swift in Sources */,
@@ -957,6 +1151,20 @@
 			files = (
 				8435AEFD1E26DD27005CD719 /* main.m in Sources */,
 				8435AEFA1E26DD27005CD719 /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		845BC7061E69F00E00DC9B81 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				849927801E6C5CA600AF8CF4 /* IconItem.swift in Sources */,
+				849927831E6C5CD600AF8CF4 /* FileItem.swift in Sources */,
+				845BC72A1E6A0CF100DC9B81 /* IconItemView.swift in Sources */,
+				8440FD071E6CA6CA00E5BFA9 /* LocalFileSystem.swift in Sources */,
+				845BC7261E69F25F00DC9B81 /* BrowserWindowController.swift in Sources */,
+				8440FCF71E6CA68300E5BFA9 /* FileSystem.swift in Sources */,
+				845BC70D1E69F00E00DC9B81 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1037,6 +1245,14 @@
 			isa = PBXVariantGroup;
 			children = (
 				8435AF011E26DD27005CD719 /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		845BC7101E69F00E00DC9B81 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				845BC7111E69F00E00DC9B81 /* Base */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
@@ -1144,7 +1360,14 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = WW9LKQ5SH5;
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/Soduto/OpenSSL/openssl/include";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(TARGET_BUILD_DIR)/openssl/include",
+					"$(TARGET_BUILD_DIR)/libssh2/include",
+				);
 				INFOPLIST_FILE = Soduto/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
@@ -1168,7 +1391,14 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = WW9LKQ5SH5;
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/Soduto/OpenSSL/openssl/include";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(TARGET_BUILD_DIR)/openssl/include",
+					"$(TARGET_BUILD_DIR)/libssh2/include",
+				);
 				INFOPLIST_FILE = Soduto/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
@@ -1210,6 +1440,34 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.soduto.SodutoLauncher;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		845BC7141E69F00E00DC9B81 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = WW9LKQ5SH5;
+				INFOPLIST_FILE = SodutoBrowser/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.soduto.SodutoBrowser;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		845BC7151E69F00E00DC9B81 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = WW9LKQ5SH5;
+				INFOPLIST_FILE = SodutoBrowser/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.soduto.SodutoBrowser;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -1269,6 +1527,15 @@
 			buildConfigurations = (
 				8435AF051E26DD27005CD719 /* Debug */,
 				8435AF061E26DD27005CD719 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		845BC7241E69F00E00DC9B81 /* Build configuration list for PBXNativeTarget "SodutoBrowser" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				845BC7141E69F00E00DC9B81 /* Debug */,
+				845BC7151E69F00E00DC9B81 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
