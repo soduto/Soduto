@@ -57,7 +57,7 @@ public class ShareService: NSObject, Service, DownloadTaskDelegate, UserNotifica
     
     // MARK: Service properties
     
-    private static let dragTypes: [String] = [kUTTypeURL as String, kUTTypeText as String]
+    private static let dragTypes: [String] = [kUTTypeFileURL as String, kUTTypeURL as String, kUTTypeText as String]
     
     public let incomingCapabilities = Set<Service.Capability>([ DataPacket.sharePacketType ])
     public let outgoingCapabilities = Set<Service.Capability>([ DataPacket.sharePacketType ])
