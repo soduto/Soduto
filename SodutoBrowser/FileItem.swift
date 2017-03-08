@@ -24,3 +24,36 @@ class FileItem: NSObject {
     }
     
 }
+
+extension FileItem: NSPasteboardWriting {
+    
+    public func writableTypes(for pasteboard: NSPasteboard) -> [String] {
+        if self.url.isFileURL {
+            if self.isDirectory {
+                return [ kUTTypeDirectory as String, kUTTypeFileURL as String, kUTTypeURL as String ]
+            }
+            else {
+                return [ kUTTypeFileURL as String, kUTTypeURL as String ]
+            }
+        }
+        else {
+            return [ kUTTypeURL as String ]
+        }
+    }
+    
+    public func pasteboardPropertyList(forType type: String) -> Any? {
+        switch type {
+        case String(kUTTypeDirectory):
+            guard self.url.isFileURL && self.isDirectory else { return nil }
+            return self.url.path
+        case String(kUTTypeFileURL):
+            guard self.url.isFileURL else { return nil }
+            return (self.url as NSURL).pasteboardPropertyList(forType: type)
+        case String(kUTTypeURL):
+            return (self.url as NSURL).pasteboardPropertyList(forType: type)
+        default:
+            return nil
+        }
+    }
+    
+}

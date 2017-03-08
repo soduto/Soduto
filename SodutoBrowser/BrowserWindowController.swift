@@ -53,6 +53,7 @@ class BrowserWindowController: NSWindowController {
         super.windowDidLoad()
         
         self.collectionView.register(NSNib(nibNamed: "IconItem", bundle: nil), forItemWithIdentifier: "IconItem")
+        self.collectionView.setDraggingSourceOperationMask(.copy, forLocal: false)
         
         goTo(self.fileSystem.defaultPlace.url, updateHistory: false)
     }
@@ -165,29 +166,31 @@ extension BrowserWindowController : NSCollectionViewDataSource {
     
 }
 
-extension NSWindowController: NSCollectionViewDelegate {
-    
-    /* Drag and drop support */
-    
-    /* To enable dealing with (section,item) NSIndexPaths now that NSCollectionView supports sections, many of the drag-and-drop delegate methods have been replaced with new versions that take NSIndexPath and array-of-NSIndexPath parameters.  In each such case, NSCollectionView will look for and invoke the newer method first.  If the delegate doesn't respond to the newer version, NSCollectionView will look for the old method, provided that the NSCollectionView has only a single section.  The old methods will not be invoked for a multi-section NSCollectionView.
-     */
-    
-    /* The return value indicates whether the collection view can attempt to initiate a drag for the given event and items. If the delegate does not implement this method, the collection view will act as if it returned YES.
-     */
-//    @available(OSX 10.11, *)
-//    optional public func collectionView(_ collectionView: NSCollectionView, canDragItemsAt indexPaths: Set<IndexPath>, with event: NSEvent) -> Bool
-    
+extension BrowserWindowController: NSCollectionViewDelegate {
     
     /* This method is called after it has been determined that a drag should begin, but before the drag has been started. To refuse the drag, return NO. To start the drag, declare the pasteboard types that you support with -[NSPasteboard declareTypes:owner:], place your data for the items at the given index paths on the pasteboard, and return YES from the method. The drag image and other drag related information will be set up and provided by the view once this call returns YES. You need to implement this method, or -collectionView:pasteboardWriterForItemAtIndexPath:, for your collection view to be a drag source.
      */
-//    @available(OSX 10.11, *)
-//    optional public func collectionView(_ collectionView: NSCollectionView, writeItemsAt indexPaths: Set<IndexPath>, to pasteboard: NSPasteboard) -> Bool
+    public func collectionView(_ collectionView: NSCollectionView, writeItemsAt indexPaths: Set<IndexPath>, to pasteboard: NSPasteboard) -> Bool {
+        
+        guard let allFileItems = self.iconArrayController.arrangedObjects as? [FileItem] else { return false }
+        
+        let fileItems = indexPaths.map { return allFileItems[$0.item] }
+        
+        pasteboard.clearContents()
+        pasteboard.writeObjects(fileItems)
+        
+        return true
+    }
     
     
     /* The delegate can support file promise drags by adding NSFilesPromisePboardType to the pasteboard in -collectionView:writeItemsAtIndexPaths:toPasteboard:. NSCollectionView implements -namesOfPromisedFilesDroppedAtDestination: to return the results of this delegate method. This method should return an array of filenames (not full paths) for the created files. The URL represents the drop location. For more information on file promise dragging, see documentation for the NSDraggingSource protocol and -namesOfPromisedFilesDroppedAtDestination:. You do not need to implement this method for your collection view to be a drag source.
      */
-//    @available(OSX 10.11, *)
-//    optional public func collectionView(_ collectionView: NSCollectionView, namesOfPromisedFilesDroppedAtDestination dropURL: URL, forDraggedItemsAt indexPaths: Set<IndexPath>) -> [String]
+//    public func collectionView(_ collectionView: NSCollectionView, namesOfPromisedFilesDroppedAtDestination dropURL: URL, forDraggedItemsAt indexPaths: Set<IndexPath>) -> [String] {
+//        
+//        guard let fileItems = self.iconArrayController.arrangedObjects as? [FileItem] else { return [] }
+//        
+//        return fileItems.map { $0.url.lastPathComponent }
+//    }
     
     
     /* Allows the delegate to construct a custom dragging image for the items being dragged. 'indexPaths' contains the (section,item) identification of the items being dragged. 'event' is a reference to the  mouse down event that began the drag. 'dragImageOffset' is an in/out parameter. This method will be called with dragImageOffset set to NSZeroPoint, but it can be modified to re-position the returned image. A dragImageOffset of NSZeroPoint will cause the image to be centered under the mouse. You can safely call -[NSCollectionView draggingImageForItemsAtIndexPaths:withEvent:offset:] from within this method. You do not need to implement this method for your collection view to be a drag source.
