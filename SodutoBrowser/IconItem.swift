@@ -10,16 +10,23 @@ import Cocoa
 
 class IconItem: NSCollectionViewItem {
     
+    var iconView: IconItemView? { return self.view as? IconItemView }
+    
     var fileItem: FileItem? {
         didSet {
             guard isViewLoaded else { return }
-            if let fileItem = self.fileItem {
+            if let fileItem = self.fileItem, !fileItem.flags.contains(.isDeleted) {
                 self.imageView?.image = fileItem.icon
-                self.textField?.stringValue = fileItem.name
+                self.iconView?.label = fileItem.name
+                self.iconView?.isHiddenItem = fileItem.flags.contains(.isHidden)
+                self.iconView?.isBusy = fileItem.flags.contains(.isBusy)
             } else {
                 self.imageView?.image = nil
-                self.textField?.stringValue = ""
+                self.iconView?.label = ""
+                self.iconView?.isHiddenItem = false
+                self.iconView?.isBusy = false
             }
+            
         }
     }
     
@@ -32,7 +39,7 @@ class IconItem: NSCollectionViewItem {
     override var isSelected: Bool {
         didSet {
             guard self.isSelected != oldValue else { return }
-            (self.view as? IconItemView)?.isSelected = self.isSelected
+            self.iconView?.isSelected = self.isSelected
         }
     }
     

@@ -12,9 +12,17 @@ import Cocoa
 class AppDelegate: NSObject, NSApplicationDelegate {
     
     struct MenuItemTags {
+        // Go menu
         static let back: Int = 1001
         static let forward: Int = 1002
         static let enclosingFolder: Int = 1003
+        
+        // View menu
+        static let toggleHiddenFiles: Int = 2001
+        static let foldersAlwaysFirst: Int = 2101
+        
+        // File menu
+        static let deleteFiles: Int = 3001
     }
 
     private var browserWindowController: BrowserWindowController?

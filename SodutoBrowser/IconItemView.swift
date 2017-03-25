@@ -8,32 +8,47 @@
 
 import Foundation
 import AppKit
+import CoreImage
 
 public class IconItemView: NSBox {
 
     public weak var collectionItem: NSCollectionViewItem!
     
-    private var iconBackgroundView: NSView!
-    private var labelView: NSTextField!
-    open override var toolTip: String? {
-        get { return labelView.stringValue }
-        set {}
-    }
+    private dynamic var iconView: NSImageView!
+    private dynamic var iconBackgroundView: NSView!
+    private dynamic var labelView: NSTextField!
+    private dynamic var overlayView: NSImageView!
     
     
-    public dynamic var isSelected: Bool = false {
+    public var label: String = "" {
         didSet {
-            self.iconBackgroundView.layer?.backgroundColor = self.isSelected ? NSColor.secondarySelectedControlColor.cgColor : nil
-            self.labelView.layer?.backgroundColor = self.isSelected ? NSColor.alternateSelectedControlColor.cgColor : nil
-            self.labelView.textColor = self.isSelected ? NSColor.alternateSelectedControlTextColor : nil
+            self.labelView.stringValue = self.label
         }
     }
     
-    public override func viewWillMove(toWindow newWindow: NSWindow?) {
-        guard newWindow != nil else { return }
+    public var isSelected: Bool = false {
+        didSet { updateStyle() }
+    }
+    
+    public var isHiddenItem: Bool = false {
+        didSet { updateStyle() }
+    }
+    
+    public var isBusy: Bool = false {
+        didSet { updateStyle() }
+    }
+    
+    
+    public override func awakeFromNib() {
+        super.awakeFromNib()
         
         let iconBackgroundView = self.subviews[0].subviews.first(where: { return !($0 is NSTextField) })
-        let labelView = self.subviews[0].subviews.first(where: { return $0 is NSTextField })as? NSTextField
+        let iconView = iconBackgroundView?.subviews.first as? NSImageView
+        let overlayView = iconBackgroundView?.subviews.last as? NSImageView
+        let labelView = self.subviews[0].subviews.first(where: { return $0 is NSTextField }) as? NSTextField
+        
+        self.iconView = iconView
+        self.iconView.unregisterDraggedTypes()
         
         self.iconBackgroundView = iconBackgroundView
         self.iconBackgroundView.wantsLayer = true
@@ -44,17 +59,47 @@ public class IconItemView: NSBox {
         self.labelView.wantsLayer = true
         self.labelView.layer?.cornerRadius = 3.0
         self.labelView.layer?.masksToBounds = true
-    }
-    
-    public override func hitTest(_ aPoint: NSPoint) -> NSView? {
-        // don't allow any mouse clicks for subviews in this NSBox
-        return super.hitTest(aPoint) != nil ? self : nil
+        self.labelView.allowsExpansionToolTips = true
+        
+        self.overlayView = overlayView
+        
+        updateStyle()
     }
     
     public override func mouseDown(with event: NSEvent) {
         super.mouseDown(with: event)
         if event.clickCount == 2 {
             NSApplication.shared().sendAction(#selector(collectionItemViewDoubleClick(_:)), to: nil, from: self.collectionItem)
+        }
+    }
+    
+    
+    private func updateStyle() {
+        self.iconBackgroundView.layer?.backgroundColor = self.isSelected ? NSColor.secondarySelectedControlColor.cgColor : nil
+        self.labelView.layer?.backgroundColor = self.isSelected ? NSColor.alternateSelectedControlColor.cgColor : nil
+        self.labelView.textColor = self.isSelected ? NSColor.alternateSelectedControlTextColor : nil
+        
+        if self.isBusy {
+            self.iconView.alphaValue = 0.3
+            self.iconView.contentFilters = [CIFilter(name: "CIPhotoEffectMono")!]
+            self.labelView.alphaValue = 0.6
+        }
+        else if self.isHiddenItem {
+            self.iconView.alphaValue = 0.5
+            self.iconView.contentFilters = []
+            self.labelView.alphaValue = 0.6
+        }
+        else {
+            self.iconView.alphaValue = 1.0
+            self.iconView.contentFilters = []
+            self.labelView.alphaValue = 1.0
+        }
+        
+        if self.isBusy {
+            self.overlayView.image = #imageLiteral(resourceName: "busyOverlayIcon")
+        }
+        else {
+            self.overlayView.image = nil
         }
     }
 }

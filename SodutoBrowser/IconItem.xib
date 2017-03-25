@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="16E154a" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="16E175b" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -26,14 +27,28 @@
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="HuO-iI-RRe" secondAttribute="height" multiplier="1:1" id="26s-Iz-rGD"/>
                                 </constraints>
-                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" id="F98-ww-tXl"/>
+                                <imageCell key="cell" alignment="left" animates="YES" imageScaling="proportionallyUpOrDown" id="F98-ww-tXl"/>
+                            </imageView>
+                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="AWm-8a-aaf" userLabel="Overlay Image View">
+                                <rect key="frame" x="119" y="119" width="22" height="22"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" priority="998" constant="22" id="aB8-dM-SGO"/>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="10" id="l3I-RP-AhJ"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="10" id="tPm-lY-Ixv"/>
+                                    <constraint firstAttribute="width" priority="998" constant="22" id="y0x-ZJ-MPW"/>
+                                </constraints>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="lsW-ey-Owp"/>
                             </imageView>
                         </subviews>
                         <constraints>
                             <constraint firstItem="HuO-iI-RRe" firstAttribute="top" secondItem="5sU-sT-9Cj" secondAttribute="top" constant="4" id="Fhz-HJ-CNk"/>
                             <constraint firstAttribute="bottom" secondItem="HuO-iI-RRe" secondAttribute="bottom" constant="4" id="Yz4-oN-ZTT"/>
                             <constraint firstItem="HuO-iI-RRe" firstAttribute="leading" secondItem="5sU-sT-9Cj" secondAttribute="leading" constant="4" id="cv0-NE-aHE"/>
+                            <constraint firstItem="AWm-8a-aaf" firstAttribute="height" relation="lessThanOrEqual" secondItem="HuO-iI-RRe" secondAttribute="height" multiplier="0.4" priority="999" id="mqj-t4-QqO"/>
                             <constraint firstAttribute="trailing" secondItem="HuO-iI-RRe" secondAttribute="trailing" constant="4" id="oDR-EW-Djg"/>
+                            <constraint firstItem="AWm-8a-aaf" firstAttribute="width" relation="lessThanOrEqual" secondItem="HuO-iI-RRe" secondAttribute="width" multiplier="0.4" priority="999" id="oPH-l6-BMd"/>
+                            <constraint firstItem="AWm-8a-aaf" firstAttribute="trailing" secondItem="HuO-iI-RRe" secondAttribute="trailing" id="sYg-vT-krq"/>
+                            <constraint firstItem="AWm-8a-aaf" firstAttribute="top" secondItem="HuO-iI-RRe" secondAttribute="top" id="zBB-9s-WBE"/>
                         </constraints>
                     </customView>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3lS-bo-163">

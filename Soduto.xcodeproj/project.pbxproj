@@ -33,6 +33,7 @@
 		8450274B1DAABB9900C20247 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8450274A1DAABB9900C20247 /* Configuration.swift */; };
 		8456F4A81D7DE393006EFE19 /* Pairable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456F4A71D7DE393006EFE19 /* Pairable.swift */; };
 		8456F4AA1D7DEA47006EFE19 /* DefaultPairingHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456F4A91D7DEA47006EFE19 /* DefaultPairingHandler.swift */; };
+		845847301E75D33600EE5A09 /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8458472F1E75D33600EE5A09 /* URL.swift */; };
 		845BC6C31E68C4BF00DC9B81 /* NMSSH.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 845BC6A21E68C26B00DC9B81 /* NMSSH.framework */; };
 		845BC70D1E69F00E00DC9B81 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845BC70C1E69F00E00DC9B81 /* AppDelegate.swift */; };
 		845BC70F1E69F00E00DC9B81 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 845BC70E1E69F00E00DC9B81 /* Assets.xcassets */; };
@@ -332,6 +333,7 @@
 		8454D12C1D34228D00788632 /* Soduto-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Soduto-Bridging-Header.h"; sourceTree = "<group>"; };
 		8456F4A71D7DE393006EFE19 /* Pairable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pairable.swift; sourceTree = "<group>"; };
 		8456F4A91D7DEA47006EFE19 /* DefaultPairingHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultPairingHandler.swift; sourceTree = "<group>"; };
+		8458472F1E75D33600EE5A09 /* URL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
 		845BC6971E68C26B00DC9B81 /* NMSSH.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = NMSSH.xcodeproj; path = Soduto/NMSSH/NMSSH.xcodeproj; sourceTree = "<group>"; };
 		845BC70A1E69F00E00DC9B81 /* SodutoBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SodutoBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		845BC70C1E69F00E00DC9B81 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -588,6 +590,14 @@
 			path = Core;
 			sourceTree = "<group>";
 		};
+		845847201E75D0ED00EE5A09 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				8458472F1E75D33600EE5A09 /* URL.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
 		845BC6981E68C26B00DC9B81 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -600,6 +610,7 @@
 		845BC70B1E69F00E00DC9B81 /* SodutoBrowser */ = {
 			isa = PBXGroup;
 			children = (
+				845847201E75D0ED00EE5A09 /* Utils */,
 				845BC70C1E69F00E00DC9B81 /* AppDelegate.swift */,
 				845BC70E1E69F00E00DC9B81 /* Assets.xcassets */,
 				845BC7271E6A062800DC9B81 /* BrowserWindow.xib */,
@@ -1165,6 +1176,7 @@
 				845BC7261E69F25F00DC9B81 /* BrowserWindowController.swift in Sources */,
 				8440FCF71E6CA68300E5BFA9 /* FileSystem.swift in Sources */,
 				845BC70D1E69F00E00DC9B81 /* AppDelegate.swift in Sources */,
+				845847301E75D33600EE5A09 /* URL.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

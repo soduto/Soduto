@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="16E154a" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="16E175b" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
@@ -9,7 +9,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="BrowserWindowController" customModule="SodutoBrowser" customModuleProvider="target">
             <connections>
                 <outlet property="collectionView" destination="dki-ve-wAx" id="LWH-z3-YnO"/>
-                <outlet property="iconArrayController" destination="hip-Ll-X0r" id="6Ms-AR-MCZ"/>
+                <outlet property="itemArrayController" destination="hip-Ll-X0r" id="4uH-Hn-YnN"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="HHo-aa-UPm"/>
             </connections>
         </customObject>
@@ -26,7 +26,7 @@
                 <subviews>
                     <scrollView wantsLayer="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aUX-UY-8V4">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
-                        <clipView key="contentView" drawsBackground="NO" id="2TC-u1-PIt">
+                        <clipView key="contentView" id="2TC-u1-PIt">
                             <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
@@ -79,7 +79,7 @@ AAAAAAEGA
         </window>
         <arrayController id="hip-Ll-X0r" userLabel="Icon Array Controller">
             <connections>
-                <binding destination="-2" name="contentArray" keyPath="icons" id="Lrm-Sp-tNz"/>
+                <binding destination="-2" name="contentArray" keyPath="items" id="Hyt-XI-Guq"/>
             </connections>
         </arrayController>
     </objects>
