@@ -33,6 +33,7 @@ class FileItem: NSObject, NSPasteboardReading, NSPasteboardWriting {
     var flags: Flags { return self.staticFlags.union(self.dynamicFlags) }
     var isDirectory: Bool { return self.flags.contains(.isDirectory) }
     var isHidden: Bool { return self.flags.contains(.isHidden) }
+    var isBusy: Bool { return self.flags.contains(.isBusy) }
     var canModify: Bool { return self.flags.contains(.isWritable) && !self.flags.contains(.isBusy) }
     
     init(url: URL, name: String, icon: NSImage, flags: Flags) {

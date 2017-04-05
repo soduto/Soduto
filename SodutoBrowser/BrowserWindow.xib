@@ -26,7 +26,7 @@
                 <subviews>
                     <scrollView wantsLayer="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aUX-UY-8V4">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
-                        <clipView key="contentView" id="2TC-u1-PIt">
+                        <clipView key="contentView" drawsBackground="NO" id="2TC-u1-PIt">
                             <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
@@ -47,7 +47,7 @@ AAAAAAEGA
                                         </caTransition>
                                     </animations>
                                     <collectionViewFlowLayout key="collectionViewLayout" minimumInteritemSpacing="10" minimumLineSpacing="10" id="l9Y-Vw-Ugu">
-                                        <size key="itemSize" width="100" height="100"/>
+                                        <size key="itemSize" width="120" height="120"/>
                                         <edgeInsets key="sectionInset" left="10" right="10" top="10" bottom="10"/>
                                     </collectionViewFlowLayout>
                                     <color key="primaryBackgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>

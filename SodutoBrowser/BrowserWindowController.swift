@@ -181,41 +181,41 @@ class BrowserWindowController: NSWindowController {
     }
     
     fileprivate func deleteFiles<T: Collection>(_ fileItems: T) where T.Iterator.Element == FileItem {
-        var count: Int = 0
-        var failures: [(item:FileItem, message:String)] = []
-        for fileItem in fileItems {
-            guard !fileItem.flags.contains(.isBusy) else { continue }
+        let validFileItems = fileItems.filter { !$0.isBusy }
+        let fileOperations = validFileItems.map { fileItem -> FileOperation in
             
-            fileItem.dynamicFlags.insert(.isBusy)
-            self.busyURLs.insert(fileItem.url)
-            count += 1
+            self.setBusyUrl(fileItem.url, isNew: false)
+            return self.fileSystem.delete(fileItem.url)
             
-            self.fileSystem.delete(fileItem.url){ err in
-                if let err = err {
-                    Log.error?.message("Failed to delete item at url [\(fileItem.url)]: \(err)")
-                    failures.append((item: fileItem, message:err.localizedDescription))
-                }
-                
-                self.removeBusyUrl(fileItem.url, isDeleted: err == nil)
-                
-                count -= 1
-                if count == 0 {
-                    if failures.count > 0 {
-                        self.displayAlert(forFailures: failures, operation: "delete")
-                    }
-                    self.removeDeletedItems()
-                }
-                else if let indexPath = self.indexPath(for: fileItem) {
-                    self.collectionView.reloadItems(at: [indexPath])
-                }
-            }
         }
         
-        self.collectionView.reloadItems(at: indexPaths(for: fileItems))
+        let completionOperations = fileOperations.map { fileOperation -> Operation in
+            let operation = BlockOperation {
+                
+                let succeeded = !fileOperation.isCancelled && fileOperation.error == nil
+                self.resetBusyUrl(fileOperation.source, isDeleted: succeeded)
+                
+                if let error = fileOperation.error {
+                    Log.error?.message("Failed to delete item at url [\(fileOperation.source)]: \(error)")
+                }
+            
+            }
+            operation.addDependency(fileOperation)
+            return operation
+        }
+        
+        let finalCompletionOperation = BlockOperation {
+            
+            self.removeDeletedItems()
+            
+        }
+        for op in completionOperations { finalCompletionOperation.addDependency(op) }
+        
+        OperationQueue.main.addOperations(completionOperations + [finalCompletionOperation], waitUntilFinished: false)
     }
     
     fileprivate func copyFiles<T: Collection>(_ fileItems: T, to: URL) where T.Iterator.Element == FileItem {
-        assert(fileSystem.isUnderRoot(to), "Copy destination must be on current file system.")
+        /*assert(fileSystem.isUnderRoot(to), "Copy destination must be on current file system.")
         
         var count: Int = 0
         var failures: [(item:FileItem, message:String)] = []
@@ -251,7 +251,7 @@ class BrowserWindowController: NSWindowController {
                     self.removeDeletedItems()
                 }
             }
-        }
+        }*/
         
         //self.collectionView.reloadItems(at: indexPaths(for: destFileItems))
     }
@@ -269,8 +269,29 @@ class BrowserWindowController: NSWindowController {
         alert.runModal()
     }
     
-    private func removeBusyUrl(_ url: URL, isDeleted: Bool) {
+    private func setBusyUrl(_ url: URL, isNew: Bool) {
+        self.busyURLs.insert(url)
+        
+        if isNew {
+            let fileItem = FileItem(url: url)
+            self.items.append(fileItem)
+            self.setValue(self.items, forKey: "items")
+            fileItem.dynamicFlags.insert(.isBusy)
+            if let indexPath = indexPath(for: fileItem) {
+                self.collectionView.insertItems(at: [indexPath])
+            }
+        }
+        else if let fileItem = self.items.first(where: { $0.url == url }) {
+            fileItem.dynamicFlags.insert(.isBusy)
+            if let indexPath = self.indexPath(for: fileItem) {
+                self.collectionView.reloadItems(at: [indexPath])
+            }
+        }
+    }
+    
+    private func resetBusyUrl(_ url: URL, isDeleted: Bool) {
         self.busyURLs.remove(url)
+        
         if let fileItem = self.items.first(where: { $0.url == url }) {
             if isDeleted {
                 fileItem.dynamicFlags.insert(.isDeleted)
@@ -290,13 +311,13 @@ class BrowserWindowController: NSWindowController {
             guard arrangedItems[i].flags.contains(.isDeleted) else { continue }
             viewIndices.insert(IndexPath(indexes: [0, i]))
         }
-        //self.collectionView.performBatchUpdates({
-            self.collectionView.deleteItems(at: viewIndices)
-        //}, completionHandler: nil)
         
-        // Now update items list without updating collection view
+        // Update data source
         let filteredItems = self.items.filter { !$0.flags.contains(.isDeleted) }
         self.setValue(filteredItems, forKey: "items")
+        
+        // Deleting from collection view must be performed after data source is updated
+        self.collectionView.deleteItems(at: viewIndices)
     }
     
     
