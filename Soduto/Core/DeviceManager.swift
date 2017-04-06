@@ -183,7 +183,7 @@ public class DeviceManager: ConnectionProviderDelegate, DeviceDelegate, DeviceDa
         
         self.devices.removeValue(forKey: device.id)
         self.recentDevices[device.id] = RecentDeviceInfo(device: device, timestamp: CACurrentMediaTime())
-        Timer.scheduledTimer(withTimeInterval: type(of: self).recentDevicesTimout, repeats: false) { _ in
+        _ = Timer.compatScheduledTimer(withTimeInterval: type(of: self).recentDevicesTimout, repeats: false) { _ in
             guard let info = self.recentDevices[device.id] else { return }
             guard info.timestamp + type(of: self).recentDevicesTimout < CACurrentMediaTime() else { return }
             self.recentDevices.removeValue(forKey: device.id)

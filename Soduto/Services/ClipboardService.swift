@@ -84,7 +84,7 @@ public class ClipboardService: Service {
     
     private func startMonitoring() {
         let interval = ClipboardService.monitoringInterval
-        self.monitoringTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
+        self.monitoringTimer = Timer.compatScheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
             self?.checkPasteboard()
         }
     }

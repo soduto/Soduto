@@ -92,8 +92,8 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     private let config: ConnectionConfiguration
     private let socket: GCDAsyncSocket
     private let sslCertificates: [AnyObject]
-    private let uploadQueue = DispatchQueue(label: "Payload upload queue", qos: DispatchQoS.background, autoreleaseFrequency: .workItem)
-    private let downloadQueue = DispatchQueue(label: "Payload download queue", qos: DispatchQoS.background, autoreleaseFrequency: .workItem)
+    private let uploadQueue = Connection.createDispatchQueue(withLabel: "Payload upload queue")
+    private let downloadQueue = Connection.createDispatchQueue(withLabel: "Payload download queue")
     private var packetsSending: [DataPacketSendingInfo] = []  // array of packets being sent
     private var packetsExpected: Int = 0         // count of packets to read befor stopping automatic reading, -1 for unlimited count
     private var waitingToSecure: Bool = false
@@ -599,6 +599,15 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
         }
         self.packetsSending = self.packetsSending.filter { $0.packetSent != nil || $0.uploadTask?.isStarted == true }
         return results
+    }
+    
+    private class func createDispatchQueue(withLabel label: String) -> DispatchQueue {
+        if #available(OSX 10.12, *) {
+            return DispatchQueue(label: label, qos: DispatchQoS.background, autoreleaseFrequency: .workItem)
+        }
+        else {
+            return DispatchQueue(label: label, qos: DispatchQoS.background)
+        }
     }
 
 }

@@ -69,7 +69,7 @@ public class UploadTask: NSObject, GCDAsyncSocketDelegate {
         self.delegateQueue = delegateQueue
         self.listeningSocket = GCDAsyncSocket(delegate: nil, delegateQueue: readQueue)
         let listeningSocket = self.listeningSocket
-        self.listenTimeoutTimer = Timer(timeInterval: UploadTask.listenTimeout, repeats: false, block: { _ in
+        self.listenTimeoutTimer = Timer.compatTimer(withTimeInterval: UploadTask.listenTimeout, repeats: false, block: { _ in
             // Dont check for listeningSocket.isConnected, because it is false for listening socket
             guard !listeningSocket.isDisconnected else { return }
             Log.info?.message("Serving payload for packet of type '\(packet.type)' on port \(listeningSocket.localPort) has timedout")

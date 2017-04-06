@@ -86,7 +86,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
     // MARK: Private
     
     private func checkOneAppInstanceRunning() {
-        let lockFileName = FileManager.default.temporaryDirectory.appendingPathComponent(self.config.hostDeviceId).appendingPathExtension("lock").path
+        let lockFileName = FileManager.default.compatTemporaryDirectory.appendingPathComponent(self.config.hostDeviceId).appendingPathExtension("lock").path
         if !tryLock(lockFileName) {
             let alert = NSAlert()
             alert.addButton(withTitle: "OK")

@@ -339,7 +339,6 @@ final class ContactPhoneNumber: NSObject {
         
         let keysToFetch: [CNKeyDescriptor] = [CNContactFormatter.descriptorForRequiredKeys(for: .fullName),
                                               CNContactPhoneNumbersKey as CNKeyDescriptor,
-                                              CNContactImageDataAvailableKey as CNKeyDescriptor,
                                               CNContactThumbnailImageDataKey as CNKeyDescriptor]
         let request = CNContactFetchRequest(keysToFetch: keysToFetch)
         request.unifyResults = true
@@ -442,7 +441,6 @@ extension ContactPhoneNumber {
         do {
             let keysToFetch: [CNKeyDescriptor] = [CNContactFormatter.descriptorForRequiredKeys(for: .fullName),
                                                   CNContactPhoneNumbersKey as CNKeyDescriptor,
-                                                  CNContactImageDataAvailableKey as CNKeyDescriptor,
                                                   CNContactThumbnailImageDataKey as CNKeyDescriptor]
             let store = CNContactStore()
             let request = CNContactFetchRequest(keysToFetch: keysToFetch)

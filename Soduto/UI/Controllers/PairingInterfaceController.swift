@@ -42,7 +42,7 @@ public class PairingInterfaceController: UserNotificationActionHandler {
         notification.identifier = "com.soduto.pairinginterfacecontroller.device.\(device.id)"
         NSUserNotificationCenter.default.scheduleNotification(notification)
         
-        Timer.scheduledTimer(withTimeInterval: DefaultPairingHandler.pairingTimoutInterval, repeats: false) { _ in
+        _ = Timer.compatScheduledTimer(withTimeInterval: DefaultPairingHandler.pairingTimoutInterval, repeats: false) { _ in
             NSUserNotificationCenter.default.removeDeliveredNotification(notification)
         }
     }

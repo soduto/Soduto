@@ -199,18 +199,22 @@ public class CertificateUtils {
         }
     }
     
-    @available(OSX 10.12, *)
     public class func deleteKey(_ key: SecKey) throws {
-        if let attrs = SecKeyCopyAttributes(key) as? [String:AnyObject] {
-            let appLabel = attrs[kSecAttrApplicationLabel as String] as? Data
-            let query: [String: AnyObject] = [
-                kSecClass as String: kSecClassKey,
-                kSecAttrApplicationLabel as String: appLabel as AnyObject
-            ]
-            let status = SecItemDelete(query as CFDictionary)
-            if status != noErr && status != errSecItemNotFound {
-                throw CertificateError.deleteItemFailure(status: status)
+        if #available(OSX 10.12, *) {
+            if let attrs = SecKeyCopyAttributes(key) as? [String:AnyObject] {
+                let appLabel = attrs[kSecAttrApplicationLabel as String] as? Data
+                let query: [String: AnyObject] = [
+                    kSecClass as String: kSecClassKey,
+                    kSecAttrApplicationLabel as String: appLabel as AnyObject
+                ]
+                let status = SecItemDelete(query as CFDictionary)
+                if status != noErr && status != errSecItemNotFound {
+                    throw CertificateError.deleteItemFailure(status: status)
+                }
             }
+        }
+        else {
+            try deleteItem(key, secClass: kSecClassKey)
         }
     }
     
