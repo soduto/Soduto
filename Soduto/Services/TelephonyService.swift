@@ -319,7 +319,7 @@ public class TelephonyService: Service, UserNotificationActionHandler {
         }
         packets.append(packet)
         
-        let timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { _ in
+        let timer = Timer.compatScheduledTimer(withTimeInterval: 5.0, repeats: false) { _ in
             do {
                 guard let (prevPackets, _) = self.pendingSMSPackets.removeValue(forKey: id) else { return }
                 

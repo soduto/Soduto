@@ -10,7 +10,7 @@ import Foundation
 import Cocoa
 
 /// TODO: Finish or remove
-public class MenuView: NSButton {
+/*public class MenuView: NSButton {
     
     // MARK: Properties
     
@@ -104,4 +104,4 @@ public class MenuView: NSButton {
         let viewMouseLocation = self.convert(mouseLocation, from: nil)
         return self.bounds.contains(viewMouseLocation)
     }
-}
+}*/

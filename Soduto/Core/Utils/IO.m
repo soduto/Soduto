@@ -9,10 +9,10 @@
 #import "IO.h"
 
 BOOL tryLock(NSString *path) {
-    int fd = open([path UTF8String], O_CREAT);
-    if (fd == -1) {
-        // something failed, just give up
-        return YES;
+    int fd = open([path UTF8String], O_CREAT | O_EXCL, S_IRUSR | S_IWUSR);
+    if (fd == -1 && errno != EEXIST) {
+        // something failed
+        return NO;
     }
     close(fd);
     
@@ -20,6 +20,9 @@ BOOL tryLock(NSString *path) {
     if (fd == -1 && errno == EWOULDBLOCK) {
         // file is locked
         return NO;
+    }
+    if (fd == -1) {
+        NSLog(@"errno=%d", errno);
     }
     return YES;
 }

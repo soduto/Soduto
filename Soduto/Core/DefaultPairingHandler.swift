@@ -134,7 +134,7 @@ public class DefaultPairingHandler: ConnectionDataPacketHandler, Pairable {
             if self.pairingStatus == .Requested || self.pairingStatus == .RequestedByPeer {
                 let status = self.pairingStatus
                 let timeoutInterval = DefaultPairingHandler.pairingTimoutInterval
-                self.pairingTimeout = Timer.scheduledTimer(withTimeInterval: timeoutInterval, repeats: false) { [weak self] (timer) in
+                self.pairingTimeout = Timer.compatScheduledTimer(withTimeInterval: timeoutInterval, repeats: false) { [weak self] (timer) in
                     guard let strongSelf = self else { return }
                     // Every change to pairingStatus should invalidate previous timeout, 
                     // so if we are here, pairingStatus should still be the same

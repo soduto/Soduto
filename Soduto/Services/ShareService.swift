@@ -387,7 +387,7 @@ public class ShareService: NSObject, Service, DownloadTaskDelegate, UserNotifica
         NSUserNotificationCenter.default.scheduleNotification(notification)
         
         if !succeeded {
-            Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { _ in
+            _ = Timer.compatScheduledTimer(withTimeInterval: 5.0, repeats: false) { _ in
                 NSUserNotificationCenter.default.removeDeliveredNotification(notification)
             }
         }

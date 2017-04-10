@@ -113,7 +113,7 @@ public class PingService: Service {
         notification.identifier = "com.soduto.pingservice.ping.device.\(device.id)"
         NSUserNotificationCenter.default.scheduleNotification(notification)
         
-        Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { _ in
+        _ = Timer.compatScheduledTimer(withTimeInterval: 5.0, repeats: false) { _ in
             NSUserNotificationCenter.default.removeDeliveredNotification(notification)
         }
     }

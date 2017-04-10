@@ -21,6 +21,8 @@
 		8435AEFF1E26DD27005CD719 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8435AEFE1E26DD27005CD719 /* Assets.xcassets */; };
 		8435AF021E26DD27005CD719 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8435AF001E26DD27005CD719 /* MainMenu.xib */; };
 		8435AF071E26DD83005CD719 /* SodutoLauncher.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8435AEF61E26DD27005CD719 /* SodutoLauncher.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		8436DEF81E956DA000529362 /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8436DEF71E956DA000529362 /* Timer.swift */; };
+		8436DEFA1E958ABA00529362 /* FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8436DEF91E958ABA00529362 /* FileManager.swift */; };
 		8438A9261E45145F00922155 /* StatusBarApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8438A9251E45145F00922155 /* StatusBarApplication.swift */; };
 		843B67041DF1E64A00289EC9 /* ShareService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843B67031DF1E64A00289EC9 /* ShareService.swift */; };
 		843B670A1DF2CEC400289EC9 /* DownloadTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843B67091DF2CEC400289EC9 /* DownloadTask.swift */; };
@@ -319,6 +321,8 @@
 		8435AF011E26DD27005CD719 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		8435AF031E26DD27005CD719 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8435AF081E26DE05005CD719 /* SodutoLauncher.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SodutoLauncher.entitlements; sourceTree = "<group>"; };
+		8436DEF71E956DA000529362 /* Timer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Timer.swift; sourceTree = "<group>"; };
+		8436DEF91E958ABA00529362 /* FileManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileManager.swift; sourceTree = "<group>"; };
 		8438A9251E45145F00922155 /* StatusBarApplication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusBarApplication.swift; sourceTree = "<group>"; };
 		843B67031DF1E64A00289EC9 /* ShareService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareService.swift; sourceTree = "<group>"; };
 		843B67091DF2CEC400289EC9 /* DownloadTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadTask.swift; sourceTree = "<group>"; };
@@ -646,6 +650,8 @@
 				84FFDA1F1E1D8D0D0069AC9A /* SimplePing.h */,
 				84FFDA291E1D8D370069AC9A /* SimplePing.m */,
 				843B670B1DF3087800289EC9 /* URL.swift */,
+				8436DEF71E956DA000529362 /* Timer.swift */,
+				8436DEF91E958ABA00529362 /* FileManager.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1136,6 +1142,7 @@
 				849961C61D5728B2002B893A /* ExceptionUtils.m in Sources */,
 				8456F4AA1D7DEA47006EFE19 /* DefaultPairingHandler.swift in Sources */,
 				8492379F1DE1C87600D95BBA /* ServiceActionMenuItem.swift in Sources */,
+				8436DEFA1E958ABA00529362 /* FileManager.swift in Sources */,
 				843B670C1DF3087800289EC9 /* URL.swift in Sources */,
 				8492379D1DE1C55900D95BBA /* DeviceMenu.swift in Sources */,
 				8499620E1D5728EE002B893A /* Test_Assertions.m in Sources */,
@@ -1145,6 +1152,7 @@
 				8456F4A81D7DE393006EFE19 /* Pairable.swift in Sources */,
 				843B67041DF1E64A00289EC9 /* ShareService.swift in Sources */,
 				84FA45D81DDDCB3D00EF3992 /* ConnectionProvider.swift in Sources */,
+				8436DEF81E956DA000529362 /* Timer.swift in Sources */,
 				842B50571E4295D200969AA7 /* UnifiedTitlebarWindow.swift in Sources */,
 				843E170E1E25851D001D0444 /* IO.m in Sources */,
 				8468BE001DEB7F97003B9925 /* NetworkUtils.swift in Sources */,
@@ -1382,7 +1390,7 @@
 				);
 				INFOPLIST_FILE = Soduto/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=500";
 				PRODUCT_BUNDLE_IDENTIFIER = com.soduto.Soduto;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1413,7 +1421,7 @@
 				);
 				INFOPLIST_FILE = Soduto/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=500";
 				PRODUCT_BUNDLE_IDENTIFIER = com.soduto.Soduto;
 				PRODUCT_NAME = "$(TARGET_NAME)";

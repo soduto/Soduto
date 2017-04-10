@@ -137,7 +137,7 @@ public class UserNotificationManager: NSObject, NSUserNotificationCenterDelegate
         guard self.fastNotifications.count > 0 else { return }
         guard self.fastTimer == nil else { return }
         
-        self.fastTimer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true) { timer in
+        self.fastTimer = Timer.compatScheduledTimer(withTimeInterval: 0.3, repeats: true) { timer in
             let deliveredNotifications = NSUserNotificationCenter.default.deliveredNotifications
             for (id, notification) in self.fastNotifications {
                 if let n = deliveredNotifications.first(where: { n in n.identifier == id }) {
@@ -159,7 +159,7 @@ public class UserNotificationManager: NSObject, NSUserNotificationCenterDelegate
         guard self.slowNotifications.count > 0 else { return }
         guard self.slowTimer == nil else { return }
         
-        self.slowTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { timer in
+        self.slowTimer = Timer.compatScheduledTimer(withTimeInterval: 5.0, repeats: true) { timer in
             let deliveredNotifications = NSUserNotificationCenter.default.deliveredNotifications
             for (id, notification) in self.slowNotifications {
                 guard !deliveredNotifications.contains(where: { n in n.identifier == id }) else { continue }
