@@ -23,6 +23,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         // File menu
         static let deleteFiles: Int = 3001
+        static let newFolder: Int = 3002
     }
 
     private var browserWindowController: BrowserWindowController?

@@ -37,14 +37,14 @@ class FileOperation: BlockOperation {
         case deleted
     }
     
-    let source: URL
+    let source: URL?
     let destination: URL?
     var sourceState: FileState = .unchanged
     var destinationState: FileState = .unchanged
     var error: Error?
     var errorDescription: String?
     
-    init(source: URL, destination: URL? = nil) {
+    init(source: URL? = nil, destination: URL? = nil) {
         self.source = source
         self.destination = destination
     }
@@ -55,6 +55,15 @@ protocol FileSystem: class {
     var name: String { get }
     var rootUrl: URL { get }
     var places: [Place] { get }
+    
+    /// Basic check if url can be deleted by this file system. It does not guarantee that operation will succeed, however.
+    func canDelete(_ url: URL) -> Bool
+    /// Basic check if copy is supported by this file system. It does not guarantee that operation will succeed, however.
+    func canCopy(_ srcUrl: URL, to destUrl: URL) -> Bool
+    /// Basic check if move is supported by this file system. It does not guarantee that operation will succeed, however.
+    func canMove(_ srcUrl: URL, to destUrl: URL) -> Bool
+    /// Basic check if creating folder at provided URL is supported by this file system. It does not guarantee that operation will succeed, however.
+    func canCreateFolder(_ url: URL) -> Bool
     
     /// Read file list for provided URL. URL must reside under rootUrl.
     func load(_ url: URL, completionHandler: @escaping ([FileItem]?, Error?)->Void)
@@ -68,6 +77,9 @@ protocol FileSystem: class {
     
     /// Move file from one place to another. Both URLs must reside under rootUrl
     func move(_ srcUrl: URL, to destUrl: URL) -> FileOperation
+    
+    /// Create folder at specified url, which must be under file system root
+    func createFolder(_ url: URL) -> FileOperation
 }
 
 extension FileSystem {
@@ -82,6 +94,62 @@ extension FileSystem {
     }
     
     func isUnderRoot(_ url: URL) -> Bool {
-        return url.isSubpathOf(self.rootUrl, strict: true)
+        return url.isUnder(self.rootUrl)
+    }
+    
+    func isValid(_ url: URL) -> Bool {
+        return url.isUnder(self.rootUrl) || url == self.rootUrl
+    }
+    
+    func canDelete(_ fileItem: FileItem) -> Bool {
+        return fileItem.canModify && canDelete(fileItem.url)
+    }
+    
+    func canDelete(_ urls: [URL]) -> Bool {
+        return urls.every { return canDelete($0) }
+    }
+    
+    func canDelete(_ fileItems: [FileItem]) -> Bool {
+        return fileItems.every { return canDelete($0) }
+    }
+    
+    func canCopy(_ fileItem: FileItem, to destURL: URL) -> Bool {
+        return canCopy(fileItem.url, to: destURL)
+    }
+    
+    func canCopy(_ srcFileItem: FileItem, to destFileItem: FileItem) -> Bool {
+        return destFileItem.canModify && canCopy(srcFileItem, to: destFileItem.url)
+    }
+    
+    func canCopy(_ urls: [URL], to destURL: URL) -> Bool {
+        return urls.every { return canCopy($0, to: destURL) }
+    }
+    
+    func canCopy(_ fileItems: [FileItem], to destURL: URL) -> Bool {
+        return fileItems.every { return canCopy($0, to: destURL) }
+    }
+    
+    func canCopy(_ fileItems: [FileItem], to destFileItem: FileItem) -> Bool {
+        return destFileItem.canModify && fileItems.every { return canCopy($0, to: destFileItem.url) }
+    }
+    
+    func canMove(_ fileItem: FileItem, to destURL: URL) -> Bool {
+        return fileItem.canModify && canMove(fileItem.url, to: destURL)
+    }
+    
+    func canMove(_ srcFileItem: FileItem, to destFileItem: FileItem) -> Bool {
+        return destFileItem.canModify && canMove(srcFileItem, to: destFileItem.url)
+    }
+    
+    func canMove(_ urls: [URL], to destURL: URL) -> Bool {
+        return urls.every { return canMove($0, to: destURL) }
+    }
+    
+    func canMove(_ fileItems: [FileItem], to destURL: URL) -> Bool {
+        return fileItems.every { return canMove($0, to: destURL) }
+    }
+    
+    func canMove(_ fileItems: [FileItem], to destFileItem: FileItem) -> Bool {
+        return destFileItem.canModify && fileItems.every { return canMove($0, to: destFileItem.url) }
     }
 }

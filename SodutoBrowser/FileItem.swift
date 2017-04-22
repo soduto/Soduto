@@ -34,7 +34,9 @@ class FileItem: NSObject, NSPasteboardReading, NSPasteboardWriting {
     var isDirectory: Bool { return self.flags.contains(.isDirectory) }
     var isHidden: Bool { return self.flags.contains(.isHidden) }
     var isBusy: Bool { return self.flags.contains(.isBusy) }
-    var canModify: Bool { return self.flags.contains(.isWritable) && !self.flags.contains(.isBusy) }
+    var isDeleted: Bool { return self.flags.contains(.isDeleted) }
+    var isWritable: Bool { return self.flags.contains(.isWritable) }
+    var canModify: Bool { return self.isWritable && !self.isBusy && !self.isDeleted }
     
     init(url: URL, name: String, icon: NSImage, flags: Flags) {
         self.url = url
@@ -65,7 +67,7 @@ class FileItem: NSObject, NSPasteboardReading, NSPasteboardWriting {
         }
         else {
             let name = url.lastPathComponent
-            var flags: Flags = []
+            var flags: Flags = [.isReadable, .isWritable]
             if url.hasDirectoryPath { flags.insert(.isDirectory) }
             if url.lastPathComponent.hasPrefix(".") { flags.insert(.isHidden) }
             let fileType: String = flags.contains(.isDirectory) ? String(kUTTypeDirectory) : url.pathExtension
@@ -79,16 +81,18 @@ class FileItem: NSObject, NSPasteboardReading, NSPasteboardWriting {
     // MARK: NSPasteboardWriting
     
     public func writableTypes(for pasteboard: NSPasteboard) -> [String] {
+        return [ kPasteboardTypeFileURLPromise as String, kPasteboardTypeFilePromiseContent as String ]
+        
         if self.url.isFileURL {
             if self.isDirectory {
-                return [ kUTTypeDirectory as String, kUTTypeFileURL as String, kUTTypeURL as String ]
+                return [ NSFilesPromisePboardType, kUTTypeDirectory as String, kUTTypeFileURL as String, kUTTypeURL as String ]
             }
             else {
-                return [ kUTTypeFileURL as String, kUTTypeURL as String ]
+                return [ NSFilesPromisePboardType, kUTTypeFileURL as String, kUTTypeURL as String ]
             }
         }
         else {
-            return [ kUTTypeURL as String ]
+            return [ NSFilesPromisePboardType, kUTTypeURL as String ]
         }
     }
     
@@ -102,6 +106,12 @@ class FileItem: NSObject, NSPasteboardReading, NSPasteboardWriting {
             return (self.url as NSURL).pasteboardPropertyList(forType: type)
         case String(kUTTypeURL):
             return (self.url as NSURL).pasteboardPropertyList(forType: type)
+        case NSFilesPromisePboardType:
+            return kUTTypeData
+        case String(kPasteboardTypeFilePromiseContent):
+            return  kUTTypeBMP
+        case String(kPasteboardTypeFileURLPromise):
+            return nil
         default:
             return nil
         }
@@ -115,23 +125,12 @@ class FileItem: NSObject, NSPasteboardReading, NSPasteboardWriting {
     }
     
     public static func readingOptions(forType type: String, pasteboard: NSPasteboard) -> NSPasteboardReadingOptions {
-        switch type {
-        case String(kUTTypeURL): return .asString
-        default:
-            return .asData
-        }
+        return NSURL.readingOptions(forType: type, pasteboard: pasteboard)
     }
     
     public required convenience init?(pasteboardPropertyList propertyList: Any, ofType type: String) {
-        switch type {
-        
-        case String(kUTTypeURL):
-            guard let url = NSURL(pasteboardPropertyList: propertyList, ofType: type) as? URL else { return nil }
-            self.init(url: url)
-            
-        default: return nil
-            
-        }
+        guard let url = NSURL(pasteboardPropertyList: propertyList, ofType: type) as? URL else { return nil }
+        self.init(url: url)
     }
     
 }

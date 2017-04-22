@@ -65,7 +65,7 @@ class SftpMounter {
         self.requestTimer?.invalidate()
         
         self.device.send(DataPacket.sftpStartBrowsingPacket())
-        self.requestTimer = Timer.scheduledTimer(withTimeInterval: type(of: self).requestTimeoutInterval, repeats: false) { [weak self] _ in
+        self.requestTimer = Timer.compatScheduledTimer(withTimeInterval: type(of: self).requestTimeoutInterval, repeats: false) { [weak self] _ in
             guard let strongSelf = self else { return }
             strongSelf.requestTimer = nil
             strongSelf.delegate?.sftpMounterDidFailToMount(strongSelf)

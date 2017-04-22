@@ -24,7 +24,7 @@ class BrowserWindowController: NSWindowController {
     
     public var canGoBack: Bool { return self.window != nil && self.backHistory.count > 0 }
     public var canGoForward: Bool { return self.window != nil && self.forwardHistory.count > 0 }
-    public var canGoUp: Bool { return self.window != nil && self.url.isSubpathOf(self.fileSystem.rootUrl, strict: true) }
+    public var canGoUp: Bool { return self.window != nil && self.fileSystem.isUnderRoot(url) }
     
     public var isHiddenFilesVisible: Bool = UserDefaults.standard.bool(forKey: SettingKeys.showHiddenFiles) {
         didSet {
@@ -44,7 +44,10 @@ class BrowserWindowController: NSWindowController {
     @IBOutlet weak var collectionView: NSCollectionView!
     @IBOutlet weak var itemArrayController: NSArrayController!
     @objc private var items: [FileItem] = [] {
-        didSet { updateBusyStatus(for: self.items) }
+        didSet {
+            updateBusyItems()
+            self.itemArrayController.content = self.items
+        }
     }
     fileprivate var arrangedItems: [FileItem] {
         guard let items = self.itemArrayController.arrangedObjects as? [FileItem] else { assertionFailure("arrangedObjects could not be converted into array of FileItem"); return [] }
@@ -62,7 +65,7 @@ class BrowserWindowController: NSWindowController {
     fileprivate static let dropTypes: [String] = [ kUTTypeFileURL as String ]
     
     
-    // MARK: Init / Deinit
+    // MARK: Setup / Cleanup
     
     init(fileSystem: FileSystem) {
         // Setup user settings default values
@@ -84,7 +87,6 @@ class BrowserWindowController: NSWindowController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
     public override func windowDidLoad() {
         super.windowDidLoad()
         
@@ -99,8 +101,10 @@ class BrowserWindowController: NSWindowController {
     }
     
     
+    // MARK: Contents handling
+    
     private func goTo(_ url: URL, updateHistory: Bool = true) {
-        guard url.isSubpathOf(self.fileSystem.rootUrl, strict: false) else { return }
+        guard self.fileSystem.isValid(url) else { return }
         
         if updateHistory {
             self.backHistory.append(self.url)
@@ -114,11 +118,11 @@ class BrowserWindowController: NSWindowController {
     
     private func loadContents() {
         let url = self.url
-        self.setValue([], forKey: "items")
+        self.items = []
         self.collectionView.reloadData()
         self.fileSystem.load(url) { (items, error) in
             if let items = items {
-                self.setValue(items, forKey: "items")
+                self.items = items
                 self.collectionView.reloadData()
             }
             else {
@@ -145,12 +149,27 @@ class BrowserWindowController: NSWindowController {
         self.collectionView.reloadData()
     }
     
-    private func updateBusyStatus(for items: [FileItem]) {
-        for item in items {
+    private func updateBusyItems() {
+        var usedURLs = Set<URL>()
+        for item in self.items {
             if self.busyURLs.contains(item.url) {
                 item.dynamicFlags.insert(.isBusy)
+                usedURLs.insert(item.url)
             }
         }
+        
+        let unusedBusyURLs = busyURLs.subtracting(usedURLs)
+        for busyURL in unusedBusyURLs {
+            guard busyURL.deletingLastPathComponent() == self.url else { continue }
+            let fileItem = FileItem(url: busyURL)
+            self.items.append(fileItem)
+        }
+    }
+    
+    fileprivate func isValid(_ indexPath: IndexPath) -> Bool {
+        guard indexPath.section == 0 else { return false }
+        guard indexPath.item < items.count else { return false }
+        return true
     }
     
     fileprivate func fileItem(at indexPath: IndexPath) -> FileItem? {
@@ -158,6 +177,10 @@ class BrowserWindowController: NSWindowController {
         let items = self.arrangedItems
         guard indexPath.item < items.count else { assertionFailure("index path with (\(indexPath.section), \(indexPath.item)) is out of arrangedItems bounds (0..<\(items.count))"); return nil }
         return items[indexPath.item]
+    }
+    
+    fileprivate func fileItems(at indexPaths: Set<IndexPath>) -> [FileItem] {
+        return indexPaths.flatMap { return self.fileItem(at: $0) }
     }
     
     fileprivate func indexPath(for fileItem: FileItem) -> IndexPath? {
@@ -180,7 +203,9 @@ class BrowserWindowController: NSWindowController {
         return paths
     }
     
-    fileprivate func deleteFiles<T: Collection>(_ fileItems: T) where T.Iterator.Element == FileItem {
+    @discardableResult fileprivate func deleteFiles<T: Collection>(_ fileItems: T) -> [FileOperation] where T.Iterator.Element == FileItem {
+        assert(!fileItems.contains(where: { $0.isBusy }), "Can not delete busy files.")
+        
         let validFileItems = fileItems.filter { !$0.isBusy }
         let fileOperations = validFileItems.map { fileItem -> FileOperation in
             
@@ -192,8 +217,10 @@ class BrowserWindowController: NSWindowController {
         let completionOperations = fileOperations.map { fileOperation -> Operation in
             let operation = BlockOperation {
                 
+                guard let srcUrl = fileOperation.source else { assertionFailure("Expected non-nil source for delete operation (\(fileOperation))."); return }
+                
                 let succeeded = !fileOperation.isCancelled && fileOperation.error == nil
-                self.resetBusyUrl(fileOperation.source, isDeleted: succeeded)
+                self.resetBusyUrl(srcUrl, isDeleted: succeeded)
                 
                 if let error = fileOperation.error {
                     Log.error?.message("Failed to delete item at url [\(fileOperation.source)]: \(error)")
@@ -212,48 +239,99 @@ class BrowserWindowController: NSWindowController {
         for op in completionOperations { finalCompletionOperation.addDependency(op) }
         
         OperationQueue.main.addOperations(completionOperations + [finalCompletionOperation], waitUntilFinished: false)
+        
+        return fileOperations
     }
     
-    fileprivate func copyFiles<T: Collection>(_ fileItems: T, to: URL) where T.Iterator.Element == FileItem {
-        /*assert(fileSystem.isUnderRoot(to), "Copy destination must be on current file system.")
+    @discardableResult fileprivate func copyFiles<T: Collection>(_ fileItems: T, to: URL) -> [FileOperation] where T.Iterator.Element == FileItem {
+        assert(!fileItems.contains(where: { $0.isBusy }), "Can not copy busy files.")
+        assert(fileSystem.isUnderRoot(to) || !fileItems.contains(where: { !fileSystem.isUnderRoot($0.url) }), "Copy sources or destination must be on current file system.")
         
-        var count: Int = 0
-        var failures: [(item:FileItem, message:String)] = []
-        for fileItem in fileItems {
-            guard !fileItem.flags.contains(.isBusy) else { continue }
+        let validFileItems = fileItems.filter { !$0.isBusy }
+        let fileOperations = validFileItems.map { fileItem -> FileOperation in
             
             let destUrl = to.appendingPathComponent(fileItem.url.lastPathComponent)
-            self.busyURLs.insert(destUrl)
-            if to == self.url {
-                let destFileItem = FileItem(url: destUrl)
-                destFileItem.dynamicFlags.insert(.isBusy)
-                self.items.append(destFileItem)
-                self.setValue(self.items, forKey: "items")
-                if let indexPath = self.indexPath(for: destFileItem) {
-                    self.collectionView.insertItems(at: [indexPath])
-                }
-            }
-            count += 1
+            self.setBusyUrl(fileItem.url, isNew: false)
+            self.setBusyUrl(destUrl, isNew: true)
+            return self.fileSystem.copy(fileItem.url, to: destUrl)
             
-            self.fileSystem.copy(fileItem.url, to: destUrl) { err in
-                if let err = err {
-                    Log.error?.message("Failed to copy item at url [\(fileItem.url)] to [\(destUrl)]: \(err)")
-                    failures.append((item: fileItem, message:err.localizedDescription))
-                }
-                
-                self.removeBusyUrl(fileItem.url, isDeleted: err != nil)
-                
-                count -= 1
-                if count == 0 {
-                    if failures.count > 0 {
-                        self.displayAlert(forFailures: failures, operation: "copy")
-                    }
-                    self.removeDeletedItems()
-                }
-            }
-        }*/
+        }
         
-        //self.collectionView.reloadItems(at: indexPaths(for: destFileItems))
+        let completionOperations = fileOperations.map { fileOperation -> Operation in
+            let operation = BlockOperation {
+                
+                guard let srcUrl = fileOperation.source else { assertionFailure("Expected non-nil source for copy operation (\(fileOperation))."); return }
+                guard let destUrl = fileOperation.destination else { assertionFailure("Expected non-nil destination for copy operation (\(fileOperation))."); return }
+                
+                let succeeded = !fileOperation.isCancelled && fileOperation.error == nil
+                self.resetBusyUrl(srcUrl, isDeleted: false)
+                self.resetBusyUrl(destUrl, isDeleted: !succeeded)
+                
+                if let error = fileOperation.error {
+                    Log.error?.message("Failed to copy item from url [\(fileOperation.source) to url [\(destUrl)]]: \(error)")
+                }
+                
+            }
+            operation.addDependency(fileOperation)
+            return operation
+        }
+        
+        let finalCompletionOperation = BlockOperation {
+            
+            self.removeDeletedItems()
+            
+        }
+        for op in completionOperations { finalCompletionOperation.addDependency(op) }
+        
+        OperationQueue.main.addOperations(completionOperations + [finalCompletionOperation], waitUntilFinished: false)
+        
+        return fileOperations
+    }
+    
+    @discardableResult fileprivate func moveFiles<T: Collection>(_ fileItems: T, to: URL) -> [FileOperation] where T.Iterator.Element == FileItem {
+        assert(!fileItems.contains(where: { $0.isBusy }), "Can not move busy files.")
+        assert(!fileItems.contains(where: { !fileSystem.isUnderRoot($0.url) }), "Move sources must be on current file system.")
+        assert(fileSystem.isUnderRoot(to), "Move destination must be on current file system.")
+        
+        let validFileItems = fileItems.filter { !$0.isBusy }
+        let fileOperations = validFileItems.map { fileItem -> FileOperation in
+            
+            let destUrl = to.appendingPathComponent(fileItem.url.lastPathComponent)
+            self.setBusyUrl(fileItem.url, isNew: false)
+            self.setBusyUrl(destUrl, isNew: true)
+            return self.fileSystem.move(fileItem.url, to: destUrl)
+            
+        }
+        
+        let completionOperations = fileOperations.map { fileOperation -> Operation in
+            let operation = BlockOperation {
+                
+                guard let srcUrl = fileOperation.source else { assertionFailure("Expected non-nil source for copy operation (\(fileOperation))."); return }
+                guard let destUrl = fileOperation.destination else { assertionFailure("Expected non-nil destination for move operation (\(fileOperation))."); return }
+                
+                let succeeded = !fileOperation.isCancelled && fileOperation.error == nil
+                self.resetBusyUrl(srcUrl, isDeleted: succeeded)
+                self.resetBusyUrl(destUrl, isDeleted: !succeeded)
+                
+                if let error = fileOperation.error {
+                    Log.error?.message("Failed to move item from url [\(fileOperation.source) to url [\(destUrl)]]: \(error)")
+                }
+                
+            }
+            operation.addDependency(fileOperation)
+            return operation
+        }
+        
+        let finalCompletionOperation = BlockOperation {
+            
+            self.removeDeletedItems()
+            
+        }
+        for op in completionOperations { finalCompletionOperation.addDependency(op) }
+        
+        OperationQueue.main.addOperations(completionOperations + [finalCompletionOperation], waitUntilFinished: false)
+        
+        return fileOperations
     }
     
     private func displayAlert(forFailures failures: [(item:FileItem, message:String)], operation: String) {
@@ -269,13 +347,14 @@ class BrowserWindowController: NSWindowController {
         alert.runModal()
     }
     
+    /// Mark url as busy, add corresponing item to collection view if it is a new item
     private func setBusyUrl(_ url: URL, isNew: Bool) {
         self.busyURLs.insert(url)
         
-        if isNew {
+        if isNew && self.url == url.deletingLastPathComponent() {
             let fileItem = FileItem(url: url)
             self.items.append(fileItem)
-            self.setValue(self.items, forKey: "items")
+            self.itemArrayController.content = self.items
             fileItem.dynamicFlags.insert(.isBusy)
             if let indexPath = indexPath(for: fileItem) {
                 self.collectionView.insertItems(at: [indexPath])
@@ -289,6 +368,7 @@ class BrowserWindowController: NSWindowController {
         }
     }
     
+    /// Remove busy mark from url, mark it as deleted or restore to normal
     private func resetBusyUrl(_ url: URL, isDeleted: Bool) {
         self.busyURLs.remove(url)
         
@@ -303,6 +383,7 @@ class BrowserWindowController: NSWindowController {
         }
     }
     
+    /// Remove items that are marked as deleted
     private func removeDeletedItems() {
         // To avoid full reload of collection view, find positions of deleted items and remove only those items
         var viewIndices: Set<IndexPath> = []
@@ -314,7 +395,7 @@ class BrowserWindowController: NSWindowController {
         
         // Update data source
         let filteredItems = self.items.filter { !$0.flags.contains(.isDeleted) }
-        self.setValue(filteredItems, forKey: "items")
+        self.items = filteredItems
         
         // Deleting from collection view must be performed after data source is updated
         self.collectionView.deleteItems(at: viewIndices)
@@ -411,27 +492,30 @@ extension BrowserWindowController: NSCollectionViewDelegate {
     
     /* This method is called after it has been determined that a drag should begin, but before the drag has been started. To refuse the drag, return NO. To start the drag, declare the pasteboard types that you support with -[NSPasteboard declareTypes:owner:], place your data for the items at the given index paths on the pasteboard, and return YES from the method. The drag image and other drag related information will be set up and provided by the view once this call returns YES. You need to implement this method, or -collectionView:pasteboardWriterForItemAtIndexPath:, for your collection view to be a drag source.
      */
-//    public func collectionView(_ collectionView: NSCollectionView, writeItemsAt indexPaths: Set<IndexPath>, to pasteboard: NSPasteboard) -> Bool {
-//        
-//        guard let allFileItems = self.iconArrayController.arrangedObjects as? [FileItem] else { return false }
-//        
-//        let fileItems = indexPaths.map { return allFileItems[$0.item] }
-//        
-//        pasteboard.clearContents()
-//        pasteboard.writeObjects(fileItems)
-//        
-//        return true
-//    }
+    public func collectionView(_ collectionView: NSCollectionView, writeItemsAt indexPaths: Set<IndexPath>, to pasteboard: NSPasteboard) -> Bool {
+        let fileItems = self.fileItems(at: indexPaths)
+        pasteboard.clearContents()
+        pasteboard.writeObjects(fileItems)
+        
+        return true
+    }
     
     
     /* The delegate can support file promise drags by adding NSFilesPromisePboardType to the pasteboard in -collectionView:writeItemsAtIndexPaths:toPasteboard:. NSCollectionView implements -namesOfPromisedFilesDroppedAtDestination: to return the results of this delegate method. This method should return an array of filenames (not full paths) for the created files. The URL represents the drop location. For more information on file promise dragging, see documentation for the NSDraggingSource protocol and -namesOfPromisedFilesDroppedAtDestination:. You do not need to implement this method for your collection view to be a drag source.
      */
-//    public func collectionView(_ collectionView: NSCollectionView, namesOfPromisedFilesDroppedAtDestination dropURL: URL, forDraggedItemsAt indexPaths: Set<IndexPath>) -> [String] { }
+    public func collectionView(_ collectionView: NSCollectionView, namesOfPromisedFilesDroppedAtDestination dropURL: URL, forDraggedItemsAt indexPaths: Set<IndexPath>) -> [String] {
+        let fileItems = self.fileItems(at: indexPaths)
+        guard fileItems.count > 0 else { return [] }
+        guard dropURL.isFileURL else { return [] }
+        
+        let operations = copyFiles(fileItems, to: dropURL)
+        
+        return operations.flatMap { return $0.destination?.lastPathComponent }
+    }
     
     
     /* Allows the delegate to construct a custom dragging image for the items being dragged. 'indexPaths' contains the (section,item) identification of the items being dragged. 'event' is a reference to the  mouse down event that began the drag. 'dragImageOffset' is an in/out parameter. This method will be called with dragImageOffset set to NSZeroPoint, but it can be modified to re-position the returned image. A dragImageOffset of NSZeroPoint will cause the image to be centered under the mouse. You can safely call -[NSCollectionView draggingImageForItemsAtIndexPaths:withEvent:offset:] from within this method. You do not need to implement this method for your collection view to be a drag source.
      */
-//    @available(OSX 10.11, *)
 //    optional public func collectionView(_ collectionView: NSCollectionView, draggingImageForItemsAt indexPaths: Set<IndexPath>, with event: NSEvent, offset dragImageOffset: NSPointPointer) -> NSImage
     
     public func collectionView(_ collectionView: NSCollectionView, validateDrop draggingInfo: NSDraggingInfo, proposedIndexPath proposedDropIndexPath: AutoreleasingUnsafeMutablePointer<NSIndexPath>, dropOperation proposedDropOperation: UnsafeMutablePointer<NSCollectionViewDropOperation>) -> NSDragOperation {
@@ -443,7 +527,7 @@ extension BrowserWindowController: NSCollectionViewDelegate {
         
         // Drop either into folder or at the end of the list
         let allItems = self.arrangedItems
-        if proposedDropOperation.pointee == .on {
+        if proposedDropOperation.pointee == .on && proposedDropIndexPath.pointee.item < allItems.count {
             guard let item = fileItem(at: proposedDropIndexPath.pointee as IndexPath) else { return [] }
             if !item.isDirectory {
                 proposedDropIndexPath.pointee = NSIndexPath(forItem: allItems.count, inSection: 0)
@@ -456,6 +540,7 @@ extension BrowserWindowController: NSCollectionViewDelegate {
         }
         
         // Count valid items
+        var areAllItemsMovable = true
         if let pasteboardItems = pasteboard.pasteboardItems {
             var numberOfValidItemsForDrop: Int = 0
             for item in pasteboardItems {
@@ -463,8 +548,12 @@ extension BrowserWindowController: NSCollectionViewDelegate {
                 if type == String(kUTTypeURL) || type == String(kUTTypeFileURL) {
                     guard let str = item.string(forType: type) else { continue }
                     guard let url = URL(string: str) else { continue }
-                    guard url.scheme == "file" || url.isSubpathOf(self.fileSystem.rootUrl, strict: true) else { continue }
+                    guard url.scheme == "file" || self.fileSystem.isUnderRoot(url) else { continue }
                     guard url.deletingLastPathComponent() != self.url || proposedDropOperation.pointee == .on else { continue }
+                    areAllItemsMovable = areAllItemsMovable && self.fileSystem.isUnderRoot(url)
+                }
+                else {
+                    areAllItemsMovable = false
                 }
                 numberOfValidItemsForDrop += 1
             }
@@ -478,7 +567,12 @@ extension BrowserWindowController: NSCollectionViewDelegate {
         draggingInfo.draggingFormation = .stack
         draggingInfo.animatesToDestination = false
         
-        return [ .copy ]
+        if areAllItemsMovable && !NSEvent.modifierFlags().contains(.option) {
+            return [ .move ]
+        }
+        else {
+            return [ .copy ]
+        }
     }
     
     
@@ -486,20 +580,41 @@ extension BrowserWindowController: NSCollectionViewDelegate {
      
      Multi-image drag and drop: If draggingInfo.animatesToDestination is set to YES, you should enumerate and update the dragging items with the proper image components and frames so that they dragged images animate to the proper locations.
      */
-//    @available(OSX 10.11, *)
-//    optional public func collectionView(_ collectionView: NSCollectionView, acceptDrop draggingInfo: NSDraggingInfo, indexPath: IndexPath, dropOperation: NSCollectionViewDropOperation) -> Bool
+    public func collectionView(_ collectionView: NSCollectionView, acceptDrop draggingInfo: NSDraggingInfo, indexPath: IndexPath, dropOperation: NSCollectionViewDropOperation) -> Bool {
+        
+        let pasteboard = draggingInfo.draggingPasteboard()
+        
+        // Basic check if there is interesting content
+        guard pasteboard.availableType(from: type(of: self).dropTypes) != nil else { assertionFailure("Cant accept pasteboard items - no supported drop types"); return false }
+        
+        // Drop either into folder or at the end of the list
+        var destUrl = self.url
+        if dropOperation == .on {
+            guard let item = fileItem(at: indexPath) else { assertionFailure("Cant accept pasteboard items - drop index path is invalid."); return false }
+            guard item.isDirectory else { assertionFailure("Cant accept pasteboard items - drop target expecte dto be a directory."); return false }
+            destUrl = item.url
+        }
+        
+        // Gather dropped file items
+        guard let srcFileItems: [FileItem] = pasteboard.readObjects(forClasses: [FileItem.self], options: nil) as? [FileItem] else { return false }
+        guard srcFileItems.count > 0 else { return false }
+        
+        copyFiles(srcFileItems, to: destUrl)
+        
+        return true
+    }
     
     
     /* Multi-image drag and drop */
     
     /* Dragging Source Support - Required for multi-image drag and drop. Return a custom object that implements NSPasteboardWriting (or simply use NSPasteboardItem), or nil to prevent dragging for the item. For each valid item returned, NSCollectionView will create an NSDraggingItem with the draggingFrame equal to the frame of the item view at the given index path and components from -[NSCollectionViewItem draggingItem]. If this method is implemented, then -collectionView:writeItemsAtIndexPaths:toPasteboard: and -collectionView:draggingImageForItemsAtIndexPaths:withEvent:offset: will not be called.
      */
-    public func collectionView(_ collectionView: NSCollectionView, pasteboardWriterForItemAt indexPath: IndexPath) -> NSPasteboardWriting? {
-        let allFileItems = self.arrangedItems
-        guard indexPath.item < allFileItems.count else { assertionFailure("indexPath.item (\(indexPath.item)) out of arrangedItems bounds (0..<\(allFileItems.count))"); return nil }
-        let fileItem = allFileItems[indexPath.item]
-        return fileItem
-    }
+//    public func collectionView(_ collectionView: NSCollectionView, pasteboardWriterForItemAt indexPath: IndexPath) -> NSPasteboardWriting? {
+//        let allFileItems = self.arrangedItems
+//        guard indexPath.item < allFileItems.count else { assertionFailure("indexPath.item (\(indexPath.item)) out of arrangedItems bounds (0..<\(allFileItems.count))"); return nil }
+//        let fileItem = allFileItems[indexPath.item]
+//        return fileItem
+//    }
     
     
     /* Dragging Source Support - Optional. Implement this method to know when the dragging session is about to begin and to potentially modify the dragging session.

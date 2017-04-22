@@ -68,6 +68,7 @@
 		849961C61D5728B2002B893A /* ExceptionUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 849961C51D5728B2002B893A /* ExceptionUtils.m */; };
 		8499620E1D5728EE002B893A /* Test_Assertions.m in Sources */ = {isa = PBXBuildFile; fileRef = 849961F31D5728EE002B893A /* Test_Assertions.m */; };
 		849962131D572B1F002B893A /* Logging.m in Sources */ = {isa = PBXBuildFile; fileRef = 849962121D572B1F002B893A /* Logging.m */; };
+		84A16BE01E9EBADD00DE2C0B /* Sequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A16BDF1E9EBADD00DE2C0B /* Sequence.swift */; };
 		84B4D0E91DFD756A00437CBB /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B4D0DC1DFD754800437CBB /* Reachability.framework */; };
 		84B4D0EC1DFD759700437CBB /* Reachability.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84B4D0DE1DFD754800437CBB /* Reachability.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84B933EF1E281AB40071DEFF /* CertificateUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 84B933EE1E281AB40071DEFF /* CertificateUtils.m */; };
@@ -381,6 +382,7 @@
 		849962121D572B1F002B893A /* Logging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Logging.m; path = MYUtilities/Logging.m; sourceTree = "<group>"; };
 		8499621A1D57438E002B893A /* CocoaAsyncSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CocoaAsyncSocket.xcodeproj; path = Soduto/CocoaAsyncSocket/CocoaAsyncSocket.xcodeproj; sourceTree = "<group>"; };
 		849962271D574530002B893A /* CocoaAsyncSocket.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaAsyncSocket.framework; path = Soduto/CocoaAsyncSocket/build/Debug/CocoaAsyncSocket.framework; sourceTree = "<group>"; };
+		84A16BDF1E9EBADD00DE2C0B /* Sequence.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sequence.swift; sourceTree = "<group>"; };
 		84B4D0CE1DFD754700437CBB /* Reachability.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Reachability.xcodeproj; path = Soduto/Reachability.swift/Reachability.xcodeproj; sourceTree = "<group>"; };
 		84B933EE1E281AB40071DEFF /* CertificateUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CertificateUtils.m; sourceTree = "<group>"; };
 		84B9340D1E2A56EA0071DEFF /* CertificateUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CertificateUtils.h; sourceTree = "<group>"; };
@@ -598,6 +600,7 @@
 			isa = PBXGroup;
 			children = (
 				8458472F1E75D33600EE5A09 /* URL.swift */,
+				84A16BDF1E9EBADD00DE2C0B /* Sequence.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1179,6 +1182,7 @@
 			files = (
 				849927801E6C5CA600AF8CF4 /* IconItem.swift in Sources */,
 				849927831E6C5CD600AF8CF4 /* FileItem.swift in Sources */,
+				84A16BE01E9EBADD00DE2C0B /* Sequence.swift in Sources */,
 				845BC72A1E6A0CF100DC9B81 /* IconItemView.swift in Sources */,
 				8440FD071E6CA6CA00E5BFA9 /* LocalFileSystem.swift in Sources */,
 				845BC7261E69F25F00DC9B81 /* BrowserWindowController.swift in Sources */,
