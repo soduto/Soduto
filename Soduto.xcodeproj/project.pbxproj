@@ -72,6 +72,9 @@
 		84B4D0E91DFD756A00437CBB /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B4D0DC1DFD754800437CBB /* Reachability.framework */; };
 		84B4D0EC1DFD759700437CBB /* Reachability.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84B4D0DE1DFD754800437CBB /* Reachability.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84B933EF1E281AB40071DEFF /* CertificateUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 84B933EE1E281AB40071DEFF /* CertificateUtils.m */; };
+		84C545E01EABC14E005A8107 /* SftpFileSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C545DF1EABC14E005A8107 /* SftpFileSystem.swift */; };
+		84C545EF1EABC38D005A8107 /* NMSSH.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 845BC6A21E68C26B00DC9B81 /* NMSSH.framework */; };
+		84C545F31EABC410005A8107 /* NMSSH.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 845BC6A21E68C26B00DC9B81 /* NMSSH.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84C613E31DECBF6C00CE7F7A /* UploadTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C613E21DECBF6B00CE7F7A /* UploadTask.swift */; };
 		84D903A21DC696A600E61DA7 /* CertificateUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D903A11DC696A600E61DA7 /* CertificateUtils.swift */; };
 		84E7320F1DF4714F001E1549 /* CleanroomLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84E732081DF46F94001E1549 /* CleanroomLogger.framework */; };
@@ -188,6 +191,20 @@
 			remoteGlobalIDString = 84BEF7201E660E2600D839D3;
 			remoteInfo = LibSSH2;
 		};
+		84C545F01EABC3DF005A8107 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 845BC6971E68C26B00DC9B81 /* NMSSH.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = E4E96D83158E10FD002E6E0A;
+			remoteInfo = NMSSH;
+		};
+		84C545F41EABC410005A8107 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 845BC6971E68C26B00DC9B81 /* NMSSH.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = E4E96D83158E10FD002E6E0A;
+			remoteInfo = NMSSH;
+		};
 		84E2F2F11D574A4F00EAA802 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8499621A1D57438E002B893A /* CocoaAsyncSocket.xcodeproj */;
@@ -283,6 +300,17 @@
 			files = (
 				8435AF071E26DD83005CD719 /* SodutoLauncher.app in CopyFiles */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		84C545F61EABC410005A8107 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				84C545F31EABC410005A8107 /* NMSSH.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		84E732261DF55B68001E1549 /* Embed Frameworks */ = {
@@ -387,6 +415,8 @@
 		84B933EE1E281AB40071DEFF /* CertificateUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CertificateUtils.m; sourceTree = "<group>"; };
 		84B9340D1E2A56EA0071DEFF /* CertificateUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CertificateUtils.h; sourceTree = "<group>"; };
 		84BEF7271E660E2600D839D3 /* LibSSH2.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = LibSSH2.xcodeproj; path = Soduto/LibSSH2/LibSSH2.xcodeproj; sourceTree = "<group>"; };
+		84C545DF1EABC14E005A8107 /* SftpFileSystem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SftpFileSystem.swift; sourceTree = "<group>"; };
+		84C545F71EABECDE005A8107 /* SodutoBrowser-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SodutoBrowser-Bridging-Header.h"; sourceTree = "<group>"; };
 		84C613E21DECBF6B00CE7F7A /* UploadTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadTask.swift; sourceTree = "<group>"; };
 		84D903A11DC696A600E61DA7 /* CertificateUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CertificateUtils.swift; sourceTree = "<group>"; };
 		84E732021DF46F93001E1549 /* CleanroomLogger.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CleanroomLogger.xcodeproj; path = Soduto/CleanroomLogger/CleanroomLogger.xcodeproj; sourceTree = "<group>"; };
@@ -435,6 +465,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84C545EF1EABC38D005A8107 /* NMSSH.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -617,7 +648,6 @@
 		845BC70B1E69F00E00DC9B81 /* SodutoBrowser */ = {
 			isa = PBXGroup;
 			children = (
-				845847201E75D0ED00EE5A09 /* Utils */,
 				845BC70C1E69F00E00DC9B81 /* AppDelegate.swift */,
 				845BC70E1E69F00E00DC9B81 /* Assets.xcassets */,
 				845BC7271E6A062800DC9B81 /* BrowserWindow.xib */,
@@ -630,6 +660,9 @@
 				845BC7131E69F00E00DC9B81 /* Info.plist */,
 				8440FD061E6CA6CA00E5BFA9 /* LocalFileSystem.swift */,
 				845BC7101E69F00E00DC9B81 /* MainMenu.xib */,
+				84C545DF1EABC14E005A8107 /* SftpFileSystem.swift */,
+				84C545F71EABECDE005A8107 /* SodutoBrowser-Bridging-Header.h */,
+				845847201E75D0ED00EE5A09 /* Utils */,
 			);
 			path = SodutoBrowser;
 			sourceTree = "<group>";
@@ -814,10 +847,13 @@
 				845BC7061E69F00E00DC9B81 /* Sources */,
 				845BC7071E69F00E00DC9B81 /* Frameworks */,
 				845BC7081E69F00E00DC9B81 /* Resources */,
+				84C545F61EABC410005A8107 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				84C545F11EABC3DF005A8107 /* PBXTargetDependency */,
+				84C545F51EABC410005A8107 /* PBXTargetDependency */,
 			);
 			name = SodutoBrowser;
 			productName = SodutoBrowser;
@@ -1181,6 +1217,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				849927801E6C5CA600AF8CF4 /* IconItem.swift in Sources */,
+				84C545E01EABC14E005A8107 /* SftpFileSystem.swift in Sources */,
 				849927831E6C5CD600AF8CF4 /* FileItem.swift in Sources */,
 				84A16BE01E9EBADD00DE2C0B /* Sequence.swift in Sources */,
 				845BC72A1E6A0CF100DC9B81 /* IconItemView.swift in Sources */,
@@ -1212,6 +1249,16 @@
 			isa = PBXTargetDependency;
 			name = ReachabilityMac;
 			targetProxy = 84B4D0E71DFD755800437CBB /* PBXContainerItemProxy */;
+		};
+		84C545F11EABC3DF005A8107 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = NMSSH;
+			targetProxy = 84C545F01EABC3DF005A8107 /* PBXContainerItemProxy */;
+		};
+		84C545F51EABC410005A8107 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = NMSSH;
+			targetProxy = 84C545F41EABC410005A8107 /* PBXContainerItemProxy */;
 		};
 		84E2F2F81D574A5900EAA802 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1473,10 +1520,17 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = WW9LKQ5SH5;
+				HEADER_SEARCH_PATHS = (
+					"$(TARGET_BUILD_DIR)/libssh2/include",
+					"$(TARGET_BUILD_DIR)/openssl/include",
+				);
 				INFOPLIST_FILE = SodutoBrowser/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.soduto.SodutoBrowser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Soduto/OpenSSL/openssl/include";
+				SWIFT_OBJC_BRIDGING_HEADER = "SodutoBrowser/SodutoBrowser-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -1487,10 +1541,17 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = WW9LKQ5SH5;
+				HEADER_SEARCH_PATHS = (
+					"$(TARGET_BUILD_DIR)/libssh2/include",
+					"$(TARGET_BUILD_DIR)/openssl/include",
+				);
 				INFOPLIST_FILE = SodutoBrowser/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.soduto.SodutoBrowser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Soduto/OpenSSL/openssl/include";
+				SWIFT_OBJC_BRIDGING_HEADER = "SodutoBrowser/SodutoBrowser-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;

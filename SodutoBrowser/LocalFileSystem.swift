@@ -14,7 +14,7 @@ class LocalFileSystem: FileSystem {
     let name: String = NSLocalizedString("Local", comment: "File system name")
     let rootUrl: URL = URL(fileURLWithPath: "/")
     let places: [Place] = [
-        Place(name: "Home", url: FileManager.default.homeDirectoryForCurrentUser)
+//        Place(name: "Home", url: FileManager.default.url(for: .userDirectory, in: FileManager.SearchPathDomainMask.userDomainMask, appropriateFor: nil, create: false))
     ]
     let fileOperationQueue = OperationQueue()
     
@@ -36,7 +36,7 @@ class LocalFileSystem: FileSystem {
         if assertOnFailure {
             assert(srcUrl.isFileURL && destUrl.isFileURL, "Copy source (\(srcUrl)) and destination (\(destUrl)) must be local file urls.")
             assert(isUnderRoot(srcUrl) || isUnderRoot(destUrl), "Copy source (\(srcUrl)) or destination (\(destUrl)) must be under root (\(self.rootUrl))")
-            assert(!destUrl.isUnder(srcUrl), "Cxan not copy source (\(srcUrl) to its own subfolder (\(destUrl)).")
+            assert(!destUrl.isUnder(srcUrl), "Can not copy source (\(srcUrl) to its own subfolder (\(destUrl)).")
         }
         return srcUrl.isFileURL && destUrl.isFileURL && (isUnderRoot(srcUrl) || isUnderRoot(destUrl)) && !destUrl.isUnder(srcUrl)
     }
@@ -46,7 +46,7 @@ class LocalFileSystem: FileSystem {
         if assertOnFailure {
             assert(srcUrl.isFileURL && destUrl.isFileURL, "Move source (\(srcUrl)) and destination (\(destUrl)) must be local file urls.")
             assert(isUnderRoot(destUrl), "Move destination (\(destUrl)) must be under root (\(self.rootUrl))")
-            assert(!destUrl.isUnder(srcUrl), "Cxan not copy source (\(srcUrl) to its own subfolder (\(destUrl)).")
+            assert(!destUrl.isUnder(srcUrl), "Can not move source (\(srcUrl) to its own subfolder (\(destUrl)).")
         }
         return srcUrl.isFileURL && destUrl.isFileURL && isUnderRoot(destUrl) && !destUrl.isUnder(srcUrl)
     }
@@ -54,7 +54,7 @@ class LocalFileSystem: FileSystem {
     func canCreateFolder(_ url: URL) -> Bool { return canDelete(url, assertOnFailure: false) }
     func canCreateFolder(_ url: URL, assertOnFailure: Bool) -> Bool {
         if assertOnFailure {
-            assert(isUnderRoot(url), "Folder tio be created (\(url)) bust be under root (\(rootUrl)).")
+            assert(isUnderRoot(url), "Folder to be created (\(url)) bust be under root (\(rootUrl)).")
         }
         return isUnderRoot(url)
     }
@@ -86,15 +86,12 @@ class LocalFileSystem: FileSystem {
         operation.addExecutionBlock { 
             do {
                 sleep(10)
-                if self.isUnderRoot(url) {
-                    try FileManager.default.removeItem(at: url)
-                }
-                else {
-                    operation.error = FileSystemError.invalidUrl(url: url)
-                }
+                try FileManager.default.removeItem(at: url)
+                operation.sourceState = .deleted
             }
             catch {
                 operation.error = error
+                operation.sourceState = .unchanged
             }
         }
         self.fileOperationQueue.addOperation(operation)
@@ -109,18 +106,12 @@ class LocalFileSystem: FileSystem {
         operation.addExecutionBlock {
             do {
                 sleep(10)
-                if !srcUrl.isFileURL {
-                    operation.error = FileSystemError.invalidUrl(url: srcUrl)
-                }
-                else if !destUrl.isFileURL  {
-                    operation.error = FileSystemError.invalidUrl(url: destUrl)
-                }
-                else {
-                    try FileManager.default.copyItem(at: srcUrl, to: destUrl)
-                }
+                try FileManager.default.copyItem(at: srcUrl, to: destUrl)
+                operation.destinationState = .present
             }
             catch {
                 operation.error = error
+                operation.destinationState = .deleted
             }
         }
         self.fileOperationQueue.addOperation(operation)
@@ -135,18 +126,14 @@ class LocalFileSystem: FileSystem {
         operation.addExecutionBlock {
             do {
                 sleep(10)
-                if !srcUrl.isFileURL {
-                    operation.error = FileSystemError.invalidUrl(url: srcUrl)
-                }
-                else if !destUrl.isFileURL  {
-                    operation.error = FileSystemError.invalidUrl(url: destUrl)
-                }
-                else {
-                    try FileManager.default.moveItem(at: srcUrl, to: destUrl)
-                }
+                try FileManager.default.moveItem(at: srcUrl, to: destUrl)
+                operation.sourceState = .deleted
+                operation.destinationState = .present
             }
             catch {
                 operation.error = error
+                operation.sourceState = .present
+                operation.destinationState = .deleted
             }
         }
         self.fileOperationQueue.addOperation(operation)
@@ -161,9 +148,11 @@ class LocalFileSystem: FileSystem {
         operation.addExecutionBlock {
             do {
                 try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+                operation.destinationState = .present
             }
             catch {
                 operation.error = error
+                operation.destinationState = .deleted
             }
         }
         self.fileOperationQueue.addOperation(operation)

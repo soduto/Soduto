@@ -81,18 +81,28 @@ class FileItem: NSObject, NSPasteboardReading, NSPasteboardWriting {
     // MARK: NSPasteboardWriting
     
     public func writableTypes(for pasteboard: NSPasteboard) -> [String] {
-        return [ kPasteboardTypeFileURLPromise as String, kPasteboardTypeFilePromiseContent as String ]
-        
         if self.url.isFileURL {
             if self.isDirectory {
-                return [ NSFilesPromisePboardType, kUTTypeDirectory as String, kUTTypeFileURL as String, kUTTypeURL as String ]
+                return [
+                    kPasteboardTypeFileURLPromise as String,
+                    kPasteboardTypeFilePromiseContent as String,
+                    kUTTypeDirectory as String,
+                    kUTTypeFileURL as String,
+                    kUTTypeURL as String ]
             }
             else {
-                return [ NSFilesPromisePboardType, kUTTypeFileURL as String, kUTTypeURL as String ]
+                return [
+                    kPasteboardTypeFileURLPromise as String,
+                    kPasteboardTypeFilePromiseContent as String,
+                    kUTTypeFileURL as String,
+                    kUTTypeURL as String ]
             }
         }
         else {
-            return [ NSFilesPromisePboardType, kUTTypeURL as String ]
+            return [
+                kPasteboardTypeFileURLPromise as String,
+                kPasteboardTypeFilePromiseContent as String,
+                kUTTypeURL as String ]
         }
     }
     
@@ -106,8 +116,6 @@ class FileItem: NSObject, NSPasteboardReading, NSPasteboardWriting {
             return (self.url as NSURL).pasteboardPropertyList(forType: type)
         case String(kUTTypeURL):
             return (self.url as NSURL).pasteboardPropertyList(forType: type)
-        case NSFilesPromisePboardType:
-            return kUTTypeData
         case String(kPasteboardTypeFilePromiseContent):
             return  kUTTypeBMP
         case String(kPasteboardTypeFileURLPromise):

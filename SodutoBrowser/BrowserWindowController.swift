@@ -62,7 +62,7 @@ class BrowserWindowController: NSWindowController {
     
     override var windowNibName: String! { return "BrowserWindow" }
     
-    fileprivate static let dropTypes: [String] = [ kUTTypeFileURL as String ]
+    fileprivate static let dropTypes: [String] = [ kUTTypeURL as String ]
     
     
     // MARK: Setup / Cleanup
@@ -250,7 +250,7 @@ class BrowserWindowController: NSWindowController {
         let validFileItems = fileItems.filter { !$0.isBusy }
         let fileOperations = validFileItems.map { fileItem -> FileOperation in
             
-            let destUrl = to.appendingPathComponent(fileItem.url.lastPathComponent)
+            let destUrl = fileItem.url.movedTo(to)
             self.setBusyUrl(fileItem.url, isNew: false)
             self.setBusyUrl(destUrl, isNew: true)
             return self.fileSystem.copy(fileItem.url, to: destUrl)
@@ -296,7 +296,7 @@ class BrowserWindowController: NSWindowController {
         let validFileItems = fileItems.filter { !$0.isBusy }
         let fileOperations = validFileItems.map { fileItem -> FileOperation in
             
-            let destUrl = to.appendingPathComponent(fileItem.url.lastPathComponent)
+            let destUrl = fileItem.url.movedTo(to)
             self.setBusyUrl(fileItem.url, isNew: false)
             self.setBusyUrl(destUrl, isNew: true)
             return self.fileSystem.move(fileItem.url, to: destUrl)
@@ -539,40 +539,40 @@ extension BrowserWindowController: NSCollectionViewDelegate {
             proposedDropOperation.pointee = .before
         }
         
+        // Get drop target url
+        var destUrl = self.url
+        if proposedDropOperation.pointee == .on {
+            guard let item = fileItem(at: proposedDropIndexPath.pointee as IndexPath) else { assertionFailure("Cant accept pasteboard items - drop index path is invalid."); return [] }
+            guard item.isDirectory else { assertionFailure("Cant accept pasteboard items - drop target expecte dto be a directory."); return [] }
+            destUrl = item.url
+        }
+        
         // Count valid items
-        var areAllItemsMovable = true
-        if let pasteboardItems = pasteboard.pasteboardItems {
-            var numberOfValidItemsForDrop: Int = 0
-            for item in pasteboardItems {
-                guard let type = item.availableType(from: type(of: self).dropTypes) else { continue }
-                if type == String(kUTTypeURL) || type == String(kUTTypeFileURL) {
-                    guard let str = item.string(forType: type) else { continue }
-                    guard let url = URL(string: str) else { continue }
-                    guard url.scheme == "file" || self.fileSystem.isUnderRoot(url) else { continue }
-                    guard url.deletingLastPathComponent() != self.url || proposedDropOperation.pointee == .on else { continue }
-                    areAllItemsMovable = areAllItemsMovable && self.fileSystem.isUnderRoot(url)
-                }
-                else {
-                    areAllItemsMovable = false
-                }
-                numberOfValidItemsForDrop += 1
-            }
-            guard numberOfValidItemsForDrop > 0 else { return [] }
-            if draggingInfo.numberOfValidItemsForDrop != numberOfValidItemsForDrop {
-                // Set only if different to avoid flickering of drag image
-                draggingInfo.numberOfValidItemsForDrop = numberOfValidItemsForDrop
-            }
+        let urls: [NSURL] = pasteboard.readObjects(forClasses: [NSURL.self], options: nil) as? [NSURL] ?? []
+        let copyableUrls = urls.filter { self.fileSystem.canCopy($0 as URL, to: ($0 as URL).movedTo(destUrl)) }
+        let movableUrls = urls.filter { self.fileSystem.canCopy($0 as URL, to: ($0 as URL).movedTo(destUrl)) }
+        
+        guard !copyableUrls.isEmpty || !movableUrls.isEmpty else { return [] }
+        
+        let validItemCount: Int
+        let operation: NSDragOperation
+        if (!movableUrls.isEmpty && !NSEvent.modifierFlags().contains(.option)) || copyableUrls.isEmpty {
+            operation =  [ .move ]
+            validItemCount = movableUrls.count
+        }
+        else {
+            operation =  [ .copy ]
+            validItemCount = copyableUrls.count
         }
         
         draggingInfo.draggingFormation = .stack
         draggingInfo.animatesToDestination = false
+        if draggingInfo.numberOfValidItemsForDrop != validItemCount {
+            // Set only if different to avoid flickering of drag image
+            draggingInfo.numberOfValidItemsForDrop = validItemCount
+        }
         
-        if areAllItemsMovable && !NSEvent.modifierFlags().contains(.option) {
-            return [ .move ]
-        }
-        else {
-            return [ .copy ]
-        }
+        return operation
     }
     
     
@@ -596,10 +596,18 @@ extension BrowserWindowController: NSCollectionViewDelegate {
         }
         
         // Gather dropped file items
-        guard let srcFileItems: [FileItem] = pasteboard.readObjects(forClasses: [FileItem.self], options: nil) as? [FileItem] else { return false }
-        guard srcFileItems.count > 0 else { return false }
+        guard let fileItems: [FileItem] = pasteboard.readObjects(forClasses: [FileItem.self], options: nil) as? [FileItem] else { return false }
+        let copyableItems = fileItems.filter { self.fileSystem.canCopy($0, to: $0.url.movedTo(destUrl)) }
+        let movableItems = fileItems.filter { self.fileSystem.canMove($0, to: $0.url.movedTo(destUrl)) }
         
-        copyFiles(srcFileItems, to: destUrl)
+        guard !copyableItems.isEmpty || !movableItems.isEmpty else { return false }
+        
+        if (!movableItems.isEmpty && !NSEvent.modifierFlags().contains(.option)) || copyableItems.isEmpty {
+            moveFiles(movableItems, to: destUrl)
+        }
+        else {
+            copyFiles(copyableItems, to: destUrl)
+        }
         
         return true
     }

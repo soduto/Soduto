@@ -24,4 +24,9 @@ extension URL {
         return true
     }
     
+    public func movedTo(_ destUrl: URL) -> URL {
+        assert(destUrl.hasDirectoryPath, "Destination url (\(destUrl)) expected to be a directory.")
+        return destUrl.appendingPathComponent(self.lastPathComponent, isDirectory: self.hasDirectoryPath)
+    }
+    
 }
