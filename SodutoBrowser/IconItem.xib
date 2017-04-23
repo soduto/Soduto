@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="16E175b" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="16F54b" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
@@ -42,7 +42,7 @@
                         </subviews>
                         <constraints>
                             <constraint firstItem="HuO-iI-RRe" firstAttribute="top" secondItem="5sU-sT-9Cj" secondAttribute="top" constant="4" id="Fhz-HJ-CNk"/>
-                            <constraint firstAttribute="bottom" secondItem="HuO-iI-RRe" secondAttribute="bottom" constant="4" id="Yz4-oN-ZTT"/>
+                            <constraint firstAttribute="bottom" secondItem="HuO-iI-RRe" secondAttribute="bottom" priority="999" constant="4" id="Yz4-oN-ZTT"/>
                             <constraint firstItem="HuO-iI-RRe" firstAttribute="leading" secondItem="5sU-sT-9Cj" secondAttribute="leading" constant="4" id="cv0-NE-aHE"/>
                             <constraint firstItem="AWm-8a-aaf" firstAttribute="height" relation="lessThanOrEqual" secondItem="HuO-iI-RRe" secondAttribute="height" multiplier="0.4" priority="999" id="mqj-t4-QqO"/>
                             <constraint firstAttribute="trailing" secondItem="HuO-iI-RRe" secondAttribute="trailing" constant="4" id="oDR-EW-Djg"/>
@@ -62,6 +62,8 @@
                 </subviews>
                 <constraints>
                     <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="3lS-bo-163" secondAttribute="trailing" constant="3" id="7fO-hI-7hg"/>
+                    <constraint firstItem="5sU-sT-9Cj" firstAttribute="centerX" secondItem="ThL-Go-grX" secondAttribute="centerX" id="DBV-gq-XkJ"/>
+                    <constraint firstItem="5sU-sT-9Cj" firstAttribute="width" relation="lessThanOrEqual" secondItem="ThL-Go-grX" secondAttribute="width" id="FIO-Lz-qm1"/>
                     <constraint firstItem="3lS-bo-163" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="ThL-Go-grX" secondAttribute="leading" constant="3" id="OP4-Ha-cmH"/>
                     <constraint firstItem="3lS-bo-163" firstAttribute="centerX" secondItem="ThL-Go-grX" secondAttribute="centerX" id="PHc-Kt-bXe"/>
                     <constraint firstAttribute="bottom" secondItem="5sU-sT-9Cj" secondAttribute="bottom" constant="38" id="Tfw-7a-qkS"/>
@@ -71,8 +73,6 @@
             </view>
             <constraints>
                 <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="3lS-bo-163" secondAttribute="bottom" id="aSI-n4-Pf7"/>
-                <constraint firstItem="5sU-sT-9Cj" firstAttribute="width" relation="lessThanOrEqual" secondItem="JHA-eZ-Ccs" secondAttribute="width" id="tBW-g0-q12"/>
-                <constraint firstItem="5sU-sT-9Cj" firstAttribute="centerX" secondItem="JHA-eZ-Ccs" secondAttribute="centerX" id="viM-RC-oJ1"/>
             </constraints>
             <color key="fillColor" name="selectedControlColor" catalog="System" colorSpace="catalog"/>
             <connections>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="16E175b" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="16F54b" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
@@ -9,6 +9,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="BrowserWindowController" customModule="SodutoBrowser" customModuleProvider="target">
             <connections>
                 <outlet property="collectionView" destination="dki-ve-wAx" id="LWH-z3-YnO"/>
+                <outlet property="iconsSizeSlider" destination="s7J-fQ-hUh" id="HgR-6M-xij"/>
                 <outlet property="itemArrayController" destination="hip-Ll-X0r" id="4uH-Hn-YnN"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="HHo-aa-UPm"/>
             </connections>
@@ -25,13 +26,13 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <scrollView wantsLayer="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aUX-UY-8V4">
-                        <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+                        <rect key="frame" x="0.0" y="24" width="480" height="246"/>
                         <clipView key="contentView" drawsBackground="NO" id="2TC-u1-PIt">
-                            <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+                            <rect key="frame" x="0.0" y="0.0" width="480" height="246"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <collectionView wantsLayer="YES" selectable="YES" allowsMultipleSelection="YES" id="dki-ve-wAx">
-                                    <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="480" height="246"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <animations>
                                         <caTransition key="subviews">
@@ -64,15 +65,44 @@ AAAAAAEGA
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                         <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="UgR-cf-sbN">
-                            <rect key="frame" x="463" y="1" width="16" height="268"/>
+                            <rect key="frame" x="464" y="0.0" width="16" height="232"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                     </scrollView>
+                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="1Nr-pP-6FY">
+                        <rect key="frame" x="0.0" y="0.0" width="480" height="24"/>
+                        <subviews>
+                            <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="K1S-2a-yKm">
+                                <rect key="frame" x="0.0" y="21" width="480" height="5"/>
+                            </box>
+                            <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="s7J-fQ-hUh" userLabel="Icon Size Slider">
+                                <rect key="frame" x="390" y="5" width="80" height="15"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="80" id="AI6-i3-nsI"/>
+                                </constraints>
+                                <sliderCell key="cell" controlSize="small" continuous="YES" state="on" alignment="left" minValue="16" maxValue="512" doubleValue="64" tickMarkPosition="above" sliderType="linear" id="MWc-Nv-Tyt"/>
+                                <connections>
+                                    <action selector="changeIconSize:" target="-2" id="xXe-ld-jEO"/>
+                                </connections>
+                            </slider>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="s7J-fQ-hUh" firstAttribute="centerY" secondItem="1Nr-pP-6FY" secondAttribute="centerY" id="Mw5-dN-9ZV"/>
+                            <constraint firstAttribute="height" constant="24" id="fSq-MS-33k"/>
+                            <constraint firstAttribute="trailing" secondItem="K1S-2a-yKm" secondAttribute="trailing" id="g9R-Sh-MPh"/>
+                            <constraint firstItem="K1S-2a-yKm" firstAttribute="leading" secondItem="1Nr-pP-6FY" secondAttribute="leading" id="hzh-GC-uLA"/>
+                            <constraint firstItem="K1S-2a-yKm" firstAttribute="top" secondItem="1Nr-pP-6FY" secondAttribute="top" id="srz-gc-6jg"/>
+                            <constraint firstAttribute="trailing" secondItem="s7J-fQ-hUh" secondAttribute="trailing" constant="10" id="yrU-wr-TGp"/>
+                        </constraints>
+                    </customView>
                 </subviews>
                 <constraints>
                     <constraint firstItem="aUX-UY-8V4" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" id="2L2-8i-0iI"/>
                     <constraint firstAttribute="trailing" secondItem="aUX-UY-8V4" secondAttribute="trailing" id="5mu-zs-zmV"/>
-                    <constraint firstAttribute="bottom" secondItem="aUX-UY-8V4" secondAttribute="bottom" id="jr8-xo-TMb"/>
+                    <constraint firstItem="1Nr-pP-6FY" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" id="90y-uo-4ah"/>
+                    <constraint firstItem="1Nr-pP-6FY" firstAttribute="top" secondItem="aUX-UY-8V4" secondAttribute="bottom" id="T0P-7r-oKM"/>
+                    <constraint firstAttribute="bottom" secondItem="1Nr-pP-6FY" secondAttribute="bottom" id="Xew-Ry-Z0x"/>
+                    <constraint firstAttribute="trailing" secondItem="1Nr-pP-6FY" secondAttribute="trailing" id="nh6-Gz-PU4"/>
                     <constraint firstItem="aUX-UY-8V4" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" id="ohb-og-Ew4"/>
                 </constraints>
             </view>

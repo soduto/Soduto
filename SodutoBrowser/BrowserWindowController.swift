@@ -17,6 +17,7 @@ class BrowserWindowController: NSWindowController {
     private struct SettingKeys {
         static let showHiddenFiles = "com.soduto.SodutoBrowser.showHiddenFiles"
         static let foldersAlwaysFirst = "com.soduto.SodutoBrowser.foldersAlwaysFirst"
+        static let iconsSize = "com.soduto.SodutoBrowser.iconsSize"
     }
     
     
@@ -26,23 +27,31 @@ class BrowserWindowController: NSWindowController {
     public var canGoForward: Bool { return self.window != nil && self.forwardHistory.count > 0 }
     public var canGoUp: Bool { return self.window != nil && self.fileSystem.isUnderRoot(url) }
     
-    public var isHiddenFilesVisible: Bool = UserDefaults.standard.bool(forKey: SettingKeys.showHiddenFiles) {
+    public var isHiddenFilesVisible: Bool = BrowserWindowController.userDefaults.bool(forKey: SettingKeys.showHiddenFiles) {
         didSet {
             guard isHiddenFilesVisible != oldValue else { return }
             UserDefaults.standard.set(isHiddenFilesVisible, forKey: SettingKeys.showHiddenFiles)
             updateFilter()
         }
     }
-    public var isFoldersAlwaysFirst: Bool = UserDefaults.standard.bool(forKey: SettingKeys.foldersAlwaysFirst) {
+    public var isFoldersAlwaysFirst: Bool = BrowserWindowController.userDefaults.bool(forKey: SettingKeys.foldersAlwaysFirst) {
         didSet {
             guard isFoldersAlwaysFirst != oldValue else { return }
             UserDefaults.standard.set(isFoldersAlwaysFirst, forKey: SettingKeys.foldersAlwaysFirst)
             updateSorting()
         }
     }
+    public var iconsSize: Int = BrowserWindowController.userDefaults.integer(forKey: SettingKeys.iconsSize) {
+        didSet {
+            guard iconsSize != oldValue else { return }
+            UserDefaults.standard.set(iconsSize, forKey: SettingKeys.iconsSize)
+            updateIconsSize()
+        }
+    }
     
     @IBOutlet weak var collectionView: NSCollectionView!
     @IBOutlet weak var itemArrayController: NSArrayController!
+    @IBOutlet weak var iconsSizeSlider: NSSlider!
     @objc private var items: [FileItem] = [] {
         didSet {
             updateBusyItems()
@@ -63,17 +72,21 @@ class BrowserWindowController: NSWindowController {
     override var windowNibName: String! { return "BrowserWindow" }
     
     fileprivate static let dropTypes: [String] = [ kUTTypeURL as String ]
+    private static var userDefaults: UserDefaults = {
+        // Setup user settings default values
+        UserDefaults.standard.register(defaults: [
+            SettingKeys.showHiddenFiles: false,
+            SettingKeys.foldersAlwaysFirst: true,
+            SettingKeys.iconsSize: 48
+            ])
+        
+        return UserDefaults.standard
+    }()
     
     
     // MARK: Setup / Cleanup
     
     init(fileSystem: FileSystem) {
-        // Setup user settings default values
-        UserDefaults.standard.register(defaults: [
-            SettingKeys.showHiddenFiles: false,
-            SettingKeys.foldersAlwaysFirst: true
-        ])
-        
         self.fileSystem = fileSystem
         self.url = fileSystem.defaultPlace.url
         
@@ -96,6 +109,7 @@ class BrowserWindowController: NSWindowController {
         
         updateFilter()
         updateSorting()
+        updateIconsSize()
         
         goTo(self.fileSystem.defaultPlace.url, updateHistory: false)
     }
@@ -129,6 +143,15 @@ class BrowserWindowController: NSWindowController {
                 Log.error?.message("Failed to load items from [\(url)] with error: \(error)")
             }
         }
+    }
+    
+    private func updateIconsSize() {
+        var size = NSSize(width: self.iconsSize, height: self.iconsSize)
+        size.height += 50 // Additional space for label and paddings
+        size.width += 8 // Image padding
+        size.width = max(size.width, 120)
+        (self.collectionView.collectionViewLayout as? NSCollectionViewFlowLayout)?.itemSize = size
+        self.iconsSizeSlider.integerValue = self.iconsSize
     }
     
     private func updateFilter() {
@@ -441,6 +464,11 @@ class BrowserWindowController: NSWindowController {
     @IBAction func deleteSelectedFiles(_ sender: Any?) {
         let fileItems: [FileItem] = self.collectionView.selectionIndexPaths.flatMap { fileItem(at: $0) }
         deleteFiles(fileItems)
+    }
+    
+    @IBAction func changeIconSize(_ sender: NSSlider?) {
+        guard let slider = sender else { assertionFailure("Sender expected to be a valid NSSlider view."); return }
+        self.iconsSize = slider.integerValue
     }
     
     
