@@ -165,8 +165,15 @@ class BrowserWindowController: NSWindowController {
         self.iconsSizeSlider.integerValue = self.iconsSize
     }
     
-    private func updateStatusInfo() {
-        let itemsCountStr = String(format: NSLocalizedString("%d items", comment: ""), self.arrangedItems.count)
+    fileprivate func updateStatusInfo() {
+        let itemsCountStr: String
+        if self.collectionView.selectionIndexes.count > 0 {
+            itemsCountStr = String(format: NSLocalizedString("%d of %d selected", comment: ""), self.collectionView.selectionIndexes.count, self.arrangedItems.count)
+        }
+        else {
+            itemsCountStr = String(format: NSLocalizedString("%d items", comment: ""), self.arrangedItems.count)
+        }
+        
         let statusStr: String
         if let freeSpace = self.freeSpace {
             let freeSpaceStr = String(format: NSLocalizedString("%@ available", comment: ""), ByteCountFormatter.string(fromByteCount: freeSpace, countStyle: .file))
@@ -175,6 +182,7 @@ class BrowserWindowController: NSWindowController {
         else {
             statusStr = itemsCountStr
         }
+        
         self.statusLabel.stringValue = statusStr
     }
     
@@ -727,14 +735,16 @@ extension BrowserWindowController: NSCollectionViewDelegate {
     
     /* Sent at the end of interactive selection, to inform the delegate that the CollectionView has selected the items at the specified "indexPaths".
      */
-//    @available(OSX 10.11, *)
-//    optional public func collectionView(_ collectionView: NSCollectionView, didSelectItemsAt indexPaths: Set<IndexPath>)
+    public func collectionView(_ collectionView: NSCollectionView, didSelectItemsAt indexPaths: Set<IndexPath>) {
+        updateStatusInfo()
+    }
     
     
     /* Sent at the end of interactive selection, to inform the delegate that the CollectionView has de-selected the items at the specified "indexPaths".
      */
-//    @available(OSX 10.11, *)
-//    optional public func collectionView(_ collectionView: NSCollectionView, didDeselectItemsAt indexPaths: Set<IndexPath>)
+    public func collectionView(_ collectionView: NSCollectionView, didDeselectItemsAt indexPaths: Set<IndexPath>) {
+        updateStatusInfo()
+    }
     
     
     
