@@ -72,10 +72,10 @@ AAAAAAEGA
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                     </scrollView>
-                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="1Nr-pP-6FY">
+                    <customView wantsLayer="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1Nr-pP-6FY">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="24"/>
                         <subviews>
-                            <visualEffectView appearanceType="vibrantLight" blendingMode="withinWindow" material="menu" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="Ygj-UD-Tne">
+                            <visualEffectView blendingMode="withinWindow" material="titlebar" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="Ygj-UD-Tne">
                                 <rect key="frame" x="0.0" y="0.0" width="480" height="24"/>
                             </visualEffectView>
                             <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="K1S-2a-yKm">
@@ -104,18 +104,19 @@ AAAAAAEGA
                             </progressIndicator>
                         </subviews>
                         <constraints>
+                            <constraint firstAttribute="bottom" secondItem="Ygj-UD-Tne" secondAttribute="bottom" id="Amt-xG-E0W"/>
+                            <constraint firstItem="Ygj-UD-Tne" firstAttribute="leading" secondItem="1Nr-pP-6FY" secondAttribute="leading" id="Dwo-vc-Gyt"/>
                             <constraint firstItem="axN-dQ-mus" firstAttribute="centerY" secondItem="1Nr-pP-6FY" secondAttribute="centerY" id="Gmb-vb-hH4"/>
-                            <constraint firstItem="Ygj-UD-Tne" firstAttribute="leading" secondItem="1Nr-pP-6FY" secondAttribute="leading" id="Hjr-DD-WXL"/>
                             <constraint firstItem="s7J-fQ-hUh" firstAttribute="centerY" secondItem="1Nr-pP-6FY" secondAttribute="centerY" id="Mw5-dN-9ZV"/>
-                            <constraint firstAttribute="trailing" secondItem="Ygj-UD-Tne" secondAttribute="trailing" id="PvN-0x-WIy"/>
-                            <constraint firstItem="Ygj-UD-Tne" firstAttribute="top" secondItem="1Nr-pP-6FY" secondAttribute="top" id="WbK-Qf-17c"/>
+                            <constraint firstItem="Ygj-UD-Tne" firstAttribute="top" secondItem="1Nr-pP-6FY" secondAttribute="top" id="PZm-Aq-geF"/>
+                            <constraint firstAttribute="trailing" secondItem="Ygj-UD-Tne" secondAttribute="trailing" id="ZY5-OH-1rK"/>
                             <constraint firstItem="5BP-Ic-wbj" firstAttribute="centerX" secondItem="1Nr-pP-6FY" secondAttribute="centerX" id="dwE-xR-IvU"/>
                             <constraint firstAttribute="height" constant="24" id="fSq-MS-33k"/>
                             <constraint firstAttribute="trailing" secondItem="K1S-2a-yKm" secondAttribute="trailing" id="g9R-Sh-MPh"/>
                             <constraint firstItem="5BP-Ic-wbj" firstAttribute="centerY" secondItem="1Nr-pP-6FY" secondAttribute="centerY" id="hak-KS-cOs"/>
                             <constraint firstItem="K1S-2a-yKm" firstAttribute="leading" secondItem="1Nr-pP-6FY" secondAttribute="leading" id="hzh-GC-uLA"/>
+                            <constraint firstItem="Ygj-UD-Tne" firstAttribute="top" secondItem="1Nr-pP-6FY" secondAttribute="top" id="o1O-th-TUs"/>
                             <constraint firstItem="axN-dQ-mus" firstAttribute="leading" secondItem="1Nr-pP-6FY" secondAttribute="leading" constant="10" id="q3Y-dH-m2e"/>
-                            <constraint firstAttribute="bottom" secondItem="Ygj-UD-Tne" secondAttribute="bottom" id="srk-ku-EtI"/>
                             <constraint firstItem="K1S-2a-yKm" firstAttribute="top" secondItem="1Nr-pP-6FY" secondAttribute="top" id="srz-gc-6jg"/>
                             <constraint firstAttribute="trailing" secondItem="s7J-fQ-hUh" secondAttribute="trailing" constant="10" id="yrU-wr-TGp"/>
                         </constraints>
