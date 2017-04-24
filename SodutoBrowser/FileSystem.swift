@@ -66,7 +66,8 @@ protocol FileSystem: class {
     func canCreateFolder(_ url: URL) -> Bool
     
     /// Read file list for provided URL. URL must reside under rootUrl.
-    func load(_ url: URL, completionHandler: @escaping ([FileItem]?, Error?)->Void)
+    /// Completion handler is called with retrieved file itemArray, free disk space and error paraneters.
+    func load(_ url: URL, completionHandler: @escaping ([FileItem]?, Int64?, Error?)->Void)
     
     /// Delete file at provided URL. URL must reside under rootUrl
     func delete(_ url: URL) -> FileOperation

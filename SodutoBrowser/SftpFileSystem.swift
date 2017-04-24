@@ -101,18 +101,19 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
         return isUnderRoot(url)
     }
     
-    func load(_ url: URL, completionHandler: @escaping (([FileItem]?, Error?) -> Void)) {
-        assert(isUnderRoot(url) || url == self.rootUrl, "Url is outside root tree.")
+    func load(_ url: URL, completionHandler: @escaping (([FileItem]?, Int64?, Error?) -> Void)) {
+        assert(isUnderRoot(url) || url == self.rootUrl, "URL (\(url)) is outside root tree (\(self.rootUrl)).")
         
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let `self` = self else { return }
             do {
                 guard let contents = self.sftp.contentsOfDirectory(atPath: url.path) as? [NMSFTPFile] else { throw SftpError.invalidDirectoryContent(at: url) }
                 let fileItems = contents.flatMap { return FileItem(sftpFile: $0, parentUrl: url, user: self.session.username ?? "") }
-                DispatchQueue.main.async { completionHandler(fileItems, nil) }
+                let freeSpace = self.remoteFreeSpace(at: url)
+                DispatchQueue.main.async { completionHandler(fileItems, freeSpace, nil) }
             }
             catch {
-                DispatchQueue.main.async { completionHandler(nil, error) }
+                DispatchQueue.main.async { completionHandler(nil, nil, error) }
             }
             
         }
@@ -341,6 +342,22 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
         
         // Try again to delete directory
         guard self.sftp.removeDirectory(atPath: url.path) else { throw SftpError.deletingFileFailed(at: url) }
+    }
+    
+    /// Synchromously retrieve remote free space
+    private func remoteFreeSpace(at url: URL) -> Int64? {
+        assert(isUnderRoot(url) || url == self.rootUrl, "URL (\(url)) is outside root tree (\(self.rootUrl)).")
+        do {
+            let output = try self.session.channel.execute("df -k \(url.path.replacingOccurrences(of: " ", with: "\\ ")) | tail -1 | awk '{ print $4 }' ")
+            let outputLines = output.components(separatedBy: "\n")
+            guard outputLines.count > 0 else { assertionFailure("Expected non-empty response"); return nil }
+            guard let freeKb = Int64(outputLines[0]) else { assertionFailure("Failed to retrieve free space for URL [\(url)], got response: \(output)"); return nil }
+            return freeKb * 1024
+        }
+        catch {
+            Log.error?.message("Failed to retrieve free disk space for URL [\(url)].")
+            return nil
+        }
     }
 }
 

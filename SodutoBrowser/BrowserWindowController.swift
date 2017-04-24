@@ -52,6 +52,8 @@ class BrowserWindowController: NSWindowController {
     @IBOutlet weak var collectionView: NSCollectionView!
     @IBOutlet weak var itemArrayController: NSArrayController!
     @IBOutlet weak var iconsSizeSlider: NSSlider!
+    @IBOutlet weak var statusLabel: NSTextField!
+    
     @objc private var items: [FileItem] = [] {
         didSet {
             updateBusyItems()
@@ -62,6 +64,7 @@ class BrowserWindowController: NSWindowController {
         guard let items = self.itemArrayController.arrangedObjects as? [FileItem] else { assertionFailure("arrangedObjects could not be converted into array of FileItem"); return [] }
         return items
     }
+    private var freeSpace: Int64?
     
     fileprivate let fileSystem: FileSystem
     fileprivate var url: URL
@@ -110,6 +113,7 @@ class BrowserWindowController: NSWindowController {
         updateFilter()
         updateSorting()
         updateIconsSize()
+        updateStatusInfo()
         
         goTo(self.fileSystem.defaultPlace.url, updateHistory: false)
     }
@@ -134,10 +138,13 @@ class BrowserWindowController: NSWindowController {
         let url = self.url
         self.items = []
         self.collectionView.reloadData()
-        self.fileSystem.load(url) { (items, error) in
+        updateStatusInfo()
+        self.fileSystem.load(url) { (items, freeSpace, error) in
             if let items = items {
                 self.items = items
+                self.freeSpace = freeSpace
                 self.collectionView.reloadData()
+                self.updateStatusInfo()
             }
             else {
                 Log.error?.message("Failed to load items from [\(url)] with error: \(error)")
@@ -154,6 +161,19 @@ class BrowserWindowController: NSWindowController {
         self.iconsSizeSlider.integerValue = self.iconsSize
     }
     
+    private func updateStatusInfo() {
+        let itemsCountStr = String(format: NSLocalizedString("%d items", comment: ""), self.arrangedItems.count)
+        let statusStr: String
+        if let freeSpace = self.freeSpace {
+            let freeSpaceStr = String(format: NSLocalizedString("%@ available", comment: ""), ByteCountFormatter.string(fromByteCount: freeSpace, countStyle: .file))
+            statusStr = "\(itemsCountStr), \(freeSpaceStr)"
+        }
+        else {
+            statusStr = itemsCountStr
+        }
+        self.statusLabel.stringValue = statusStr
+    }
+    
     private func updateFilter() {
         self.itemArrayController.filterPredicate = NSPredicate(block: { (item, substitutions) -> Bool in
             guard let fileItem = item as? FileItem else { return false }
@@ -161,6 +181,7 @@ class BrowserWindowController: NSWindowController {
             return true
         })
         self.collectionView.reloadData()
+        updateStatusInfo()
     }
     
     private func updateSorting() {
@@ -170,6 +191,7 @@ class BrowserWindowController: NSWindowController {
         }
         self.itemArrayController.sortDescriptors = descriptors
         self.collectionView.reloadData()
+        updateStatusInfo()
     }
     
     private func updateBusyItems() {
@@ -257,6 +279,7 @@ class BrowserWindowController: NSWindowController {
         let finalCompletionOperation = BlockOperation {
             
             self.removeDeletedItems()
+            self.updateStatusInfo()
             
         }
         for op in completionOperations { finalCompletionOperation.addDependency(op) }
@@ -302,6 +325,7 @@ class BrowserWindowController: NSWindowController {
         let finalCompletionOperation = BlockOperation {
             
             self.removeDeletedItems()
+            self.updateStatusInfo()
             
         }
         for op in completionOperations { finalCompletionOperation.addDependency(op) }
@@ -348,6 +372,7 @@ class BrowserWindowController: NSWindowController {
         let finalCompletionOperation = BlockOperation {
             
             self.removeDeletedItems()
+            self.updateStatusInfo()
             
         }
         for op in completionOperations { finalCompletionOperation.addDependency(op) }

@@ -59,8 +59,8 @@ class LocalFileSystem: FileSystem {
         return isUnderRoot(url)
     }
     
-    func load(_ url: URL, completionHandler: @escaping (([FileItem]?, Error?) -> Void)) {
-        DispatchQueue.global(qos: .userInitiated).async {
+    func load(_ url: URL, completionHandler: @escaping (([FileItem]?, Int64?, Error?) -> Void)) {
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             do {
                 var content: [FileItem] = []
                 let fileURLs: [URL] = try FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: [])
@@ -68,11 +68,12 @@ class LocalFileSystem: FileSystem {
                     let item = FileItem(url: url)
                     content.append(item)
                 }
+                let space = self?.freeSpace(at: url)
                 
-                DispatchQueue.main.async { completionHandler(content, nil) }
+                DispatchQueue.main.async { completionHandler(content, space, nil) }
             }
             catch {
-                DispatchQueue.main.async { completionHandler(nil, error) }
+                DispatchQueue.main.async { completionHandler(nil, nil, error) }
             }
             
         }
@@ -157,5 +158,15 @@ class LocalFileSystem: FileSystem {
         }
         self.fileOperationQueue.addOperation(operation)
         return operation
+    }
+    
+    
+    // MARK: Private stuff
+    
+    private func freeSpace(at url: URL) -> Int64? {
+        assert(isUnderRoot(url) || url == self.rootUrl, "URL (\(url)) is outside root tree (\(self.rootUrl)).")
+        guard let fileSystemAttrs = try? FileManager.default.attributesOfFileSystem(forPath: url.path) else { assertionFailure("Failed to retrieve file system information for URL [\(url)]"); return nil }
+        guard let freeSpace = fileSystemAttrs[FileAttributeKey.systemFreeSize] as? NSNumber else { assertionFailure("Failed to retrieve file system free space for URL [\(url)]"); return nil }
+        return freeSpace.int64Value
     }
 }
