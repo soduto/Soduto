@@ -11,6 +11,7 @@
                 <outlet property="collectionView" destination="dki-ve-wAx" id="LWH-z3-YnO"/>
                 <outlet property="iconsSizeSlider" destination="s7J-fQ-hUh" id="HgR-6M-xij"/>
                 <outlet property="itemArrayController" destination="hip-Ll-X0r" id="4uH-Hn-YnN"/>
+                <outlet property="progressIndicator" destination="axN-dQ-mus" id="sNf-0D-j6d"/>
                 <outlet property="statusLabel" destination="5BP-Ic-wbj" id="vHO-oa-yyd"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="HHo-aa-UPm"/>
             </connections>
@@ -94,14 +95,19 @@ AAAAAAEGA
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="axN-dQ-mus">
+                                <rect key="frame" x="10" y="4" width="16" height="16"/>
+                            </progressIndicator>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="axN-dQ-mus" firstAttribute="centerY" secondItem="1Nr-pP-6FY" secondAttribute="centerY" id="Gmb-vb-hH4"/>
                             <constraint firstItem="s7J-fQ-hUh" firstAttribute="centerY" secondItem="1Nr-pP-6FY" secondAttribute="centerY" id="Mw5-dN-9ZV"/>
                             <constraint firstItem="5BP-Ic-wbj" firstAttribute="centerX" secondItem="1Nr-pP-6FY" secondAttribute="centerX" id="dwE-xR-IvU"/>
                             <constraint firstAttribute="height" constant="24" id="fSq-MS-33k"/>
                             <constraint firstAttribute="trailing" secondItem="K1S-2a-yKm" secondAttribute="trailing" id="g9R-Sh-MPh"/>
                             <constraint firstItem="5BP-Ic-wbj" firstAttribute="centerY" secondItem="1Nr-pP-6FY" secondAttribute="centerY" id="hak-KS-cOs"/>
                             <constraint firstItem="K1S-2a-yKm" firstAttribute="leading" secondItem="1Nr-pP-6FY" secondAttribute="leading" id="hzh-GC-uLA"/>
+                            <constraint firstItem="axN-dQ-mus" firstAttribute="leading" secondItem="1Nr-pP-6FY" secondAttribute="leading" constant="10" id="q3Y-dH-m2e"/>
                             <constraint firstItem="K1S-2a-yKm" firstAttribute="top" secondItem="1Nr-pP-6FY" secondAttribute="top" id="srz-gc-6jg"/>
                             <constraint firstAttribute="trailing" secondItem="s7J-fQ-hUh" secondAttribute="trailing" constant="10" id="yrU-wr-TGp"/>
                         </constraints>

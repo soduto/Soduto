@@ -30,7 +30,7 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
     
     // MARK: Properties
     
-    let name: String = NSLocalizedString("SFTP", comment: "File system name")
+    let name: String
     let rootUrl: URL
     let places: [Place] = []
     
@@ -41,7 +41,9 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
     
     // MARK: Setup / Cleanup
     
-    init(host: String, user: String, password: String, path: String) throws {
+    init(name: String, host: String, user: String, password: String, path: String) throws {
+        self.name = name
+        
         self.session = NMSSHSession.connect(toHost: host, withUsername: user)
         guard self.session.isConnected else { throw SftpError.connectionFailed }
         

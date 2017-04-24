@@ -53,6 +53,7 @@ class BrowserWindowController: NSWindowController {
     @IBOutlet weak var itemArrayController: NSArrayController!
     @IBOutlet weak var iconsSizeSlider: NSSlider!
     @IBOutlet weak var statusLabel: NSTextField!
+    @IBOutlet weak var progressIndicator: NSProgressIndicator!
     
     @objc private var items: [FileItem] = [] {
         didSet {
@@ -138,8 +139,11 @@ class BrowserWindowController: NSWindowController {
         let url = self.url
         self.items = []
         self.collectionView.reloadData()
+        self.progressIndicator.startAnimation(self)
         updateStatusInfo()
+        
         self.fileSystem.load(url) { (items, freeSpace, error) in
+            self.progressIndicator.stopAnimation(self)
             if let items = items {
                 self.items = items
                 self.freeSpace = freeSpace

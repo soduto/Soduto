@@ -29,7 +29,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var browserWindowController: BrowserWindowController?
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        let fs = try! SftpFileSystem(host: "286840.s.dedikuoti.lt", user: "giedrius", password: "gargantuki", path: "/")
+        let fs = try! SftpFileSystem(name: "SFTP", host: "286840.s.dedikuoti.lt", user: "giedrius", password: "gargantuki", path: "/")
         self.browserWindowController = BrowserWindowController(fileSystem: fs)
     }
 
