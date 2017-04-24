@@ -28,13 +28,13 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <scrollView wantsLayer="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aUX-UY-8V4">
-                        <rect key="frame" x="0.0" y="24" width="480" height="246"/>
+                        <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                         <clipView key="contentView" drawsBackground="NO" id="2TC-u1-PIt">
-                            <rect key="frame" x="0.0" y="0.0" width="480" height="246"/>
+                            <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <collectionView wantsLayer="YES" selectable="YES" allowsMultipleSelection="YES" id="dki-ve-wAx">
-                                    <rect key="frame" x="0.0" y="0.0" width="480" height="246"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <animations>
                                         <caTransition key="subviews">
@@ -62,6 +62,7 @@ AAAAAAEGA
                             </subviews>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </clipView>
+                        <edgeInsets key="scrollerInsets" left="0.0" right="0.0" top="0.0" bottom="24"/>
                         <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="xu9-Rc-IPW">
                             <rect key="frame" x="1" y="253" width="478" height="16"/>
                             <autoresizingMask key="autoresizingMask"/>
@@ -74,6 +75,9 @@ AAAAAAEGA
                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="1Nr-pP-6FY">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="24"/>
                         <subviews>
+                            <visualEffectView appearanceType="vibrantLight" blendingMode="withinWindow" material="menu" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="Ygj-UD-Tne">
+                                <rect key="frame" x="0.0" y="0.0" width="480" height="24"/>
+                            </visualEffectView>
                             <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="K1S-2a-yKm">
                                 <rect key="frame" x="0.0" y="21" width="480" height="5"/>
                             </box>
@@ -88,10 +92,10 @@ AAAAAAEGA
                                 </connections>
                             </slider>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5BP-Ic-wbj" userLabel="Status Label">
-                                <rect key="frame" x="220" y="5" width="41" height="14"/>
-                                <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="fdsfdsf" id="Buu-Ed-FV0">
+                                <rect key="frame" x="238" y="5" width="4" height="14"/>
+                                <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="Buu-Ed-FV0">
                                     <font key="font" metaFont="smallSystem"/>
-                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
@@ -101,13 +105,17 @@ AAAAAAEGA
                         </subviews>
                         <constraints>
                             <constraint firstItem="axN-dQ-mus" firstAttribute="centerY" secondItem="1Nr-pP-6FY" secondAttribute="centerY" id="Gmb-vb-hH4"/>
+                            <constraint firstItem="Ygj-UD-Tne" firstAttribute="leading" secondItem="1Nr-pP-6FY" secondAttribute="leading" id="Hjr-DD-WXL"/>
                             <constraint firstItem="s7J-fQ-hUh" firstAttribute="centerY" secondItem="1Nr-pP-6FY" secondAttribute="centerY" id="Mw5-dN-9ZV"/>
+                            <constraint firstAttribute="trailing" secondItem="Ygj-UD-Tne" secondAttribute="trailing" id="PvN-0x-WIy"/>
+                            <constraint firstItem="Ygj-UD-Tne" firstAttribute="top" secondItem="1Nr-pP-6FY" secondAttribute="top" id="WbK-Qf-17c"/>
                             <constraint firstItem="5BP-Ic-wbj" firstAttribute="centerX" secondItem="1Nr-pP-6FY" secondAttribute="centerX" id="dwE-xR-IvU"/>
                             <constraint firstAttribute="height" constant="24" id="fSq-MS-33k"/>
                             <constraint firstAttribute="trailing" secondItem="K1S-2a-yKm" secondAttribute="trailing" id="g9R-Sh-MPh"/>
                             <constraint firstItem="5BP-Ic-wbj" firstAttribute="centerY" secondItem="1Nr-pP-6FY" secondAttribute="centerY" id="hak-KS-cOs"/>
                             <constraint firstItem="K1S-2a-yKm" firstAttribute="leading" secondItem="1Nr-pP-6FY" secondAttribute="leading" id="hzh-GC-uLA"/>
                             <constraint firstItem="axN-dQ-mus" firstAttribute="leading" secondItem="1Nr-pP-6FY" secondAttribute="leading" constant="10" id="q3Y-dH-m2e"/>
+                            <constraint firstAttribute="bottom" secondItem="Ygj-UD-Tne" secondAttribute="bottom" id="srk-ku-EtI"/>
                             <constraint firstItem="K1S-2a-yKm" firstAttribute="top" secondItem="1Nr-pP-6FY" secondAttribute="top" id="srz-gc-6jg"/>
                             <constraint firstAttribute="trailing" secondItem="s7J-fQ-hUh" secondAttribute="trailing" constant="10" id="yrU-wr-TGp"/>
                         </constraints>
@@ -117,13 +125,47 @@ AAAAAAEGA
                     <constraint firstItem="aUX-UY-8V4" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" id="2L2-8i-0iI"/>
                     <constraint firstAttribute="trailing" secondItem="aUX-UY-8V4" secondAttribute="trailing" id="5mu-zs-zmV"/>
                     <constraint firstItem="1Nr-pP-6FY" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" id="90y-uo-4ah"/>
-                    <constraint firstItem="1Nr-pP-6FY" firstAttribute="top" secondItem="aUX-UY-8V4" secondAttribute="bottom" id="T0P-7r-oKM"/>
                     <constraint firstAttribute="bottom" secondItem="1Nr-pP-6FY" secondAttribute="bottom" id="Xew-Ry-Z0x"/>
+                    <constraint firstAttribute="bottom" secondItem="aUX-UY-8V4" secondAttribute="bottom" id="jpH-WN-CWN"/>
                     <constraint firstAttribute="trailing" secondItem="1Nr-pP-6FY" secondAttribute="trailing" id="nh6-Gz-PU4"/>
                     <constraint firstItem="aUX-UY-8V4" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" id="ohb-og-Ew4"/>
                 </constraints>
             </view>
+            <toolbar key="toolbar" implicitIdentifier="4CE7B376-FDE2-4285-9D2F-0FA3FFE61BDD" autosavesConfiguration="NO" displayMode="iconOnly" sizeMode="regular" id="wJB-nt-QwV">
+                <allowedToolbarItems>
+                    <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="fo3-9d-cmB"/>
+                    <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="2D0-ll-7ku"/>
+                    <toolbarItem implicitItemIdentifier="B802093F-9553-4DB5-87F6-5608AD79FFD4" label="Go Back/Forward" paletteLabel="Go Back/Forward" tag="50001" id="6YR-i1-dEB">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="0.0" height="22"/>
+                        <size key="maxSize" width="100" height="28"/>
+                        <segmentedControl key="view" verticalHuggingPriority="750" tag="50001" id="47F-1F-m2Y">
+                            <rect key="frame" x="49" y="14" width="0.0" height="26"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <segmentedCell key="cell" borderStyle="border" alignment="left" style="separated" trackingMode="momentary" id="6P8-24-7VJ">
+                                <font key="font" metaFont="system"/>
+                                <segments>
+                                    <segment image="NSGoLeftTemplate" width="23"/>
+                                    <segment image="NSGoRightTemplate" width="23" tag="1"/>
+                                </segments>
+                            </segmentedCell>
+                            <connections>
+                                <action selector="goBackForward:" target="-1" id="AWQ-td-j0S"/>
+                            </connections>
+                        </segmentedControl>
+                    </toolbarItem>
+                </allowedToolbarItems>
+                <defaultToolbarItems>
+                    <toolbarItem reference="6YR-i1-dEB"/>
+                    <toolbarItem reference="2D0-ll-7ku"/>
+                </defaultToolbarItems>
+            </toolbar>
+            <contentBorderThickness minY="22"/>
         </window>
         <arrayController id="hip-Ll-X0r" userLabel="Icon Array Controller"/>
     </objects>
+    <resources>
+        <image name="NSGoLeftTemplate" width="9" height="12"/>
+        <image name="NSGoRightTemplate" width="9" height="12"/>
+    </resources>
 </document>

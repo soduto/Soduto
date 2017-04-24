@@ -25,6 +25,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         static let deleteFiles: Int = 3001
         static let newFolder: Int = 3002
     }
+    
+    struct ToolbarItemTags {
+        static let backForward: Int = 50001
+    }
 
     private var browserWindowController: BrowserWindowController?
     

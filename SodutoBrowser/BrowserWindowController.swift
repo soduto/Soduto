@@ -132,6 +132,7 @@ class BrowserWindowController: NSWindowController {
         
         self.url = url
         self.window?.title = "\(self.fileSystem.name) - \(self.url.lastPathComponent)"
+        self.window?.toolbar?.items.forEach { $0.isEnabled = self.validateToolbarItem($0) }
         loadContents()
     }
     
@@ -508,8 +509,17 @@ class BrowserWindowController: NSWindowController {
         self.iconsSize = slider.integerValue
     }
     
+    @IBAction func goBackForward(_ sender: NSSegmentedControl?) {
+        guard let control = sender else { assertionFailure("Sender expected to be a valid NSSegmentedControl view."); return }
+        switch control.selectedSegment {
+        case 0: goBack(nil)
+        case 1: goForward(nil)
+        default: return
+        }
+    }
     
-    // MARK: Menu
+    
+    // MARK: Menu / Toolbar
     
     override func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         switch menuItem.tag {
@@ -523,6 +533,17 @@ class BrowserWindowController: NSWindowController {
             menuItem.state = self.isFoldersAlwaysFirst ? NSOnState : NSOffState
             return true
         case AppDelegate.MenuItemTags.deleteFiles: return !self.collectionView.selectionIndexes.isEmpty
+        default: return false
+        }
+    }
+    
+    override func validateToolbarItem(_ item: NSToolbarItem) -> Bool {
+        switch item.tag {
+        case AppDelegate.ToolbarItemTags.backForward:
+            guard let view = item.view as? NSSegmentedControl else { return false }
+            view.setEnabled(self.canGoBack, forSegment: 0)
+            view.setEnabled(self.canGoForward, forSegment: 1)
+            return true
         default: return false
         }
     }
