@@ -39,8 +39,19 @@ class IconItem: NSCollectionViewItem {
     override var isSelected: Bool {
         didSet {
             guard self.isSelected != oldValue else { return }
-            self.iconView?.isSelected = self.isSelected
+            updateViewSelection()
         }
+    }
+    
+    override var highlightState: NSCollectionViewItemHighlightState {
+        didSet {
+            guard self.highlightState != oldValue else { return }
+            updateViewSelection()
+        }
+    }
+    
+    private func updateViewSelection() {
+        self.iconView?.isSelected = self.isSelected || self.highlightState == .asDropTarget
     }
     
 }
