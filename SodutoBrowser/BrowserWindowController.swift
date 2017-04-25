@@ -54,6 +54,7 @@ class BrowserWindowController: NSWindowController {
     @IBOutlet weak var iconsSizeSlider: NSSlider!
     @IBOutlet weak var statusLabel: NSTextField!
     @IBOutlet weak var progressIndicator: NSProgressIndicator!
+    @IBOutlet weak var pathControl: NSPathControl!
     
     @objc private var items: [FileItem] = [] {
         didSet {
