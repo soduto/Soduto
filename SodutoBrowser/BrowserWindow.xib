@@ -64,13 +64,13 @@ AAAAAAEGA
                                 </collectionView>
                             </subviews>
                         </clipView>
-                        <edgeInsets key="scrollerInsets" left="0.0" right="0.0" top="0.0" bottom="48"/>
+                        <edgeInsets key="contentInsets" left="0.0" right="0.0" top="0.0" bottom="48"/>
                         <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="xu9-Rc-IPW">
-                            <rect key="frame" x="1" y="205" width="478" height="16"/>
+                            <rect key="frame" x="1" y="205" width="478" height="15"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
-                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="UgR-cf-sbN">
-                            <rect key="frame" x="463" y="1" width="16" height="220"/>
+                        <scroller key="verticalScroller" verticalHuggingPriority="750" horizontal="NO" id="UgR-cf-sbN">
+                            <rect key="frame" x="464" y="0.0" width="16" height="222"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                     </scrollView>
