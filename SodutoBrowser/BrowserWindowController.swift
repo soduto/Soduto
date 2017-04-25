@@ -125,6 +125,7 @@ class BrowserWindowController: NSWindowController {
     
     private func goTo(_ url: URL, updateHistory: Bool = true) {
         guard self.fileSystem.isValid(url) else { return }
+        guard url.hasDirectoryPath else { return }
         
         if updateHistory {
             self.backHistory.append(self.url)
@@ -135,6 +136,7 @@ class BrowserWindowController: NSWindowController {
         self.window?.title = "\(self.fileSystem.name) - \(self.url.lastPathComponent)"
         self.window?.toolbar?.items.forEach { $0.isEnabled = self.validateToolbarItem($0) }
         loadContents()
+        updatePathControl()
     }
     
     private func loadContents() {
@@ -186,6 +188,38 @@ class BrowserWindowController: NSWindowController {
         }
         
         self.statusLabel.stringValue = statusStr
+    }
+    
+    fileprivate func updatePathControl() {
+        var cells: [NSPathComponentCell] = []
+        var url = self.fileSystem.rootUrl
+        
+        let rootCell = NSPathComponentCell()
+        rootCell.image = NSImage(named: NSImageNameNetwork)
+        rootCell.title = self.fileSystem.name
+        rootCell.url = url
+        cells.append(rootCell)
+        
+        let relativePath = self.url.relativeTo(self.fileSystem.rootUrl)
+        for component in relativePath.pathComponents {
+            guard component != "/" else { continue }
+            url.appendPathComponent(component, isDirectory: true)
+            let cell = NSPathComponentCell()
+            cell.image = NSImage(named: NSImageNameFolder)
+            cell.title = component
+            cell.url = url
+            cells.append(cell)
+        }
+        
+        if self.collectionView.selectionIndexPaths.count == 1, let fileItem = self.fileItem(at: self.collectionView.selectionIndexPaths.first!), fileItem.isDirectory {
+            let cell = NSPathComponentCell()
+            cell.image = NSImage(named: NSImageNameFolder)
+            cell.title = fileItem.name
+            cell.url = fileItem.url
+            cells.append(cell)
+        }
+        
+        self.pathControl.setPathComponentCells(cells)
     }
     
     private func updateFilter() {
@@ -519,6 +553,12 @@ class BrowserWindowController: NSWindowController {
         }
     }
     
+    @IBAction func pathControlDoubleClicked(_ sender: NSPathControl?) {
+        guard let control = sender else { assertionFailure("Sender expected to be a valid NSPathControl view."); return }
+        guard let url = control.clickedPathItem?.url else { return }
+        self.goTo(url)
+    }
+    
     
     // MARK: Menu / Toolbar
     
@@ -759,6 +799,7 @@ extension BrowserWindowController: NSCollectionViewDelegate {
      */
     public func collectionView(_ collectionView: NSCollectionView, didSelectItemsAt indexPaths: Set<IndexPath>) {
         updateStatusInfo()
+        updatePathControl()
     }
     
     
@@ -766,6 +807,7 @@ extension BrowserWindowController: NSCollectionViewDelegate {
      */
     public func collectionView(_ collectionView: NSCollectionView, didDeselectItemsAt indexPaths: Set<IndexPath>) {
         updateStatusInfo()
+        updatePathControl()
     }
     
     

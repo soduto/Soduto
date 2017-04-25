@@ -29,4 +29,30 @@ extension URL {
         return destUrl.appendingPathComponent(self.lastPathComponent, isDirectory: self.hasDirectoryPath)
     }
     
+    public func relativeTo(_ baseUrl: URL) -> URL {
+        let absSelf = self.absoluteURL
+        let baseUrl = baseUrl.absoluteURL
+        
+        assert(absSelf.isUnder(baseUrl) || baseUrl == absSelf, "baseUrl [\(baseUrl)] expected to be prefix of [\(absSelf)].")
+        guard absSelf.isUnder(baseUrl) || baseUrl == absSelf else { return absSelf }
+        
+        let relativeComponents = absSelf.pathComponents.suffix(from: baseUrl.pathComponents.count)
+        guard var relativeUrl = URL(string: ".", relativeTo: baseUrl) else { assertionFailure("Could not contruct relative URL with base [\(baseUrl)]"); return absSelf }
+        for component in relativeComponents {
+            relativeUrl.appendPathComponent(component)
+        }
+        return relativeUrl
+    }
+    
+    public func rebasing(to newBaseUrl: URL) -> URL {
+        assert(baseURL != nil, "Expected relative URL: \(self).")
+        guard baseURL != nil else { return self }
+        guard let rebased = URL(string: relativeString, relativeTo: newBaseUrl) else { assertionFailure("Failed to create relative URL from [\(self)] rebased to [\(newBaseUrl)]."); return self }
+        return rebased
+    }
+    
+    public func rebasing(from oldBaseUrl: URL, to newBaseUrl: URL) -> URL {
+        return self.relativeTo(oldBaseUrl).rebasing(to: newBaseUrl)
+    }
+    
 }

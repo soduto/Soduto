@@ -89,6 +89,9 @@ AAAAAAEGA
                                         <font key="font" metaFont="smallSystem"/>
                                         <url key="url" string="file://localhost/Applications/"/>
                                     </pathCell>
+                                    <connections>
+                                        <action trigger="doubleAction" selector="pathControlDoubleClicked:" target="-2" id="zQw-Vt-TKG"/>
+                                    </connections>
                                 </pathControl>
                             </subviews>
                             <constraints>
