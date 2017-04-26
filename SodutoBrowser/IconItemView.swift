@@ -100,13 +100,8 @@ public class IconItemView: NSBox, NSTextFieldDelegate {
     public override func controlTextDidEndEditing(_ obj: Notification) {
         guard (obj.object as? NSControl) == self.labelView else { assertionFailure("Expected notification from own labelView, but got \(obj.object)"); return }
         self.labelView.isEditable = false
+        self.labelView.needsUpdateConstraints = true
         updateStyle()
-        self.layout()
-    }
-    
-    public override func controlTextDidChange(_ obj: Notification) {
-        guard (obj.object as? NSControl) == self.labelView else { assertionFailure("Expected notification from own labelView, but got \(obj.object)"); return }
-        self.collectionItem.labelTextDidChange(self.labelView.stringValue)
     }
     
     
