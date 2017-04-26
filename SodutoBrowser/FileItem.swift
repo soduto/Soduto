@@ -10,42 +10,44 @@ import Foundation
 import AppKit
 import CleanroomLogger
 
-class FileItem: NSObject, NSPasteboardReading, NSPasteboardWriting {
+public class FileItem: NSObject, NSPasteboardReading, NSPasteboardWriting {
     
     public struct Flags: OptionSet {
-        let rawValue: Int
+        public let rawValue: Int
         
-        static let isDirectory = Flags(rawValue: 1 << 0)
-        static let isHidden = Flags(rawValue: 1 << 1)
-        static let isReadable = Flags(rawValue: 1 << 2)
-        static let isWritable = Flags(rawValue: 1 << 3)
-        static let isBusy = Flags(rawValue: 1 << 4)    // Indicates, that there is pending operation on the item
-        static let isDeleted = Flags(rawValue: 1 << 5) // Indicates that item is already deleted and this is just a placeholder
+        public init(rawValue: Int) { self.rawValue = rawValue }
+        
+        public static let isDirectory = Flags(rawValue: 1 << 0)
+        public static let isHidden = Flags(rawValue: 1 << 1)
+        public static let isReadable = Flags(rawValue: 1 << 2)
+        public static let isWritable = Flags(rawValue: 1 << 3)
+        public static let isBusy = Flags(rawValue: 1 << 4)    // Indicates, that there is pending operation on the item
+        public static let isDeleted = Flags(rawValue: 1 << 5) // Indicates that item is already deleted and this is just a placeholder
     }
 
     
-    let url: URL
-    let name: String
-    let icon: NSImage
-    let staticFlags: Flags
-    var dynamicFlags: Flags = []
+    public let url: URL
+    public let name: String
+    public let icon: NSImage
+    public let staticFlags: Flags
+    public var dynamicFlags: Flags = []
     
-    var flags: Flags { return self.staticFlags.union(self.dynamicFlags) }
-    var isDirectory: Bool { return self.flags.contains(.isDirectory) }
-    var isHidden: Bool { return self.flags.contains(.isHidden) }
-    var isBusy: Bool { return self.flags.contains(.isBusy) }
-    var isDeleted: Bool { return self.flags.contains(.isDeleted) }
-    var isWritable: Bool { return self.flags.contains(.isWritable) }
-    var canModify: Bool { return self.isWritable && !self.isBusy && !self.isDeleted }
+    public var flags: Flags { return self.staticFlags.union(self.dynamicFlags) }
+    public var isDirectory: Bool { return self.flags.contains(.isDirectory) }
+    public var isHidden: Bool { return self.flags.contains(.isHidden) }
+    public var isBusy: Bool { return self.flags.contains(.isBusy) }
+    public var isDeleted: Bool { return self.flags.contains(.isDeleted) }
+    public var isWritable: Bool { return self.flags.contains(.isWritable) }
+    public var canModify: Bool { return self.isWritable && !self.isBusy && !self.isDeleted }
     
-    init(url: URL, name: String, icon: NSImage, flags: Flags) {
+    public init(url: URL, name: String, icon: NSImage, flags: Flags) {
         self.url = url
         self.name = name
         self.icon = icon
         self.staticFlags = flags
     }
     
-    convenience init(url: URL) {
+    public convenience init(url: URL) {
         if url.isFileURL {
             let icon = NSWorkspace.shared().icon(forFile: url.path)
             do {

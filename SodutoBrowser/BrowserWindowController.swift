@@ -500,7 +500,17 @@ class BrowserWindowController: NSWindowController {
     
     // MARK: Actions
     
-    override func collectionItemViewDoubleClick(_ sender: NSCollectionViewItem) {
+    func collectionItemViewClick(_ sender: NSCollectionViewItem) {
+        guard let item = sender as? IconItem else { return }
+        guard self.collectionView.selectionIndexes.count == 1 else { return }
+        guard let selectedIndexPath = self.collectionView.selectionIndexPaths.first else { return }
+        guard self.collectionView.item(at: selectedIndexPath) == item else { return }
+        guard let fileItem = item.fileItem else { return }
+        guard fileItem.canModify else { return }
+        item.startEditing()
+    }
+    
+    func collectionItemViewDoubleClick(_ sender: NSCollectionViewItem) {
         guard let fileItem = (sender as? IconItem)?.fileItem else { return }
         guard !fileItem.flags.contains(.isBusy) else { return }
         guard fileItem.isDirectory else { return }

@@ -10,9 +10,9 @@ import Foundation
 import AppKit
 import CoreImage
 
-public class IconItemView: NSBox {
+public class IconItemView: NSBox, NSTextFieldDelegate {
 
-    public weak var collectionItem: NSCollectionViewItem!
+    public weak var collectionItem: IconItem!
     
     private dynamic var iconView: NSImageView!
     private dynamic var iconBackgroundView: NSView!
@@ -38,6 +38,8 @@ public class IconItemView: NSBox {
         didSet { updateStyle() }
     }
     
+    public var isEditing: Bool { return self.labelView.currentEditor() != nil }
+    
     
     public override func awakeFromNib() {
         super.awakeFromNib()
@@ -60,24 +62,60 @@ public class IconItemView: NSBox {
         self.labelView.layer?.cornerRadius = 3.0
         self.labelView.layer?.masksToBounds = true
         self.labelView.allowsExpansionToolTips = true
+        self.labelView.maximumNumberOfLines = 2
+        self.labelView.delegate = self
         
         self.overlayView = overlayView
         
         updateStyle()
     }
     
-    public override func mouseDown(with event: NSEvent) {
-        super.mouseDown(with: event)
-        if event.clickCount == 2 {
-            NSApplication.shared().sendAction(#selector(collectionItemViewDoubleClick(_:)), to: nil, from: self.collectionItem)
+    public override func mouseUp(with event: NSEvent) {
+        if event.clickCount == 1 {
+            NSApplication.shared().sendAction(#selector(BrowserWindowController.collectionItemViewClick(_:)), to: nil, from: self.collectionItem)
         }
+        else if event.clickCount == 2 {
+            NSApplication.shared().sendAction(#selector(BrowserWindowController.collectionItemViewDoubleClick(_:)), to: nil, from: self.collectionItem)
+        }
+        super.mouseUp(with: event)
     }
     
     
+    // MARK: Editing
+    
+    public func startEditing() {
+        self.labelView.isEditable = true
+        if self.window?.makeFirstResponder(self.labelView) == true {
+            updateStyle()
+        }
+        else {
+            self.labelView.isEditable = false
+        }
+    }
+    
+    public func cancelEditing() {
+        self.labelView.abortEditing()
+    }
+    
+    public override func controlTextDidEndEditing(_ obj: Notification) {
+        guard (obj.object as? NSControl) == self.labelView else { assertionFailure("Expected notification from own labelView, but got \(obj.object)"); return }
+        self.labelView.isEditable = false
+        updateStyle()
+        self.layout()
+    }
+    
+    public override func controlTextDidChange(_ obj: Notification) {
+        guard (obj.object as? NSControl) == self.labelView else { assertionFailure("Expected notification from own labelView, but got \(obj.object)"); return }
+        self.collectionItem.labelTextDidChange(self.labelView.stringValue)
+    }
+    
+    
+    // MARK: Other
+    
     private func updateStyle() {
-        self.iconBackgroundView.layer?.backgroundColor = self.isSelected ? NSColor.secondarySelectedControlColor.cgColor : nil
-        self.labelView.layer?.backgroundColor = self.isSelected ? NSColor.alternateSelectedControlColor.cgColor : nil
-        self.labelView.textColor = self.isSelected ? NSColor.alternateSelectedControlTextColor : nil
+        self.iconBackgroundView.layer?.backgroundColor = self.isSelected || self.isEditing ? NSColor.secondarySelectedControlColor.cgColor : nil
+        self.labelView.layer?.backgroundColor = self.isSelected && !self.isEditing ? NSColor.alternateSelectedControlColor.cgColor : nil
+        self.labelView.textColor = self.isSelected && !self.isEditing ? NSColor.alternateSelectedControlTextColor : nil
         
         if self.isBusy {
             self.iconView.alphaValue = 0.3
@@ -101,11 +139,5 @@ public class IconItemView: NSBox {
         else {
             self.overlayView.image = nil
         }
-    }
-}
-
-extension NSResponder {
-    func collectionItemViewDoubleClick(_ sender: NSCollectionViewItem) {
-        nextResponder?.collectionItemViewDoubleClick(sender)
     }
 }
