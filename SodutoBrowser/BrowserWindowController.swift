@@ -500,7 +500,7 @@ class BrowserWindowController: NSWindowController {
     
     // MARK: Actions
     
-    func collectionItemViewClick(_ sender: NSCollectionViewItem) {
+    func collectionItemViewLabelClick(_ sender: NSCollectionViewItem) {
         guard let item = sender as? IconItem else { return }
         guard self.collectionView.selectionIndexes.count == 1 else { return }
         guard let selectedIndexPath = self.collectionView.selectionIndexPaths.first else { return }
