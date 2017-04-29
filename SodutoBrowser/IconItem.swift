@@ -16,7 +16,7 @@ public class IconItem: NSCollectionViewItem {
     
     // MARK: Properties
     
-//    public weak var delegate: IconItemDelegate?
+    public weak var delegate: IconItemDelegate?
     
     public var iconView: IconItemView? { return self.view as? IconItemView }
     
@@ -80,7 +80,7 @@ public class IconItem: NSCollectionViewItem {
     
     /// Called by the view when edited text changes
     public func labelTextDidChange(_ text: String) {
-//        self.delegate?.iconItem(self, didChangeName: text)
+        self.delegate?.iconItem(self, didChangeName: text)
         self.iconView?.cancelEditing()
     }
     

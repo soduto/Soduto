@@ -96,11 +96,23 @@ public class IconItemView: NSBox, NSTextFieldDelegate {
     }
     
     public func cancelEditing() {
-        self.labelView.abortEditing()
+        finishEditing()
     }
     
     public override func controlTextDidEndEditing(_ obj: Notification) {
         guard (obj.object as? NSControl) == self.labelView else { assertionFailure("Expected notification from own labelView, but got \(obj.object)"); return }
+        if self.labelView.stringValue != self.label {
+            self.collectionItem.labelTextDidChange(self.labelView.stringValue)
+        }
+        finishEditing()
+    }
+    
+    public override func cancelOperation(_ sender: Any?) {
+        cancelEditing()
+    }
+    
+    private func finishEditing() {
+        self.labelView.abortEditing()
         self.labelView.isEditable = false
         self.labelView.needsUpdateConstraints = true
         updateStyle()

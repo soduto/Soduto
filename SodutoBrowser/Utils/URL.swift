@@ -29,6 +29,10 @@ extension URL {
         return destUrl.appendingPathComponent(self.lastPathComponent, isDirectory: self.hasDirectoryPath)
     }
     
+    public func renamed(to newName: String) -> URL {
+        return self.deletingLastPathComponent().appendingPathComponent(newName, isDirectory: self.hasDirectoryPath)
+    }
+    
     public func relativeTo(_ baseUrl: URL) -> URL {
         let absSelf = self.absoluteURL
         let baseUrl = baseUrl.absoluteURL

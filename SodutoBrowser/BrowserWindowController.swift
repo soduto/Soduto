@@ -430,6 +430,43 @@ class BrowserWindowController: NSWindowController {
         return fileOperations
     }
     
+    @discardableResult fileprivate func renameFile(_ fileItem: FileItem, to: String) -> FileOperation {
+        let destUrl = fileItem.url.renamed(to: to)
+        assert(fileSystem.canMove(fileItem, to: destUrl), "Can not rename file.")
+        
+        self.setBusyUrl(fileItem.url, isNew: false, visible: false)
+        let fileOperation = self.fileSystem.move(fileItem.url, to: destUrl)
+        
+        let completionOperation = BlockOperation {
+            
+            guard let srcUrl = fileOperation.source else { assertionFailure("Expected non-nil source for copy operation (\(fileOperation))."); return }
+            guard let destUrl = fileOperation.destination else { assertionFailure("Expected non-nil destination for move operation (\(fileOperation))."); return }
+            
+            self.resetBusyUrl(srcUrl, isDeleted: false)
+            if let index = self.items.index(where: { $0.url == srcUrl }) {
+                let newFileItem = FileItem(url: destUrl, name: to, icon: fileItem.icon, flags: fileItem.staticFlags)
+                self.items[index] = newFileItem
+                self.itemArrayController.content = self.items
+                if let indexPath = self.indexPath(for: newFileItem) {
+                    self.collectionView.reloadItems(at: [indexPath])
+                }
+            }
+            
+            if let error = fileOperation.error {
+                Log.error?.message("Failed to move item from url [\(fileOperation.source) to url [\(destUrl)]]: \(error)")
+            }
+            
+            self.updateStatusInfo()
+            
+        }
+        completionOperation.addDependency(fileOperation)
+        
+        OperationQueue.main.addOperation(completionOperation)
+        
+        return fileOperation
+    }
+
+    
     private func displayAlert(forFailures failures: [(item:FileItem, message:String)], operation: String) {
         guard failures.count > 0 else { return }
         
@@ -444,10 +481,10 @@ class BrowserWindowController: NSWindowController {
     }
     
     /// Mark url as busy, add corresponing item to collection view if it is a new item
-    private func setBusyUrl(_ url: URL, isNew: Bool) {
+    private func setBusyUrl(_ url: URL, isNew: Bool, visible: Bool = true) {
         self.busyURLs.insert(url)
         
-        if isNew && self.url == url.deletingLastPathComponent() {
+        if isNew && self.url == url.deletingLastPathComponent() && visible {
             let fileItem = FileItem(url: url)
             self.items.append(fileItem)
             self.itemArrayController.content = self.items
@@ -458,7 +495,7 @@ class BrowserWindowController: NSWindowController {
         }
         else if let fileItem = self.items.first(where: { $0.url == url }) {
             fileItem.dynamicFlags.insert(.isBusy)
-            if let indexPath = self.indexPath(for: fileItem) {
+            if visible, let indexPath = self.indexPath(for: fileItem) {
                 self.collectionView.reloadItems(at: [indexPath])
             }
         }
@@ -619,6 +656,7 @@ extension BrowserWindowController : NSCollectionViewDataSource {
         guard fileItems.count > indexPath.item else { assertionFailure("indexPath.item (\(indexPath.item)) out of arrangedItems bounds (0..<\(fileItems.count))."); return item }
         
         iconItem.fileItem = fileItems[indexPath.item]
+        iconItem.delegate = self
         
         return item
     }
@@ -849,5 +887,14 @@ extension BrowserWindowController: NSCollectionViewDelegate {
      */
 //    @available(OSX 10.11, *)
 //    optional public func collectionView(_ collectionView: NSCollectionView, transitionLayoutForOldLayout fromLayout: NSCollectionViewLayout, newLayout toLayout: NSCollectionViewLayout) -> NSCollectionViewTransitionLayout
+    
+}
+
+extension BrowserWindowController: IconItemDelegate {
+    
+    func iconItem(_ iconItem: IconItem, didChangeName name: String) {
+        guard let fileItem = iconItem.fileItem else { return }
+        renameFile(fileItem, to: name)
+    }
     
 }
