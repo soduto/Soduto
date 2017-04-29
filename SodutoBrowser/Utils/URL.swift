@@ -59,4 +59,45 @@ extension URL {
         return self.relativeTo(oldBaseUrl).rebasing(to: newBaseUrl)
     }
     
+    public func nonExisting(validator: (URL)->Bool) -> URL {
+        var result = self
+        while !validator(result) {
+            result = result.alternativeForDuplicate()
+        }
+        return result
+    }
+    
+    public func alternativeForDuplicate() -> URL {
+        let pathExtension = self.pathExtension
+        let urlWithoutExtension = !pathExtension.isEmpty ? self.deletingPathExtension() : self
+        let nameWithoutExtension = urlWithoutExtension.lastPathComponent
+        
+        let updatedNameWithoutExtension: String
+        let regex = try! NSRegularExpression(pattern: "(.*)[(](\\d+)[)]$")
+        let range = NSMakeRange(0, nameWithoutExtension.characters.count)
+        if let match = regex.firstMatch(in: nameWithoutExtension, options: [], range: range){
+            let prefix = substring(string: nameWithoutExtension, range: match.rangeAt(1))
+            let numberStr = substring(string: nameWithoutExtension, range: match.rangeAt(2))
+            let number = Int(numberStr) ?? 0
+            updatedNameWithoutExtension = "\(prefix)(\(number + 1))"
+        }
+        else {
+            updatedNameWithoutExtension = "\(nameWithoutExtension)(1)"
+        }
+        
+        let updatedUrlWithoutExtension = self.deletingLastPathComponent().appendingPathComponent(updatedNameWithoutExtension, isDirectory: hasDirectoryPath)
+        let updatedUrl = !pathExtension.isEmpty ? updatedUrlWithoutExtension.appendingPathExtension(pathExtension) : updatedUrlWithoutExtension
+        return updatedUrl
+    }
+    
+    
+    // MARK: Private methods
+    
+    private func substring(string: String, range: NSRange) -> String {
+        let startIndex = string.index(string.startIndex, offsetBy: range.location)
+        let endIndex = string.index(startIndex, offsetBy: range.length)
+        let stringRange = startIndex ..< endIndex
+        return string.substring(with: stringRange)
+    }
+    
 }

@@ -276,13 +276,24 @@ class BrowserWindowController: NSWindowController {
         return indexPaths.flatMap { return self.fileItem(at: $0) }
     }
     
+    fileprivate func indexPath(for url: URL) -> IndexPath? {
+        guard let index =  self.arrangedItems.index(where: { $0.url == url }) else { return nil }
+        return IndexPath(indexes: [0, index])
+    }
+    
     fileprivate func indexPath(for fileItem: FileItem) -> IndexPath? {
-        let arrangedItems: [FileItem] = (self.itemArrayController.arrangedObjects as? [FileItem]) ?? []
+        return indexPath(for: fileItem.url)
+    }
+    
+    fileprivate func indexPaths<T: Collection>(for urls: T) -> Set<IndexPath> where T.Iterator.Element == URL {
+        var paths: Set<IndexPath> = []
+        let arrangedItems = self.arrangedItems
         for i in 0 ..< arrangedItems.count {
-            guard arrangedItems[i].url == fileItem.url else { continue }
-            return IndexPath(indexes: [0, i])
+            let url = arrangedItems[i].url
+            guard urls.contains(where: { $0 == url }) else { continue }
+            paths.insert(IndexPath(indexes: [0, i]))
         }
-        return nil
+        return paths
     }
     
     fileprivate func indexPaths<T: Collection>(for fileItems: T) -> Set<IndexPath> where T.Iterator.Element == FileItem {
@@ -401,7 +412,7 @@ class BrowserWindowController: NSWindowController {
         let completionOperations = fileOperations.map { fileOperation -> Operation in
             let operation = BlockOperation {
                 
-                guard let srcUrl = fileOperation.source else { assertionFailure("Expected non-nil source for copy operation (\(fileOperation))."); return }
+                guard let srcUrl = fileOperation.source else { assertionFailure("Expected non-nil source for move operation (\(fileOperation))."); return }
                 guard let destUrl = fileOperation.destination else { assertionFailure("Expected non-nil destination for move operation (\(fileOperation))."); return }
                 
                 let succeeded = !fileOperation.isCancelled && fileOperation.error == nil
@@ -434,13 +445,13 @@ class BrowserWindowController: NSWindowController {
         let destUrl = fileItem.url.renamed(to: to)
         assert(fileSystem.canMove(fileItem, to: destUrl), "Can not rename file.")
         
-        self.setBusyUrl(fileItem.url, isNew: false, visible: false)
+        setBusyUrl(fileItem.url, isNew: false, visible: false)
         let fileOperation = self.fileSystem.move(fileItem.url, to: destUrl)
         
         let completionOperation = BlockOperation {
             
-            guard let srcUrl = fileOperation.source else { assertionFailure("Expected non-nil source for copy operation (\(fileOperation))."); return }
-            guard let destUrl = fileOperation.destination else { assertionFailure("Expected non-nil destination for move operation (\(fileOperation))."); return }
+            guard let srcUrl = fileOperation.source else { assertionFailure("Expected non-nil source for rename operation (\(fileOperation))."); return }
+            guard let destUrl = fileOperation.destination else { assertionFailure("Expected non-nil destination for rename operation (\(fileOperation))."); return }
             
             self.resetBusyUrl(srcUrl, isDeleted: false)
             if let index = self.items.index(where: { $0.url == srcUrl }) {
@@ -453,14 +464,42 @@ class BrowserWindowController: NSWindowController {
             }
             
             if let error = fileOperation.error {
-                Log.error?.message("Failed to move item from url [\(fileOperation.source) to url [\(destUrl)]]: \(error)")
+                Log.error?.message("Failed to rename item from [\(fileOperation.source)] to [\(destUrl)]: \(error)")
+            }
+            
+            self.updateStatusInfo()
+            self.updatePathControl()
+        }
+        completionOperation.addDependency(fileOperation)
+        OperationQueue.main.addOperation(completionOperation)
+        
+        return fileOperation
+    }
+    
+    @discardableResult fileprivate func createFolder(_ url: URL) -> FileOperation {
+        assert(self.fileSystem.canCreateFolder(url), "File system does not support creating a folder [\(url)].")
+        
+        setBusyUrl(url, isNew: true)
+        let fileOperation = self.fileSystem.createFolder(url)
+        
+        let completionOperation = BlockOperation {
+            
+            guard let destUrl = fileOperation.destination else { assertionFailure("Expected non-nil destination for create folder operation (\(fileOperation))."); return }
+            
+            let succeeded = !fileOperation.isCancelled && fileOperation.error == nil
+            self.resetBusyUrl(destUrl, isDeleted: !succeeded)
+            if succeeded {
+                self.startEditing(destUrl)
+            }
+            
+            if let error = fileOperation.error {
+                Log.error?.message("Failed to create folder [\(destUrl)]: \(error)")
             }
             
             self.updateStatusInfo()
             
         }
         completionOperation.addDependency(fileOperation)
-        
         OperationQueue.main.addOperation(completionOperation)
         
         return fileOperation
@@ -534,6 +573,16 @@ class BrowserWindowController: NSWindowController {
         self.collectionView.deleteItems(at: viewIndices)
     }
     
+    private func startEditing(_ url: URL) {
+        guard let indexPath = indexPath(for: url) else { return }
+        guard let item = self.collectionView.item(at: indexPath) as? IconItem else { return }
+        guard let fileItem = item.fileItem else { return }
+        guard fileItem.canModify == true else { return }
+        self.collectionView.deselectAll(nil)
+        self.collectionView.selectItems(at: [indexPath], scrollPosition: .bottom)
+        item.startEditing()
+    }
+    
     
     // MARK: Actions
     
@@ -586,6 +635,15 @@ class BrowserWindowController: NSWindowController {
         deleteFiles(fileItems)
     }
     
+    @IBAction func createFolder(_ sender: Any?) {
+        let defaultName = NSLocalizedString("New Folder", comment: "New folder name")
+        let url = self.url.appendingPathComponent(defaultName, isDirectory: true)
+        let nonExistingUrl = url.nonExisting { url in
+            return !self.items.contains(where: { $0.url == url })
+        }
+        createFolder(nonExistingUrl)
+    }
+    
     @IBAction func changeIconSize(_ sender: NSSlider?) {
         guard let slider = sender else { assertionFailure("Sender expected to be a valid NSSlider view."); return }
         self.iconsSize = slider.integerValue
@@ -621,6 +679,7 @@ class BrowserWindowController: NSWindowController {
             menuItem.state = self.isFoldersAlwaysFirst ? NSOnState : NSOffState
             return true
         case AppDelegate.MenuItemTags.deleteFiles: return !self.collectionView.selectionIndexes.isEmpty
+        case AppDelegate.MenuItemTags.newFolder: return true
         default: return false
         }
     }

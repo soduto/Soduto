@@ -64,6 +64,11 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="File" id="VGS-iG-SzJ">
                         <items>
+                            <menuItem title="New Folder" tag="3002" keyEquivalent="N" id="lw4-IW-vFd">
+                                <connections>
+                                    <action selector="createFolder:" target="-1" id="FR4-ae-3mA"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Delete" tag="3001" id="tkz-X1-Mer">
                                 <string key="keyEquivalent" base64-UTF8="YES">
 CA

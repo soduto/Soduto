@@ -99,8 +99,9 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
     func canCreateFolder(_ url: URL, assertOnFailure: Bool) -> Bool {
         if assertOnFailure {
             assert(isUnderRoot(url), "Folder to be created (\(url)) bust be under root (\(rootUrl)).")
+            assert(url.hasDirectoryPath, "URL [\(url)] expected to have directory path.")
         }
-        return isUnderRoot(url)
+        return isUnderRoot(url) && url.hasDirectoryPath
     }
     
     func load(_ url: URL, completionHandler: @escaping (([FileItem]?, Int64?, Error?) -> Void)) {
