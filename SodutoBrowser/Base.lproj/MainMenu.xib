@@ -64,11 +64,32 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="File" id="VGS-iG-SzJ">
                         <items>
+                            <menuItem title="New Window" tag="3003" keyEquivalent="n" id="vHV-ms-YC6">
+                                <connections>
+                                    <action selector="newWindow:" target="-1" id="wtZ-as-7a9"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="New Folder" tag="3002" keyEquivalent="N" id="lw4-IW-vFd">
                                 <connections>
                                     <action selector="createFolder:" target="-1" id="FR4-ae-3mA"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="New Tab" tag="3006" keyEquivalent="t" id="nXP-CG-ebW">
+                                <connections>
+                                    <action selector="newTab:" target="-1" id="qsd-5h-cLN"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Close Window" tag="3004" keyEquivalent="W" id="opz-qT-Eof">
+                                <connections>
+                                    <action selector="closeTabGroup:" target="-1" id="yUW-IE-Onl"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Close Window / Tab" tag="3005" keyEquivalent="w" id="Ef3-4J-shl">
+                                <connections>
+                                    <action selector="close:" target="-1" id="Jgd-ww-ej2"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="mo1-D6-zc8"/>
                             <menuItem title="Delete" tag="3001" id="tkz-X1-Mer">
                                 <string key="keyEquivalent" base64-UTF8="YES">
 CA

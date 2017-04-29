@@ -74,8 +74,8 @@ class BrowserWindowController: NSWindowController {
     }
     private var freeSpace: Int64?
     
-    fileprivate let fileSystem: FileSystem
-    fileprivate var url: URL
+    public let fileSystem: FileSystem
+    public private(set) var url: URL
     private var backHistory: [URL] = []
     private var forwardHistory: [URL] = []
     private var busyURLs: Set<URL> = []
@@ -105,8 +105,6 @@ class BrowserWindowController: NSWindowController {
         
         // make sure window is loaded
         let _ = self.window
-        
-        self.window?.delegate = self
     }
     
     required init?(coder: NSCoder) {
@@ -115,6 +113,10 @@ class BrowserWindowController: NSWindowController {
     
     public override func windowDidLoad() {
         super.windowDidLoad()
+        
+        self.window?.delegate = self
+        self.window?.setFrameAutosaveName("com.soduto.SodutoBrowser.window-\(self.fileSystem.name.addingPercentEncoding(withAllowedCharacters: .alphanumerics))")
+        self.window?.makeKey()
         
         self.collectionView.register(NSNib(nibNamed: "IconItem", bundle: nil), forItemWithIdentifier: "IconItem")
         self.collectionView.setDraggingSourceOperationMask(.copy, forLocal: false)
