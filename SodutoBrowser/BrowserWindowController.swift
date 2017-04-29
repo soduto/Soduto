@@ -10,6 +10,10 @@ import Foundation
 import AppKit
 import CleanroomLogger
 
+protocol BrowserWindowControllerDelegate: class {
+    func browserWindowWillClose(_ controller: BrowserWindowController)
+}
+
 class BrowserWindowController: NSWindowController {
     
     // MARK: Types
@@ -22,6 +26,8 @@ class BrowserWindowController: NSWindowController {
     
     
     // MARK: Properties
+    
+    public weak var delegate: BrowserWindowControllerDelegate?
     
     public var canGoBack: Bool { return self.window != nil && self.backHistory.count > 0 }
     public var canGoForward: Bool { return self.window != nil && self.forwardHistory.count > 0 }
@@ -99,6 +105,8 @@ class BrowserWindowController: NSWindowController {
         
         // make sure window is loaded
         let _ = self.window
+        
+        self.window?.delegate = self
     }
     
     required init?(coder: NSCoder) {
@@ -694,6 +702,14 @@ class BrowserWindowController: NSWindowController {
         default: return false
         }
     }
+}
+
+extension BrowserWindowController: NSWindowDelegate {
+    
+    func windowWillClose(_ notification: Notification) {
+        self.delegate?.browserWindowWillClose(self)
+    }
+    
 }
 
 extension BrowserWindowController : NSCollectionViewDataSource {

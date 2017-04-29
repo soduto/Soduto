@@ -18,6 +18,7 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
         case connectionFailed
         case authenticationFailed
         case sftpInitializationFailed
+        case channelInitializationFailed
         case invalidDirectoryContent(at: URL)
         case deletingFileFailed(at: URL)
         case copyingFileFailed(from: URL, to: URL)
@@ -34,9 +35,10 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
     let rootUrl: URL
     let places: [Place] = []
     
-    private let fileOperationQueue = OperationQueue()
-    private let session: NMSSHSession
-    private let sftp: NMSFTP
+    private let browseQueue = OperationQueue()
+    private let fileOperationsQueue = OperationQueue()
+    private let browseSession: NMSSHSession
+    private let fileOperationsSession: NMSSHSession
     
     
     // MARK: Setup / Cleanup
@@ -44,19 +46,28 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
     init(name: String, host: String, user: String, password: String, path: String) throws {
         self.name = name
         
-        self.session = NMSSHSession.connect(toHost: host, withUsername: user)
-        guard self.session.isConnected else { throw SftpError.connectionFailed }
-        
-        self.session.authenticate(byPassword: password)
-        guard self.session.isAuthorized else { throw SftpError.authenticationFailed }
-        
-        self.sftp = NMSFTP.connect(with: self.session)
-        guard self.sftp.isConnected else { throw SftpError.sftpInitializationFailed }
+        self.browseSession = try type(of: self).initSession(host: host, user: user, password: password)
+        self.fileOperationsSession = try type(of: self).initSession(host: host, user: user, password: password)
         
         self.rootUrl = URL(string: "sftp://\(host)\(path)")!
         
-        self.fileOperationQueue.maxConcurrentOperationCount = 1
-        self.fileOperationQueue.qualityOfService = .userInitiated
+        self.browseQueue.maxConcurrentOperationCount = 1
+        self.browseQueue.qualityOfService = .userInteractive
+        self.fileOperationsQueue.maxConcurrentOperationCount = 1
+        self.fileOperationsQueue.qualityOfService = .userInitiated
+    }
+    
+    private static func initSession(host: String, user: String, password: String) throws -> NMSSHSession {
+        guard let session = NMSSHSession.connect(toHost: host, withUsername: user) else { throw SftpError.connectionFailed }
+        guard session.isConnected else { throw SftpError.connectionFailed }
+        
+        session.authenticate(byPassword: password)
+        guard session.isAuthorized else { throw SftpError.authenticationFailed }
+        
+        session.sftp.connect()
+        guard session.sftp.isConnected else { throw SftpError.sftpInitializationFailed }
+        
+        return session
     }
     
     
@@ -107,18 +118,17 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
     func load(_ url: URL, completionHandler: @escaping (([FileItem]?, Int64?, Error?) -> Void)) {
         assert(isUnderRoot(url) || url == self.rootUrl, "URL (\(url)) is outside root tree (\(self.rootUrl)).")
         
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+        browseQueue.addOperation {[weak self] in
             guard let `self` = self else { return }
             do {
-                guard let contents = self.sftp.contentsOfDirectory(atPath: url.path) as? [NMSFTPFile] else { throw SftpError.invalidDirectoryContent(at: url) }
-                let fileItems = contents.flatMap { return FileItem(sftpFile: $0, parentUrl: url, user: self.session.username ?? "") }
-                let freeSpace = self.remoteFreeSpace(at: url)
+                guard let contents = self.browseSession.sftp.contentsOfDirectory(atPath: url.path) as? [NMSFTPFile] else { throw SftpError.invalidDirectoryContent(at: url) }
+                let fileItems = contents.flatMap { return FileItem(sftpFile: $0, parentUrl: url, user: self.browseSession.username ?? "") }
+                let freeSpace = self.browseSession.channel.freeSpace(at: url.path)
                 DispatchQueue.main.async { completionHandler(fileItems, freeSpace, nil) }
             }
             catch {
                 DispatchQueue.main.async { completionHandler(nil, nil, error) }
             }
-            
         }
     }
     
@@ -138,7 +148,7 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
                 operation.sourceState = .present
             }
         }
-        self.fileOperationQueue.addOperation(operation)
+        self.fileOperationsQueue.addOperation(operation)
         return operation
     }
     
@@ -151,7 +161,7 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
             guard let `self` = self else { return }
             do {
                 if self.isUnderRoot(srcUrl) && self.isUnderRoot(destUrl) {
-                    guard self.sftp.copyContents(ofPath: srcUrl.path, toFileAtPath: destUrl.path, progress: nil) else {
+                    guard self.fileOperationsSession.sftp.copyContents(ofPath: srcUrl.path, toFileAtPath: destUrl.path, progress: nil) else {
                         throw SftpError.copyingFileFailed(from: srcUrl, to: destUrl)
                     }
                 }
@@ -168,7 +178,7 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
                 operation.destinationState = .deleted
             }
         }
-        self.fileOperationQueue.addOperation(operation)
+        self.fileOperationsQueue.addOperation(operation)
         return operation
     }
     
@@ -181,7 +191,7 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
         operation.addExecutionBlock {[weak self] in
             guard let `self` = self else { return }
             do {
-                guard self.sftp.moveItem(atPath: srcUrl.path, toPath: destUrl.path) else { throw SftpError.movingFileFailed(from: srcUrl, to: destUrl) }
+                guard self.fileOperationsSession.sftp.moveItem(atPath: srcUrl.path, toPath: destUrl.path) else { throw SftpError.movingFileFailed(from: srcUrl, to: destUrl) }
                 operation.sourceState = .deleted
                 operation.destinationState = .present
             }
@@ -191,7 +201,7 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
                 operation.destinationState = .deleted
             }
         }
-        self.fileOperationQueue.addOperation(operation)
+        self.fileOperationsQueue.addOperation(operation)
         return operation
     }
     
@@ -202,7 +212,7 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
         operation.destinationState = .inProgress
         operation.addExecutionBlock {
             do {
-                guard self.sftp.createDirectory(atPath: url.path) else { throw SftpError.creatingDirectoryFailed(at: url) }
+                guard self.fileOperationsSession.sftp.createDirectory(atPath: url.path) else { throw SftpError.creatingDirectoryFailed(at: url) }
                 operation.destinationState = .present
             }
             catch {
@@ -210,7 +220,7 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
                 operation.destinationState = .deleted
             }
         }
-        self.fileOperationQueue.addOperation(operation)
+        self.fileOperationsQueue.addOperation(operation)
         return operation
     }
     
@@ -243,7 +253,7 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
             try downloadDirectory(from: srcUrl, to: destUrl)
         }
         else {
-            self.session.channel.downloadFile(srcUrl.path, to: destUrl.path)
+            self.fileOperationsSession.channel.downloadFile(srcUrl.path, to: destUrl.path)
         }
     }
     
@@ -253,7 +263,7 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
         assert(srcUrl.hasDirectoryPath, "Source URL (\(srcUrl)) expected to be a directory.")
         assert(destUrl.isFileURL, "Destination URL (\(destUrl)) expected to be local directory URL.")
         
-        guard let files = self.sftp.contentsOfDirectory(atPath: srcUrl.path) as? [NMSFTPFile] else { throw SftpError.invalidDirectoryContent(at: srcUrl) }
+        guard let files = self.fileOperationsSession.sftp.contentsOfDirectory(atPath: srcUrl.path) as? [NMSFTPFile] else { throw SftpError.invalidDirectoryContent(at: srcUrl) }
         
         try ensureLocalDirectory(at: destUrl)
         
@@ -269,9 +279,9 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
     private func ensureRemoteDirectory(at url: URL) throws {
         assert(isUnderRoot(url), "URL (\(url)) expected to be under root (\(self.rootUrl)).")
         
-        guard !self.sftp.fileExists(atPath: url.path) else { throw SftpError.regularFileInsteadOfDirectory(at: url) }
-        guard !self.sftp.directoryExists(atPath: url.path) else { return }
-        guard self.sftp.createDirectory(atPath: url.path) else { throw SftpError.creatingDirectoryFailed(at: url) }
+        guard !self.fileOperationsSession.sftp.fileExists(atPath: url.path) else { throw SftpError.regularFileInsteadOfDirectory(at: url) }
+        guard !self.fileOperationsSession.sftp.directoryExists(atPath: url.path) else { return }
+        guard self.fileOperationsSession.sftp.createDirectory(atPath: url.path) else { throw SftpError.creatingDirectoryFailed(at: url) }
     }
     
     /// Synchronously upload local file or directory to remote destination.
@@ -283,7 +293,7 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
             try uploadDirectory(from: srcUrl, to: destUrl)
         }
         else {
-            self.session.channel.uploadFile(srcUrl.path, to: destUrl.path)
+            self.fileOperationsSession.channel.uploadFile(srcUrl.path, to: destUrl.path)
         }
     }
     
@@ -311,7 +321,7 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
             try deleteRemoteDirectory(at: url)
         }
         else {
-            guard self.sftp.removeFile(atPath: url.path) else { throw SftpError.deletingFileFailed(at: url) }
+            guard self.fileOperationsSession.sftp.removeFile(atPath: url.path) else { throw SftpError.deletingFileFailed(at: url) }
         }
     }
     
@@ -320,23 +330,25 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
         assert(isUnderRoot(url), "URL being deleted (\(url)) expected to be under root (\(self.rootUrl)).")
         assert(url.hasDirectoryPath, "URL being deleted (\(url)) expected to be a directory.")
         
+        let session = self.fileOperationsSession
+        
         // first try delete directly
-        if self.sftp.removeDirectory(atPath: url.path) { return }
+        if session.sftp.removeDirectory(atPath: url.path) { return }
         
         // However direct delete may fail on non-empty directory with SFTP error 4 (Failure). In such case try deleteing children manually.
         
-        switch self.session.lastError {
-        case let err as NSError: guard Int32(err.code) == LIBSSH2_ERROR_SFTP_PROTOCOL else { throw self.session.lastError }
-        default: throw self.session.lastError
+        switch session.lastError {
+        case let err as NSError: guard Int32(err.code) == LIBSSH2_ERROR_SFTP_PROTOCOL else { throw session.lastError }
+        default: throw session.lastError
         }
         
-        switch self.sftp.lastError {
-        case let err as NSError: guard Int32(err.code) == LIBSSH2_FX_FAILURE else { throw self.sftp.lastError }
-        default: throw self.sftp.lastError
+        switch session.sftp.lastError {
+        case let err as NSError: guard Int32(err.code) == LIBSSH2_FX_FAILURE else { throw session.sftp.lastError }
+        default: throw session.sftp.lastError
         }
         
         // Delete children
-        guard let files = self.sftp.contentsOfDirectory(atPath: url.path) as? [NMSFTPFile] else { throw SftpError.invalidDirectoryContent(at: url) }
+        guard let files = session.sftp.contentsOfDirectory(atPath: url.path) as? [NMSFTPFile] else { throw SftpError.invalidDirectoryContent(at: url) }
         for file in files {
             guard let filename = file.filename else { assertionFailure("File name expected to be non-nil."); continue }
             let fileUrl = url.appendingPathComponent(filename, isDirectory: file.isDirectory)
@@ -344,23 +356,7 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
         }
         
         // Try again to delete directory
-        guard self.sftp.removeDirectory(atPath: url.path) else { throw SftpError.deletingFileFailed(at: url) }
-    }
-    
-    /// Synchromously retrieve remote free space
-    private func remoteFreeSpace(at url: URL) -> Int64? {
-        assert(isUnderRoot(url) || url == self.rootUrl, "URL (\(url)) is outside root tree (\(self.rootUrl)).")
-        do {
-            let output = try self.session.channel.execute("df -k \(url.path.replacingOccurrences(of: " ", with: "\\ ")) | tail -1 | awk '{ print $4 }' ")
-            let outputLines = output.components(separatedBy: "\n")
-            guard outputLines.count > 0 else { assertionFailure("Expected non-empty response"); return nil }
-            guard let freeKb = Int64(outputLines[0]) else { assertionFailure("Failed to retrieve free space for URL [\(url)], got response: \(output)"); return nil }
-            return freeKb * 1024
-        }
-        catch {
-            Log.error?.message("Failed to retrieve free disk space for URL [\(url)].")
-            return nil
-        }
+        guard session.sftp.removeDirectory(atPath: url.path) else { throw SftpError.deletingFileFailed(at: url) }
     }
 }
 
@@ -400,6 +396,27 @@ extension NMSFTPFile {
     
     fileprivate func isWritable(by user: String) -> Bool {
         return true
+    }
+    
+}
+
+
+// MARK: -
+
+extension NMSSHChannel {
+    
+    func freeSpace(at path: String) -> Int64? {
+        do {
+            let output = try execute("df -k \(path.replacingOccurrences(of: " ", with: "\\ ")) | tail -1 | awk '{ print $4 }' ")
+            let outputLines = output.components(separatedBy: "\n")
+            guard outputLines.count > 0 else { assertionFailure("Expected non-empty response"); return nil }
+            guard let freeKb = Int64(outputLines[0]) else { assertionFailure("Failed to retrieve free space for path [\(path)], got response: \(output)"); return nil }
+            return freeKb * 1024
+        }
+        catch {
+            Log.error?.message("Failed to retrieve free disk space for path [\(path)].")
+            return nil
+        }
     }
     
 }

@@ -9,7 +9,9 @@
 import Cocoa
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, BrowserWindowControllerDelegate {
+    
+    // MARK: Types
     
     struct MenuItemTags {
         // Go menu
@@ -29,16 +31,53 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     struct ToolbarItemTags {
         static let backForward: Int = 50001
     }
+    
+    
+    // MARK: Properties
 
-    private var browserWindowController: BrowserWindowController?
+    private(set) var browserWindowControllers: [BrowserWindowController] = []
+    
+    var keyBrowserWindowController: BrowserWindowController? {
+        return NSApp.keyWindow?.windowController as? BrowserWindowController
+    }
+    
+    
+    // MARK: NSApplicationDelegate
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         let fs = try! SftpFileSystem(name: "SFTP", host: "286840.s.dedikuoti.lt", user: "giedrius", password: "gargantuki", path: "/")
-        self.browserWindowController = BrowserWindowController(fileSystem: fs)
+        newBrowserWindow(with: fs)
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
         // Insert code here to tear down your application
     }
-}
+    
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        return true
+    }
+    
+    
+    // MARK: BrowserWindowControllerDelegate
+    
+    func browserWindowWillClose(_ controller: BrowserWindowController) {
+        guard let index = self.browserWindowControllers.index(of: controller) else { return }
+        self.browserWindowControllers.remove(at: index)
+    }
+    
+    
+    // MARK: Actions
+    
+    @IBAction func newWindow(_ sender: Any?) {
+//        guard let controller = self.keyBrowserWindowController else { NSBeep(); return }
+    }
 
+    
+    // MARK: Private
+    
+    private func newBrowserWindow(with fileSystem: FileSystem) {
+        let windowController = BrowserWindowController(fileSystem: fileSystem)
+        windowController.delegate = self
+        browserWindowControllers.append(windowController)
+    }
+}
