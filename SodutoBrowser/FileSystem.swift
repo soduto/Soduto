@@ -17,6 +17,7 @@ enum FileSystemError: Error {
     case fileExists(url: URL)
     case fileDoesNotExist(url: URL)
     case fileSystemUnreachable(url: URL)
+    case internalFailure
 }
 
 struct Place {
@@ -42,11 +43,16 @@ class FileOperation: BlockOperation {
     var sourceState: FileState = .unchanged
     var destinationState: FileState = .unchanged
     var error: Error?
-    var errorDescription: String?
     
     init(source: URL? = nil, destination: URL? = nil) {
         self.source = source
         self.destination = destination
+    }
+    
+    init(source: URL? = nil, destination: URL? = nil, error: Error) {
+        self.source = source
+        self.destination = destination
+        self.error = error
     }
 }
 
@@ -91,6 +97,14 @@ extension FileSystem {
         }
         else {
             return Place(name: NSLocalizedString("Root", comment: "directory"), url: self.rootUrl)
+        }
+    }
+    
+    var tempDownloadsDirectory: URL {
+        if #available(OSX 10.12, *) {
+            return FileManager.default.temporaryDirectory
+        } else {
+            return (try? FileManager.default.url(for: .downloadsDirectory, in: .userDomainMask, appropriateFor: nil, create: true)) ?? URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
         }
     }
     
@@ -152,5 +166,13 @@ extension FileSystem {
     
     func canMove(_ fileItems: [FileItem], to destFileItem: FileItem) -> Bool {
         return destFileItem.canModify && fileItems.every { return canMove($0, to: destFileItem.url) }
+    }
+    
+    func canOpenFile(_ fileItem: FileItem) -> Bool {
+        return canOpenFile(fileItem.url)
+    }
+    
+    func canOpenFile(_ url: URL) -> Bool {
+        return !url.hasDirectoryPath && canCopy([url], to: tempDownloadsDirectory)
     }
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="16F54b" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="16F71b" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
@@ -96,6 +96,56 @@ CA
 </string>
                                 <connections>
                                     <action selector="deleteSelectedFiles:" target="-1" id="zfj-bA-QTX"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="Edit" id="DyT-eZ-rgU">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="Edit" id="bZ7-p4-Yhb">
+                        <items>
+                            <menuItem title="Undo" hidden="YES" enabled="NO" keyEquivalent="z" id="UR1-EZ-0Cu">
+                                <connections>
+                                    <action selector="undo:" target="-1" id="OR2-io-WfV"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Redo" hidden="YES" enabled="NO" keyEquivalent="Z" id="cci-za-8te">
+                                <connections>
+                                    <action selector="redo:" target="-1" id="mfH-Zl-iLy"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" hidden="YES" id="Bgh-Pu-rww"/>
+                            <menuItem title="Cut" hidden="YES" enabled="NO" keyEquivalent="x" id="Uu5-ON-42y">
+                                <connections>
+                                    <action selector="cut:" target="-1" id="F0s-Xb-n0R"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Copy" keyEquivalent="c" id="udI-ME-5SI">
+                                <connections>
+                                    <action selector="copy:" target="-1" id="yoP-Kk-w1b"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Paste" keyEquivalent="v" id="Jje-Ke-itA">
+                                <connections>
+                                    <action selector="paste:" target="-1" id="lC8-ls-BHQ"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Paste and Match Style" hidden="YES" enabled="NO" keyEquivalent="V" id="Uk1-lD-bcN">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="pasteAsPlainText:" target="-1" id="IVo-1d-a75"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Delete" hidden="YES" enabled="NO" id="mZL-1q-TCO">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="delete:" target="-1" id="Xll-N0-GDi"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Select All" keyEquivalent="a" id="DEn-fZ-QO9">
+                                <connections>
+                                    <action selector="selectAll:" target="-1" id="AEX-SL-HOz"/>
                                 </connections>
                             </menuItem>
                         </items>

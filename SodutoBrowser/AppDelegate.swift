@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import CleanroomLogger
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate, BrowserWindowControllerDelegate {
@@ -45,18 +46,46 @@ class AppDelegate: NSObject, NSApplicationDelegate, BrowserWindowControllerDeleg
         return NSApp.keyWindow?.windowController as? BrowserWindowController
     }
     
+    static let logLevelConfigurationKey = "com.soduto.logLevel"
+    
+    override init() {
+        UserDefaults.standard.register(defaults: [AppDelegate.logLevelConfigurationKey: LogSeverity.info.rawValue])
+        
+        #if DEBUG
+            Log.enable(configuration: XcodeLogConfiguration(minimumSeverity: .debug, logToASL: true))
+        #else
+            let formatter = FieldBasedLogFormatter(fields: [.severity(.simple), .delimiter(.spacedPipe), .payload])
+            let aslRecorder = ASLLogRecorder(formatter: formatter, echoToStdErr: true)
+            let severity: LogSeverity = LogSeverity(rawValue: UserDefaults.standard.integer(forKey: AppDelegate.logLevelConfigurationKey)) ?? .info
+            Log.enable(configuration: BasicLogConfiguration(minimumSeverity: severity, recorders: [aslRecorder]))
+        #endif
+    }
+    
     
     // MARK: NSApplicationDelegate
     
     func applicationWillFinishLaunching(_ notification: Notification) {
+        UserDefaults.standard.register(defaults: [AppDelegate.logLevelConfigurationKey: LogSeverity.info.rawValue])
+        
+        #if DEBUG
+            Log.enable(configuration: XcodeLogConfiguration(minimumSeverity: .debug, logToASL: false))
+        #else
+            let formatter = FieldBasedLogFormatter(fields: [.severity(.simple), .delimiter(.spacedPipe), .payload])
+            let aslRecorder = ASLLogRecorder(formatter: formatter, echoToStdErr: true)
+            let severity: LogSeverity = LogSeverity(rawValue: UserDefaults.standard.integer(forKey: AppDelegate.logLevelConfigurationKey)) ?? .info
+            Log.enable(configuration: BasicLogConfiguration(minimumSeverity: severity, recorders: [aslRecorder]))
+        #endif
+        
         if #available(OSX 10.12, *) {
             NSWindow.allowsAutomaticWindowTabbing = true
         }
+        
+        NSAppleEventManager.shared().setEventHandler(self, andSelector: #selector(handleGetURLEvent(_:withReplyEvent:)), forEventClass: AEEventClass(kInternetEventClass), andEventID: AEEventID(kAEGetURL))
     }
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        let fs = try! SftpFileSystem(name: "SFTP", host: "286840.s.dedikuoti.lt", user: "giedrius", password: "gargantuki", path: "/")
-        newBrowserWindow(with: fs)
+//        let fs = try! SftpFileSystem(name: "SFTP", host: "286840.s.dedikuoti.lt", user: "giedrius", password: "gargantuki", path: "/")
+//        newBrowserWindow(with: fs)
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -149,6 +178,42 @@ class AppDelegate: NSObject, NSApplicationDelegate, BrowserWindowControllerDeleg
             return (window?.tabbedWindows?.count ?? 0) > 1
         } else {
             return false
+        }
+    }
+    
+    @objc func handleGetURLEvent(_ event:NSAppleEventDescriptor, withReplyEvent replyEvent:NSAppleEventDescriptor) {
+        guard let directObject = event.paramDescriptor(forKeyword: keyDirectObject)?.stringValue else { Log.info?.message("Failed to read direct object string value from getURL Apple event."); return }
+        guard let url = URL(string: directObject) else { Log.info?.message("Failed to initialize URL from string."); return }
+        
+        let qtnpKeyword = UInt32(0x71746E70)
+        if let propertiesData = event.paramDescriptor(forKeyword: qtnpKeyword)?.data {
+            do {
+                let properties = try PropertyListSerialization.propertyList(from: propertiesData, options: [], format: nil)
+                print("\(properties)")
+            }
+            catch {
+                print("\(error)")
+            }
+        }
+        
+        open(url)
+    }
+    
+    private func open(_ url: URL) {
+        guard let scheme = url.scheme else { Log.info?.message("Input URL expected to contain valid scheme part."); return }
+        
+        switch scheme {
+        case "sftp":
+            guard let host = url.host else { Log.info?.message("Input URL expected to contain valid host part."); return }
+            guard let user = url.user else { Log.info?.message("Input URL expected to contain valid user part - anonymous not supported."); return }
+            guard let password = url.password else { Log.info?.message("Input URL expected to contain valid password part - anonymous not supported."); return }
+            let name = url.fragment ?? host
+            let port: UInt16? = (url.port != nil) ? UInt16(url.port!) : nil
+            let path = url.path
+            guard let fs = try? SftpFileSystem(name: name, host: host, port: port, user: user, password: password, path: path) else { Log.info?.message("Failed to connect to SFTP at URL [\(url)]"); return }
+            newBrowserWindow(with: fs)
+        default:
+            Log.info?.message("Unsupported URL scheme: \(scheme)")
         }
     }
 }

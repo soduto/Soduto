@@ -19,6 +19,7 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
         case authenticationFailed
         case sftpInitializationFailed
         case channelInitializationFailed
+        case rootUrlInitializationFailed
         case invalidDirectoryContent(at: URL)
         case deletingFileFailed(at: URL)
         case copyingFileFailed(from: URL, to: URL)
@@ -26,6 +27,8 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
         case regularFileInsteadOfDirectory(at: URL)
         case downloadingFileFailed(at: URL)
         case creatingDirectoryFailed(at: URL)
+        case openInputStreamFailed(at: URL)
+        case openOutputStreamFailed(at: URL)
     }
     
     
@@ -43,13 +46,16 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
     
     // MARK: Setup / Cleanup
     
-    init(name: String, host: String, user: String, password: String, path: String) throws {
+    init(name: String, host: String, port: UInt16?, user: String, password: String, path: String) throws {
         self.name = name
         
-        self.browseSession = try type(of: self).initSession(host: host, user: user, password: password)
-        self.fileOperationsSession = try type(of: self).initSession(host: host, user: user, password: password)
+        let hostWithPort = port != nil ? "\(host):\(port!)" : host
+        self.browseSession = try type(of: self).initSession(host: hostWithPort, user: user, password: password)
+        self.fileOperationsSession = try type(of: self).initSession(host: hostWithPort, user: user, password: password)
         
-        self.rootUrl = URL(string: "sftp://\(host)\(path)")!
+        let directoryPath = path.hasSuffix("/") ? path : path + "/"
+        guard let rootUrl = URL.url(scheme: "sftp", host: host, port: port, user: user, path: directoryPath) else { throw SftpError.rootUrlInitializationFailed }
+        self.rootUrl = rootUrl
         
         self.browseQueue.maxConcurrentOperationCount = 1
         self.browseQueue.qualityOfService = .userInteractive
@@ -121,12 +127,15 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
         browseQueue.addOperation {[weak self] in
             guard let `self` = self else { return }
             do {
-                guard let contents = self.browseSession.sftp.contentsOfDirectory(atPath: url.path) as? [NMSFTPFile] else { throw SftpError.invalidDirectoryContent(at: url) }
+                let rawContents = self.browseSession.sftp.contentsOfDirectory(atPath: url.path)
+                guard let contents = rawContents as? [NMSFTPFile] else { throw SftpError.invalidDirectoryContent(at: url) }
                 let fileItems = contents.flatMap { return FileItem(sftpFile: $0, parentUrl: url, user: self.browseSession.username ?? "") }
                 let freeSpace = self.browseSession.channel.freeSpace(at: url.path)
                 DispatchQueue.main.async { completionHandler(fileItems, freeSpace, nil) }
             }
             catch {
+                print("\(self.browseSession.lastError)")
+                print("\(self.browseSession.sftp.lastError)")
                 DispatchQueue.main.async { completionHandler(nil, nil, error) }
             }
         }
@@ -247,13 +256,14 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
     /// Synchronously download remote file or directory to local destination.
     private func download(from srcUrl: URL, to destUrl: URL) throws {
         assert(isUnderRoot(srcUrl), "Source URL (\(srcUrl)) expected to be under root (\(self.rootUrl)).")
-        assert(destUrl.isFileURL, "Destination URL (\(destUrl)) expected to be local directory URL.")
+        assert(destUrl.isFileURL, "Destination URL (\(destUrl)) expected to be local URL.")
         
         if srcUrl.hasDirectoryPath {
             try downloadDirectory(from: srcUrl, to: destUrl)
         }
         else {
-            self.fileOperationsSession.channel.downloadFile(srcUrl.path, to: destUrl.path)
+            guard let stream = OutputStream(url: destUrl, append: false) else { throw SftpError.openOutputStreamFailed(at: srcUrl) }
+            guard self.fileOperationsSession.sftp.readFile(atPath: srcUrl.path, to: stream) else { throw SftpError.copyingFileFailed(from: srcUrl, to: destUrl) }
         }
     }
     
@@ -293,7 +303,8 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
             try uploadDirectory(from: srcUrl, to: destUrl)
         }
         else {
-            self.fileOperationsSession.channel.uploadFile(srcUrl.path, to: destUrl.path)
+            guard let stream = InputStream(url: srcUrl) else { throw SftpError.openInputStreamFailed(at: srcUrl) }
+            guard self.fileOperationsSession.sftp.write(stream, toFileAtPath: destUrl.path) else { throw SftpError.copyingFileFailed(from: srcUrl, to: destUrl) }
         }
     }
     
@@ -406,17 +417,24 @@ extension NMSFTPFile {
 extension NMSSHChannel {
     
     func freeSpace(at path: String) -> Int64? {
-        do {
-            let output = try execute("df -k \(path.replacingOccurrences(of: " ", with: "\\ ")) | tail -1 | awk '{ print $4 }' ")
+        return nil
+        
+        /*do {
+            let output = try execute("df \(path.replacingOccurrences(of: " ", with: "\\ ")) | tail -1 | awk '{ print $4 }' ")
             let outputLines = output.components(separatedBy: "\n")
             guard outputLines.count > 0 else { assertionFailure("Expected non-empty response"); return nil }
-            guard let freeKb = Int64(outputLines[0]) else { assertionFailure("Failed to retrieve free space for path [\(path)], got response: \(output)"); return nil }
-            return freeKb * 1024
+            
+            var space: AnyObject? = nil
+            var error: NSString? = nil
+            let formatter = ByteCountFormatter()
+            guard formatter.getObjectValue(&space, for: outputLines[0], errorDescription: &error) else { assertionFailure("Failed to retrieve free space for path [\(path)], got response: \(output)"); return nil }
+            guard let number = space as? NSNumber else { assertionFailure("Unexepected parsed byte count object type: \(type(of: space))"); return nil }
+            return number.int64Value
         }
         catch {
-            Log.error?.message("Failed to retrieve free disk space for path [\(path)].")
+            Log.error?.message("Failed to retrieve free disk space for path [\(path)]: \(error).")
             return nil
-        }
+        }*/
     }
     
 }

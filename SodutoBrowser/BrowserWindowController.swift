@@ -143,9 +143,9 @@ class BrowserWindowController: NSWindowController {
         }
         
         self.url = url
-        self.window?.title = "\(self.fileSystem.name) - \(self.url.lastPathComponent)"
         self.window?.toolbar?.items.forEach { $0.isEnabled = self.validateToolbarItem($0) }
         loadContents()
+        updateWindowTitle()
         updatePathControl()
     }
     
@@ -167,6 +167,15 @@ class BrowserWindowController: NSWindowController {
             else {
                 Log.error?.message("Failed to load items from [\(url)] with error: \(error)")
             }
+        }
+    }
+    
+    private func updateWindowTitle() {
+        if self.fileSystem.isUnderRoot(self.url) {
+            self.window?.title = "\(self.fileSystem.name) - \(self.url.lastPathComponent)"
+        }
+        else {
+            self.window?.title = self.fileSystem.name
         }
     }
     
@@ -210,7 +219,7 @@ class BrowserWindowController: NSWindowController {
         rootCell.url = url
         cells.append(rootCell)
         
-        let relativePath = self.url.relativeTo(self.fileSystem.rootUrl)
+        let relativePath = self.url.relativeTo(self.fileSystem.rootUrl).rebasing(to: URL(string: "/")!)
         for component in relativePath.pathComponents {
             guard component != "/" else { continue }
             url.appendPathComponent(component, isDirectory: true)
@@ -316,6 +325,16 @@ class BrowserWindowController: NSWindowController {
         }
         return paths
     }
+
+    fileprivate func canWriteFileItems(at indexPaths: Set<IndexPath>, to pasteboard: NSPasteboard) -> Bool {
+        let fileItems = self.fileItems(at: indexPaths)
+        return !fileItems.isEmpty && !fileItems.contains { $0.isBusy }
+    }
+    
+    fileprivate func canReadFileItems(from pasteboard: NSPasteboard) -> Bool {
+        let urls: [NSURL] = pasteboard.readObjects(forClasses: [NSURL.self], options: nil) as? [NSURL] ?? []
+        return urls.contains { self.fileSystem.canCopy($0 as URL, to: ($0 as URL).movedTo(self.url)) }
+    }
     
     @discardableResult fileprivate func deleteFiles<T: Collection>(_ fileItems: T) -> [FileOperation] where T.Iterator.Element == FileItem {
         assert(!fileItems.contains(where: { $0.isBusy }), "Can not delete busy files.")
@@ -366,7 +385,7 @@ class BrowserWindowController: NSWindowController {
         let fileOperations = validFileItems.map { fileItem -> FileOperation in
             
             let destUrl = fileItem.url.movedTo(to)
-            self.setBusyUrl(fileItem.url, isNew: false)
+            //self.setBusyUrl(fileItem.url, isNew: false)
             self.setBusyUrl(destUrl, isNew: true)
             return self.fileSystem.copy(fileItem.url, to: destUrl)
             
@@ -375,11 +394,11 @@ class BrowserWindowController: NSWindowController {
         let completionOperations = fileOperations.map { fileOperation -> Operation in
             let operation = BlockOperation {
                 
-                guard let srcUrl = fileOperation.source else { assertionFailure("Expected non-nil source for copy operation (\(fileOperation))."); return }
+                //guard let srcUrl = fileOperation.source else { assertionFailure("Expected non-nil source for copy operation (\(fileOperation))."); return }
                 guard let destUrl = fileOperation.destination else { assertionFailure("Expected non-nil destination for copy operation (\(fileOperation))."); return }
                 
                 let succeeded = !fileOperation.isCancelled && fileOperation.error == nil
-                self.resetBusyUrl(srcUrl, isDeleted: false)
+                //self.resetBusyUrl(srcUrl, isDeleted: false)
                 self.resetBusyUrl(destUrl, isDeleted: !succeeded)
                 
                 if let error = fileOperation.error {
@@ -514,6 +533,23 @@ class BrowserWindowController: NSWindowController {
         
         return fileOperation
     }
+    
+    @discardableResult fileprivate func openFile(_ fileItem: FileItem) -> FileOperation {
+        assert(self.fileSystem.canOpenFile(fileItem), "File system does not support opening a file [\(url)].")
+        
+        guard let copyOperation = copyFiles([fileItem], to: self.fileSystem.tempDownloadsDirectory).first else { assertionFailure("Expected to get one copy operation."); return FileOperation(source: fileItem.url, error: FileSystemError.internalFailure) }
+        
+        let completionOperation = BlockOperation {
+            guard let destUrl = copyOperation.destination else { assertionFailure("Expected non-nil destination for rename operation (\(copyOperation))."); return }
+            guard destUrl.isFileURL else { assertionFailure("Destination URL (\(destUrl)) expected to be a local file."); return }
+            guard !destUrl.hasDirectoryPath else { assertionFailure("Destination URL (\(destUrl)) expected to be a simple file."); return }
+            NSWorkspace.shared().openFile(destUrl.path)
+        }
+        completionOperation.addDependency(copyOperation)
+        OperationQueue.main.addOperation(completionOperation)
+        
+        return copyOperation
+    }
 
     
     private func displayAlert(forFailures failures: [(item:FileItem, message:String)], operation: String) {
@@ -593,6 +629,22 @@ class BrowserWindowController: NSWindowController {
         item.startEditing()
     }
     
+    fileprivate func writeFileItems(at indexPaths: Set<IndexPath>, to pasteboard: NSPasteboard) -> Bool {
+        guard canWriteFileItems(at: indexPaths, to: pasteboard) else { return false }
+        let fileItems = self.fileItems(at: indexPaths)
+        pasteboard.clearContents()
+        pasteboard.writeObjects(fileItems)
+        return true
+    }
+    
+    fileprivate func pasteFileItems(from pasteboard: NSPasteboard) -> Bool {
+        guard let fileItems: [FileItem] = pasteboard.readObjects(forClasses: [FileItem.self], options: nil) as? [FileItem] else { return false }
+        let copyableItems = fileItems.filter { self.fileSystem.canCopy($0, to: $0.url.movedTo(self.url)) }
+        guard !copyableItems.isEmpty else { return false }
+        copyFiles(copyableItems, to: self.url)
+        return true
+    }
+    
     
     // MARK: Actions
     
@@ -609,8 +661,12 @@ class BrowserWindowController: NSWindowController {
     func collectionItemViewDoubleClick(_ sender: NSCollectionViewItem) {
         guard let fileItem = (sender as? IconItem)?.fileItem else { return }
         guard !fileItem.flags.contains(.isBusy) else { return }
-        guard fileItem.isDirectory else { return }
-        goTo(fileItem.url)
+        if fileItem.isDirectory {
+            goTo(fileItem.url)
+        }
+        else if self.fileSystem.canOpenFile(fileItem) {
+            openFile(fileItem)
+        }
     }
     
     @IBAction func goUp(_ sender: Any?) {
@@ -674,6 +730,18 @@ class BrowserWindowController: NSWindowController {
         self.goTo(url)
     }
     
+    @IBAction func copy(_ sender: Any?) {
+        if !self.writeFileItems(at: self.collectionView.selectionIndexPaths, to: NSPasteboard.general()) {
+            NSBeep()
+        }
+    }
+    
+    @IBAction func paste(_ sender: Any?) {
+        if !self.pasteFileItems(from: NSPasteboard.general()) {
+            NSBeep()
+        }
+    }
+    
     
     // MARK: Menu / Toolbar
     
@@ -690,7 +758,14 @@ class BrowserWindowController: NSWindowController {
             return true
         case AppDelegate.MenuItemTags.deleteFiles: return !self.collectionView.selectionIndexes.isEmpty
         case AppDelegate.MenuItemTags.newFolder: return true
-        default: return false
+        default: break
+        }
+        
+        guard let action = menuItem.action else { return super.validateMenuItem(menuItem) }
+        switch action {
+        case #selector(copy(_:)): return self.canWriteFileItems(at: self.collectionView.selectionIndexPaths, to: NSPasteboard.general())
+        case #selector(paste(_:)): return self.canReadFileItems(from: NSPasteboard.general())
+        default: return super.validateMenuItem(menuItem)
         }
     }
     
@@ -745,11 +820,7 @@ extension BrowserWindowController: NSCollectionViewDelegate {
     /* This method is called after it has been determined that a drag should begin, but before the drag has been started. To refuse the drag, return NO. To start the drag, declare the pasteboard types that you support with -[NSPasteboard declareTypes:owner:], place your data for the items at the given index paths on the pasteboard, and return YES from the method. The drag image and other drag related information will be set up and provided by the view once this call returns YES. You need to implement this method, or -collectionView:pasteboardWriterForItemAtIndexPath:, for your collection view to be a drag source.
      */
     public func collectionView(_ collectionView: NSCollectionView, writeItemsAt indexPaths: Set<IndexPath>, to pasteboard: NSPasteboard) -> Bool {
-        let fileItems = self.fileItems(at: indexPaths)
-        pasteboard.clearContents()
-        pasteboard.writeObjects(fileItems)
-        
-        return true
+        return writeFileItems(at: indexPaths, to: pasteboard)
     }
     
     

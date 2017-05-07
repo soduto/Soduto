@@ -10,6 +10,18 @@ import Foundation
 
 extension URL {
     
+    public static func url(scheme: String? = nil, host: String? = nil, port: UInt16? = nil, user: String? = nil, password: String? = nil, path: String? = nil, fragment: String? = nil) -> URL? {
+        let urlComponents = NSURLComponents()
+        urlComponents.scheme = scheme
+        urlComponents.host = host
+        urlComponents.port = port != nil ? port! as NSNumber : nil
+        urlComponents.user = user
+        urlComponents.password = password
+        urlComponents.path = path
+        urlComponents.fragment = fragment
+        return urlComponents.url
+    }
+    
     public func isUnder(_ otherUrl: URL) -> Bool {
         guard self.scheme == otherUrl.scheme else { return false }
         guard self.host == otherUrl.host else { return false }
@@ -43,7 +55,7 @@ extension URL {
         let relativeComponents = absSelf.pathComponents.suffix(from: baseUrl.pathComponents.count)
         guard var relativeUrl = URL(string: ".", relativeTo: baseUrl) else { assertionFailure("Could not contruct relative URL with base [\(baseUrl)]"); return absSelf }
         for component in relativeComponents {
-            relativeUrl.appendPathComponent(component)
+            relativeUrl.appendPathComponent(component, isDirectory: absSelf.hasDirectoryPath)
         }
         return relativeUrl
     }
