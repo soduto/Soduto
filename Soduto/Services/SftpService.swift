@@ -25,7 +25,7 @@ import CleanroomLogger
 /// following fields:
 ///
 /// startBrowsing (boolean): tell device to start sftp server and notify desktop
-public class SftpService: Service {
+public class SftpService: NSObject, Service, NSWindowDelegate {
     
     // MARK: Types
     
@@ -39,6 +39,7 @@ public class SftpService: Service {
     public static let requestTimeoutInterval: TimeInterval = 20.0
     
     private var requestTimers: [Device.Id:Timer] = [:]
+    private var loadingWindowControllers: [Device.Id:LoadingWindowController] = [:]
     
     
     // MARK: Service
@@ -56,6 +57,7 @@ public class SftpService: Service {
     public func setup(for device: Device) {}
     
     public func cleanup(for device: Device) {
+        hideLoadingMessage(for: device)
         if let timer = self.requestTimers.removeValue(forKey: device.id) {
             timer.invalidate()
             failedToActivateSftp(for: device)
@@ -90,6 +92,7 @@ public class SftpService: Service {
     
     private func activatingSftp(for device: Device) {
         discardRequestTimer(for: device)
+        showLoadingMessage(for: device)
         self.requestTimers[device.id] = Timer.compatScheduledTimer(withTimeInterval: type(of: self).requestTimeoutInterval, repeats: false) { [weak self] _ in
             self?.failedToActivateSftp(for: device)
         }
@@ -97,10 +100,18 @@ public class SftpService: Service {
     
     private func failedToActivateSftp(for device: Device) {
         discardRequestTimer(for: device)
+        hideLoadingMessage(for: device)
+        
+        let alert = NSAlert()
+        alert.alertStyle = .informational
+        alert.messageText = NSLocalizedString("Browse failed", comment: "")
+        alert.informativeText = NSString(format: NSLocalizedString("Failed to initialize browse session for %@.", comment: "") as NSString, device.name) as String
+        alert.runModal()
     }
     
     private func succeededToActivateSftp(for device: Device, withEndPoint url: URL) {
         discardRequestTimer(for: device)
+        hideLoadingMessage(for: device)
         launchBrowser(for: url)
     }
     
@@ -138,12 +149,40 @@ public class SftpService: Service {
         }
         catch {
             Log.error?.message("Failed to handle SFTP data packet: \(error)")
+            failedToActivateSftp(for: device)
         }
     }
     
     private func discardRequestTimer(for device: Device) {
-        let timer = self.requestTimers.removeValue(forKey: device.id)
+        discardRequestTimer(forDeviceWithId: device.id)
+    }
+    
+    private func discardRequestTimer(forDeviceWithId deviceId: Device.Id) {
+        let timer = self.requestTimers.removeValue(forKey: deviceId)
         timer?.invalidate()
+    }
+    
+    private func showLoadingMessage(for device: Device) {
+        if loadingWindowControllers[device.id] != nil {
+            loadingWindowControllers[device.id]?.showWindow(self)
+            return
+        }
+        
+        let controller = LoadingWindowController.loadController()
+        _ = controller.window // make sure window is loaded
+        controller.titleLabel.stringValue = NSString(format: NSLocalizedString("Initializing browse session for %@...", comment: "") as NSString, device.name) as String
+        controller.dismissHandler = { [weak self] controller in
+            guard let entry = self?.loadingWindowControllers.first(where: { $0.value === controller }) else { return }
+            self?.discardRequestTimer(forDeviceWithId: entry.key)
+            _ = self?.loadingWindowControllers.removeValue(forKey: entry.key)
+        }
+        self.loadingWindowControllers[device.id] = controller
+        
+        controller.showWindow(self)
+    }
+    
+    private func hideLoadingMessage(for device: Device) {
+        self.loadingWindowControllers[device.id]?.dismissController(self)
     }
     
     private func launchBrowser(for url: URL) {

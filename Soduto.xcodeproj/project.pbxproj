@@ -42,13 +42,16 @@
 		8456F4A81D7DE393006EFE19 /* Pairable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456F4A71D7DE393006EFE19 /* Pairable.swift */; };
 		8456F4AA1D7DEA47006EFE19 /* DefaultPairingHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456F4A91D7DEA47006EFE19 /* DefaultPairingHandler.swift */; };
 		845847301E75D33600EE5A09 /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8458472F1E75D33600EE5A09 /* URL.swift */; };
-		845BC6C31E68C4BF00DC9B81 /* NMSSH.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 845BC6A21E68C26B00DC9B81 /* NMSSH.framework */; };
 		845BC70D1E69F00E00DC9B81 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845BC70C1E69F00E00DC9B81 /* AppDelegate.swift */; };
 		845BC70F1E69F00E00DC9B81 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 845BC70E1E69F00E00DC9B81 /* Assets.xcassets */; };
 		845BC7121E69F00E00DC9B81 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 845BC7101E69F00E00DC9B81 /* MainMenu.xib */; };
 		845BC7261E69F25F00DC9B81 /* BrowserWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845BC7251E69F25F00DC9B81 /* BrowserWindowController.swift */; };
 		845BC7281E6A062900DC9B81 /* BrowserWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 845BC7271E6A062800DC9B81 /* BrowserWindow.xib */; };
 		845BC72A1E6A0CF100DC9B81 /* IconItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845BC7291E6A0CF100DC9B81 /* IconItemView.swift */; };
+		8461F3571EC0E7CD00E99C17 /* LoadingWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8461F3551EC0E7CD00E99C17 /* LoadingWindow.xib */; };
+		8461F3591EC0F58500E99C17 /* LoadingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8461F3581EC0F58500E99C17 /* LoadingWindowController.swift */; };
+		8461F35C1EC0FBC500E99C17 /* LoadingView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8461F35A1EC0FBC500E99C17 /* LoadingView.xib */; };
+		8461F35E1EC1014800E99C17 /* HoverButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8461F35D1EC1014800E99C17 /* HoverButton.swift */; };
 		84651A721E599A3C00D17601 /* BatteryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84651A711E599A3C00D17601 /* BatteryService.swift */; };
 		84651A741E59F9C900D17601 /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84651A731E59F9C900D17601 /* MenuView.swift */; };
 		84651A761E5AEBE100D17601 /* SftpService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84651A751E5AEBE100D17601 /* SftpService.swift */; };
@@ -425,6 +428,10 @@
 		845BC7251E69F25F00DC9B81 /* BrowserWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrowserWindowController.swift; sourceTree = "<group>"; };
 		845BC7271E6A062800DC9B81 /* BrowserWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BrowserWindow.xib; sourceTree = "<group>"; };
 		845BC7291E6A0CF100DC9B81 /* IconItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IconItemView.swift; sourceTree = "<group>"; };
+		8461F3561EC0E7CD00E99C17 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LoadingWindow.xib; sourceTree = "<group>"; };
+		8461F3581EC0F58500E99C17 /* LoadingWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingWindowController.swift; sourceTree = "<group>"; };
+		8461F35B1EC0FBC500E99C17 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LoadingView.xib; sourceTree = "<group>"; };
+		8461F35D1EC1014800E99C17 /* HoverButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HoverButton.swift; sourceTree = "<group>"; };
 		84651A711E599A3C00D17601 /* BatteryService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BatteryService.swift; sourceTree = "<group>"; };
 		84651A731E59F9C900D17601 /* MenuView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
 		84651A751E5AEBE100D17601 /* SftpService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SftpService.swift; sourceTree = "<group>"; };
@@ -491,7 +498,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				845BC6C31E68C4BF00DC9B81 /* NMSSH.framework in Frameworks */,
 				843E17891E26B56A001D0444 /* ServiceManagement.framework in Frameworks */,
 				843E16F11E2413CE001D0444 /* libcrypto.a in Frameworks */,
 				84B4D0E91DFD756A00437CBB /* Reachability.framework in Frameworks */,
@@ -534,6 +540,8 @@
 				8421A8E01D75FF05008AC833 /* PreferencesWindow.xib */,
 				843301671D2D8CB8008934BB /* MainMenu.xib */,
 				8431076F1E3D23C900AE96AB /* SendMessageWindow.xib */,
+				8461F3551EC0E7CD00E99C17 /* LoadingWindow.xib */,
+				8461F35A1EC0FBC500E99C17 /* LoadingView.xib */,
 			);
 			name = XIB;
 			path = ..;
@@ -559,6 +567,7 @@
 				8492379E1DE1C87600D95BBA /* ServiceActionMenuItem.swift */,
 				842B50561E4295D200969AA7 /* UnifiedTitlebarWindow.swift */,
 				84651A731E59F9C900D17601 /* MenuView.swift */,
+				8461F35D1EC1014800E99C17 /* HoverButton.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -566,6 +575,7 @@
 		8421A8E51D761286008AC833 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				8461F3581EC0F58500E99C17 /* LoadingWindowController.swift */,
 				849237EB1DE5FC9600D95BBA /* PairingInterfaceController.swift */,
 				8421A8E61D761409008AC833 /* PreferencesWindowController.swift */,
 				843107721E3D32A300AE96AB /* SendMessageWindowController.swift */,
@@ -1160,7 +1170,9 @@
 			files = (
 				8421A8E21D75FF05008AC833 /* PreferencesWindow.xib in Resources */,
 				849961B81D5726B0002B893A /* LICENSE.txt in Resources */,
+				8461F3571EC0E7CD00E99C17 /* LoadingWindow.xib in Resources */,
 				843107711E3D23CA00AE96AB /* SendMessageWindow.xib in Resources */,
+				8461F35C1EC0FBC500E99C17 /* LoadingView.xib in Resources */,
 				843301661D2D8CB8008934BB /* Assets.xcassets in Resources */,
 				843301691D2D8CB8008934BB /* MainMenu.xib in Resources */,
 			);
@@ -1226,6 +1238,7 @@
 				849237A11DE224CF00D95BBA /* FindMyPhoneService.swift in Sources */,
 				84FA45E41DDDDB7F00EF3992 /* InterfaceElementTags.swift in Sources */,
 				849237A31DE4E76E00D95BBA /* UserNotificationManager.swift in Sources */,
+				8461F3591EC0F58500E99C17 /* LoadingWindowController.swift in Sources */,
 				84651A761E5AEBE100D17601 /* SftpService.swift in Sources */,
 				84FA45D71DDDCB3D00EF3992 /* Connection.swift in Sources */,
 				84FFDA2A1E1D8D370069AC9A /* SimplePing.m in Sources */,
@@ -1239,6 +1252,7 @@
 				8421A8E71D761409008AC833 /* PreferencesWindowController.swift in Sources */,
 				849237991DE06EBC00D95BBA /* ServiceAction.swift in Sources */,
 				8456F4A81D7DE393006EFE19 /* Pairable.swift in Sources */,
+				8461F35E1EC1014800E99C17 /* HoverButton.swift in Sources */,
 				843B67041DF1E64A00289EC9 /* ShareService.swift in Sources */,
 				84FA45D81DDDCB3D00EF3992 /* ConnectionProvider.swift in Sources */,
 				8436DEF81E956DA000529362 /* Timer.swift in Sources */,
@@ -1391,6 +1405,22 @@
 				845BC7111E69F00E00DC9B81 /* Base */,
 			);
 			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		8461F3551EC0E7CD00E99C17 /* LoadingWindow.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8461F3561EC0E7CD00E99C17 /* Base */,
+			);
+			name = LoadingWindow.xib;
+			sourceTree = "<group>";
+		};
+		8461F35A1EC0FBC500E99C17 /* LoadingView.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8461F35B1EC0FBC500E99C17 /* Base */,
+			);
+			name = LoadingView.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
