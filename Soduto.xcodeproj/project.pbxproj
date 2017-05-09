@@ -54,6 +54,7 @@
 		845BE2E31EC246F500F3BD62 /* LoadingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845BE2E11EC246EE00F3BD62 /* LoadingWindowController.swift */; };
 		845BE2E61EC2476200F3BD62 /* HoverButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845BE2E51EC2476200F3BD62 /* HoverButton.swift */; };
 		845BE2E71EC2476500F3BD62 /* HoverButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845BE2E51EC2476200F3BD62 /* HoverButton.swift */; };
+		845BE2E91EC2626E00F3BD62 /* CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845BE2E81EC2626E00F3BD62 /* CollectionView.swift */; };
 		8461F35C1EC0FBC500E99C17 /* LoadingView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8461F35A1EC0FBC500E99C17 /* LoadingView.xib */; };
 		84651A721E599A3C00D17601 /* BatteryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84651A711E599A3C00D17601 /* BatteryService.swift */; };
 		84651A741E59F9C900D17601 /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84651A731E59F9C900D17601 /* MenuView.swift */; };
@@ -434,6 +435,7 @@
 		845BE2DD1EC2465500F3BD62 /* LoadingWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoadingWindow.xib; sourceTree = "<group>"; };
 		845BE2E11EC246EE00F3BD62 /* LoadingWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingWindowController.swift; sourceTree = "<group>"; };
 		845BE2E51EC2476200F3BD62 /* HoverButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HoverButton.swift; sourceTree = "<group>"; };
+		845BE2E81EC2626E00F3BD62 /* CollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionView.swift; sourceTree = "<group>"; };
 		8461F35B1EC0FBC500E99C17 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LoadingView.xib; sourceTree = "<group>"; };
 		84651A711E599A3C00D17601 /* BatteryService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BatteryService.swift; sourceTree = "<group>"; };
 		84651A731E59F9C900D17601 /* MenuView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
@@ -708,11 +710,11 @@
 		845BC70B1E69F00E00DC9B81 /* SodutoBrowser */ = {
 			isa = PBXGroup;
 			children = (
-				8438ECE01EBA650A006CBB07 /* SodutoBrowser.entitlements */,
 				845BC70C1E69F00E00DC9B81 /* AppDelegate.swift */,
 				845BC70E1E69F00E00DC9B81 /* Assets.xcassets */,
 				845BC7271E6A062800DC9B81 /* BrowserWindow.xib */,
 				845BC7251E69F25F00DC9B81 /* BrowserWindowController.swift */,
+				845BE2E81EC2626E00F3BD62 /* CollectionView.swift */,
 				849927821E6C5CD600AF8CF4 /* FileItem.swift */,
 				8440FCF61E6CA68300E5BFA9 /* FileSystem.swift */,
 				8499277E1E6C5CA600AF8CF4 /* IconItem.swift */,
@@ -723,6 +725,7 @@
 				845BC7101E69F00E00DC9B81 /* MainMenu.xib */,
 				84C545DF1EABC14E005A8107 /* SftpFileSystem.swift */,
 				84C545F71EABECDE005A8107 /* SodutoBrowser-Bridging-Header.h */,
+				8438ECE01EBA650A006CBB07 /* SodutoBrowser.entitlements */,
 				845847201E75D0ED00EE5A09 /* Utils */,
 			);
 			path = SodutoBrowser;
@@ -1329,6 +1332,7 @@
 				84C545E01EABC14E005A8107 /* SftpFileSystem.swift in Sources */,
 				849927831E6C5CD600AF8CF4 /* FileItem.swift in Sources */,
 				84A16BE01E9EBADD00DE2C0B /* Sequence.swift in Sources */,
+				845BE2E91EC2626E00F3BD62 /* CollectionView.swift in Sources */,
 				845BC72A1E6A0CF100DC9B81 /* IconItemView.swift in Sources */,
 				8440FD071E6CA6CA00E5BFA9 /* LocalFileSystem.swift in Sources */,
 				845BC7261E69F25F00DC9B81 /* BrowserWindowController.swift in Sources */,
