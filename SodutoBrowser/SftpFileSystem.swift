@@ -31,6 +31,8 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
         case openOutputStreamFailed(at: URL)
     }
     
+    typealias Progress = ((UInt, UInt)->Bool)
+    
     
     // MARK: Properties
     
@@ -169,13 +171,17 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
         operation.addExecutionBlock { [weak self] in
             guard let `self` = self else { return }
             do {
+                let progress: Progress = { _, _ in
+                    return !operation.isCancelled
+                }
+                
                 if self.isUnderRoot(srcUrl) && self.isUnderRoot(destUrl) {
-                    guard self.fileOperationsSession.sftp.copyContents(ofPath: srcUrl.path, toFileAtPath: destUrl.path, progress: nil) else {
+                    guard self.fileOperationsSession.sftp.copyContents(ofPath: srcUrl.path, toFileAtPath: destUrl.path, progress: progress) else {
                         throw SftpError.copyingFileFailed(from: srcUrl, to: destUrl)
                     }
                 }
                 else if self.isUnderRoot(srcUrl) {
-                    try self.download(from: srcUrl, to: destUrl)
+                    try self.download(from: srcUrl, to: destUrl, progress: progress)
                 }
                 else if self.isUnderRoot(destUrl) {
                     try self.upload(from: srcUrl, to: destUrl)
@@ -254,21 +260,21 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
     }
     
     /// Synchronously download remote file or directory to local destination.
-    private func download(from srcUrl: URL, to destUrl: URL) throws {
+    private func download(from srcUrl: URL, to destUrl: URL, progress: Progress?) throws {
         assert(isUnderRoot(srcUrl), "Source URL (\(srcUrl)) expected to be under root (\(self.rootUrl)).")
         assert(destUrl.isFileURL, "Destination URL (\(destUrl)) expected to be local URL.")
         
         if srcUrl.hasDirectoryPath {
-            try downloadDirectory(from: srcUrl, to: destUrl)
+            try downloadDirectory(from: srcUrl, to: destUrl, progress: progress)
         }
         else {
             guard let stream = OutputStream(url: destUrl, append: false) else { throw SftpError.openOutputStreamFailed(at: srcUrl) }
-            guard self.fileOperationsSession.sftp.readFile(atPath: srcUrl.path, to: stream) else { throw SftpError.copyingFileFailed(from: srcUrl, to: destUrl) }
+            guard self.fileOperationsSession.sftp.readFile(atPath: srcUrl.path, to: stream, progress: progress) else { throw SftpError.copyingFileFailed(from: srcUrl, to: destUrl) }
         }
     }
     
     /// Synchromously donwload remote directory to local destination.
-    private func downloadDirectory(from srcUrl: URL, to destUrl: URL) throws {
+    private func downloadDirectory(from srcUrl: URL, to destUrl: URL, progress: Progress?) throws {
         assert(isUnderRoot(srcUrl), "Source URL (\(srcUrl)) expected to be under root (\(self.rootUrl)).")
         assert(srcUrl.hasDirectoryPath, "Source URL (\(srcUrl)) expected to be a directory.")
         assert(destUrl.isFileURL, "Destination URL (\(destUrl)) expected to be local directory URL.")
@@ -281,7 +287,7 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
             guard let filename = file.filename else { assertionFailure("File name expected to be non-nil."); continue }
             let fileSrcUrl = srcUrl.appendingPathComponent(filename, isDirectory: file.isDirectory)
             let fileDestUrl = destUrl.appendingPathComponent(filename, isDirectory: file.isDirectory)
-            try download(from: fileSrcUrl, to: fileDestUrl)
+            try download(from: fileSrcUrl, to: fileDestUrl, progress: progress)
         }
     }
     

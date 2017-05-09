@@ -539,7 +539,16 @@ class BrowserWindowController: NSWindowController {
         
         guard let copyOperation = copyFiles([fileItem], to: self.fileSystem.tempDownloadsDirectory).first else { assertionFailure("Expected to get one copy operation."); return FileOperation(source: fileItem.url, error: FileSystemError.internalFailure) }
         
+        let loadingController = LoadingWindowController.loadController()
+        loadingController.titleLabel.stringValue = String(format: NSLocalizedString("Opening file %@", comment: ""), fileItem.name)
+        loadingController.hintLabel.stringValue = NSLocalizedString("Cancel opening", comment: "")
+        loadingController.dismissHandler = { _ in copyOperation.cancel() }
+        loadingController.showWindow(self)
+        
         let completionOperation = BlockOperation {
+            loadingController.dismissController(nil)
+            
+            guard !copyOperation.isCancelled else { return }
             guard let destUrl = copyOperation.destination else { assertionFailure("Expected non-nil destination for rename operation (\(copyOperation))."); return }
             guard destUrl.isFileURL else { assertionFailure("Destination URL (\(destUrl)) expected to be a local file."); return }
             guard !destUrl.hasDirectoryPath else { assertionFailure("Destination URL (\(destUrl)) expected to be a simple file."); return }

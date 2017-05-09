@@ -169,8 +169,7 @@ public class SftpService: NSObject, Service, NSWindowDelegate {
         }
         
         let controller = LoadingWindowController.loadController()
-        _ = controller.window // make sure window is loaded
-        controller.titleLabel.stringValue = NSString(format: NSLocalizedString("Initializing browse session for %@...", comment: "") as NSString, device.name) as String
+        controller.titleLabel.stringValue = String(format: NSLocalizedString("Initializing browse session for %@...", comment: ""), device.name)
         controller.hintLabel.stringValue = NSLocalizedString("Stop initializing", comment: "Browse session initialization")
         controller.dismissHandler = { [weak self] controller in
             guard let entry = self?.loadingWindowControllers.first(where: { $0.value === controller }) else { return }
