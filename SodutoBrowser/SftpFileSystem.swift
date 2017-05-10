@@ -206,6 +206,7 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
         operation.addExecutionBlock {[weak self] in
             guard let `self` = self else { return }
             do {
+                let destUrl = try self.nonExistingUrl(for: destUrl)
                 guard self.fileOperationsSession.sftp.moveItem(atPath: srcUrl.path, toPath: destUrl.path) else { throw SftpError.movingFileFailed(from: srcUrl, to: destUrl) }
                 operation.sourceState = .deleted
                 operation.destinationState = .present
@@ -247,16 +248,34 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
         return isUnderRoot(url) || url.isFileURL
     }
     
+    /// Return the same given URL or an alternative that does not yet exist
+    private func nonExistingUrl(for url: URL) throws -> URL {
+        var url = url
+        if isUnderRoot(url) {
+            while self.fileOperationsSession.sftp.fileExists(atPath: url.path) {
+                url = url.alternativeForDuplicate()
+            }
+            return url
+        }
+        else if url.isFileURL {
+            while FileManager.default.fileExists(atPath: url.path) {
+                url = url.alternativeForDuplicate()
+            }
+            return url
+        }
+        else {
+            throw FileSystemError.invalidUrl(url: url)
+        }
+    }
+    
     /// Make sure there is required directory on local file system
     private func ensureLocalDirectory(at url: URL) throws {
+        var url = url
         var existsDirectory: ObjCBool = false
         if !FileManager.default.fileExists(atPath: url.path, isDirectory: &existsDirectory) {
-            try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+            url = try nonExistingUrl(for: url)
         }
-        else if !existsDirectory.boolValue {
-            throw SftpError.regularFileInsteadOfDirectory(at: url)
-        }
-
+        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
     }
     
     /// Synchronously download remote file or directory to local destination.
@@ -268,6 +287,7 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
             try downloadDirectory(from: srcUrl, to: destUrl, progress: progress)
         }
         else {
+            let destUrl = try nonExistingUrl(for: destUrl)
             guard let stream = OutputStream(url: destUrl, append: false) else { throw SftpError.openOutputStreamFailed(at: srcUrl) }
             guard self.fileOperationsSession.sftp.readFile(atPath: srcUrl.path, to: stream, progress: progress) else { throw SftpError.copyingFileFailed(from: srcUrl, to: destUrl) }
         }
@@ -295,7 +315,10 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
     private func ensureRemoteDirectory(at url: URL) throws {
         assert(isUnderRoot(url), "URL (\(url)) expected to be under root (\(self.rootUrl)).")
         
-        guard !self.fileOperationsSession.sftp.fileExists(atPath: url.path) else { throw SftpError.regularFileInsteadOfDirectory(at: url) }
+        var url = url
+        if self.fileOperationsSession.sftp.fileExists(atPath: url.path) {
+            url = try nonExistingUrl(for: url)
+        }
         guard !self.fileOperationsSession.sftp.directoryExists(atPath: url.path) else { return }
         guard self.fileOperationsSession.sftp.createDirectory(atPath: url.path) else { throw SftpError.creatingDirectoryFailed(at: url) }
     }
@@ -309,6 +332,7 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
             try uploadDirectory(from: srcUrl, to: destUrl)
         }
         else {
+            let destUrl = try nonExistingUrl(for: destUrl)
             guard let stream = InputStream(url: srcUrl) else { throw SftpError.openInputStreamFailed(at: srcUrl) }
             guard self.fileOperationsSession.sftp.write(stream, toFileAtPath: destUrl.path) else { throw SftpError.copyingFileFailed(from: srcUrl, to: destUrl) }
         }
