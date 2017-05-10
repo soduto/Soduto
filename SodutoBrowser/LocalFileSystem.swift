@@ -82,7 +82,7 @@ class LocalFileSystem: FileSystem {
     func delete(_ url: URL) -> FileOperation {
         _ = canDelete(url, assertOnFailure: true)
         
-        let operation = FileOperation(source: url)
+        let operation = FileOperation(operation: .delete, source: url)
         operation.sourceState = .inProgress
         operation.addExecutionBlock { 
             do {
@@ -102,7 +102,7 @@ class LocalFileSystem: FileSystem {
     func copy(_ srcUrl: URL, to destUrl: URL) -> FileOperation {
         _ = canCopy(srcUrl, to: destUrl, assertOnFailure: true)
         
-        let operation = FileOperation(source: srcUrl, destination: destUrl)
+        let operation = FileOperation(operation: .copy, source: srcUrl, destination: destUrl)
         operation.destinationState = .inProgress
         operation.addExecutionBlock {
             do {
@@ -122,7 +122,7 @@ class LocalFileSystem: FileSystem {
     func move(_ srcUrl: URL, to destUrl: URL) -> FileOperation {
         _ = canMove(srcUrl, to: destUrl, assertOnFailure: true)
         
-        let operation = FileOperation(source: srcUrl, destination: destUrl)
+        let operation = FileOperation(operation: .move, source: srcUrl, destination: destUrl)
         operation.destinationState = .inProgress
         operation.addExecutionBlock {
             do {
@@ -144,7 +144,7 @@ class LocalFileSystem: FileSystem {
     func createFolder(_ url: URL) -> FileOperation {
         _ = canCreateFolder(url, assertOnFailure: true)
         
-        let operation = FileOperation(destination: url)
+        let operation = FileOperation(operation: .createFolder, destination: url)
         operation.destinationState = .inProgress
         operation.addExecutionBlock {
             do {

@@ -38,18 +38,28 @@ class FileOperation: BlockOperation {
         case deleted
     }
     
+    enum Operation: Int {
+        case delete
+        case copy
+        case move
+        case createFolder
+    }
+    
+    let operation: Operation
     let source: URL?
     let destination: URL?
     var sourceState: FileState = .unchanged
     var destinationState: FileState = .unchanged
     var error: Error?
     
-    init(source: URL? = nil, destination: URL? = nil) {
+    init(operation: Operation, source: URL? = nil, destination: URL? = nil) {
+        self.operation = operation
         self.source = source
         self.destination = destination
     }
     
-    init(source: URL? = nil, destination: URL? = nil, error: Error) {
+    init(operation: Operation, source: URL? = nil, destination: URL? = nil, error: Error) {
+        self.operation = operation
         self.source = source
         self.destination = destination
         self.error = error

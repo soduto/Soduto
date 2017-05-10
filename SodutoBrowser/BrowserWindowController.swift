@@ -355,10 +355,6 @@ class BrowserWindowController: NSWindowController {
                 let succeeded = !fileOperation.isCancelled && fileOperation.error == nil
                 self.resetBusyUrl(srcUrl, isDeleted: succeeded)
                 
-                if let error = fileOperation.error {
-                    Log.error?.message("Failed to delete item at url [\(fileOperation.source)]: \(error)")
-                }
-            
             }
             operation.addDependency(fileOperation)
             return operation
@@ -366,6 +362,7 @@ class BrowserWindowController: NSWindowController {
         
         let finalCompletionOperation = BlockOperation {
             
+            self.handleErrors(for: fileOperations)
             self.removeDeletedItems()
             self.updateStatusInfo()
             
@@ -401,10 +398,6 @@ class BrowserWindowController: NSWindowController {
                 //self.resetBusyUrl(srcUrl, isDeleted: false)
                 self.resetBusyUrl(destUrl, isDeleted: !succeeded)
                 
-                if let error = fileOperation.error {
-                    Log.error?.message("Failed to copy item from url [\(fileOperation.source) to url [\(destUrl)]]: \(error)")
-                }
-                
             }
             operation.addDependency(fileOperation)
             return operation
@@ -412,6 +405,7 @@ class BrowserWindowController: NSWindowController {
         
         let finalCompletionOperation = BlockOperation {
             
+            self.handleErrors(for: fileOperations)
             self.removeDeletedItems()
             self.updateStatusInfo()
             
@@ -448,10 +442,6 @@ class BrowserWindowController: NSWindowController {
                 self.resetBusyUrl(srcUrl, isDeleted: succeeded)
                 self.resetBusyUrl(destUrl, isDeleted: !succeeded)
                 
-                if let error = fileOperation.error {
-                    Log.error?.message("Failed to move item from url [\(fileOperation.source) to url [\(destUrl)]]: \(error)")
-                }
-                
             }
             operation.addDependency(fileOperation)
             return operation
@@ -459,6 +449,7 @@ class BrowserWindowController: NSWindowController {
         
         let finalCompletionOperation = BlockOperation {
             
+            self.handleErrors(for: fileOperations)
             self.removeDeletedItems()
             self.updateStatusInfo()
             
@@ -492,10 +483,7 @@ class BrowserWindowController: NSWindowController {
                 }
             }
             
-            if let error = fileOperation.error {
-                Log.error?.message("Failed to rename item from [\(fileOperation.source)] to [\(destUrl)]: \(error)")
-            }
-            
+            self.handleErrors(for: [fileOperation])
             self.updateStatusInfo()
             self.updatePathControl()
         }
@@ -521,10 +509,7 @@ class BrowserWindowController: NSWindowController {
                 self.startEditing(destUrl)
             }
             
-            if let error = fileOperation.error {
-                Log.error?.message("Failed to create folder [\(destUrl)]: \(error)")
-            }
-            
+            self.handleErrors(for: [fileOperation])
             self.updateStatusInfo()
             
         }
@@ -537,7 +522,7 @@ class BrowserWindowController: NSWindowController {
     @discardableResult fileprivate func openFile(_ fileItem: FileItem) -> FileOperation {
         assert(self.fileSystem.canOpenFile(fileItem), "File system does not support opening a file [\(url)].")
         
-        guard let copyOperation = copyFiles([fileItem], to: self.fileSystem.tempDownloadsDirectory).first else { assertionFailure("Expected to get one copy operation."); return FileOperation(source: fileItem.url, error: FileSystemError.internalFailure) }
+        guard let copyOperation = copyFiles([fileItem], to: self.fileSystem.tempDownloadsDirectory).first else { assertionFailure("Expected to get one copy operation."); return FileOperation(operation: .copy, source: fileItem.url, error: FileSystemError.internalFailure) }
         
         let loadingController = LoadingWindowController.loadController()
         loadingController.titleLabel.stringValue = String(format: NSLocalizedString("Opening file %@", comment: ""), fileItem.name)
@@ -560,19 +545,6 @@ class BrowserWindowController: NSWindowController {
         return copyOperation
     }
 
-    
-    private func displayAlert(forFailures failures: [(item:FileItem, message:String)], operation: String) {
-        guard failures.count > 0 else { return }
-        
-        let failuresInfo: [String] = failures.map { failure in
-            return "\(failure.item.url) - \(failure.message)"
-        }
-        let alert = NSAlert()
-        alert.alertStyle = .warning
-        alert.messageText = NSLocalizedString("Failed to \(operation) files", comment: "")
-        alert.informativeText = failuresInfo.joined(separator: "\n")
-        alert.runModal()
-    }
     
     /// Mark url as busy, add corresponing item to collection view if it is a new item
     private func setBusyUrl(_ url: URL, isNew: Bool, visible: Bool = true) {
@@ -626,6 +598,60 @@ class BrowserWindowController: NSWindowController {
         
         // Deleting from collection view must be performed after data source is updated
         self.collectionView.deleteItems(at: viewIndices)
+    }
+    
+    private func handleErrors(for fileOperations: [FileOperation]) {
+        let failedOperations = fileOperations.filter { $0.error != nil }
+        guard !failedOperations.isEmpty else { return }
+        
+        var deleteMessages: [String] = []
+        var copyMessages: [String] = []
+        var moveMessages: [String] = []
+        var createFolderMessages: [String] = []
+        for operation in failedOperations {
+            guard let error = operation.error else { continue }
+            
+            switch operation.operation {
+            case .delete:
+                guard let srcUrl = operation.source else { continue }
+                Log.error?.message("Failed to delete file at [\(srcUrl)]: \(error)")
+                deleteMessages.append(srcUrl.absoluteString)
+            case .copy:
+                guard let srcUrl = operation.source else { continue }
+                guard let destUrl = operation.destination else { continue }
+                Log.error?.message("Failed to copy file from [\(srcUrl)] to [\(destUrl)]: \(error)")
+                copyMessages.append(String(format: NSLocalizedString("from '%@' to '%@'", comment: ""), srcUrl.absoluteString, destUrl.absoluteString))
+            case .move:
+                guard let srcUrl = operation.source else { continue }
+                guard let destUrl = operation.destination else { continue }
+                Log.error?.message("Failed to move file from [\(srcUrl)] to [\(destUrl)]: \(error)")
+                moveMessages.append(String(format: NSLocalizedString("from '%@' to '%@'", comment: ""), srcUrl.absoluteString, destUrl.absoluteString))
+            case .createFolder:
+                guard let destUrl = operation.destination else { continue }
+                Log.error?.message("Failed to create folder at [\(destUrl)]: \(error)")
+                createFolderMessages.append(destUrl.absoluteString)
+            }
+        }
+        
+        var text = ""
+        if !deleteMessages.isEmpty {
+            text += NSLocalizedString("Failed to delete", comment: "") + ":\n\t" + deleteMessages.joined(separator: "\n\t") + "\n"
+        }
+        if !copyMessages.isEmpty {
+            text += NSLocalizedString("Failed to copy", comment: "") + ":\n\t" + copyMessages.joined(separator: "\n\t") + "\n"
+        }
+        if !moveMessages.isEmpty {
+            text += NSLocalizedString("Failed to move", comment: "") + ":\n\t" + moveMessages.joined(separator: "\n\t") + "\n"
+        }
+        if !createFolderMessages.isEmpty {
+            text += NSLocalizedString("Failed to create folder", comment: "") + ":\n\t" + createFolderMessages.joined(separator: "\n\t") + "\n"
+        }
+        
+        let alert = NSAlert()
+        alert.alertStyle = .warning
+        alert.messageText = NSLocalizedString("Failed to perform file operations", comment: "")
+        alert.informativeText = text
+        alert.runModal()
     }
     
     private func startEditing(_ url: URL) {
