@@ -79,6 +79,11 @@
                                     <action selector="newTab:" target="-1" id="qsd-5h-cLN"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Open" tag="3007" keyEquivalent="o" id="VAw-XY-UJL">
+                                <connections>
+                                    <action selector="open:" target="-1" id="L9F-7p-W5l"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Close Window" tag="3004" keyEquivalent="W" id="opz-qT-Eof">
                                 <connections>
                                     <action selector="closeTabGroup:" target="-1" id="yUW-IE-Onl"/>

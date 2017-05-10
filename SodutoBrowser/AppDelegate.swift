@@ -31,6 +31,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, BrowserWindowControllerDeleg
         static let closeTabGroup: Int = 3004
         static let close: Int = 3005
         static let newTab: Int = 3006
+        static let open: Int = 3007
     }
     
     struct ToolbarItemTags {

@@ -654,6 +654,27 @@ class BrowserWindowController: NSWindowController {
         return true
     }
     
+    fileprivate var canOpen: Bool {
+        guard self.collectionView.selectionIndexPaths.count == 1 else { return false }
+        guard let indexPath = self.collectionView.selectionIndexPaths.first else { return false }
+        guard let fileItem = fileItem(at: indexPath) else { return false }
+        return canOpen(fileItem)
+    }
+    
+    fileprivate func canOpen(_ fileItem: FileItem) -> Bool {
+        return !fileItem.isBusy
+    }
+    
+    fileprivate func open(_ fileItem: FileItem) {
+        guard canOpen(fileItem) else { return }
+        if fileItem.isDirectory {
+            goTo(fileItem.url)
+        }
+        else if self.fileSystem.canOpenFile(fileItem) {
+            openFile(fileItem)
+        }
+    }
+    
     
     // MARK: Actions
     
@@ -669,13 +690,7 @@ class BrowserWindowController: NSWindowController {
     
     func collectionItemViewDoubleClick(_ sender: NSCollectionViewItem) {
         guard let fileItem = (sender as? IconItem)?.fileItem else { return }
-        guard !fileItem.flags.contains(.isBusy) else { return }
-        if fileItem.isDirectory {
-            goTo(fileItem.url)
-        }
-        else if self.fileSystem.canOpenFile(fileItem) {
-            openFile(fileItem)
-        }
+        open(fileItem)
     }
     
     @IBAction func goUp(_ sender: Any?) {
@@ -751,6 +766,13 @@ class BrowserWindowController: NSWindowController {
         }
     }
     
+    @IBAction func open(_ sender: Any?) {
+        guard self.canOpen else { return }
+        guard let indexPath = self.collectionView.selectionIndexPaths.first else { return }
+        guard let fileItem = fileItem(at: indexPath) else { return }
+        open(fileItem)
+    }
+    
     
     // MARK: Menu / Toolbar
     
@@ -765,8 +787,9 @@ class BrowserWindowController: NSWindowController {
         case AppDelegate.MenuItemTags.foldersAlwaysFirst:
             menuItem.state = self.isFoldersAlwaysFirst ? NSOnState : NSOffState
             return true
-        case AppDelegate.MenuItemTags.deleteFiles: return !self.collectionView.selectionIndexes.isEmpty
+        case AppDelegate.MenuItemTags.deleteFiles: return !self.collectionView.selectionIndexPaths.isEmpty
         case AppDelegate.MenuItemTags.newFolder: return true
+        case AppDelegate.MenuItemTags.open: return self.canOpen
         default: break
         }
         
@@ -790,6 +813,9 @@ class BrowserWindowController: NSWindowController {
     }
 }
 
+
+// MARK: NSWindowDelegate
+
 extension BrowserWindowController: NSWindowDelegate {
     
     func windowWillClose(_ notification: Notification) {
@@ -797,6 +823,9 @@ extension BrowserWindowController: NSWindowDelegate {
     }
     
 }
+
+
+// MARK: NSCollectionViewDataSource
 
 extension BrowserWindowController : NSCollectionViewDataSource {
     
@@ -823,6 +852,9 @@ extension BrowserWindowController : NSCollectionViewDataSource {
     }
     
 }
+
+
+// MARK: NSCollectionViewDelegate
 
 extension BrowserWindowController: NSCollectionViewDelegate {
     
@@ -1046,6 +1078,9 @@ extension BrowserWindowController: NSCollectionViewDelegate {
 //    optional public func collectionView(_ collectionView: NSCollectionView, transitionLayoutForOldLayout fromLayout: NSCollectionViewLayout, newLayout toLayout: NSCollectionViewLayout) -> NSCollectionViewTransitionLayout
     
 }
+
+
+// MARK: IconItemDelegate
 
 extension BrowserWindowController: IconItemDelegate {
     
