@@ -103,6 +103,8 @@ class BrowserWindowController: NSWindowController {
         
         super.init(window: nil)
         
+        self.fileSystem.delegate = self
+         
         // make sure window is loaded
         let _ = self.window
     }
@@ -134,7 +136,7 @@ class BrowserWindowController: NSWindowController {
     // MARK: Contents handling
     
     private func goTo(_ url: URL, updateHistory: Bool = true) {
-        guard self.fileSystem.isValid(url) else { return }
+        guard self.fileSystem.isOwn(url) else { return }
         guard url.hasDirectoryPath else { return }
         
         if updateHistory {
@@ -342,7 +344,7 @@ class BrowserWindowController: NSWindowController {
         let validFileItems = fileItems.filter { !$0.isBusy }
         let fileOperations = validFileItems.map { fileItem -> FileOperation in
             
-            self.setBusyUrl(fileItem.url, isNew: false)
+            self.setBusyUrl(fileItem.url)
             return self.fileSystem.delete(fileItem.url)
             
         }
@@ -353,7 +355,12 @@ class BrowserWindowController: NSWindowController {
                 guard let srcUrl = fileOperation.source else { assertionFailure("Expected non-nil source for delete operation (\(fileOperation))."); return }
                 
                 let succeeded = !fileOperation.isCancelled && fileOperation.error == nil
-                self.resetBusyUrl(srcUrl, isDeleted: succeeded)
+                if succeeded {
+                    self.removeFileItem(withURL: srcUrl)
+                }
+                else {
+                    self.resetBusyUrl(srcUrl)
+                }
                 
             }
             operation.addDependency(fileOperation)
@@ -383,7 +390,7 @@ class BrowserWindowController: NSWindowController {
             
             let destUrl = fileItem.url.movedTo(to)
             //self.setBusyUrl(fileItem.url, isNew: false)
-            self.setBusyUrl(destUrl, isNew: true)
+            //self.setBusyUrl(destUrl, isNew: true)
             return self.fileSystem.copy(fileItem.url, to: destUrl)
             
         }
@@ -396,7 +403,12 @@ class BrowserWindowController: NSWindowController {
                 
                 let succeeded = !fileOperation.isCancelled && fileOperation.error == nil
                 //self.resetBusyUrl(srcUrl, isDeleted: false)
-                self.resetBusyUrl(destUrl, isDeleted: !succeeded)
+                if succeeded {
+                    self.resetBusyUrl(destUrl)
+                }
+                else {
+                    self.removeFileItem(withURL: destUrl)
+                }
                 
             }
             operation.addDependency(fileOperation)
@@ -426,8 +438,8 @@ class BrowserWindowController: NSWindowController {
         let fileOperations = validFileItems.map { fileItem -> FileOperation in
             
             let destUrl = fileItem.url.movedTo(to)
-            self.setBusyUrl(fileItem.url, isNew: false)
-            self.setBusyUrl(destUrl, isNew: true)
+            self.setBusyUrl(fileItem.url)
+            //self.setBusyUrl(destUrl, isNew: true)
             return self.fileSystem.move(fileItem.url, to: destUrl)
             
         }
@@ -439,8 +451,14 @@ class BrowserWindowController: NSWindowController {
                 guard let destUrl = fileOperation.destination else { assertionFailure("Expected non-nil destination for move operation (\(fileOperation))."); return }
                 
                 let succeeded = !fileOperation.isCancelled && fileOperation.error == nil
-                self.resetBusyUrl(srcUrl, isDeleted: succeeded)
-                self.resetBusyUrl(destUrl, isDeleted: !succeeded)
+                if succeeded {
+                    self.removeFileItem(withURL: srcUrl)
+                    self.resetBusyUrl(destUrl)
+                }
+                else {
+                    self.resetBusyUrl(srcUrl)
+                    self.removeFileItem(withURL: destUrl)
+                }
                 
             }
             operation.addDependency(fileOperation)
@@ -465,7 +483,7 @@ class BrowserWindowController: NSWindowController {
         let destUrl = fileItem.url.renamed(to: to)
         assert(fileSystem.canMove(fileItem, to: destUrl), "Can not rename file.")
         
-        setBusyUrl(fileItem.url, isNew: false, visible: false)
+        setBusyUrl(fileItem.url, reload: false)
         let fileOperation = self.fileSystem.move(fileItem.url, to: destUrl)
         
         let completionOperation = BlockOperation {
@@ -473,14 +491,29 @@ class BrowserWindowController: NSWindowController {
             guard let srcUrl = fileOperation.source else { assertionFailure("Expected non-nil source for rename operation (\(fileOperation))."); return }
             guard let destUrl = fileOperation.destination else { assertionFailure("Expected non-nil destination for rename operation (\(fileOperation))."); return }
             
-            self.resetBusyUrl(srcUrl, isDeleted: false)
-            if let index = self.items.index(where: { $0.url == srcUrl }) {
-                let newFileItem = FileItem(url: destUrl, name: to, icon: fileItem.icon, flags: fileItem.staticFlags)
-                self.items[index] = newFileItem
-                self.itemArrayController.content = self.items
-                if let indexPath = self.indexPath(for: newFileItem) {
-                    self.collectionView.reloadItems(at: [indexPath])
+            let succeeded = !fileOperation.isCancelled && fileOperation.error == nil
+            if succeeded {
+                if let indexPath = self.indexPath(for: srcUrl), let index = self.items.index(where: { $0.url == srcUrl }) {
+                    self.resetBusyUrl(srcUrl, reload: false)
+                    let newFileItem = FileItem(url: destUrl)
+                    self.items[index] = newFileItem
+                    self.itemArrayController.content = self.items
+                    if let newIndexPath = self.indexPath(for: newFileItem) {
+                        self.collectionView.moveItem(at: indexPath, to: newIndexPath)
+                        self.collectionView.reloadItems(at: [newIndexPath])
+                    }
+                    else {
+                        self.removeFileItem(withURL: srcUrl)
+                        self.removeDeletedItems()
+                    }
                 }
+                else {
+                    self.resetBusyUrl(srcUrl)
+                    self.addNewFileItem(withURL: destUrl)
+                }
+            }
+            else {
+                self.resetBusyUrl(srcUrl)
             }
             
             self.handleErrors(for: [fileOperation])
@@ -496,7 +529,6 @@ class BrowserWindowController: NSWindowController {
     @discardableResult fileprivate func createFolder(_ url: URL) -> FileOperation {
         assert(self.fileSystem.canCreateFolder(url), "File system does not support creating a folder [\(url)].")
         
-        setBusyUrl(url, isNew: true)
         let fileOperation = self.fileSystem.createFolder(url)
         
         let completionOperation = BlockOperation {
@@ -504,9 +536,13 @@ class BrowserWindowController: NSWindowController {
             guard let destUrl = fileOperation.destination else { assertionFailure("Expected non-nil destination for create folder operation (\(fileOperation))."); return }
             
             let succeeded = !fileOperation.isCancelled && fileOperation.error == nil
-            self.resetBusyUrl(destUrl, isDeleted: !succeeded)
             if succeeded {
+                self.resetBusyUrl(destUrl)
                 self.startEditing(destUrl)
+            }
+            else {
+                self.removeFileItem(withURL: destUrl)
+                self.removeDeletedItems()
             }
             
             self.handleErrors(for: [fileOperation])
@@ -547,36 +583,78 @@ class BrowserWindowController: NSWindowController {
 
     
     /// Mark url as busy, add corresponing item to collection view if it is a new item
-    private func setBusyUrl(_ url: URL, isNew: Bool, visible: Bool = true) {
-        self.busyURLs.insert(url)
+//    private func setBusyUrl(_ url: URL, isNew: Bool, visible: Bool = true) {
+//        self.busyURLs.insert(url)
+//        
+//        if isNew && self.url == url.deletingLastPathComponent() && visible {
+//            let fileItem = FileItem(url: url)
+//            self.items.append(fileItem)
+//            self.itemArrayController.content = self.items
+//            fileItem.dynamicFlags.insert(.isBusy)
+//            if let indexPath = indexPath(for: fileItem) {
+//                self.collectionView.insertItems(at: [indexPath])
+//            }
+//        }
+//        else if let fileItem = self.items.first(where: { $0.url == url }) {
+//            fileItem.dynamicFlags.insert(.isBusy)
+//            if visible, let indexPath = self.indexPath(for: fileItem) {
+//                self.collectionView.reloadItems(at: [indexPath])
+//            }
+//        }
+//    }
+    
+    /// Remove busy mark from url, mark it as deleted or restore to normal
+    fileprivate func resetBusyUrl(_ url: URL, reload: Bool = true) {
+        self.busyURLs.remove(url)
         
-        if isNew && self.url == url.deletingLastPathComponent() && visible {
-            let fileItem = FileItem(url: url)
-            self.items.append(fileItem)
-            self.itemArrayController.content = self.items
-            fileItem.dynamicFlags.insert(.isBusy)
-            if let indexPath = indexPath(for: fileItem) {
-                self.collectionView.insertItems(at: [indexPath])
-            }
-        }
-        else if let fileItem = self.items.first(where: { $0.url == url }) {
-            fileItem.dynamicFlags.insert(.isBusy)
-            if visible, let indexPath = self.indexPath(for: fileItem) {
+        if let fileItem = self.items.first(where: { $0.url == url }) {
+            fileItem.dynamicFlags.remove(.isBusy)
+            if let indexPath = self.indexPath(for: fileItem), reload {
                 self.collectionView.reloadItems(at: [indexPath])
             }
         }
     }
     
-    /// Remove busy mark from url, mark it as deleted or restore to normal
-    private func resetBusyUrl(_ url: URL, isDeleted: Bool) {
+    /// Mark url and correspinding fileItem (if present) as busy
+    fileprivate func setBusyUrl(_ url: URL, reload: Bool = true) {
+        self.busyURLs.insert(url)
+        
+        if let fileItem = self.items.first(where: { $0.url == url }) {
+            fileItem.dynamicFlags.insert(.isBusy)
+            if let indexPath = indexPath(for: fileItem), reload {
+                self.collectionView.reloadItems(at: [indexPath])
+            }
+        }
+    }
+    
+    /// Insert new fileItem if absent reseting busy status
+    fileprivate func addNewFileItem(withURL url: URL, reload: Bool = true) {
+        self.busyURLs.remove(url)
+        
+        guard self.url == url.deletingLastPathComponent() else { return }
+        if let fileItem = self.items.first(where: { $0.url == url }) {
+            fileItem.dynamicFlags = []
+            if let indexPath = indexPath(for: fileItem), reload {
+                self.collectionView.reloadItems(at: [indexPath])
+            }
+        }
+        else {
+            let fileItem = FileItem(url: url)
+            self.items.append(fileItem)
+            self.itemArrayController.content = self.items
+            if let indexPath = indexPath(for: fileItem) {
+                self.collectionView.insertItems(at: [indexPath])
+            }
+        }
+    }
+    
+    /// Mark existing file item as deleted reseting buy status
+    fileprivate func removeFileItem(withURL url: URL, reload: Bool = true) {
         self.busyURLs.remove(url)
         
         if let fileItem = self.items.first(where: { $0.url == url }) {
-            if isDeleted {
-                fileItem.dynamicFlags.insert(.isDeleted)
-            }
-            fileItem.dynamicFlags.remove(.isBusy)
-            if let indexPath = self.indexPath(for: fileItem) {
+            fileItem.dynamicFlags = [ .isDeleted ]
+            if let indexPath = indexPath(for: fileItem), reload {
                 self.collectionView.reloadItems(at: [indexPath])
             }
         }
@@ -615,21 +693,25 @@ class BrowserWindowController: NSWindowController {
             case .delete:
                 guard let srcUrl = operation.source else { continue }
                 Log.error?.message("Failed to delete file at [\(srcUrl)]: \(error)")
-                deleteMessages.append(srcUrl.absoluteString)
+                deleteMessages.append(self.fileSystem.description(for: srcUrl))
             case .copy:
                 guard let srcUrl = operation.source else { continue }
                 guard let destUrl = operation.destination else { continue }
                 Log.error?.message("Failed to copy file from [\(srcUrl)] to [\(destUrl)]: \(error)")
-                copyMessages.append(String(format: NSLocalizedString("from '%@' to '%@'", comment: ""), srcUrl.absoluteString, destUrl.absoluteString))
+                let srcName = self.fileSystem.description(for: srcUrl)
+                let destName = self.fileSystem.description(for: destUrl)
+                copyMessages.append(String(format: NSLocalizedString("from %@ to %@", comment: ""), srcName, destName))
             case .move:
                 guard let srcUrl = operation.source else { continue }
                 guard let destUrl = operation.destination else { continue }
                 Log.error?.message("Failed to move file from [\(srcUrl)] to [\(destUrl)]: \(error)")
-                moveMessages.append(String(format: NSLocalizedString("from '%@' to '%@'", comment: ""), srcUrl.absoluteString, destUrl.absoluteString))
+                let srcName = self.fileSystem.description(for: srcUrl)
+                let destName = self.fileSystem.description(for: destUrl)
+                moveMessages.append(String(format: NSLocalizedString("from %@ to %@", comment: ""), srcName, destName))
             case .createFolder:
                 guard let destUrl = operation.destination else { continue }
                 Log.error?.message("Failed to create folder at [\(destUrl)]: \(error)")
-                createFolderMessages.append(destUrl.absoluteString)
+                createFolderMessages.append(self.fileSystem.description(for: destUrl))
             }
         }
         
@@ -1048,7 +1130,10 @@ extension BrowserWindowController: NSCollectionViewDelegate {
     /* Sent during interactive selection, to inform the delegate that the CollectionView would like to select the items at the specified "indexPaths".  In addition to optionally reacting to the proposed change, you can approve it (by returning "indexPaths" as-is), or selectively refuse some or all of the proposed selection changes (by returning a modified autoreleased mutableCopy of indexPaths, or an empty indexPaths instance).
      */
     public func collectionView(_ collectionView: NSCollectionView, shouldSelectItemsAt indexPaths: Set<IndexPath>) -> Set<IndexPath> {
-        let filtered = indexPaths.filter { self.fileItem(at: $0)?.flags.contains(.isBusy) != true }
+        let filtered = indexPaths.filter {
+            guard let fileItem = self.fileItem(at: $0) else { return false }
+            return !fileItem.isBusy && !fileItem.isDeleted
+        }
         return Set<IndexPath>(filtered)
     }
     
@@ -1114,5 +1199,24 @@ extension BrowserWindowController: IconItemDelegate {
         guard let fileItem = iconItem.fileItem else { return }
         renameFile(fileItem, to: name)
     }
+    
+}
+
+
+// MARK: FileSystemDelegate
+
+extension BrowserWindowController: FileSystemDelegate {
+    
+    func fileSystem(_ fileSystem: FileSystem, willAddFileAt url: URL, from fileOperation: FileOperation) {
+        // Dont do anything if renaming
+        guard !(fileOperation.operation == .move && fileOperation.source?.deletingLastPathComponent() == fileOperation.destination?.deletingLastPathComponent()) else { return }
+        
+        addNewFileItem(withURL: url, reload: false)
+        setBusyUrl(url)
+    }
+    
+    func fileSystem(_ fileSystem: FileSystem, didAddFileAt url: URL, from fileOperation: FileOperation) {}
+    
+    func fileSystem(_ fileSystem: FileSystem, didRemoveFileAt url: URL, from fileOperation: FileOperation) {}
     
 }

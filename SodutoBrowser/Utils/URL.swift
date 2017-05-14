@@ -102,6 +102,12 @@ extension URL {
         return updatedUrl
     }
     
+    public var regularFileURL: URL {
+        let lastPathComponent = self.lastPathComponent
+        guard !lastPathComponent.isEmpty else { return self }
+        return self.deletingLastPathComponent().appendingPathComponent(lastPathComponent)
+    }
+    
     
     // MARK: Private methods
     

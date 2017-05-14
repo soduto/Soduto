@@ -47,7 +47,7 @@ class FileOperation: BlockOperation {
     
     let operation: Operation
     let source: URL?
-    let destination: URL?
+    var destination: URL?
     var sourceState: FileState = .unchanged
     var destinationState: FileState = .unchanged
     var error: Error?
@@ -66,20 +66,21 @@ class FileOperation: BlockOperation {
     }
 }
 
+protocol FileSystemDelegate: class {
+    
+    func fileSystem(_ fileSystem: FileSystem, willAddFileAt url: URL, from fileOperation: FileOperation)
+    func fileSystem(_ fileSystem: FileSystem, didAddFileAt url: URL, from fileOperation: FileOperation)
+    func fileSystem(_ fileSystem: FileSystem, didRemoveFileAt url: URL, from fileOperation: FileOperation)
+    
+}
+
 protocol FileSystem: class {
+    
+    weak var delegate: FileSystemDelegate? { get set }
     
     var name: String { get }
     var rootUrl: URL { get }
     var places: [Place] { get }
-    
-    /// Basic check if url can be deleted by this file system. It does not guarantee that operation will succeed, however.
-    func canDelete(_ url: URL) -> Bool
-    /// Basic check if copy is supported by this file system. It does not guarantee that operation will succeed, however.
-    func canCopy(_ srcUrl: URL, to destUrl: URL) -> Bool
-    /// Basic check if move is supported by this file system. It does not guarantee that operation will succeed, however.
-    func canMove(_ srcUrl: URL, to destUrl: URL) -> Bool
-    /// Basic check if creating folder at provided URL is supported by this file system. It does not guarantee that operation will succeed, however.
-    func canCreateFolder(_ url: URL) -> Bool
     
     /// Read file list for provided URL. URL must reside under rootUrl.
     /// Completion handler is called with retrieved file itemArray, free disk space and error paraneters.
@@ -122,8 +123,25 @@ extension FileSystem {
         return url.isUnder(self.rootUrl)
     }
     
-    func isValid(_ url: URL) -> Bool {
+    /// Basic check if given URL belongs to file system
+    func isOwn(_ url: URL) -> Bool {
         return url.isUnder(self.rootUrl) || url == self.rootUrl
+    }
+    
+    /// Basic check if given url is understood by the file system.
+    func isSupportedUrl(_ url: URL) -> Bool {
+        return isUnderRoot(url) || url.isFileURL
+    }
+    
+    
+    // MARK: Deleting
+    
+    func canDelete(_ url: URL) -> Bool { return canDelete(url, assertOnFailure: false) }
+    func canDelete(_ url: URL, assertOnFailure: Bool) -> Bool {
+        if assertOnFailure {
+            assert(isUnderRoot(url), "Deleted file (\(url)) must reside under root (\(self.rootUrl))")
+        }
+        return isUnderRoot(url)
     }
     
     func canDelete(_ fileItem: FileItem) -> Bool {
@@ -138,12 +156,27 @@ extension FileSystem {
         return fileItems.every { return canDelete($0) }
     }
     
-    func canCopy(_ fileItem: FileItem, to destURL: URL) -> Bool {
-        return canCopy(fileItem.url, to: destURL)
+    
+    // MARK: Copying
+    
+    func canCopy(_ srcUrl: URL, to destUrl: URL) -> Bool { return canCopy(srcUrl, to: destUrl, assertOnFailure: false) }
+    func canCopy(_ srcUrl: URL, to destUrl: URL, assertOnFailure: Bool) -> Bool {
+        if assertOnFailure {
+            assert(srcUrl.absoluteURL != destUrl.absoluteURL, "Copy source and destination is the same (\(srcUrl)).")
+            assert(isSupportedUrl(srcUrl), "Unsupported source url (\(srcUrl)).")
+            assert(isSupportedUrl(destUrl), "Unsupported destination url (\(srcUrl)).")
+            assert(isUnderRoot(srcUrl) || isUnderRoot(destUrl), "Copy source (\(srcUrl)) or destination (\(destUrl)) must be under root (\(self.rootUrl))")
+            assert(!destUrl.isUnder(srcUrl), "Can not copy source (\(srcUrl) to its own subfolder (\(destUrl)).")
+        }
+        return (srcUrl.absoluteURL != destUrl.absoluteURL) && isSupportedUrl(srcUrl) && isSupportedUrl(destUrl) && (isUnderRoot(srcUrl) || isUnderRoot(destUrl)) && !destUrl.isUnder(srcUrl)
     }
     
     func canCopy(_ srcFileItem: FileItem, to destFileItem: FileItem) -> Bool {
         return destFileItem.canModify && canCopy(srcFileItem, to: destFileItem.url)
+    }
+    
+    func canCopy(_ fileItem: FileItem, to destURL: URL) -> Bool {
+        return fileItem.canRead && canCopy(fileItem.url, to: destURL)
     }
     
     func canCopy(_ urls: [URL], to destURL: URL) -> Bool {
@@ -155,7 +188,23 @@ extension FileSystem {
     }
     
     func canCopy(_ fileItems: [FileItem], to destFileItem: FileItem) -> Bool {
-        return destFileItem.canModify && fileItems.every { return canCopy($0, to: destFileItem.url) }
+        return fileItems.every { return canCopy($0, to: destFileItem) }
+    }
+    
+    
+    // MARK: Moving
+    
+    func canMove(_ srcUrl: URL, to destUrl: URL) -> Bool { return canMove(srcUrl, to: destUrl, assertOnFailure: false) }
+    func canMove(_ srcUrl: URL, to destUrl: URL, assertOnFailure: Bool) -> Bool {
+        if assertOnFailure {
+            assert(srcUrl.absoluteURL != destUrl.absoluteURL, "Move source and destination is the same (\(srcUrl)).")
+            assert(isSupportedUrl(srcUrl), "Unsupported source url (\(srcUrl)).")
+            assert(isSupportedUrl(destUrl), "Unsupported destination url (\(srcUrl)).")
+            assert(isUnderRoot(srcUrl), "Move source (\(srcUrl)) must be under root (\(self.rootUrl))")
+            assert(isUnderRoot(destUrl), "Move destination (\(destUrl)) must be under root (\(self.rootUrl))")
+            assert(!destUrl.isUnder(srcUrl), "Can not move source (\(srcUrl) to its own subfolder (\(destUrl)).")
+        }
+        return (srcUrl.absoluteURL != destUrl.absoluteURL) && isSupportedUrl(srcUrl) && isSupportedUrl(destUrl) && isUnderRoot(srcUrl) && isUnderRoot(destUrl) && !destUrl.isUnder(srcUrl)
     }
     
     func canMove(_ fileItem: FileItem, to destURL: URL) -> Bool {
@@ -178,11 +227,41 @@ extension FileSystem {
         return destFileItem.canModify && fileItems.every { return canMove($0, to: destFileItem.url) }
     }
     
+    
+    // MARK: Folder creating
+    
+    func canCreateFolder(_ url: URL) -> Bool { return canDelete(url, assertOnFailure: false) }
+    func canCreateFolder(_ url: URL, assertOnFailure: Bool) -> Bool {
+        if assertOnFailure {
+            assert(isUnderRoot(url), "Folder to be created (\(url)) bust be under root (\(rootUrl)).")
+            assert(url.hasDirectoryPath, "URL [\(url)] expected to have directory path.")
+        }
+        return isUnderRoot(url) && url.hasDirectoryPath
+    }
+    
+    
+    // MARK: Opening
+    
     func canOpenFile(_ fileItem: FileItem) -> Bool {
-        return canOpenFile(fileItem.url)
+        return fileItem.canRead && canOpenFile(fileItem.url)
     }
     
     func canOpenFile(_ url: URL) -> Bool {
         return !url.hasDirectoryPath && canCopy([url], to: tempDownloadsDirectory)
+    }
+    
+    
+    // MARK: Info
+    
+    func description(for url: URL) -> String {
+        if isOwn(url) {
+            return "'\(url.path)' (\(name))"
+        }
+        else if url.isFileURL {
+            return "'\(url.path)' (\(NSLocalizedString("local", comment: "Local file description")))"
+        }
+        else {
+            return "'\(url.absoluteString)'"
+        }
     }
 }

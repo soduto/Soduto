@@ -11,52 +11,16 @@ import AppKit
 
 class LocalFileSystem: FileSystem {
     
+    weak var delegate: FileSystemDelegate?
+    
     let name: String = NSLocalizedString("Local", comment: "File system name")
     let rootUrl: URL = URL(fileURLWithPath: "/")
-    let places: [Place] = [
-//        Place(name: "Home", url: FileManager.default.url(for: .userDirectory, in: FileManager.SearchPathDomainMask.userDomainMask, appropriateFor: nil, create: false))
-    ]
+    let places: [Place] = []
     let fileOperationQueue = OperationQueue()
     
     init() {
         self.fileOperationQueue.maxConcurrentOperationCount = 2
         self.fileOperationQueue.qualityOfService = .userInitiated
-    }
-    
-    func canDelete(_ url: URL) -> Bool { return canDelete(url, assertOnFailure: false) }
-    func canDelete(_ url: URL, assertOnFailure: Bool) -> Bool {
-        if assertOnFailure {
-            assert(isUnderRoot(url), "Deleted file (\(url)) must reside under root (\(self.rootUrl))")
-        }
-        return isUnderRoot(url)
-    }
-    
-    func canCopy(_ srcUrl: URL, to destUrl: URL) -> Bool { return canCopy(srcUrl, to: destUrl, assertOnFailure: false) }
-    func canCopy(_ srcUrl: URL, to destUrl: URL, assertOnFailure: Bool) -> Bool {
-        if assertOnFailure {
-            assert(srcUrl.isFileURL && destUrl.isFileURL, "Copy source (\(srcUrl)) and destination (\(destUrl)) must be local file urls.")
-            assert(isUnderRoot(srcUrl) || isUnderRoot(destUrl), "Copy source (\(srcUrl)) or destination (\(destUrl)) must be under root (\(self.rootUrl))")
-            assert(!destUrl.isUnder(srcUrl), "Can not copy source (\(srcUrl) to its own subfolder (\(destUrl)).")
-        }
-        return srcUrl.isFileURL && destUrl.isFileURL && (isUnderRoot(srcUrl) || isUnderRoot(destUrl)) && !destUrl.isUnder(srcUrl)
-    }
-    
-    func canMove(_ srcUrl: URL, to destUrl: URL) -> Bool { return canMove(srcUrl, to: destUrl, assertOnFailure: false) }
-    func canMove(_ srcUrl: URL, to destUrl: URL, assertOnFailure: Bool) -> Bool {
-        if assertOnFailure {
-            assert(srcUrl.isFileURL && destUrl.isFileURL, "Move source (\(srcUrl)) and destination (\(destUrl)) must be local file urls.")
-            assert(isUnderRoot(destUrl), "Move destination (\(destUrl)) must be under root (\(self.rootUrl))")
-            assert(!destUrl.isUnder(srcUrl), "Can not move source (\(srcUrl) to its own subfolder (\(destUrl)).")
-        }
-        return srcUrl.isFileURL && destUrl.isFileURL && isUnderRoot(destUrl) && !destUrl.isUnder(srcUrl)
-    }
-    
-    func canCreateFolder(_ url: URL) -> Bool { return canDelete(url, assertOnFailure: false) }
-    func canCreateFolder(_ url: URL, assertOnFailure: Bool) -> Bool {
-        if assertOnFailure {
-            assert(isUnderRoot(url), "Folder to be created (\(url)) bust be under root (\(rootUrl)).")
-        }
-        return isUnderRoot(url)
     }
     
     func load(_ url: URL, completionHandler: @escaping (([FileItem]?, Int64?, Error?) -> Void)) {

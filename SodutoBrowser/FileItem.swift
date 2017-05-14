@@ -37,7 +37,9 @@ public class FileItem: NSObject, NSPasteboardReading, NSPasteboardWriting {
     public var isHidden: Bool { return self.flags.contains(.isHidden) }
     public var isBusy: Bool { return self.flags.contains(.isBusy) }
     public var isDeleted: Bool { return self.flags.contains(.isDeleted) }
+    public var isReadable: Bool { return self.flags.contains(.isReadable) }
     public var isWritable: Bool { return self.flags.contains(.isWritable) }
+    public var canRead: Bool { return self.isReadable && !self.isBusy && !self.isDeleted }
     public var canModify: Bool { return self.isWritable && !self.isBusy && !self.isDeleted }
     
     public init(url: URL, name: String, icon: NSImage, flags: Flags) {
@@ -56,6 +58,8 @@ public class FileItem: NSObject, NSPasteboardReading, NSPasteboardWriting {
                 var flags: Flags = []
                 if resourceValues.isDirectory == true { flags.insert(.isDirectory) }
                 if resourceValues.isHidden == true { flags.insert(.isHidden) }
+                if FileManager.default.isReadableFile(atPath: url.path) { flags.insert(.isReadable) }
+                if FileManager.default.isWritableFile(atPath: url.path) { flags.insert(.isWritable) }
                 self.init(url: url, name: name, icon: icon, flags: flags)
             }
             catch {
@@ -64,6 +68,8 @@ public class FileItem: NSObject, NSPasteboardReading, NSPasteboardWriting {
                 var flags: Flags = []
                 if url.hasDirectoryPath { flags.insert(.isDirectory) }
                 if url.lastPathComponent.hasPrefix(".") { flags.insert(.isHidden) }
+                if FileManager.default.isReadableFile(atPath: url.path) { flags.insert(.isReadable) }
+                if FileManager.default.isWritableFile(atPath: url.path) { flags.insert(.isWritable) }
                 self.init(url: url, name: name, icon: icon, flags: flags)
             }
         }

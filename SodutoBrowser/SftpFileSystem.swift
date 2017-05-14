@@ -31,10 +31,13 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
         case openOutputStreamFailed(at: URL)
     }
     
-    typealias Progress = ((UInt, UInt)->Bool)
+    typealias DownloadProgress = ((UInt, UInt)->Bool)
+    typealias UploadProgress = ((UInt)->Bool)
     
     
     // MARK: Properties
+    
+    weak var delegate: FileSystemDelegate?
     
     let name: String
     let rootUrl: URL
@@ -80,48 +83,6 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
     
     
     // MARK: FileSystem
-    
-    func canDelete(_ url: URL) -> Bool { return canDelete(url, assertOnFailure: false) }
-    func canDelete(_ url: URL, assertOnFailure: Bool) -> Bool {
-        if assertOnFailure {
-            assert(isUnderRoot(url), "Deleted file (\(url)) must reside under root (\(self.rootUrl))")
-        }
-        return isUnderRoot(url)
-    }
-    
-    func canCopy(_ srcUrl: URL, to destUrl: URL) -> Bool { return canCopy(srcUrl, to: destUrl, assertOnFailure: false) }
-    func canCopy(_ srcUrl: URL, to destUrl: URL, assertOnFailure: Bool) -> Bool {
-        if assertOnFailure {
-            assert(srcUrl.absoluteURL != destUrl.absoluteURL, "Copy source and destination is the same (\(srcUrl)).")
-            assert(isSupportedUrl(srcUrl), "Unsupported source url (\(srcUrl)).")
-            assert(isSupportedUrl(destUrl), "Unsupported destination url (\(srcUrl)).")
-            assert(isUnderRoot(srcUrl) || isUnderRoot(destUrl), "Copy source (\(srcUrl)) or destination (\(destUrl)) must be under root (\(self.rootUrl))")
-            assert(!destUrl.isUnder(srcUrl), "Can not copy source (\(srcUrl) to its own subfolder (\(destUrl)).")
-        }
-        return (srcUrl.absoluteURL != destUrl.absoluteURL) && isSupportedUrl(srcUrl) && isSupportedUrl(destUrl) && (isUnderRoot(srcUrl) || isUnderRoot(destUrl)) && !destUrl.isUnder(srcUrl)
-    }
-    
-    func canMove(_ srcUrl: URL, to destUrl: URL) -> Bool { return canMove(srcUrl, to: destUrl, assertOnFailure: false) }
-    func canMove(_ srcUrl: URL, to destUrl: URL, assertOnFailure: Bool) -> Bool {
-        if assertOnFailure {
-            assert(srcUrl.absoluteURL != destUrl.absoluteURL, "Move source and destination is the same (\(srcUrl)).")
-            assert(isSupportedUrl(srcUrl), "Unsupported source url (\(srcUrl)).")
-            assert(isSupportedUrl(destUrl), "Unsupported destination url (\(srcUrl)).")
-            assert(isUnderRoot(srcUrl), "Move source (\(srcUrl)) must be under root (\(self.rootUrl))")
-            assert(isUnderRoot(destUrl), "Move destination (\(destUrl)) must be under root (\(self.rootUrl))")
-            assert(!destUrl.isUnder(srcUrl), "Can not move source (\(srcUrl) to its own subfolder (\(destUrl)).")
-        }
-        return (srcUrl.absoluteURL != destUrl.absoluteURL) && isSupportedUrl(srcUrl) && isSupportedUrl(destUrl) && isUnderRoot(srcUrl) && isUnderRoot(destUrl) && !destUrl.isUnder(srcUrl)
-    }
-    
-    func canCreateFolder(_ url: URL) -> Bool { return canDelete(url, assertOnFailure: false) }
-    func canCreateFolder(_ url: URL, assertOnFailure: Bool) -> Bool {
-        if assertOnFailure {
-            assert(isUnderRoot(url), "Folder to be created (\(url)) bust be under root (\(rootUrl)).")
-            assert(url.hasDirectoryPath, "URL [\(url)] expected to have directory path.")
-        }
-        return isUnderRoot(url) && url.hasDirectoryPath
-    }
     
     func load(_ url: URL, completionHandler: @escaping (([FileItem]?, Int64?, Error?) -> Void)) {
         assert(isUnderRoot(url) || url == self.rootUrl, "URL (\(url)) is outside root tree (\(self.rootUrl)).")
@@ -171,14 +132,14 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
         operation.addExecutionBlock { [weak self] in
             guard let `self` = self else { return }
             do {
-                let progress: Progress = { _, _ in
-                    return !operation.isCancelled
-                }
+                let progress: DownloadProgress = { _, _ in return !operation.isCancelled }
+                
+                let destUrl = try self.nonExistingUrl(for: destUrl)
+                operation.destination = destUrl
+                self.willAddFile(at: destUrl, from: operation)
                 
                 if self.isUnderRoot(srcUrl) && self.isUnderRoot(destUrl) {
-                    guard self.fileOperationsSession.sftp.copyContents(ofPath: srcUrl.path, toFileAtPath: destUrl.path, progress: progress) else {
-                        throw SftpError.copyingFileFailed(from: srcUrl, to: destUrl)
-                    }
+                    guard self.fileOperationsSession.sftp.copyContents(ofPath: srcUrl.path, toFileAtPath: destUrl.path, progress: progress) else { throw SftpError.copyingFileFailed(from: srcUrl, to: destUrl) }
                 }
                 else if self.isUnderRoot(srcUrl) {
                     try self.download(from: srcUrl, to: destUrl, progress: progress)
@@ -207,6 +168,9 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
             guard let `self` = self else { return }
             do {
                 let destUrl = try self.nonExistingUrl(for: destUrl)
+                operation.destination = destUrl
+                self.willAddFile(at: destUrl, from: operation)
+                
                 guard self.fileOperationsSession.sftp.moveItem(atPath: srcUrl.path, toPath: destUrl.path) else { throw SftpError.movingFileFailed(from: srcUrl, to: destUrl) }
                 operation.sourceState = .deleted
                 operation.destinationState = .present
@@ -228,6 +192,10 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
         operation.destinationState = .inProgress
         operation.addExecutionBlock {
             do {
+                let url = try self.nonExistingUrl(for: url)
+                operation.destination = url
+                self.willAddFile(at: url, from: operation)
+                
                 guard self.fileOperationsSession.sftp.createDirectory(atPath: url.path) else { throw SftpError.creatingDirectoryFailed(at: url) }
                 operation.destinationState = .present
             }
@@ -243,22 +211,18 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
     
     // MARK: Private stuff
     
-    /// Chack if given url is understood by the file system.
-    private func isSupportedUrl(_ url: URL) -> Bool {
-        return isUnderRoot(url) || url.isFileURL
-    }
-    
     /// Return the same given URL or an alternative that does not yet exist
     private func nonExistingUrl(for url: URL) throws -> URL {
         var url = url
+        
         if isUnderRoot(url) {
-            while self.fileOperationsSession.sftp.fileExists(atPath: url.path) {
+            while self.fileOperationsSession.sftp.fileExists(atPath: url.regularFileURL.path) || self.fileOperationsSession.sftp.directoryExists(atPath: url.regularFileURL.path) {
                 url = url.alternativeForDuplicate()
             }
             return url
         }
         else if url.isFileURL {
-            while FileManager.default.fileExists(atPath: url.path) {
+            while FileManager.default.fileExists(atPath: url.regularFileURL.path) {
                 url = url.alternativeForDuplicate()
             }
             return url
@@ -279,7 +243,7 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
     }
     
     /// Synchronously download remote file or directory to local destination.
-    private func download(from srcUrl: URL, to destUrl: URL, progress: Progress?) throws {
+    private func download(from srcUrl: URL, to destUrl: URL, progress: DownloadProgress?) throws {
         assert(isUnderRoot(srcUrl), "Source URL (\(srcUrl)) expected to be under root (\(self.rootUrl)).")
         assert(destUrl.isFileURL, "Destination URL (\(destUrl)) expected to be local URL.")
         
@@ -294,7 +258,7 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
     }
     
     /// Synchromously donwload remote directory to local destination.
-    private func downloadDirectory(from srcUrl: URL, to destUrl: URL, progress: Progress?) throws {
+    private func downloadDirectory(from srcUrl: URL, to destUrl: URL, progress: DownloadProgress?) throws {
         assert(isUnderRoot(srcUrl), "Source URL (\(srcUrl)) expected to be under root (\(self.rootUrl)).")
         assert(srcUrl.hasDirectoryPath, "Source URL (\(srcUrl)) expected to be a directory.")
         assert(destUrl.isFileURL, "Destination URL (\(destUrl)) expected to be local directory URL.")
@@ -333,8 +297,15 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
         }
         else {
             let destUrl = try nonExistingUrl(for: destUrl)
+            var started: Bool = false
+            let progress: UploadProgress = { _ in
+                if !started {
+                    started = true
+                }
+                return true
+            }
             guard let stream = InputStream(url: srcUrl) else { throw SftpError.openInputStreamFailed(at: srcUrl) }
-            guard self.fileOperationsSession.sftp.write(stream, toFileAtPath: destUrl.path) else { throw SftpError.copyingFileFailed(from: srcUrl, to: destUrl) }
+            guard self.fileOperationsSession.sftp.write(stream, toFileAtPath: destUrl.path, progress: progress) else { throw SftpError.copyingFileFailed(from: srcUrl, to: destUrl) }
         }
     }
     
@@ -374,7 +345,9 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
         let session = self.fileOperationsSession
         
         // first try delete directly
-        if session.sftp.removeDirectory(atPath: url.path) { return }
+        if session.sftp.removeDirectory(atPath: url.path) {
+            return
+        }
         
         // However direct delete may fail on non-empty directory with SFTP error 4 (Failure). In such case try deleteing children manually.
         
@@ -399,6 +372,27 @@ class SftpFileSystem: NSObject, FileSystem, NMSSHSessionDelegate {
         // Try again to delete directory
         guard session.sftp.removeDirectory(atPath: url.path) else { throw SftpError.deletingFileFailed(at: url) }
     }
+    
+    /// Perform notification about starting to add new file (file name might be different than requested)
+    private func willAddFile(at url: URL, from fileOperation: FileOperation) {
+        DispatchQueue.main.async {
+            self.delegate?.fileSystem(self, willAddFileAt: url, from: fileOperation)
+        }
+    }
+    
+    /// Perform notification about deleted file
+//    private func didRemoveFile(at url: URL) {
+//        DispatchQueue.main.async {
+//            self.delegate?.fileSystem(self, didRemoveFileAt: url)
+//        }
+//    }
+    
+    /// Perform notification about added file
+//    private func didAddFile(at url: URL) {
+//        DispatchQueue.main.async {
+//            self.delegate?.fileSystem(self, didAddFileAt: url)
+//        }
+//    }
 }
 
 
