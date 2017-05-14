@@ -79,6 +79,8 @@ class BrowserWindowController: NSWindowController {
     private var backHistory: [URL] = []
     private var forwardHistory: [URL] = []
     private var busyURLs: Set<URL> = []
+    private var fileOperationsQueue: OperationQueue = OperationQueue()
+    private var isLoadingContents: Bool = false
     
     override var windowNibName: String! { return "BrowserWindow" }
     
@@ -104,6 +106,7 @@ class BrowserWindowController: NSWindowController {
         super.init(window: nil)
         
         self.fileSystem.delegate = self
+        self.fileOperationsQueue.underlyingQueue = DispatchQueue.main
          
         // make sure window is loaded
         let _ = self.window
@@ -153,13 +156,15 @@ class BrowserWindowController: NSWindowController {
     
     private func loadContents() {
         let url = self.url
+        self.isLoadingContents = true
         self.items = []
         self.collectionView.reloadData()
-        self.progressIndicator.startAnimation(self)
+        updateProgress()
         updateStatusInfo()
         
         self.fileSystem.load(url) { (items, freeSpace, error) in
-            self.progressIndicator.stopAnimation(self)
+            self.isLoadingContents = false
+            self.updateProgress()
             if let items = items {
                 self.items = items
                 self.freeSpace = freeSpace
@@ -243,6 +248,15 @@ class BrowserWindowController: NSWindowController {
         self.pathControl.setPathComponentCells(cells)
     }
     
+    private func updateProgress() {
+        if self.isLoadingContents || self.fileOperationsQueue.operationCount > 0 {
+            self.progressIndicator.startAnimation(self)
+        }
+        else {
+            self.progressIndicator.stopAnimation(self)
+        }
+    }
+    
     private func updateFilter() {
         self.itemArrayController.filterPredicate = NSPredicate(block: { (item, substitutions) -> Bool in
             guard let fileItem = item as? FileItem else { return false }
@@ -264,6 +278,8 @@ class BrowserWindowController: NSWindowController {
     }
     
     private func updateBusyItems() {
+        guard !isLoadingContents else { return } // we dont want to add busy items suring loadin new content - only after it is loaded
+        
         var usedURLs = Set<URL>()
         for item in self.items {
             if self.busyURLs.contains(item.url) {
@@ -372,11 +388,13 @@ class BrowserWindowController: NSWindowController {
             self.handleErrors(for: fileOperations)
             self.removeDeletedItems()
             self.updateStatusInfo()
+            DispatchQueue.main.async { self.updateProgress() }
             
         }
         for op in completionOperations { finalCompletionOperation.addDependency(op) }
         
-        OperationQueue.main.addOperations(completionOperations + [finalCompletionOperation], waitUntilFinished: false)
+        self.fileOperationsQueue.addOperations(completionOperations + [finalCompletionOperation], waitUntilFinished: false)
+        updateProgress()
         
         return fileOperations
     }
@@ -420,11 +438,13 @@ class BrowserWindowController: NSWindowController {
             self.handleErrors(for: fileOperations)
             self.removeDeletedItems()
             self.updateStatusInfo()
+            DispatchQueue.main.async { self.updateProgress() }
             
         }
         for op in completionOperations { finalCompletionOperation.addDependency(op) }
         
-        OperationQueue.main.addOperations(completionOperations + [finalCompletionOperation], waitUntilFinished: false)
+        self.fileOperationsQueue.addOperations(completionOperations + [finalCompletionOperation], waitUntilFinished: false)
+        updateProgress()
         
         return fileOperations
     }
@@ -470,11 +490,13 @@ class BrowserWindowController: NSWindowController {
             self.handleErrors(for: fileOperations)
             self.removeDeletedItems()
             self.updateStatusInfo()
+            DispatchQueue.main.async { self.updateProgress() }
             
         }
         for op in completionOperations { finalCompletionOperation.addDependency(op) }
         
-        OperationQueue.main.addOperations(completionOperations + [finalCompletionOperation], waitUntilFinished: false)
+        self.fileOperationsQueue.addOperations(completionOperations + [finalCompletionOperation], waitUntilFinished: false)
+        updateProgress()
         
         return fileOperations
     }
@@ -519,9 +541,11 @@ class BrowserWindowController: NSWindowController {
             self.handleErrors(for: [fileOperation])
             self.updateStatusInfo()
             self.updatePathControl()
+            DispatchQueue.main.async { self.updateProgress() }
         }
         completionOperation.addDependency(fileOperation)
-        OperationQueue.main.addOperation(completionOperation)
+        self.fileOperationsQueue.addOperation(completionOperation)
+        updateProgress()
         
         return fileOperation
     }
@@ -547,10 +571,12 @@ class BrowserWindowController: NSWindowController {
             
             self.handleErrors(for: [fileOperation])
             self.updateStatusInfo()
+            DispatchQueue.main.async { self.updateProgress() }
             
         }
         completionOperation.addDependency(fileOperation)
-        OperationQueue.main.addOperation(completionOperation)
+        self.fileOperationsQueue.addOperation(completionOperation)
+        updateProgress()
         
         return fileOperation
     }
@@ -574,34 +600,15 @@ class BrowserWindowController: NSWindowController {
             guard destUrl.isFileURL else { assertionFailure("Destination URL (\(destUrl)) expected to be a local file."); return }
             guard !destUrl.hasDirectoryPath else { assertionFailure("Destination URL (\(destUrl)) expected to be a simple file."); return }
             NSWorkspace.shared().openFile(destUrl.path)
+            DispatchQueue.main.async { self.updateProgress() }
         }
         completionOperation.addDependency(copyOperation)
         OperationQueue.main.addOperation(completionOperation)
+        updateProgress()
         
         return copyOperation
     }
 
-    
-    /// Mark url as busy, add corresponing item to collection view if it is a new item
-//    private func setBusyUrl(_ url: URL, isNew: Bool, visible: Bool = true) {
-//        self.busyURLs.insert(url)
-//        
-//        if isNew && self.url == url.deletingLastPathComponent() && visible {
-//            let fileItem = FileItem(url: url)
-//            self.items.append(fileItem)
-//            self.itemArrayController.content = self.items
-//            fileItem.dynamicFlags.insert(.isBusy)
-//            if let indexPath = indexPath(for: fileItem) {
-//                self.collectionView.insertItems(at: [indexPath])
-//            }
-//        }
-//        else if let fileItem = self.items.first(where: { $0.url == url }) {
-//            fileItem.dynamicFlags.insert(.isBusy)
-//            if visible, let indexPath = self.indexPath(for: fileItem) {
-//                self.collectionView.reloadItems(at: [indexPath])
-//            }
-//        }
-//    }
     
     /// Remove busy mark from url, mark it as deleted or restore to normal
     fileprivate func resetBusyUrl(_ url: URL, reload: Bool = true) {
