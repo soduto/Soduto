@@ -159,6 +159,34 @@
 			remoteGlobalIDString = 845BC6BB1E68C3B000DC9B81;
 			remoteInfo = ssl;
 		};
+		8472F4701EC8DD490028627C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 843E16DF1E240F46001D0444 /* OpenSSL.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 9069D28B0FCE659A0042E34C;
+			remoteInfo = crypto;
+		};
+		8472F47F1EC8DD530028627C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 843E16DF1E240F46001D0444 /* OpenSSL.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 845BC6BA1E68C3B000DC9B81;
+			remoteInfo = ssl;
+		};
+		8472F4811EC8DD590028627C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84BEF7271E660E2600D839D3 /* LibSSH2.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 84BEF71F1E660E2600D839D3;
+			remoteInfo = ssh2;
+		};
+		8472F4981EC8EFB60028627C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 843E16DF1E240F46001D0444 /* OpenSSL.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 9069D28B0FCE659A0042E34C;
+			remoteInfo = crypto;
+		};
 		847EF4C71DC9049D00360BBE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 843301581D2D8CB8008934BB /* Project object */;
@@ -910,6 +938,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				8472F4991EC8EFB60028627C /* PBXTargetDependency */,
 				84D0716A1EB91FAE004D383A /* PBXTargetDependency */,
 				84B4D0E81DFD755800437CBB /* PBXTargetDependency */,
 				84E7320E1DF47006001E1549 /* PBXTargetDependency */,
@@ -952,6 +981,9 @@
 			buildRules = (
 			);
 			dependencies = (
+				8472F4711EC8DD490028627C /* PBXTargetDependency */,
+				8472F4801EC8DD530028627C /* PBXTargetDependency */,
+				8472F4821EC8DD590028627C /* PBXTargetDependency */,
 				84C545F51EABC410005A8107 /* PBXTargetDependency */,
 				8438ECE91EBA67B6006CBB07 /* PBXTargetDependency */,
 				8438ECEE1EBA67BC006CBB07 /* PBXTargetDependency */,
@@ -1369,6 +1401,26 @@
 			name = CleanroomASL;
 			targetProxy = 8438ECF11EBA67CB006CBB07 /* PBXContainerItemProxy */;
 		};
+		8472F4711EC8DD490028627C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = crypto;
+			targetProxy = 8472F4701EC8DD490028627C /* PBXContainerItemProxy */;
+		};
+		8472F4801EC8DD530028627C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ssl;
+			targetProxy = 8472F47F1EC8DD530028627C /* PBXContainerItemProxy */;
+		};
+		8472F4821EC8DD590028627C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ssh2;
+			targetProxy = 8472F4811EC8DD590028627C /* PBXContainerItemProxy */;
+		};
+		8472F4991EC8EFB60028627C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = crypto;
+			targetProxy = 8472F4981EC8EFB60028627C /* PBXContainerItemProxy */;
+		};
 		847EF4C81DC9049D00360BBE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 8433015F1D2D8CB8008934BB /* Soduto */;
@@ -1605,7 +1657,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(TARGET_BUILD_DIR)/openssl/include",
-					"$(TARGET_BUILD_DIR)/libssh2/include",
+					"$(OBJROOT)/UninstalledProducts/macosx/openssl/include",
 				);
 				INFOPLIST_FILE = Soduto/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
@@ -1687,6 +1739,8 @@
 				HEADER_SEARCH_PATHS = (
 					"$(TARGET_BUILD_DIR)/libssh2/include",
 					"$(TARGET_BUILD_DIR)/openssl/include",
+					"$(OBJROOT)/UninstalledProducts/macosx/libssh2/include",
+					"$(OBJROOT)/UninstalledProducts/macosx/openssl/include",
 				);
 				INFOPLIST_FILE = SodutoBrowser/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";

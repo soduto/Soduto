@@ -14,6 +14,3 @@
 #import <net/if_arp.h>
 #import <net/if_dl.h>
 #import <ifaddrs.h>
-
-#import <OSXFUSE/OSXFUSE.h>
-#import <NMSSH/NMSSH.h>

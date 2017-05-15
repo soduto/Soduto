@@ -6,14 +6,56 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		8472F4881EC8E1720028627C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8472F4831EC8E1720028627C /* OpenSSL.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9069D28C0FCE659A0042E34C;
+			remoteInfo = crypto;
+		};
+		8472F48A1EC8E1720028627C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8472F4831EC8E1720028627C /* OpenSSL.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 845BC6BB1E68C3B000DC9B81;
+			remoteInfo = ssl;
+		};
+		8472F48C1EC8E1830028627C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8472F4831EC8E1720028627C /* OpenSSL.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 9069D28B0FCE659A0042E34C;
+			remoteInfo = crypto;
+		};
+		8472F48E1EC8E1830028627C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8472F4831EC8E1720028627C /* OpenSSL.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 845BC6BA1E68C3B000DC9B81;
+			remoteInfo = ssl;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		8472F4831EC8E1720028627C /* OpenSSL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpenSSL.xcodeproj; path = ../OpenSSL/OpenSSL.xcodeproj; sourceTree = "<group>"; };
 		84BEF7201E660E2600D839D3 /* libssh2.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libssh2.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		8472F4841EC8E1720028627C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8472F4891EC8E1720028627C /* libcrypto.a */,
+				8472F48B1EC8E1720028627C /* libssl.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		84BEF7171E660E2600D839D3 = {
 			isa = PBXGroup;
 			children = (
+				8472F4831EC8E1720028627C /* OpenSSL.xcodeproj */,
 				84BEF7211E660E2600D839D3 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -38,6 +80,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				8472F48D1EC8E1830028627C /* PBXTargetDependency */,
+				8472F48F1EC8E1830028627C /* PBXTargetDependency */,
 			);
 			name = ssh2;
 			productName = LibSSH2;
@@ -69,12 +113,35 @@
 			mainGroup = 84BEF7171E660E2600D839D3;
 			productRefGroup = 84BEF7211E660E2600D839D3 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 8472F4841EC8E1720028627C /* Products */;
+					ProjectRef = 8472F4831EC8E1720028627C /* OpenSSL.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				84BEF71F1E660E2600D839D3 /* ssh2 */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		8472F4891EC8E1720028627C /* libcrypto.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libcrypto.a;
+			remoteRef = 8472F4881EC8E1720028627C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		8472F48B1EC8E1720028627C /* libssl.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libssl.a;
+			remoteRef = 8472F48A1EC8E1720028627C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXShellScriptBuildPhase section */
 		84BEF7371E66148300D839D3 /* ShellScript */ = {
@@ -91,6 +158,19 @@
 			shellScript = "cd \"${SRCROOT}\"\n/bin/sh build.sh";
 		};
 /* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		8472F48D1EC8E1830028627C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = crypto;
+			targetProxy = 8472F48C1EC8E1830028627C /* PBXContainerItemProxy */;
+		};
+		8472F48F1EC8E1830028627C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ssl;
+			targetProxy = 8472F48E1EC8E1830028627C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		84BEF7221E660E2600D839D3 /* Debug */ = {
@@ -137,6 +217,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -177,6 +258,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
@@ -184,7 +266,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEVELOPMENT_TEAM = "";
-				EXECUTABLE_PREFIX = lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -194,7 +275,6 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				DEVELOPMENT_TEAM = "";
-				EXECUTABLE_PREFIX = lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
