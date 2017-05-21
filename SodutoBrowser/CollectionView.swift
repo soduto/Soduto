@@ -32,6 +32,23 @@ class CollectionView: NSCollectionView {
         super.keyDown(with: event)
     }
     
+//    public override func hitTest(_ point: NSPoint) -> NSView? {
+//        // 10.11 does not hit test selected items appropriately
+//        if #available(OSX 10.12, *) {}
+//        else {
+//            let point = convert(point, from: superview)
+//            let selectedPaths = selectionIndexPaths
+//            for indexPath in selectedPaths {
+//                guard let item = item(at: indexPath) else { continue }
+//                if let result = item.view.hitTest(point) {
+//                    return result
+//                }
+//            }
+//        }
+//        
+//        return super.hitTest(point)
+//    }
+    
     private var isSelectectionEmty: Bool {
         for indexPath in selectionIndexPaths {
             if indexPath.section < numberOfSections && indexPath.section >= 0 &&
