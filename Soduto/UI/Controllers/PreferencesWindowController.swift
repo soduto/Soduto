@@ -56,11 +56,6 @@ public class PreferencesWindowController: NSWindowController {
     
     override public func windowDidLoad() {
         self.refreshDeviceList()
-        
-        if let screenSize = NSScreen.main()?.frame.size, let windowSize = self.window?.frame.size {
-            let pos = NSPoint(x: (screenSize.width - windowSize.width) * 0.5, y: (screenSize.height - windowSize.height) * 0.5)
-            self.window?.setFrameOrigin(pos)
-        }
     }
     
     override public func keyDown(with event: NSEvent) {
@@ -88,7 +83,7 @@ extension PreferencesWindowController : NSTableViewDataSource {
 extension PreferencesWindowController: NSTableViewDelegate {
     
     public func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-
+        
         guard let deviceDataSource = self.deviceDataSource else { return nil }
         
         let device: Device
@@ -119,5 +114,5 @@ extension PreferencesWindowController: NSTableViewDelegate {
         
         return nil
     }
-    
+
 }
