@@ -31,7 +31,7 @@ fileprivate class TimerBlockHolder {
         self.block = block
     }
     
-    dynamic func execute(_ timer: Timer) {
+    @objc dynamic func execute(_ timer: Timer) {
         block(timer)
     }
 }

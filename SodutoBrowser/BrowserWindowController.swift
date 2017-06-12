@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import AppKit
+import Cocoa
 import CleanroomLogger
 
 protocol BrowserWindowControllerDelegate: class {
@@ -82,9 +82,9 @@ class BrowserWindowController: NSWindowController {
     private var fileOperationsQueue: OperationQueue = OperationQueue()
     private var isLoadingContents: Bool = false
     
-    override var windowNibName: String! { return "BrowserWindow" }
+    override var windowNibName: NSNib.Name! { return NSNib.Name(rawValue: "BrowserWindow") }
     
-    fileprivate static let dropTypes: [String] = [ kUTTypeURL as String ]
+    fileprivate static let dropTypes: [NSPasteboard.PasteboardType] = [ NSPasteboard.PasteboardType(rawValue: kUTTypeURL as String) ]
     private static var userDefaults: UserDefaults = {
         // Setup user settings default values
         UserDefaults.standard.register(defaults: [
@@ -120,12 +120,14 @@ class BrowserWindowController: NSWindowController {
         super.windowDidLoad()
         
         self.window?.delegate = self
-        self.window?.setFrameAutosaveName("com.soduto.SodutoBrowser.window-\(self.fileSystem.name.addingPercentEncoding(withAllowedCharacters: .alphanumerics))")
+        let autosaveNameID = self.fileSystem.name.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? ""
+        self.window?.setFrameAutosaveName(NSWindow.FrameAutosaveName(rawValue: "com.soduto.SodutoBrowser.window-\(autosaveNameID)"))
         self.window?.makeKey()
         
-        self.collectionView.register(NSNib(nibNamed: "IconItem", bundle: nil), forItemWithIdentifier: "IconItem")
+        let iconItemNib = NSNib(nibNamed: NSNib.Name(rawValue: "IconItem"), bundle: nil)
+        self.collectionView.register(iconItemNib, forItemWithIdentifier: NSUserInterfaceItemIdentifier(rawValue: "IconItem"))
         self.collectionView.setDraggingSourceOperationMask(.copy, forLocal: false)
-        self.collectionView.register(forDraggedTypes: type(of: self).dropTypes)
+        self.collectionView.registerForDraggedTypes(type(of: self).dropTypes)
         
         updateFilter()
         updateSorting()
@@ -172,7 +174,7 @@ class BrowserWindowController: NSWindowController {
                 self.updateStatusInfo()
             }
             else {
-                Log.error?.message("Failed to load items from [\(url)] with error: \(error)")
+                Log.error?.message("Failed to load items from [\(url)] with error: \(String(describing: error))")
             }
         }
     }
@@ -221,7 +223,7 @@ class BrowserWindowController: NSWindowController {
         var url = self.fileSystem.rootUrl
         
         let rootCell = NSPathComponentCell()
-        rootCell.image = NSImage(named: NSImageNameNetwork)
+        rootCell.image = NSImage(named: NSImage.Name.network)
         rootCell.title = self.fileSystem.name
         rootCell.url = url
         cells.append(rootCell)
@@ -231,7 +233,7 @@ class BrowserWindowController: NSWindowController {
             guard component != "/" else { continue }
             url.appendPathComponent(component, isDirectory: true)
             let cell = NSPathComponentCell()
-            cell.image = NSImage(named: NSImageNameFolder)
+            cell.image = NSImage(named: NSImage.Name.folder)
             cell.title = component
             cell.url = url
             cells.append(cell)
@@ -239,7 +241,7 @@ class BrowserWindowController: NSWindowController {
         
         if self.collectionView.selectionIndexPaths.count == 1, let fileItem = self.fileItem(at: self.collectionView.selectionIndexPaths.first!), fileItem.isDirectory {
             let cell = NSPathComponentCell()
-            cell.image = NSImage(named: NSImageNameFolder)
+            cell.image = NSImage(named: NSImage.Name.folder)
             cell.title = fileItem.name
             cell.url = fileItem.url
             cells.append(cell)
@@ -599,7 +601,7 @@ class BrowserWindowController: NSWindowController {
             guard let destUrl = copyOperation.destination else { assertionFailure("Expected non-nil destination for rename operation (\(copyOperation))."); return }
             guard destUrl.isFileURL else { assertionFailure("Destination URL (\(destUrl)) expected to be a local file."); return }
             guard !destUrl.hasDirectoryPath else { assertionFailure("Destination URL (\(destUrl)) expected to be a simple file."); return }
-            NSWorkspace.shared().openFile(destUrl.path)
+            NSWorkspace.shared.openFile(destUrl.path)
             DispatchQueue.main.async { self.updateProgress() }
         }
         completionOperation.addDependency(copyOperation)
@@ -793,7 +795,7 @@ class BrowserWindowController: NSWindowController {
     
     // MARK: Actions
     
-    func collectionItemViewLabelClick(_ sender: NSCollectionViewItem) {
+    @objc func collectionItemViewLabelClick(_ sender: NSCollectionViewItem) {
         guard let item = sender as? IconItem else { return }
         guard self.collectionView.selectionIndexes.count == 1 else { return }
         guard let selectedIndexPath = self.collectionView.selectionIndexPaths.first else { return }
@@ -803,7 +805,7 @@ class BrowserWindowController: NSWindowController {
         item.startEditing()
     }
     
-    func collectionItemViewDoubleClick(_ sender: NSCollectionViewItem) {
+    @objc func collectionItemViewDoubleClick(_ sender: NSCollectionViewItem) {
         guard let fileItem = (sender as? IconItem)?.fileItem else { return }
         open(fileItem)
     }
@@ -870,14 +872,14 @@ class BrowserWindowController: NSWindowController {
     }
     
     @IBAction func copy(_ sender: Any?) {
-        if !self.writeFileItems(at: self.collectionView.selectionIndexPaths, to: NSPasteboard.general()) {
-            NSBeep()
+        if !self.writeFileItems(at: self.collectionView.selectionIndexPaths, to: NSPasteboard.general) {
+            NSSound.beep()
         }
     }
     
     @IBAction func paste(_ sender: Any?) {
-        if !self.pasteFileItems(from: NSPasteboard.general()) {
-            NSBeep()
+        if !self.pasteFileItems(from: NSPasteboard.general) {
+            NSSound.beep()
         }
     }
     
@@ -900,7 +902,7 @@ class BrowserWindowController: NSWindowController {
             menuItem.title = self.isHiddenFilesVisible ? NSLocalizedString("Hide Hidden Files", comment: "") : NSLocalizedString("Show Hidden Files", comment: "")
             return true
         case AppDelegate.MenuItemTags.foldersAlwaysFirst:
-            menuItem.state = self.isFoldersAlwaysFirst ? NSOnState : NSOffState
+            menuItem.state = self.isFoldersAlwaysFirst ? NSControl.StateValue.onState : NSControl.StateValue.offState
             return true
         case AppDelegate.MenuItemTags.deleteFiles: return !self.collectionView.selectionIndexPaths.isEmpty
         case AppDelegate.MenuItemTags.newFolder: return true
@@ -910,8 +912,8 @@ class BrowserWindowController: NSWindowController {
         
         guard let action = menuItem.action else { return super.validateMenuItem(menuItem) }
         switch action {
-        case #selector(copy(_:)): return self.canWriteFileItems(at: self.collectionView.selectionIndexPaths, to: NSPasteboard.general())
-        case #selector(paste(_:)): return self.canReadFileItems(from: NSPasteboard.general())
+        case #selector(copy(_:)): return self.canWriteFileItems(at: self.collectionView.selectionIndexPaths, to: NSPasteboard.general)
+        case #selector(paste(_:)): return self.canReadFileItems(from: NSPasteboard.general)
         default: return super.validateMenuItem(menuItem)
         }
     }
@@ -954,7 +956,7 @@ extension BrowserWindowController : NSCollectionViewDataSource {
     
     func collectionView(_ itemForRepresentedObjectAtcollectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
         
-        let item = collectionView.makeItem(withIdentifier: "IconItem", for: indexPath)
+        let item = collectionView.makeItem(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "IconItem"), for: indexPath)
         guard let iconItem = item as? IconItem else { return item }
         
         let fileItems = self.arrangedItems
@@ -997,7 +999,7 @@ extension BrowserWindowController: NSCollectionViewDelegate {
      */
 //    optional public func collectionView(_ collectionView: NSCollectionView, draggingImageForItemsAt indexPaths: Set<IndexPath>, with event: NSEvent, offset dragImageOffset: NSPointPointer) -> NSImage
     
-    public func collectionView(_ collectionView: NSCollectionView, validateDrop draggingInfo: NSDraggingInfo, proposedIndexPath proposedDropIndexPath: AutoreleasingUnsafeMutablePointer<NSIndexPath>, dropOperation proposedDropOperation: UnsafeMutablePointer<NSCollectionViewDropOperation>) -> NSDragOperation {
+    public func collectionView(_ collectionView: NSCollectionView, validateDrop draggingInfo: NSDraggingInfo, proposedIndexPath proposedDropIndexPath: AutoreleasingUnsafeMutablePointer<NSIndexPath>, dropOperation proposedDropOperation: UnsafeMutablePointer<NSCollectionView.DropOperation>) -> NSDragOperation {
         
         let pasteboard = draggingInfo.draggingPasteboard()
         
@@ -1035,7 +1037,7 @@ extension BrowserWindowController: NSCollectionViewDelegate {
         
         let validItemCount: Int
         let operation: NSDragOperation
-        if (!movableUrls.isEmpty && !NSEvent.modifierFlags().contains(.option)) || copyableUrls.isEmpty {
+        if (!movableUrls.isEmpty && !NSEvent.modifierFlags.contains(.option)) || copyableUrls.isEmpty {
             operation =  [ .move ]
             validItemCount = movableUrls.count
         }
@@ -1059,7 +1061,7 @@ extension BrowserWindowController: NSCollectionViewDelegate {
      
      Multi-image drag and drop: If draggingInfo.animatesToDestination is set to YES, you should enumerate and update the dragging items with the proper image components and frames so that they dragged images animate to the proper locations.
      */
-    public func collectionView(_ collectionView: NSCollectionView, acceptDrop draggingInfo: NSDraggingInfo, indexPath: IndexPath, dropOperation: NSCollectionViewDropOperation) -> Bool {
+    public func collectionView(_ collectionView: NSCollectionView, acceptDrop draggingInfo: NSDraggingInfo, indexPath: IndexPath, dropOperation: NSCollectionView.DropOperation) -> Bool {
         
         let pasteboard = draggingInfo.draggingPasteboard()
         
@@ -1081,7 +1083,7 @@ extension BrowserWindowController: NSCollectionViewDelegate {
         
         guard !copyableItems.isEmpty || !movableItems.isEmpty else { return false }
         
-        if (!movableItems.isEmpty && !NSEvent.modifierFlags().contains(.option)) || copyableItems.isEmpty {
+        if (!movableItems.isEmpty && !NSEvent.modifierFlags.contains(.option)) || copyableItems.isEmpty {
             moveFiles(movableItems, to: destUrl)
         }
         else {

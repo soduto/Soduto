@@ -330,7 +330,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     }
     
     public func socketDidDisconnect(_ sock: GCDAsyncSocket, withError err: Error?) {
-        Log.debug?.message("socketDidDisconnect(<\(sock)> withError:<\(err)>)")
+        Log.debug?.message("socketDidDisconnect(<\(sock)> withError:<\(String(describing: err))>)")
     
         // Execute state change before packets dicarding, so that delegate could reclaim unsent packets
         self.state = .Closed
@@ -472,7 +472,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     private func sendSimplePacket(_ packet: DataPacket, whenCompleted: SendingCompletionHandler? = nil) -> Bool {
         assert(!packet.hasPayload())
         
-        Log.debug?.message("send(:\(packet) whenCompleted:\(whenCompleted)) [\(self)]")
+        Log.debug?.message("send(:\(packet) whenCompleted:\(String(describing: whenCompleted))) [\(self)]")
         
         if let bytes = try? packet.serialize() {
             let data = Data(bytes: bytes)
@@ -493,7 +493,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
         
         if let uploadTask = UploadTask(packet: packet, connection: self, readQueue: self.uploadQueue) {
             
-            Log.debug?.message("send(:\(packet) whenCompleted:\(whenCompleted)) [\(self)]")
+            Log.debug?.message("send(:\(packet) whenCompleted:\(String(describing: whenCompleted))) [\(self)]")
             
             var packet = packet
             packet.payloadInfo = uploadTask.payloadInfo

@@ -44,7 +44,7 @@ class SendMessageWindowController: NSWindowController {
     
     
     static func loadController() -> SendMessageWindowController {
-        let controller = SendMessageWindowController(windowNibName: "SendMessageWindow")
+        let controller = SendMessageWindowController(windowNibName: NSNib.Name(rawValue: "SendMessageWindow"))
         
         // make sure window is loaded
         let _ = controller.window
@@ -70,7 +70,7 @@ class SendMessageWindowController: NSWindowController {
         self.bodyInput.textContainerInset = NSSize(width: 15.0, height: 8.0)
         self.bodyInput.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .regular))
         
-        if let screenSize = NSScreen.main()?.frame.size, let windowSize = self.window?.frame.size {
+        if let screenSize = NSScreen.main?.frame.size, let windowSize = self.window?.frame.size {
             let pos = NSPoint(x: (screenSize.width - windowSize.width) * 0.5, y: (screenSize.height - windowSize.height) * 0.5)
             self.window?.setFrameOrigin(pos)
         }
@@ -99,7 +99,7 @@ class SendMessageWindowController: NSWindowController {
     
     // MARK: Actions
     
-    dynamic fileprivate func selectPhoneMenuAction(_ sender: Any?) {
+    @objc dynamic fileprivate func selectPhoneMenuAction(_ sender: Any?) {
         guard let menuItem = sender as? NSMenuItem else { return }
         guard let contactPhoneNumber = menuItem.representedObject as? ContactPhoneNumber else { return }
         let phoneIndex = menuItem.tag
@@ -135,7 +135,7 @@ extension SendMessageWindowController: NSTextDelegate {
         
         // Message body
         if view === self.bodyInput {
-            self.bodyInputPlaceholder.isHidden = self.bodyInput.string?.isEmpty != true
+            self.bodyInputPlaceholder.isHidden = self.bodyInput.string.isEmpty != true
             self.sendButton.isEnabled = self.isReadyToSend
         }
         
@@ -199,7 +199,7 @@ extension SendMessageWindowController: NSTokenFieldDelegate {
         }
     }
     
-    func tokenField(_ tokenField: NSTokenField, representedObjectForEditing editingString: String) -> Any {
+    func tokenField(_ tokenField: NSTokenField, representedObjectForEditing editingString: String) -> Any? {
         if self.isContactsAccessAllowed, let contactPhoneNumber = ContactPhoneNumber(string: editingString) {
             return contactPhoneNumber
         }
@@ -248,7 +248,7 @@ extension SendMessageWindowController: NSTokenFieldDelegate {
             item.representedObject = contactPhoneNumber
             item.target = self
             item.action = #selector(selectPhoneMenuAction(_:))
-            item.state = contactPhoneNumber.selectedPhone === phoneNumber ? NSOnState : NSOffState
+            item.state = contactPhoneNumber.selectedPhone === phoneNumber ? NSControl.StateValue.onState : NSControl.StateValue.offState
             menu.addItem(item)
         }
         return menu
@@ -274,7 +274,7 @@ final class ContactPhoneNumber: NSObject {
     // MARK: Properties
     
     fileprivate static let delimiter = " — "
-    fileprivate static let pboardType = "com.soduto.contactphonenumber"
+    fileprivate static let pboardType = NSPasteboard.PasteboardType(rawValue: "com.soduto.contactphonenumber")
     
     let contact: CNContact
     var selectedPhone: CNLabeledValue<CNPhoneNumber> {
@@ -389,15 +389,15 @@ final class ContactPhoneNumber: NSObject {
 
 extension ContactPhoneNumber: NSPasteboardReading {
     
-    static func readableTypes(for pasteboard: NSPasteboard) -> [String] {
+    static func readableTypes(for pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
         return [ContactPhoneNumber.pboardType]
     }
     
-    static func readingOptions(forType type: String, pasteboard: NSPasteboard) -> NSPasteboardReadingOptions {
-        return NSPasteboardReadingOptions.asString
+    static func readingOptions(forType type: NSPasteboard.PasteboardType, pasteboard: NSPasteboard) -> NSPasteboard.ReadingOptions {
+        return NSPasteboard.ReadingOptions.asString
     }
     
-    convenience init?(pasteboardPropertyList propertyList: Any, ofType type: String) {
+    convenience init?(pasteboardPropertyList propertyList: Any, ofType type: NSPasteboard.PasteboardType) {
         guard type == ContactPhoneNumber.pboardType else { return nil }
         guard let str = propertyList as? String else { return nil }
         self.init(string: str)
@@ -410,15 +410,17 @@ extension ContactPhoneNumber: NSPasteboardReading {
 
 extension ContactPhoneNumber: NSPasteboardWriting {
     
-    func writableTypes(for pasteboard: NSPasteboard) -> [String] {
-        return [ContactPhoneNumber.pboardType, kUTTypeText as String]
+    func writableTypes(for pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
+        return [
+            ContactPhoneNumber.pboardType,
+            NSPasteboard.PasteboardType(rawValue: kUTTypeText as String) ]
     }
     
-    func pasteboardPropertyList(forType type: String) -> Any? {
+    func pasteboardPropertyList(forType type: NSPasteboard.PasteboardType) -> Any? {
         if type == ContactPhoneNumber.pboardType {
             return self.canonicalString
         }
-        else if type == kUTTypeText as String {
+        else if type.rawValue == kUTTypeText as String {
             return self.canonicalString
         }
         else {

@@ -19,7 +19,7 @@ public class PreferencesWindowController: NSWindowController {
     
     
     static func loadController() -> PreferencesWindowController {
-        return PreferencesWindowController(windowNibName: "PreferencesWindow")
+        return PreferencesWindowController(windowNibName: NSNib.Name(rawValue: "PreferencesWindow"))
     }
     
     
@@ -37,8 +37,8 @@ public class PreferencesWindowController: NSWindowController {
         if let hostName = config?.hostDeviceName {
             let label = NSMutableAttributedString(string: NSLocalizedString("This device is discoverable as", comment: "") + ":")
             label.addAttributes([
-                NSForegroundColorAttributeName: NSColor.disabledControlTextColor,
-                NSFontAttributeName: NSFont.systemFont(ofSize: NSFont.smallSystemFontSize()) 
+                NSAttributedStringKey.foregroundColor: NSColor.disabledControlTextColor,
+                NSAttributedStringKey.font: NSFont.systemFont(ofSize: NSFont.smallSystemFontSize) 
             ], range: NSMakeRange(0, label.length))
             label.append(NSAttributedString(string: "\n\(hostName)"))
             label.setAlignment(.center, range: NSMakeRange(0, label.length))
@@ -107,7 +107,7 @@ extension PreferencesWindowController: NSTableViewDelegate {
             }
         }
         
-        if let cell = tableView.make(withIdentifier: "DeviceItemID", owner: nil) as? DeviceListItemView {
+        if let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "DeviceItemID"), owner: nil) as? DeviceListItemView {
             cell.device = device
             return cell
         }

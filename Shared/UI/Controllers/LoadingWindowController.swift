@@ -23,7 +23,7 @@ public class LoadingWindowController: NSWindowController {
     
 
     static func loadController() -> LoadingWindowController {
-        let controller = LoadingWindowController(windowNibName: "LoadingWindow")
+        let controller = LoadingWindowController(windowNibName: NSNib.Name(rawValue: "LoadingWindow"))
         _ = controller.window // make sure window and its components are loaded for receiver
         return controller
     }

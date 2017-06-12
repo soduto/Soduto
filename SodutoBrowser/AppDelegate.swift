@@ -109,12 +109,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, BrowserWindowControllerDeleg
     // MARK: Actions
     
     @IBAction func newWindow(_ sender: Any?) {
-        guard let controller = self.keyBrowserWindowController else { NSBeep(); return }
+        guard let controller = self.keyBrowserWindowController else { NSSound.beep(); return }
         newBrowserWindow(with: controller.fileSystem)
     }
     
     @IBAction func newTab(_ sender: Any?) {
-        guard let controller = self.keyBrowserWindowController else { NSBeep(); return }
+        guard let controller = self.keyBrowserWindowController else { NSSound.beep(); return }
         let newController = newBrowserWindow(with: controller.fileSystem)
         if #available(OSX 10.12, *) {
             if let newWindow = newController.window {
@@ -124,7 +124,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, BrowserWindowControllerDeleg
     }
     
     @IBAction func closeTabGroup(_ sender: Any?) {
-        guard let controller = self.keyBrowserWindowController else { NSBeep(); return }
+        guard let controller = self.keyBrowserWindowController else { NSSound.beep(); return }
         if #available(OSX 10.12, *) {
             controller.window?.tabbedWindows?.forEach { $0.close() }
         }
@@ -134,7 +134,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, BrowserWindowControllerDeleg
     }
     
     @IBAction func close(_ sender: Any?) {
-        guard let controller = self.keyBrowserWindowController else { NSBeep(); return }
+        guard let controller = self.keyBrowserWindowController else { NSSound.beep(); return }
         controller.window?.close()
     }
     

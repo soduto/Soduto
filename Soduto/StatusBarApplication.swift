@@ -12,7 +12,7 @@ import Cocoa
 class StatusBarApplication: NSApplication {
     
     override func sendEvent(_ event: NSEvent) {
-        if event.type == NSEventType.keyDown {
+        if event.type == NSEvent.EventType.keyDown {
             let modifiers = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
             if modifiers == [.command] {
                 switch event.charactersIgnoringModifiers!.lowercased() {

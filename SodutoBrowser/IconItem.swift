@@ -45,7 +45,7 @@ public class IconItem: NSCollectionViewItem {
         }
     }
     
-    public override var highlightState: NSCollectionViewItemHighlightState {
+    public override var highlightState: NSCollectionViewItem.HighlightState {
         didSet {
             guard self.highlightState != oldValue else { return }
             updateViewSelection()

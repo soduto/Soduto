@@ -57,7 +57,10 @@ public class ShareService: NSObject, Service, DownloadTaskDelegate, UserNotifica
     
     // MARK: Service properties
     
-    private static let dragTypes: [String] = [kUTTypeFileURL as String, kUTTypeURL as String, kUTTypeText as String]
+    private static let dragTypes: [NSPasteboard.PasteboardType] = [
+        NSPasteboard.PasteboardType(rawValue: kUTTypeFileURL as String),
+        NSPasteboard.PasteboardType(rawValue: kUTTypeURL as String),
+        NSPasteboard.PasteboardType(rawValue: kUTTypeText as String) ]
     
     public let incomingCapabilities = Set<Service.Capability>([ DataPacket.sharePacketType ])
     public let outgoingCapabilities = Set<Service.Capability>([ DataPacket.sharePacketType ])
@@ -85,10 +88,10 @@ public class ShareService: NSObject, Service, DownloadTaskDelegate, UserNotifica
                 let fileName = try dataPacket.getFilename() ?? "\(UUID().uuidString).txt"
                 let fullURL = URL(fileURLWithPath: fileName, relativeTo: URL(fileURLWithPath: directory, isDirectory: true))
                 try text.write(to: fullURL, atomically: true, encoding: .utf8)
-                NSWorkspace.shared().open(fullURL)
+                NSWorkspace.shared.open(fullURL)
             }
             else if let urlString = try dataPacket.getUrl(), let url = URL(string: urlString) {
-                NSWorkspace.shared().open(url)
+                NSWorkspace.shared.open(url)
             }
             else {
                 Log.error?.message("Unknown shared content")
@@ -129,7 +132,7 @@ public class ShareService: NSObject, Service, DownloadTaskDelegate, UserNotifica
             openPanel.canChooseFiles = true
             openPanel.allowsMultipleSelection = true
             openPanel.begin { result in
-                guard result == NSFileHandlingPanelOKButton else { return }
+                guard result == NSApplication.ModalResponse.OK else { return }
                 for url in openPanel.urls {
                     self.uploadFile(url: url, to: device)
                 }
@@ -170,7 +173,7 @@ public class ShareService: NSObject, Service, DownloadTaskDelegate, UserNotifica
         guard let url = URL(string: urlString) else { return }
         guard notification.activationType == .actionButtonClicked || notification.activationType == .contentsClicked else { return }
         
-        NSWorkspace.shared().open(url)
+        NSWorkspace.shared.open(url)
     }
     
     
@@ -179,7 +182,7 @@ public class ShareService: NSObject, Service, DownloadTaskDelegate, UserNotifica
     public dynamic func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
         guard self.validDevices.count > 0 else { return [] }
         
-        let types: [String] = type(of: self).dragTypes
+        let types: [String] = type(of: self).dragTypes.map { $0.rawValue }
         let canRead: Bool = sender.draggingPasteboard().canReadItem(withDataConformingToTypes: types)
         return canRead ? [.copy] : []
     }
@@ -195,7 +198,7 @@ public class ShareService: NSObject, Service, DownloadTaskDelegate, UserNotifica
         let items: [NSPasteboardItem] = sender.draggingPasteboard().pasteboardItems ?? []
         for item in items {
             guard let type = item.availableType(from: types) else { continue }
-            switch type {
+            switch type.rawValue {
                 
             case String(kUTTypeFileURL):
                 guard let urlString = item.string(forType: type) else { break }
@@ -211,7 +214,7 @@ public class ShareService: NSObject, Service, DownloadTaskDelegate, UserNotifica
                 urlPackets.append(dataPacket)
                 break
                 
-            case type where UTTypeConformsTo(type as CFString, kUTTypeText):
+            case type.rawValue where UTTypeConformsTo(type.rawValue as CFString, kUTTypeText):
                 guard let text = item.string(forType: type) else { break }
                 let dataPacket = self.dataPacket(forText: text)
                 textPackets.append(dataPacket)
@@ -230,7 +233,7 @@ public class ShareService: NSObject, Service, DownloadTaskDelegate, UserNotifica
     
     // MARK: Actions
     
-    private dynamic func dragDestinationMenuItemAction(_ sender: Any?) {
+    @objc private dynamic func dragDestinationMenuItemAction(_ sender: Any?) {
         guard let menuItem = sender as? NSMenuItem else { return }
         
         if let obj = menuItem.representedObject as? DragDestination {
@@ -436,7 +439,7 @@ public class ShareService: NSObject, Service, DownloadTaskDelegate, UserNotifica
             menu.addItem(item)
         }
         
-        let position = sender.draggingDestinationWindow()?.frame.origin ?? NSEvent.mouseLocation()
+        let position = sender.draggingDestinationWindow()?.frame.origin ?? NSEvent.mouseLocation
         return menu.popUp(positioning: nil, at: position, in: nil)
     }
     

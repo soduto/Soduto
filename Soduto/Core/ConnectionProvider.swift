@@ -120,7 +120,7 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
     
     // MARK: Announcements broadcasting
     
-    public dynamic func broadcastAnnouncement() {
+    @objc public dynamic func broadcastAnnouncement() {
         guard self.isStarted else { return }
         guard self.tcpSocket.localPort > 0 else { return }
         guard self.announcementTimer == nil else { return }

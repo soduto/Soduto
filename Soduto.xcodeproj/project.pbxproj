@@ -7,10 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		840538201ED62282003798AA /* WelcomeWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8405381F1ED62282003798AA /* WelcomeWindowController.swift */; };
 		840FC2F91DEF6AF400AC4824 /* ClipboardService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840FC2F81DEF6AF400AC4824 /* ClipboardService.swift */; };
 		84218DC81D789BAB00C7CEBE /* DeviceListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84218DC71D789BAB00C7CEBE /* DeviceListItemView.swift */; };
 		8421A8E21D75FF05008AC833 /* PreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8421A8E01D75FF05008AC833 /* PreferencesWindow.xib */; };
 		8421A8E71D761409008AC833 /* PreferencesWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8421A8E61D761409008AC833 /* PreferencesWindowController.swift */; };
+		842505E91ED1BD3C00AEE25F /* RemoteKeyboardService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842505E81ED1BD3C00AEE25F /* RemoteKeyboardService.swift */; };
+		842506371ED3692300AEE25F /* WelcomeWindow.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 842506351ED3692300AEE25F /* WelcomeWindow.storyboard */; };
+		842506731ED4CEF800AEE25F /* DeviceListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842506721ED4CEF800AEE25F /* DeviceListController.swift */; };
 		842B50571E4295D200969AA7 /* UnifiedTitlebarWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842B50561E4295D200969AA7 /* UnifiedTitlebarWindow.swift */; };
 		843107711E3D23CA00AE96AB /* SendMessageWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8431076F1E3D23C900AE96AB /* SendMessageWindow.xib */; };
 		843107731E3D32A300AE96AB /* SendMessageWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843107721E3D32A300AE96AB /* SendMessageWindowController.swift */; };
@@ -38,6 +42,7 @@
 		843E17891E26B56A001D0444 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 843E17881E26B56A001D0444 /* ServiceManagement.framework */; };
 		8440FCF71E6CA68300E5BFA9 /* FileSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8440FCF61E6CA68300E5BFA9 /* FileSystem.swift */; };
 		8440FD071E6CA6CA00E5BFA9 /* LocalFileSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8440FD061E6CA6CA00E5BFA9 /* LocalFileSystem.swift */; };
+		844AF28F1ED6185100422B7F /* DevicesList.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 844AF28E1ED6185100422B7F /* DevicesList.storyboard */; };
 		8450274B1DAABB9900C20247 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8450274A1DAABB9900C20247 /* Configuration.swift */; };
 		8456F4A81D7DE393006EFE19 /* Pairable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456F4A71D7DE393006EFE19 /* Pairable.swift */; };
 		8456F4AA1D7DEA47006EFE19 /* DefaultPairingHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456F4A91D7DEA47006EFE19 /* DefaultPairingHandler.swift */; };
@@ -413,11 +418,15 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8405381F1ED62282003798AA /* WelcomeWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeWindowController.swift; sourceTree = "<group>"; };
 		840FC2F81DEF6AF400AC4824 /* ClipboardService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClipboardService.swift; sourceTree = "<group>"; };
 		841E814C1D809C360096A846 /* Soduto.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Soduto.entitlements; sourceTree = "<group>"; };
 		84218DC71D789BAB00C7CEBE /* DeviceListItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceListItemView.swift; sourceTree = "<group>"; };
 		8421A8E11D75FF05008AC833 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindow.xib; sourceTree = "<group>"; };
 		8421A8E61D761409008AC833 /* PreferencesWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesWindowController.swift; sourceTree = "<group>"; };
+		842505E81ED1BD3C00AEE25F /* RemoteKeyboardService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteKeyboardService.swift; sourceTree = "<group>"; };
+		842506361ED3692300AEE25F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/WelcomeWindow.storyboard; sourceTree = "<group>"; };
+		842506721ED4CEF800AEE25F /* DeviceListController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceListController.swift; sourceTree = "<group>"; };
 		842B50561E4295D200969AA7 /* UnifiedTitlebarWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnifiedTitlebarWindow.swift; sourceTree = "<group>"; };
 		843107701E3D23CA00AE96AB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/SendMessageWindow.xib; sourceTree = "<group>"; };
 		843107721E3D32A300AE96AB /* SendMessageWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SendMessageWindowController.swift; sourceTree = "<group>"; };
@@ -446,6 +455,7 @@
 		843E17881E26B56A001D0444 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
 		8440FCF61E6CA68300E5BFA9 /* FileSystem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileSystem.swift; sourceTree = "<group>"; };
 		8440FD061E6CA6CA00E5BFA9 /* LocalFileSystem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalFileSystem.swift; sourceTree = "<group>"; };
+		844AF28E1ED6185100422B7F /* DevicesList.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = DevicesList.storyboard; sourceTree = "<group>"; };
 		8450274A1DAABB9900C20247 /* Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		8454D12C1D34228D00788632 /* Soduto-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Soduto-Bridging-Header.h"; sourceTree = "<group>"; };
 		8456F4A71D7DE393006EFE19 /* Pairable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pairable.swift; sourceTree = "<group>"; };
@@ -570,10 +580,12 @@
 		8421A8DF1D75FEA0008AC833 /* XIB */ = {
 			isa = PBXGroup;
 			children = (
-				8421A8E01D75FF05008AC833 /* PreferencesWindow.xib */,
-				843301671D2D8CB8008934BB /* MainMenu.xib */,
-				8431076F1E3D23C900AE96AB /* SendMessageWindow.xib */,
+				844AF28E1ED6185100422B7F /* DevicesList.storyboard */,
 				8461F35A1EC0FBC500E99C17 /* LoadingView.xib */,
+				843301671D2D8CB8008934BB /* MainMenu.xib */,
+				8421A8E01D75FF05008AC833 /* PreferencesWindow.xib */,
+				8431076F1E3D23C900AE96AB /* SendMessageWindow.xib */,
+				842506351ED3692300AEE25F /* WelcomeWindow.storyboard */,
 			);
 			name = XIB;
 			path = ..;
@@ -606,10 +618,12 @@
 		8421A8E51D761286008AC833 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				842506721ED4CEF800AEE25F /* DeviceListController.swift */,
 				849237EB1DE5FC9600D95BBA /* PairingInterfaceController.swift */,
 				8421A8E61D761409008AC833 /* PreferencesWindowController.swift */,
 				843107721E3D32A300AE96AB /* SendMessageWindowController.swift */,
 				8FC977F01D4778E9001ADF7E /* StatusBarMenuController.swift */,
+				8405381F1ED62282003798AA /* WelcomeWindowController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -913,6 +927,7 @@
 				849237A01DE224CF00D95BBA /* FindMyPhoneService.swift */,
 				8468BDFA1DE8F10D003B9925 /* NotificationsService.swift */,
 				84FA45EC1DDF525200EF3992 /* PingService.swift */,
+				842505E81ED1BD3C00AEE25F /* RemoteKeyboardService.swift */,
 				84651A751E5AEBE100D17601 /* SftpService.swift */,
 				843B67031DF1E64A00289EC9 /* ShareService.swift */,
 				847E9D2A1DF5E2640042D3CE /* TelephonyService.swift */,
@@ -1019,14 +1034,14 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0820;
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = Soduto;
 				TargetAttributes = {
 					8433015F1D2D8CB8008934BB = {
 						CreatedOnToolsVersion = 8.0;
 						DevelopmentTeam = WW9LKQ5SH5;
 						DevelopmentTeamName = "Giedrius Stanevicius (Personal Team)";
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
@@ -1047,6 +1062,7 @@
 					845BC7091E69F00E00DC9B81 = {
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = WW9LKQ5SH5;
+						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
@@ -1056,6 +1072,7 @@
 					};
 					847EF4C11DC9049D00360BBE = {
 						CreatedOnToolsVersion = 8.1;
+						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 8433015F1D2D8CB8008934BB;
 					};
@@ -1250,9 +1267,11 @@
 				849961B81D5726B0002B893A /* LICENSE.txt in Resources */,
 				843107711E3D23CA00AE96AB /* SendMessageWindow.xib in Resources */,
 				845BE2DE1EC2465500F3BD62 /* LoadingWindow.xib in Resources */,
+				844AF28F1ED6185100422B7F /* DevicesList.storyboard in Resources */,
 				8461F35C1EC0FBC500E99C17 /* LoadingView.xib in Resources */,
 				843301661D2D8CB8008934BB /* Assets.xcassets in Resources */,
 				843301691D2D8CB8008934BB /* MainMenu.xib in Resources */,
+				842506371ED3692300AEE25F /* WelcomeWindow.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1292,6 +1311,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8468BDFB1DE8F10D003B9925 /* NotificationsService.swift in Sources */,
+				842506731ED4CEF800AEE25F /* DeviceListController.swift in Sources */,
 				84218DC81D789BAB00C7CEBE /* DeviceListItemView.swift in Sources */,
 				84C613E31DECBF6C00CE7F7A /* UploadTask.swift in Sources */,
 				84FA45E81DDE088B00EF3992 /* ServiceManager.swift in Sources */,
@@ -1333,6 +1353,7 @@
 				8456F4A81D7DE393006EFE19 /* Pairable.swift in Sources */,
 				845BE2E61EC2476200F3BD62 /* HoverButton.swift in Sources */,
 				843B67041DF1E64A00289EC9 /* ShareService.swift in Sources */,
+				842505E91ED1BD3C00AEE25F /* RemoteKeyboardService.swift in Sources */,
 				84FA45D81DDDCB3D00EF3992 /* ConnectionProvider.swift in Sources */,
 				8436DEF81E956DA000529362 /* Timer.swift in Sources */,
 				842B50571E4295D200969AA7 /* UnifiedTitlebarWindow.swift in Sources */,
@@ -1340,6 +1361,7 @@
 				8468BE001DEB7F97003B9925 /* NetworkUtils.swift in Sources */,
 				84D903A21DC696A600E61DA7 /* CertificateUtils.swift in Sources */,
 				84FA45DD1DDDCB3D00EF3992 /* SocketAddress.swift in Sources */,
+				840538201ED62282003798AA /* WelcomeWindowController.swift in Sources */,
 				84FA45E61DDDE87F00EF3992 /* AppDelegate.swift in Sources */,
 				84651A741E59F9C900D17601 /* MenuView.swift in Sources */,
 				84FA45ED1DDF525200EF3992 /* PingService.swift in Sources */,
@@ -1477,6 +1499,14 @@
 			name = PreferencesWindow.xib;
 			sourceTree = "<group>";
 		};
+		842506351ED3692300AEE25F /* WelcomeWindow.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				842506361ED3692300AEE25F /* Base */,
+			);
+			name = WelcomeWindow.storyboard;
+			sourceTree = "<group>";
+		};
 		8431076F1E3D23C900AE96AB /* SendMessageWindow.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1529,7 +1559,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -1537,7 +1569,11 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -1578,7 +1614,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -1586,7 +1624,11 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -1637,7 +1679,8 @@
 				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Soduto/OpenSSL/openssl/include";
 				SWIFT_OBJC_BRIDGING_HEADER = "Soduto/Soduto-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -1667,7 +1710,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Soduto/OpenSSL/openssl/include";
 				SWIFT_OBJC_BRIDGING_HEADER = "Soduto/Soduto-Bridging-Header.h";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
@@ -1724,7 +1768,8 @@
 				SKIP_INSTALL = YES;
 				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Soduto/OpenSSL/openssl/include";
 				SWIFT_OBJC_BRIDGING_HEADER = "SodutoBrowser/SodutoBrowser-Bridging-Header.h";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -1751,7 +1796,8 @@
 				SKIP_INSTALL = YES;
 				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Soduto/OpenSSL/openssl/include";
 				SWIFT_OBJC_BRIDGING_HEADER = "SodutoBrowser/SodutoBrowser-Bridging-Header.h";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
@@ -1765,7 +1811,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.soduto.SodutoTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Soduto.app/Contents/MacOS/Soduto";
 			};
 			name = Debug;
@@ -1780,7 +1827,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.soduto.SodutoTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Soduto.app/Contents/MacOS/Soduto";
 			};
 			name = Release;

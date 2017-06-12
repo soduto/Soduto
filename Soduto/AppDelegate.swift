@@ -13,6 +13,7 @@ import CleanroomLogger
 class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
     
     @IBOutlet weak var statusBarMenuController: StatusBarMenuController!
+    var welcomeWindowController: WelcomeWindowController?
 
     let config = Configuration()
     let connectionProvider: ConnectionProvider
@@ -63,8 +64,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
         self.serviceManager.add(service: PingService())
         self.serviceManager.add(service: BatteryService())
         self.serviceManager.add(service: FindMyPhoneService())
+        self.serviceManager.add(service: RemoteKeyboardService())
         
         self.connectionProvider.start()
+        
+//        showWelcomeWindow()
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -76,6 +80,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
     
     func deviceManager(_ manager: DeviceManager, didChangeDeviceState device: Device) {
         self.statusBarMenuController.refreshDeviceLists()
+        self.welcomeWindowController?.deviceDataSource = self.deviceManager
     }
     
     func deviceManager(_ manager: DeviceManager, didReceivePairingRequest request: PairingRequest, forDevice device: Device) {
@@ -96,6 +101,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
             alert.runModal()
             NSApp.terminate(self)
         }
+    }
+    
+    private func showWelcomeWindow() {
+        let storyboard = NSStoryboard(name: NSStoryboard.Name(rawValue: "WelcomeWindow"), bundle: nil)
+        guard let controller = storyboard.instantiateInitialController() as? WelcomeWindowController else { assertionFailure("Could not load welcome window controller."); return }
+        controller.deviceDataSource = self.deviceManager
+        controller.showWindow(nil)
+        self.welcomeWindowController = controller
     }
     
 }

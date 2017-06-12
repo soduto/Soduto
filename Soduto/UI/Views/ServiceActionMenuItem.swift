@@ -33,7 +33,7 @@ public class ServiceActionMenuItem: NSMenuItem {
     
     // MARK: Public methods
     
-    public func performServiceAction() {
+    @objc public func performServiceAction() {
         serviceAction.perform()
     }
 }

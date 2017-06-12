@@ -170,7 +170,7 @@ public class UploadTask: NSObject, GCDAsyncSocketDelegate {
     }
     
     public func socketDidDisconnect(_ sock: GCDAsyncSocket, withError err: Error?) {
-        Log.debug?.message("socketDidDisconnect(<\(sock)>, withError: <\(err)>) [\(self)]")
+        Log.debug?.message("socketDidDisconnect(<\(sock)>, withError: <\(String(describing: err))>) [\(self)]")
         
         if sock === self.listeningSocket {
             if let error = err {

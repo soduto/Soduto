@@ -76,6 +76,9 @@ public class DeviceConfiguration: NSObject {
                 if let newValue = newValue {
                     try CertificateUtils.addCertificate(newValue, name: self.certificateName)
                 }
+                else {
+                    self.certificateName = ""
+                }
             }
             catch {
                 Log.error?.message("Failed to update certificate: \(error)")

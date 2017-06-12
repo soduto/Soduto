@@ -201,7 +201,7 @@ public class TelephonyService: Service, UserNotificationActionHandler {
             notification.identifier = notificationId
             NSUserNotificationCenter.default.scheduleNotification(notification)
             
-            Log.debug?.message("Ringing notification shown: \(notification.identifier)")
+            Log.debug?.message("Ringing notification shown: \(String(describing: notification.identifier))")
         }
         catch {
             Log.error?.message("Error while showing ringing notification: \(error)")
@@ -227,7 +227,7 @@ public class TelephonyService: Service, UserNotificationActionHandler {
             notification.identifier = notificationId
             NSUserNotificationCenter.default.scheduleNotification(notification)
             
-            Log.debug?.message("Missed call notification shown: \(notification.identifier)")
+            Log.debug?.message("Missed call notification shown: \(String(describing: notification.identifier))")
         }
         catch {
             Log.error?.message("Error while showing missed call notification: \(error)")
@@ -275,7 +275,7 @@ public class TelephonyService: Service, UserNotificationActionHandler {
             notification.identifier = notificationId
             NSUserNotificationCenter.default.deliver(notification)
             
-            Log.debug?.message("SMS notification shown: \(notification.identifier)")
+            Log.debug?.message("SMS notification shown: \(String(describing: notification.identifier))")
         }
         catch {
             Log.error?.message("Error while showing sms notification: \(error)")

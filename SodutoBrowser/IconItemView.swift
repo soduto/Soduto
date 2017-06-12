@@ -14,10 +14,10 @@ public class IconItemView: NSBox, NSTextFieldDelegate {
 
     public weak var collectionItem: IconItem!
     
-    private dynamic var iconView: NSImageView!
-    private dynamic var iconBackgroundView: NSView!
-    private dynamic var labelView: NSTextField!
-    private dynamic var overlayView: NSImageView!
+    @objc private dynamic var iconView: NSImageView!
+    @objc private dynamic var iconBackgroundView: NSView!
+    @objc private dynamic var labelView: NSTextField!
+    @objc private dynamic var overlayView: NSImageView!
     
     
     public var label: String = "" {
@@ -73,11 +73,11 @@ public class IconItemView: NSBox, NSTextFieldDelegate {
     public override func mouseUp(with event: NSEvent) {
         if event.clickCount == 1 {
             if let location = self.superview?.convert(event.locationInWindow, from: nil), hitTest(location) == self.labelView {
-                NSApplication.shared().sendAction(#selector(BrowserWindowController.collectionItemViewLabelClick(_:)), to: nil, from: self.collectionItem)
+                NSApplication.shared.sendAction(#selector(BrowserWindowController.collectionItemViewLabelClick(_:)), to: nil, from: self.collectionItem)
             }
         }
         else if event.clickCount == 2 {
-            NSApplication.shared().sendAction(#selector(BrowserWindowController.collectionItemViewDoubleClick(_:)), to: nil, from: self.collectionItem)
+            NSApplication.shared.sendAction(#selector(BrowserWindowController.collectionItemViewDoubleClick(_:)), to: nil, from: self.collectionItem)
         }
         super.mouseUp(with: event)
     }
@@ -100,7 +100,7 @@ public class IconItemView: NSBox, NSTextFieldDelegate {
     }
     
     public override func controlTextDidEndEditing(_ obj: Notification) {
-        guard (obj.object as? NSControl) == self.labelView else { assertionFailure("Expected notification from own labelView, but got \(obj.object)"); return }
+        guard (obj.object as? NSControl) == self.labelView else { assertionFailure("Expected notification from own labelView, but got \(String(describing: obj.object))"); return }
         if self.labelView.stringValue != self.label {
             self.collectionItem.labelTextDidChange(self.labelView.stringValue)
         }

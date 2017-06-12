@@ -19,7 +19,7 @@ public class StatusBarMenuController: NSObject, NSWindowDelegate, NSMenuDelegate
     public var serviceManager: ServiceManager?
     public var config: Configuration?
     
-    let statusBarItem = NSStatusBar.system().statusItem(withLength: NSSquareStatusItemLength)
+    let statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
     
     var preferencesWindowController: PreferencesWindowController?
     
@@ -30,7 +30,9 @@ public class StatusBarMenuController: NSObject, NSWindowDelegate, NSMenuDelegate
         self.statusBarItem.image = statusBarIcon
         self.statusBarItem.menu = self.statusBarMenu
         
-        let dragTypes: [String] = [kUTTypeURL as String, kUTTypeText as String]
+        let dragTypes: [NSPasteboard.PasteboardType] = [
+            NSPasteboard.PasteboardType(rawValue: kUTTypeURL as String),
+            NSPasteboard.PasteboardType(rawValue: kUTTypeText as String) ]
         self.statusBarItem.button?.window?.registerForDraggedTypes(dragTypes)
         self.statusBarItem.button?.window?.delegate = self
     }
@@ -109,7 +111,7 @@ public class StatusBarMenuController: NSObject, NSWindowDelegate, NSMenuDelegate
         
         if menu == self.statusBarMenu {
             self.refreshMenuDeviceList()
-            self.launchOnLoginItem.state = (self.config?.launchOnLogin ?? false) ? NSOnState : NSOffState
+            self.launchOnLoginItem.state = (self.config?.launchOnLogin ?? false) ? NSControl.StateValue.onState : NSControl.StateValue.offState
         }
     }
     
@@ -164,17 +166,17 @@ public class StatusBarMenuController: NSObject, NSWindowDelegate, NSMenuDelegate
             let fullWidth: CGFloat = 16
             let chargedWidth: CGFloat = fullWidth * CGFloat(batteryStatus.currentCharge) / 100.0
             NSColor.black.set()
-            NSRectFill(NSRect(x: 2, y: 2, width: chargedWidth, height: 8))
+            NSRect(x: 2, y: 2, width: chargedWidth, height: 8).fill()
             
             if batteryStatus.isCharging {
                 let chargingIcon = #imageLiteral(resourceName: "batteryStatusChargingIcon")
                 let mask = NSImage(size: chargingIcon.size, flipped: false) { _ in
                     NSColor.white.setFill()
-                    NSRectFill(rect)
+                    rect.fill()
                     chargingIcon.draw(in: rect)
                     return true
                 }
-                if let context = NSGraphicsContext.current(),
+                if let context = NSGraphicsContext.current,
                     let cgMask = mask.cgImage(forProposedRect: &rect, context: context, hints: nil),
                     let cgMask2 = CGImage(maskWidth: cgMask.width, height: cgMask.height, bitsPerComponent: cgMask.bitsPerComponent, bitsPerPixel: cgMask.bitsPerPixel, bytesPerRow: cgMask.bytesPerRow, provider: cgMask.dataProvider!, decode: nil, shouldInterpolate: false) {
                     
@@ -182,7 +184,7 @@ public class StatusBarMenuController: NSObject, NSWindowDelegate, NSMenuDelegate
                     
                     context.cgContext.clip(to: rect, mask: cgMask2)
                     NSColor.black.setFill()
-                    NSRectFill(rect)
+                    rect.fill()
                 }
             }
             

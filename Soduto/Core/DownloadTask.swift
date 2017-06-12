@@ -103,7 +103,7 @@ public class DownloadTask: NSObject, GCDAsyncSocketDelegate {
             if let payloadSize = self.payloadSize {
                 finished = self.bytesRead >= payloadSize
             }
-            else if let error = err as? NSError {
+            else if let error = err as NSError? {
                 finished = error.domain == GCDAsyncSocketErrorDomain && error.code == GCDAsyncSocketError.closedError.rawValue
             }
             else {
