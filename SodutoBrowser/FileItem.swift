@@ -33,14 +33,14 @@ public class FileItem: NSObject, NSPasteboardReading, NSPasteboardWriting {
     public var dynamicFlags: Flags = []
     
     public var flags: Flags { return self.staticFlags.union(self.dynamicFlags) }
-    public var isDirectory: Bool { return self.flags.contains(.isDirectory) }
-    public var isHidden: Bool { return self.flags.contains(.isHidden) }
-    public var isBusy: Bool { return self.flags.contains(.isBusy) }
-    public var isDeleted: Bool { return self.flags.contains(.isDeleted) }
-    public var isReadable: Bool { return self.flags.contains(.isReadable) }
-    public var isWritable: Bool { return self.flags.contains(.isWritable) }
-    public var canRead: Bool { return self.isReadable && !self.isBusy && !self.isDeleted }
-    public var canModify: Bool { return self.isWritable && !self.isBusy && !self.isDeleted }
+    @objc dynamic public var isDirectory: Bool { return self.flags.contains(.isDirectory) }
+    @objc dynamic public var isHidden: Bool { return self.flags.contains(.isHidden) }
+    @objc dynamic public var isBusy: Bool { return self.flags.contains(.isBusy) }
+    @objc dynamic public var isDeleted: Bool { return self.flags.contains(.isDeleted) }
+    @objc dynamic public var isReadable: Bool { return self.flags.contains(.isReadable) }
+    @objc dynamic public var isWritable: Bool { return self.flags.contains(.isWritable) }
+    @objc dynamic public var canRead: Bool { return self.isReadable && !self.isBusy && !self.isDeleted }
+    @objc dynamic public var canModify: Bool { return self.isWritable && !self.isBusy && !self.isDeleted }
     
     public init(url: URL, name: String, icon: NSImage, flags: Flags) {
         self.url = url
