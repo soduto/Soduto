@@ -68,7 +68,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
         
         self.connectionProvider.start()
         
-//        showWelcomeWindow()
+        showWelcomeWindow()
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -106,10 +106,43 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
     private func showWelcomeWindow() {
         let storyboard = NSStoryboard(name: NSStoryboard.Name(rawValue: "WelcomeWindow"), bundle: nil)
         guard let controller = storyboard.instantiateInitialController() as? WelcomeWindowController else { assertionFailure("Could not load welcome window controller."); return }
+        
+        NSApp.activate(ignoringOtherApps: true)
+        
         controller.deviceDataSource = self.deviceManager
         controller.showWindow(nil)
         self.welcomeWindowController = controller
     }
     
+    
+    
+//    let serviceUUID: UUID = UUID(uuidString: "185f3df4-3268-4e3f-9fca-d4d5059915bd")!
+//    var inquiry: IOBluetoothDeviceInquiry?
+//
+//    private func checkBluetooth() {
+//        inquiry = IOBluetoothDeviceInquiry(delegate: self)
+//
+//        inquiry?.inquiryLength = 15
+//        guard inquiry?.start() == kIOReturnSuccess else { Log.error?.message("Failed to start BT inquiry"); return }
+//        _ = Timer.compatScheduledTimer(withTimeInterval: 20, repeats: true) { (timer) in
+//            guard self.inquiry?.stop() == kIOReturnSuccess else { Log.error?.message("Failed to stop BT inquiry"); return }
+//            guard self.inquiry?.start() == kIOReturnSuccess else { Log.error?.message("Failed to start BT inquiry"); return }
+//        }
+//    }
 }
+
+//extension AppDelegate: IOBluetoothDeviceInquiryDelegate {
+//
+//    @objc dynamic func deviceInquiryStarted(_ sender: IOBluetoothDeviceInquiry!) {
+//        Log.info?.message("Searching Bluetooth devices.")
+//    }
+//
+//    @objc dynamic func deviceInquiryDeviceFound(_ sender: IOBluetoothDeviceInquiry!, device: IOBluetoothDevice!) {
+//        Log.info?.message("Found Bluetooth device: \(device)")
+//    }
+//
+//    @objc dynamic func deviceInquiryComplete(_ sender: IOBluetoothDeviceInquiry!, error: IOReturn, aborted: Bool) {
+//        Log.info?.message("Found Bluetooth devices: \(sender.foundDevices())")
+//    }
+//}
 
