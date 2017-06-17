@@ -165,30 +165,29 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable, CustomStrin
     
     /// Register handler for incoming data packets. Most common handler would be Service instances
     public func addDataPacketHandler(_ handler: DeviceDataPacketHandler) {
-//        self.packetHandlers.append(handler)
+        self.packetHandlers.append(handler)
     }
     
     /// Register multiple handlers for incoming data packets. Most common handlers would be Service instances
     public func addDataPacketHandlers<S : Sequence>(_ handlers: S) where S.Iterator.Element == DeviceDataPacketHandler {
-//        for handler in handlers {
-//            self.addDataPacketHandler(handler)
-//        }
+        for handler in handlers {
+            self.addDataPacketHandler(handler)
+        }
     }
     
     /// Unregister data packet handler which was registered with such methods as 
     /// `addDataPacketHandler(_:)` or `addDataPacketHandlers(_:)`
     public func removeDataPacketHandler(_ handler: DeviceDataPacketHandler) {
-//        let index = self.packetHandlers.index { $0 === handler }
-//        if index != nil {
-//            self.packetHandlers.remove(at: index!)
-//        }
+        let index = self.packetHandlers.index { $0 === handler }
+        if index != nil {
+            self.packetHandlers.remove(at: index!)
+        }
     }
     
     /// Return all service actions available to this device
     public func serviceActions() -> [ServiceAction] {
-//        guard self.pairingStatus == .Paired else { return [] }
-//        return self.delegate?.serviceActions(for: self) ?? []
-        return []
+        guard self.pairingStatus == .Paired else { return [] }
+        return self.delegate?.serviceActions(for: self) ?? []
     }
     
     /// Send a data packet to remote device. A most appropriate connection for the task
@@ -196,54 +195,54 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable, CustomStrin
     /// when packet is successfully sent. On failure completion handler would not be called -
     /// whole connection would be closed instead.
     public func send(_ packet: DataPacket, whenCompleted: Connection.SendingCompletionHandler? = nil) {
-//        if let connection = self.connectionForSending() {
-//            let accepted = connection.send(packet, whenCompleted: whenCompleted)
-//            if !accepted {
-//                let pendingPacket = PendingDataPacket(packet: packet, completionHandler: whenCompleted)
-//                self.pendingPackets.insert(pendingPacket, at: 0)
-//            }
-//        }
-//        else {
-//            whenCompleted?(false, false)
-//        }
+        if let connection = self.connectionForSending() {
+            let accepted = connection.send(packet, whenCompleted: whenCompleted)
+            if !accepted {
+                let pendingPacket = PendingDataPacket(packet: packet, completionHandler: whenCompleted)
+                self.pendingPackets.insert(pendingPacket, at: 0)
+            }
+        }
+        else {
+            whenCompleted?(false, false)
+        }
     }
     
     /// Cleanup all pending to send packets, executing their completion handlers if any.
     public func discardPendingPackets() {
-//        for pendingPacket in self.pendingPackets {
-//            pendingPacket.completionHandler?(false, false)
-//        }
-//        self.pendingPackets = []
+        for pendingPacket in self.pendingPackets {
+            pendingPacket.completionHandler?(false, false)
+        }
+        self.pendingPackets = []
     }
     
     
     // MARK: ConnectionDelegate
     
     public func connection(_ connection: Connection, didSwitchToState state: Connection.State) {
-//        Log.debug?.message("connection(<\(connection)> didSwitchToState:<\(state)>)")
-//        switch state {
-//        case .Closed:
-//            // Remove closed connection from containing list and reclaim its unsent packets
-//            // to be sent with another connection.
-//            // NOTE: Reclaiming unsent packets handle only those packets, that are unsent itself,
-//            // not the ones that have uploading in progress. However it is ok to remove connections with
-//            // uploads in progress as upload tasks and connections keep references to each other,
-//            // so connection will be alive until all uploads are finished and all completion handlers are executed
-//            if let index = self.connections.index(of: connection) {
-//                let connection = self.connections.remove(at: index)
-//                self.reclaimUnsentPackets(from: connection)
-//                self.updateReachabilityStatus()
-//            }
-//            else if let index = self.lingeringConnections.index(of: connection) {
-//                let connection = self.lingeringConnections.remove(at: index)
-//                self.reclaimUnsentPackets(from: connection)
-//            }
-//            else {
-//                assertionFailure("Connection not found in device connections list")
-//            }
-//        default:
-//            assertionFailure("Unexpected connection state switch: \(connection) -> \(state)")
-//        }
+        Log.debug?.message("connection(<\(connection)> didSwitchToState:<\(state)>)")
+        switch state {
+        case .Closed:
+            // Remove closed connection from containing list and reclaim its unsent packets
+            // to be sent with another connection.
+            // NOTE: Reclaiming unsent packets handle only those packets, that are unsent itself,
+            // not the ones that have uploading in progress. However it is ok to remove connections with
+            // uploads in progress as upload tasks and connections keep references to each other,
+            // so connection will be alive until all uploads are finished and all completion handlers are executed
+            if let index = self.connections.index(of: connection) {
+                let connection = self.connections.remove(at: index)
+                self.reclaimUnsentPackets(from: connection)
+                self.updateReachabilityStatus()
+            }
+            else if let index = self.lingeringConnections.index(of: connection) {
+                let connection = self.lingeringConnections.remove(at: index)
+                self.reclaimUnsentPackets(from: connection)
+            }
+            else {
+                assertionFailure("Connection not found in device connections list")
+            }
+        default:
+            assertionFailure("Unexpected connection state switch: \(connection) -> \(state)")
+        }
     }
     
     public func connection(_ connection: Connection, didSendPacket packet: DataPacket, uploadedPayload: Bool) {
@@ -251,26 +250,26 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable, CustomStrin
     }
     
     public func connection(_ connection: Connection, didReadPacket packet: DataPacket) {
-//        self.handle(packet: packet, onConnection: connection)
+        self.handle(packet: packet, onConnection: connection)
     }
     
     public func connectionCapacityChanged(_ connection: Connection) {
-//        self.sendPendingPackets()
+        self.sendPendingPackets()
     }
     
     
     // MARK: PairableDelegate
     
     public func pairable(_ pairable:Pairable, receivedRequest request:PairingRequest) {
-//        self.delegate?.device(self, didReceivePairingRequest: request)
+        self.delegate?.device(self, didReceivePairingRequest: request)
     }
     
     public func pairable(_ pairable:Pairable, failedWithError error:Error) {
-//        Log.debug?.message("pairable(<\(pairable)> failedWithError:<\(error)>)")
+        Log.debug?.message("pairable(<\(pairable)> failedWithError:<\(error)>)")
     }
     
     public func pairable(_ pairable:Pairable, statusChanged status:PairingStatus) {
-//        self.updatePairingStatus()
+        self.updatePairingStatus()
     }
     
     
@@ -281,175 +280,173 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable, CustomStrin
     
     public var pairingStatus: PairingStatus {
         didSet {
-//            if pairingStatus != oldValue {
-//                self.delegate?.device(self, didChangePairingStatus: self.pairingStatus)
-//            }
+            if pairingStatus != oldValue {
+                self.delegate?.device(self, didChangePairingStatus: self.pairingStatus)
+            }
         }
     }
     
     public func requestPairing() {
-//        if let connection = self.connectionForPairing() {
-//            if connection.pairingStatus == .RequestedByPeer {
-//                connection.acceptPairing()
-//            }
-//            else {
-//                connection.requestPairing()
-//            }
-//        }
+        if let connection = self.connectionForPairing() {
+            if connection.pairingStatus == .RequestedByPeer {
+                connection.acceptPairing()
+            }
+            else {
+                connection.requestPairing()
+            }
+        }
     }
     
     public func acceptPairing() {
-//        if let connection = self.connectionForPairing(), connection.pairingStatus == .RequestedByPeer {
-//            connection.acceptPairing()
-//        }
+        if let connection = self.connectionForPairing(), connection.pairingStatus == .RequestedByPeer {
+            connection.acceptPairing()
+        }
     }
     
     public func declinePairing() {
-//        for connection in self.connections {
-//            switch connection.pairingStatus {
-//            case .RequestedByPeer:
-//                connection.declinePairing()
-//                break
-//            case .Paired, .Requested:
-//                connection.unpair()
-//                break
-//            default:
-//                break
-//            }
-//        }
+        for connection in self.connections {
+            switch connection.pairingStatus {
+            case .RequestedByPeer:
+                connection.declinePairing()
+                break
+            case .Paired, .Requested:
+                connection.unpair()
+                break
+            default:
+                break
+            }
+        }
     }
     
     public func unpair() {
-//        for connection in self.connections {
-//            switch connection.pairingStatus {
-//            case .Paired, .Requested:
-//                connection.unpair()
-//                break
-//            case .RequestedByPeer:
-//                connection.declinePairing()
-//                break
-//            default:
-//                break
-//            }
-//        }
-//
-//        // Device might be unavailable and no connections present - update status once more to be sure
-//        self.updatePairingStatus(globalStatus: .Unpaired)
+        for connection in self.connections {
+            switch connection.pairingStatus {
+            case .Paired, .Requested:
+                connection.unpair()
+                break
+            case .RequestedByPeer:
+                connection.declinePairing()
+                break
+            default:
+                break
+            }
+        }
+        
+        // Device might be unavailable and no connections present - update status once more to be sure
+        self.updatePairingStatus(globalStatus: .Unpaired)
     }
     
     public func updatePairingStatus(globalStatus: PairingStatus) {
-//        for connection in self.connections {
-//            connection.updatePairingStatus(globalStatus: globalStatus)
-//        }
-//        self.config.isPaired = globalStatus == .Paired
-//        if !self.config.isPaired {
-//            self.config.certificate = nil
-//        }
-//        self.pairingStatus = globalStatus
+        for connection in self.connections {
+            connection.updatePairingStatus(globalStatus: globalStatus)
+        }
+        self.config.isPaired = globalStatus == .Paired
+        if !self.config.isPaired {
+            self.config.certificate = nil
+        }
+        self.pairingStatus = globalStatus
     }
     
     
     // MARK: CustomStringConvertible
     
     public var description: String {
-//        return "<Device:\(self.id):\(self.name)>"
-        return ""
+        return "<Device:\(self.id):\(self.name)>"
     }
     
     
     // MARK: Private
     
     private func updateReachabilityStatus() {
-//        self.isReachable = self.connections.count != 0
+        self.isReachable = self.connections.count != 0
     }
     
     private func updatePairingStatus() {
-//        var status: PairingStatus = .Unpaired
-//        if self.connections.count > 0 {
-//            for connection in self.connections {
-//                if connection.pairingStatus == .Paired {
-//                    status = connection.pairingStatus
-//                    break
-//                }
-//                if (connection.pairingStatus == .Requested || connection.pairingStatus == .RequestedByPeer) &&
-//                    status == .Unpaired {
-//                    status = connection.pairingStatus
-//                }
-//            }
-//        }
-//        else {
-//            status = self.config.isPaired ? .Paired : .Unpaired
-//        }
-//
-//        self.updatePairingStatus(globalStatus: status)
+        var status: PairingStatus = .Unpaired
+        if self.connections.count > 0 {
+            for connection in self.connections {
+                if connection.pairingStatus == .Paired {
+                    status = connection.pairingStatus
+                    break
+                }
+                if (connection.pairingStatus == .Requested || connection.pairingStatus == .RequestedByPeer) &&
+                    status == .Unpaired {
+                    status = connection.pairingStatus
+                }
+            }
+        }
+        else {
+            status = self.config.isPaired ? .Paired : .Unpaired
+        }
+        
+        self.updatePairingStatus(globalStatus: status)
     }
     
     /// Choose a connection most appropriate for pairing. Return `nil` if pairing seems inapprorpiate.
     private func connectionForPairing() -> Connection? {
-//        var bestConnection: Connection? = nil
-//        for connection in self.connections {
-//            switch connection.pairingStatus {
-//            case .Unpaired:
-//                if bestConnection == nil {
-//                    bestConnection = connection
-//                }
-//                break
-//            case .RequestedByPeer:
-//                return connection
-//            case .Requested:
-//                return nil
-//            case .Paired:
-//                return nil
-//            }
-//        }
-//        return bestConnection
-        return nil
+        var bestConnection: Connection? = nil
+        for connection in self.connections {
+            switch connection.pairingStatus {
+            case .Unpaired:
+                if bestConnection == nil {
+                    bestConnection = connection
+                }
+                break
+            case .RequestedByPeer:
+                return connection
+            case .Requested:
+                return nil
+            case .Paired:
+                return nil
+            }
+        }
+        return bestConnection
     }
     
     /// Choose a connection most appropriate for sending packets. Connection may be chosen 
     /// according its availability, reliability, speed, etc.
     private func connectionForSending() -> Connection? {
-//        for connection in self.connections {
-//            if connection.pairingStatus == .Paired {
-//                return connection
-//            }
-//        }
+        for connection in self.connections {
+            if connection.pairingStatus == .Paired {
+                return connection
+            }
+        }
         return nil
     }
     
     /// Pass received data packet to the handlers, registered with methods such as
     /// `addDataPacketHandler(_:)` or `addDataPacketHandlers(_:)`
     private func handle(packet: DataPacket, onConnection connection: Connection) {
-//        for handler in self.packetHandlers {
-//            let handled = handler.handleDataPacket(packet, fromDevice: self, onConnection: connection)
-//            if handled {
-//                return
-//            }
-//        }
+        for handler in self.packetHandlers {
+            let handled = handler.handleDataPacket(packet, fromDevice: self, onConnection: connection)
+            if handled {
+                return
+            }
+        }
     }
     
     /// Try sending packets from pendingPackets list, send as many as possible until no connection accepts any.
     private func sendPendingPackets() {
-//        while let pendingPacket = self.pendingPackets.popLast() {
-//            let connection = self.connectionForSending()
-//            let accepted = connection?.send(pendingPacket.packet, whenCompleted: pendingPacket.completionHandler) ?? false
-//            if !accepted {
-//                self.pendingPackets.append(pendingPacket)
-//                break
-//            }
-//        }
+        while let pendingPacket = self.pendingPackets.popLast() {
+            let connection = self.connectionForSending()
+            let accepted = connection?.send(pendingPacket.packet, whenCompleted: pendingPacket.completionHandler) ?? false
+            if !accepted {
+                self.pendingPackets.append(pendingPacket)
+                break
+            }
+        }
     }
     
     /// Take unsent packets from a closed connection, put them into pendingPackets list and try resend them if possible.
     private func reclaimUnsentPackets(from connection: Connection) {
-//        assert(connection.state == .Closed, "Connection needs to be closed in order to reclaim its packets: \(connection)")
-//
-//        let unsentPackets = connection.reclaimUnsentPackets()
-//        for unsentPacket in unsentPackets {
-//            let pendingPacket = PendingDataPacket(packet: unsentPacket.dataPacket, completionHandler: unsentPacket.completionHandler)
-//            self.pendingPackets.append(pendingPacket)
-//        }
-//
-//        self.sendPendingPackets()
+        assert(connection.state == .Closed, "Connection needs to be closed in order to reclaim its packets: \(connection)")
+
+        let unsentPackets = connection.reclaimUnsentPackets()
+        for unsentPacket in unsentPackets {
+            let pendingPacket = PendingDataPacket(packet: unsentPacket.dataPacket, completionHandler: unsentPacket.completionHandler)
+            self.pendingPackets.append(pendingPacket)
+        }
+
+        self.sendPendingPackets()
     }
 }
