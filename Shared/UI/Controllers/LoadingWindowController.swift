@@ -42,6 +42,7 @@ public class LoadingWindowController: NSWindowController {
     public override func dismissController(_ sender: Any?) {
         super.dismissController(sender)
         dismissHandler?(self)
+        window?.close()
     }
     
     public override func windowDidLoad() {
