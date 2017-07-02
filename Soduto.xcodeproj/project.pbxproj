@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0223974F1F0908FB00B0C70A /* TextFieldWithLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0223974E1F0908FB00B0C70A /* TextFieldWithLinks.swift */; };
+		0225F6111F06E2380021BFE2 /* NSAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0225F6101F06E2380021BFE2 /* NSAttributedString.swift */; };
 		840538201ED62282003798AA /* WelcomeWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8405381F1ED62282003798AA /* WelcomeWindowController.swift */; };
 		840FC2F91DEF6AF400AC4824 /* ClipboardService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840FC2F81DEF6AF400AC4824 /* ClipboardService.swift */; };
 		84218DC81D789BAB00C7CEBE /* DeviceListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84218DC71D789BAB00C7CEBE /* DeviceListItemView.swift */; };
@@ -418,6 +420,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0223974E1F0908FB00B0C70A /* TextFieldWithLinks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldWithLinks.swift; sourceTree = "<group>"; };
+		0225F6101F06E2380021BFE2 /* NSAttributedString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSAttributedString.swift; sourceTree = "<group>"; };
 		8405381F1ED62282003798AA /* WelcomeWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeWindowController.swift; sourceTree = "<group>"; };
 		840FC2F81DEF6AF400AC4824 /* ClipboardService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClipboardService.swift; sourceTree = "<group>"; };
 		841E814C1D809C360096A846 /* Soduto.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Soduto.entitlements; sourceTree = "<group>"; };
@@ -577,6 +581,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0225F6051F06E2110021BFE2 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				0225F6101F06E2380021BFE2 /* NSAttributedString.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
 		8421A8DF1D75FEA0008AC833 /* XIB */ = {
 			isa = PBXGroup;
 			children = (
@@ -776,6 +788,7 @@
 		845BE2CD1EC2443300F3BD62 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				0225F6051F06E2110021BFE2 /* Utils */,
 				845BE2DB1EC2455800F3BD62 /* UI */,
 			);
 			path = Shared;
@@ -811,6 +824,7 @@
 			isa = PBXGroup;
 			children = (
 				845BE2E51EC2476200F3BD62 /* HoverButton.swift */,
+				0223974E1F0908FB00B0C70A /* TextFieldWithLinks.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1345,8 +1359,10 @@
 				8456F4AA1D7DEA47006EFE19 /* DefaultPairingHandler.swift in Sources */,
 				8492379F1DE1C87600D95BBA /* ServiceActionMenuItem.swift in Sources */,
 				8436DEFA1E958ABA00529362 /* FileManager.swift in Sources */,
+				0225F6111F06E2380021BFE2 /* NSAttributedString.swift in Sources */,
 				843B670C1DF3087800289EC9 /* URL.swift in Sources */,
 				8492379D1DE1C55900D95BBA /* DeviceMenu.swift in Sources */,
+				0223974F1F0908FB00B0C70A /* TextFieldWithLinks.swift in Sources */,
 				8499620E1D5728EE002B893A /* Test_Assertions.m in Sources */,
 				8421A8E71D761409008AC833 /* PreferencesWindowController.swift in Sources */,
 				849237991DE06EBC00D95BBA /* ServiceAction.swift in Sources */,

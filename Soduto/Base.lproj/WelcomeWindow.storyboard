@@ -411,18 +411,19 @@
                                 </textFieldCell>
                             </textField>
                             <containerView translatesAutoresizingMaskIntoConstraints="NO" id="AXW-Sh-IVD">
-                                <rect key="frame" x="20" y="84" width="520" height="184"/>
+                                <rect key="frame" x="20" y="95" width="520" height="173"/>
                                 <connections>
                                     <segue destination="cD5-Zy-f8C" kind="embed" id="AtF-cU-sVw"/>
                                 </connections>
                             </containerView>
-                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="751" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zk1-qR-sdx">
-                                <rect key="frame" x="18" y="49" width="524" height="33"/>
-                                <textFieldCell key="cell" controlSize="mini" sendsActionOnEndEditing="YES" id="UT0-VS-VKu">
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="751" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zk1-qR-sdx" customClass="TextFieldWithLinks" customModule="Soduto" customModuleProvider="target">
+                                <rect key="frame" x="18" y="49" width="524" height="44"/>
+                                <textFieldCell key="cell" controlSize="mini" allowsUndo="NO" sendsActionOnEndEditing="YES" allowsEditingTextAttributes="YES" id="UT0-VS-VKu">
                                     <font key="font" metaFont="miniSystem"/>
                                     <string key="title">If you don't see your device listed above:
 - Make sure that appropriate software is installed and running on the device.
-- Make sure that the device is connected to the same network.</string>
+- Make sure that the device is connected to the same network.
+- Check out more troubleshooting options [here](http://soduto.com/articles/troubleshooting).</string>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
@@ -477,6 +478,9 @@
                             <constraint firstAttribute="trailing" secondItem="AXW-Sh-IVD" secondAttribute="trailing" constant="20" id="xhs-4S-BhX"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="troubleshootingLabel" destination="zk1-qR-sdx" id="Jwf-o7-Ge6"/>
+                    </connections>
                 </viewController>
                 <customObject id="1Tp-Gw-cnc" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -490,13 +494,13 @@
                         <rect key="frame" x="0.0" y="0.0" width="560" height="350"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HvN-cd-EKY">
-                                <rect key="frame" x="18" y="279" width="524" height="51"/>
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HvN-cd-EKY" customClass="TextFieldWithLinks" customModule="Soduto" customModuleProvider="target">
+                                <rect key="frame" x="18" y="228" width="524" height="102"/>
                                 <textFieldCell key="cell" controlSize="mini" sendsActionOnEndEditing="YES" id="N7v-eS-Lf0">
                                     <font key="font" metaFont="system"/>
                                     <string key="title">Congratulations! Your devices are ready to communicate!
 
-Notice Soduto icon in the status bar - here you can access most of its functionality.</string>
+Don't worry if you couldn't setup all your devices right now - you can always do this in Soduto Preferences which is accessible through a Status Bar icon. There you can also access most of Soduto functionality too. For more information about Soduto features and usage, please visit Soduto [website](http://soduto.com).</string>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
@@ -535,7 +539,7 @@ Notice Soduto icon in the status bar - here you can access most of its functiona
                                 </customSpacing>
                             </stackView>
                             <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="0a7-Yf-1q6">
-                                <rect key="frame" x="20" y="146" width="520" height="125"/>
+                                <rect key="frame" x="20" y="95" width="520" height="125"/>
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="statusBarScreenshot" id="BAL-N0-N7E"/>
                             </imageView>
                         </subviews>

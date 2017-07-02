@@ -107,6 +107,8 @@ class WelcomeTabItemViewController: NSViewController {
 
 class PairingTabItemViewController: WelcomeTabItemViewController {
     
+    @IBOutlet weak var troubleshootingLabel: NSTextField?
+    
     private var deviceListController: DeviceListController?
     
     var deviceDataSource: DeviceDataSource? { return self.tabViewController?.deviceDataSource }
@@ -122,5 +124,4 @@ class PairingTabItemViewController: WelcomeTabItemViewController {
         self.deviceListController?.refreshDeviceList()
         self.view.layoutSubtreeIfNeeded()
     }
-    
 }
