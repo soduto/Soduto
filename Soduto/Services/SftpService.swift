@@ -68,7 +68,7 @@ public class SftpService: NSObject, Service, NSWindowDelegate {
         guard device.incomingCapabilities.contains(DataPacket.sftpRequestPacketType) else { return [] }
         
         return [
-            ServiceAction(id: ActionId.browseFiles.rawValue, title: "Browse files", description: "Browse device files in Finder", service: self, device: device)
+            ServiceAction(id: ActionId.browseFiles.rawValue, title: "Browse Files", description: "Browse device files in Finder", service: self, device: device)
         ]
     }
     

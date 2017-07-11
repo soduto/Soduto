@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="16G8c" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13156.6" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13156.6"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -38,7 +38,7 @@
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="Zv9-hp-heD"/>
-                <menuItem title="Launch on login" id="tU8-jY-Cw3">
+                <menuItem title="Launch on Login" id="tU8-jY-Cw3">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="toggleLaunchOnLogin:" target="vQj-dd-GoX" id="tjq-3a-oye"/>

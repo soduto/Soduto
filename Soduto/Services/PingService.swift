@@ -24,7 +24,7 @@ fileprivate extension DataPacket {
     
     static func pingPacket() -> DataPacket {
         return DataPacket(type: pingPacketType, body: [
-            PingProperty.message.rawValue: "Testing connection." as AnyObject
+            PingProperty.message.rawValue: "Testing Connection." as AnyObject
         ])
     }
     

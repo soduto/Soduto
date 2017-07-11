@@ -117,7 +117,7 @@ public class ShareService: NSObject, Service, DownloadTaskDelegate, UserNotifica
         guard device.pairingStatus == .Paired else { return [] }
         
         return [
-            ServiceAction(id: ActionId.shareFiles.rawValue, title: "Upload file(s)", description: "Upload file(s) to the peer device.", service: self, device: device)
+            ServiceAction(id: ActionId.shareFiles.rawValue, title: "Send Files", description: "Upload files to the peer device.", service: self, device: device)
         ]
     }
     
