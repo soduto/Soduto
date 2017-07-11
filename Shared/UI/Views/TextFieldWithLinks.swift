@@ -78,11 +78,6 @@ public class TextFieldWithLinks: NSTextField {
         let fullRange = NSMakeRange(0, string.length)
         var infos: [LinkInfo] = []
         
-        let image = NSImage(size: self.bounds.size, flipped: true) { (rect) -> Bool in
-            layoutManager.drawGlyphs(forGlyphRange: layoutManager.glyphRange(for: textContainer), at: NSPoint.zero)
-            return true
-        }
-        
         string.enumerateAttribute(NSAttributedStringKey.link, in: fullRange, options: []) { (value, range, stop) in
             guard let url = value as? NSURL else { return }
             
