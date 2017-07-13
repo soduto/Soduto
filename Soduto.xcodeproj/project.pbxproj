@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		02150DE81F17F98F00401CC6 /* DeviceInfoWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 02150DE61F17F98F00401CC6 /* DeviceInfoWindow.xib */; };
 		0223974F1F0908FB00B0C70A /* TextFieldWithLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0223974E1F0908FB00B0C70A /* TextFieldWithLinks.swift */; };
 		0225F6111F06E2380021BFE2 /* NSAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0225F6101F06E2380021BFE2 /* NSAttributedString.swift */; };
 		840538201ED62282003798AA /* WelcomeWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8405381F1ED62282003798AA /* WelcomeWindowController.swift */; };
@@ -420,6 +421,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		02150DE71F17F98F00401CC6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/DeviceInfoWindow.xib; sourceTree = "<group>"; };
 		0223974E1F0908FB00B0C70A /* TextFieldWithLinks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldWithLinks.swift; sourceTree = "<group>"; };
 		0225F6101F06E2380021BFE2 /* NSAttributedString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSAttributedString.swift; sourceTree = "<group>"; };
 		8405381F1ED62282003798AA /* WelcomeWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeWindowController.swift; sourceTree = "<group>"; };
@@ -592,6 +594,7 @@
 		8421A8DF1D75FEA0008AC833 /* XIB */ = {
 			isa = PBXGroup;
 			children = (
+				02150DE61F17F98F00401CC6 /* DeviceInfoWindow.xib */,
 				844AF28E1ED6185100422B7F /* DevicesList.storyboard */,
 				8461F35A1EC0FBC500E99C17 /* LoadingView.xib */,
 				843301671D2D8CB8008934BB /* MainMenu.xib */,
@@ -1280,6 +1283,7 @@
 				8421A8E21D75FF05008AC833 /* PreferencesWindow.xib in Resources */,
 				849961B81D5726B0002B893A /* LICENSE.txt in Resources */,
 				843107711E3D23CA00AE96AB /* SendMessageWindow.xib in Resources */,
+				02150DE81F17F98F00401CC6 /* DeviceInfoWindow.xib in Resources */,
 				845BE2DE1EC2465500F3BD62 /* LoadingWindow.xib in Resources */,
 				844AF28F1ED6185100422B7F /* DevicesList.storyboard in Resources */,
 				8461F35C1EC0FBC500E99C17 /* LoadingView.xib in Resources */,
@@ -1507,6 +1511,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		02150DE61F17F98F00401CC6 /* DeviceInfoWindow.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				02150DE71F17F98F00401CC6 /* Base */,
+			);
+			name = DeviceInfoWindow.xib;
+			sourceTree = "<group>";
+		};
 		8421A8E01D75FF05008AC833 /* PreferencesWindow.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
