@@ -88,8 +88,8 @@ extension URL {
         let regex = try! NSRegularExpression(pattern: "(.*)[(](\\d+)[)]$")
         let range = NSMakeRange(0, nameWithoutExtension.characters.count)
         if let match = regex.firstMatch(in: nameWithoutExtension, options: [], range: range){
-            let prefix = substring(string: nameWithoutExtension, range: match.rangeAt(1))
-            let numberStr = substring(string: nameWithoutExtension, range: match.rangeAt(2))
+            let prefix = substring(string: nameWithoutExtension, range: match.range(at: 1))
+            let numberStr = substring(string: nameWithoutExtension, range: match.range(at: 2))
             let number = Int(numberStr) ?? 0
             updatedNameWithoutExtension = "\(prefix)(\(number + 1))"
         }

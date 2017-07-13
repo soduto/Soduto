@@ -25,8 +25,8 @@ public extension URL {
         let regex = try! NSRegularExpression(pattern: "(.*)[(](\\d+)[)]$")
         let range = NSMakeRange(0, pathWithoutExtension.characters.count)
         if let match = regex.firstMatch(in: pathWithoutExtension, options: [], range: range){
-            let prefix = substring(string: pathWithoutExtension, range: match.rangeAt(1))
-            let numberStr = substring(string: pathWithoutExtension, range: match.rangeAt(2))
+            let prefix = substring(string: pathWithoutExtension, range: match.range(at: 1))
+            let numberStr = substring(string: pathWithoutExtension, range: match.range(at: 2))
             let number = Int(numberStr) ?? 0
             updatedPathWithoutExtension = "\(prefix)(\(number + 1))"
         }

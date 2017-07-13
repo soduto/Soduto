@@ -39,8 +39,8 @@ extension NSMutableAttributedString {
         regex.enumerateMatches(in: source as String, options: [], range: NSMakeRange(0, length)) { (result, _, _) in
             guard let result = result else { return }
             
-            let linkText = source.substring(with: result.rangeAt(1))
-            let linkUrl = source.substring(with: result.rangeAt(2))
+            let linkText = source.substring(with: result.range(at: 1))
+            let linkUrl = source.substring(with: result.range(at: 2))
             let linkAttributes: [NSAttributedStringKey:Any]?
             if let url = URL(string: linkUrl) {
                 linkAttributes = [
@@ -53,10 +53,10 @@ extension NSMutableAttributedString {
             }
             let linkString = NSAttributedString(string: linkText, attributes: linkAttributes)
             
-            var replaceRange = result.rangeAt(0)
+            var replaceRange = result.range(at: 0)
             replaceRange.location += offset
             replaceCharacters(in: replaceRange, with: linkString)
-            offset += result.rangeAt(1).length - result.rangeAt(0).length
+            offset += result.range(at: 1).length - result.range(at: 0).length
         }
     }
     
