@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13122.17" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="5Dj-mc-cY5">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13156.6" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="5Dj-mc-cY5">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13122.17"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13156.6"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
         <capability name="stacking Non-gravity area distributions on NSStackView" minToolsVersion="7.0" minSystemVersion="10.11"/>
@@ -17,6 +17,9 @@
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="196" y="100" width="480" height="270"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
+                        <connections>
+                            <outlet property="delegate" destination="5Dj-mc-cY5" id="RGo-WM-iPc"/>
+                        </connections>
                     </window>
                     <connections>
                         <segue destination="1ej-Da-Ghi" kind="relationship" relationship="window.shadowedContentViewController" id="HXh-d9-nxD"/>
@@ -70,23 +73,29 @@
                                 </constraints>
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="welcomeBackground" id="tek-XU-n4o"/>
                             </imageView>
-                            <button wantsLayer="YES" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pHn-2N-2sT">
-                                <rect key="frame" x="209" y="13" width="142" height="32"/>
+                            <visualEffectView wantsLayer="YES" appearanceType="vibrantDark" fixedFrame="YES" blendingMode="withinWindow" material="ultraDark" state="active" translatesAutoresizingMaskIntoConstraints="NO" id="tTi-lY-RjK">
+                                <rect key="frame" x="0.0" y="0.0" width="560" height="350"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <ciFilter key="compositingFilter" name="CISoftLightBlendMode">
+                                <subviews>
+                                    <button wantsLayer="YES" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pHn-2N-2sT">
+                                        <rect key="frame" x="209" y="13" width="142" height="32"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <buttonCell key="cell" type="push" title="Quick Setup" bezelStyle="rounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="91x-gB-fj6">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="forward:" target="Fwc-54-JaF" id="3gO-WW-bIn"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <ciFilter key="compositingFilter" name="CILightenBlendMode">
                                     <configuration>
                                         <null key="inputBackgroundImage"/>
                                         <null key="inputImage"/>
                                     </configuration>
                                 </ciFilter>
-                                <buttonCell key="cell" type="push" title="Quick Setup" bezelStyle="rounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="91x-gB-fj6">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="forward:" target="Fwc-54-JaF" id="3gO-WW-bIn"/>
-                                </connections>
-                            </button>
+                            </visualEffectView>
                         </subviews>
                         <constraints>
                             <constraint firstItem="bRT-wU-evQ" firstAttribute="top" secondItem="YZH-Gg-XwB" secondAttribute="top" id="C4n-cJ-tII"/>
@@ -500,7 +509,7 @@
                                     <font key="font" metaFont="system"/>
                                     <string key="title">Congratulations! Your devices are ready to communicate!
 
-Don't worry if you couldn't setup all your devices right now - you can always do this in Soduto Preferences which is accessible through a Status Bar icon. There you can also access most of Soduto functionality too. For more information about Soduto features and usage, please visit Soduto [website](http://soduto.com).</string>
+Don't worry if you couldn't setup all your devices right now — you can always do this in Soduto Preferences which is accessible through the Status Menu icon. There you can also access most of Soduto functionality too. For more information about Soduto features and usage, please visit Soduto [website](http://soduto.com).</string>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
