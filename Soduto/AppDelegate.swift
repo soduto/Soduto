@@ -80,7 +80,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
     
     func deviceManager(_ manager: DeviceManager, didChangeDeviceState device: Device) {
         self.statusBarMenuController.refreshDeviceLists()
-        self.welcomeWindowController?.deviceDataSource = self.deviceManager
+        self.welcomeWindowController?.refreshDeviceLists()
     }
     
     func deviceManager(_ manager: DeviceManager, didReceivePairingRequest request: PairingRequest, forDevice device: Device) {

@@ -37,6 +37,10 @@ class WelcomeWindowController: NSWindowController {
         NotificationCenter.default.addObserver(self, selector: #selector(handleWindowWillClose(_:)), name: NSWindow.willCloseNotification, object: nil)
     }
     
+    func refreshDeviceLists() {
+        self.tabViewController?.refreshDeviceLists()
+    }
+    
     @objc private func handleWindowWillClose(_ notification: Notification) {
         guard notification.object as? NSWindow == self.window else { return }
         dismissHandler?(self)
@@ -83,6 +87,12 @@ class WelcomeTabViewController: NSTabViewController {
         }
     }
     
+    func refreshDeviceLists() {
+        guard selectedTabViewItemIndex > 0 else { return }
+        let selectedTabViewItem = self.tabView.tabViewItem(at: selectedTabViewItemIndex)
+        guard let pairingController = selectedTabViewItem.viewController as? PairingTabItemViewController else { return }
+        pairingController.refreshDeviceLists()
+    }
 }
 
 class WelcomeTabItemViewController: NSViewController {
@@ -135,5 +145,9 @@ class PairingTabItemViewController: WelcomeTabItemViewController {
         self.deviceListController?.deviceDataSource = self.deviceDataSource
         self.deviceListController?.refreshDeviceList()
         self.view.layoutSubtreeIfNeeded()
+    }
+    
+    func refreshDeviceLists() {
+        self.deviceListController?.refreshDeviceList()
     }
 }
