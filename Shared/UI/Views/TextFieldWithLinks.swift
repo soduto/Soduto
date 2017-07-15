@@ -58,7 +58,15 @@ public class TextFieldWithLinks: NSTextField {
         // Font used for displaying and frame calculations must match
         let string = NSMutableAttributedString(attributedString: self.attributedStringValue)
         if let font = self.font {
-            string.applyDefaultFont(font)
+            let paragraphStyle = NSMutableParagraphStyle()
+            if #available(OSX 10.13, *) {}
+            else {
+                paragraphStyle.lineSpacing = 1
+            }
+            string.applyDefaultAttributes([
+                NSAttributedStringKey.font: font,
+                NSAttributedStringKey.paragraphStyle: paragraphStyle
+            ])
         }
         
         let textViewFrame = self.cell?.titleRect(forBounds: self.bounds) ?? NSRect.zero
@@ -77,6 +85,11 @@ public class TextFieldWithLinks: NSTextField {
         guard let string = textView.textStorage else { return [] }
         let fullRange = NSMakeRange(0, string.length)
         var infos: [LinkInfo] = []
+        
+        let image = NSImage(size: bounds.size, flipped: true) { (rect) -> Bool in
+            layoutManager.drawGlyphs(forGlyphRange: layoutManager.glyphRange(for: textContainer), at: NSPoint.zero)
+            return true
+        }
         
         string.enumerateAttribute(NSAttributedStringKey.link, in: fullRange, options: []) { (value, range, stop) in
             guard let url = value as? NSURL else { return }

@@ -21,14 +21,20 @@ extension NSAttributedString {
 
 extension NSMutableAttributedString {
     
-    public func applyDefaultFont(_ defaultFont: NSFont) {
+    public func applyDefaultAttributes(_ attributes: [NSAttributedStringKey:Any]) {
         let origString = NSAttributedString(attributedString: self)
         let wholeRange = NSMakeRange(0, length)
-        addAttribute(NSAttributedStringKey.font, value: defaultFont, range: wholeRange)
+        for attr in attributes {
+            addAttribute(attr.key, value: attr.value, range: wholeRange)
+        }
         origString.enumerateAttribute(NSAttributedStringKey.font, in: wholeRange, options: []) { (value, range, _) in
             guard let font = value as? NSFont else { return }
             self.addAttribute(NSAttributedStringKey.font, value: font, range: range)
         }
+    }
+    
+    public func applyDefaultFont(_ defaultFont: NSFont) {
+        applyDefaultAttributes([NSAttributedStringKey.font: defaultFont])
     }
     
     public func replaceMarkdownWithLinks() {
