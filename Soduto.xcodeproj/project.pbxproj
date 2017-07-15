@@ -10,6 +10,7 @@
 		02150DE81F17F98F00401CC6 /* DeviceInfoWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 02150DE61F17F98F00401CC6 /* DeviceInfoWindow.xib */; };
 		0223974F1F0908FB00B0C70A /* TextFieldWithLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0223974E1F0908FB00B0C70A /* TextFieldWithLinks.swift */; };
 		0225F6111F06E2380021BFE2 /* NSAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0225F6101F06E2380021BFE2 /* NSAttributedString.swift */; };
+		026BFB581F194D7D00D888E2 /* DeviceInfoWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026BFB571F194D7D00D888E2 /* DeviceInfoWindowController.swift */; };
 		840538201ED62282003798AA /* WelcomeWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8405381F1ED62282003798AA /* WelcomeWindowController.swift */; };
 		840FC2F91DEF6AF400AC4824 /* ClipboardService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840FC2F81DEF6AF400AC4824 /* ClipboardService.swift */; };
 		84218DC81D789BAB00C7CEBE /* DeviceListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84218DC71D789BAB00C7CEBE /* DeviceListItemView.swift */; };
@@ -424,6 +425,7 @@
 		02150DE71F17F98F00401CC6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/DeviceInfoWindow.xib; sourceTree = "<group>"; };
 		0223974E1F0908FB00B0C70A /* TextFieldWithLinks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldWithLinks.swift; sourceTree = "<group>"; };
 		0225F6101F06E2380021BFE2 /* NSAttributedString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSAttributedString.swift; sourceTree = "<group>"; };
+		026BFB571F194D7D00D888E2 /* DeviceInfoWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoWindowController.swift; sourceTree = "<group>"; };
 		8405381F1ED62282003798AA /* WelcomeWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeWindowController.swift; sourceTree = "<group>"; };
 		840FC2F81DEF6AF400AC4824 /* ClipboardService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClipboardService.swift; sourceTree = "<group>"; };
 		841E814C1D809C360096A846 /* Soduto.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Soduto.entitlements; sourceTree = "<group>"; };
@@ -633,6 +635,7 @@
 		8421A8E51D761286008AC833 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				026BFB571F194D7D00D888E2 /* DeviceInfoWindowController.swift */,
 				842506721ED4CEF800AEE25F /* DeviceListController.swift */,
 				849237EB1DE5FC9600D95BBA /* PairingInterfaceController.swift */,
 				8421A8E61D761409008AC833 /* PreferencesWindowController.swift */,
@@ -1374,6 +1377,7 @@
 				845BE2E61EC2476200F3BD62 /* HoverButton.swift in Sources */,
 				843B67041DF1E64A00289EC9 /* ShareService.swift in Sources */,
 				842505E91ED1BD3C00AEE25F /* RemoteKeyboardService.swift in Sources */,
+				026BFB581F194D7D00D888E2 /* DeviceInfoWindowController.swift in Sources */,
 				84FA45D81DDDCB3D00EF3992 /* ConnectionProvider.swift in Sources */,
 				8436DEF81E956DA000529362 /* Timer.swift in Sources */,
 				842B50571E4295D200969AA7 /* UnifiedTitlebarWindow.swift in Sources */,

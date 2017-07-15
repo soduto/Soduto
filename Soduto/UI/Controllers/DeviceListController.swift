@@ -37,6 +37,21 @@ class DeviceListController: NSViewController {
         }
     }
     
+    @IBAction func showDeviceInfo(_ sender: Any?) {
+        guard self.deviceList.clickedRow >= 0 else { return }
+        guard let rowView = self.deviceList.rowView(atRow: self.deviceList.clickedRow, makeIfNecessary: false) else { return }
+        guard let cellView = rowView.view(atColumn: 0) as? DeviceListItemView else { return }
+        guard let device = cellView.device else { return }
+        
+        let controller = DeviceInfoWindowController.loadController()
+        controller.device = device
+        
+        guard let window = controller.window else { return }
+        self.view.window?.beginSheet(window) { _ in
+            controller.window = nil // just to keep controller until sheet ends
+        }
+    }
+    
 }
 
 // MARK: -
@@ -80,9 +95,9 @@ extension DeviceListController: NSTableViewDelegate {
             }
         }
         
-        if let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "DeviceItemID"), owner: nil) as? DeviceListItemView {
-            cell.device = device
-            return cell
+        if let view = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "DeviceItemID"), owner: nil) as? DeviceListItemView {
+            view.device = device
+            return view
         }
         
         return nil

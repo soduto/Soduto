@@ -71,6 +71,13 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable, CustomStrin
     public let outgoingCapabilities: Set<Service.Capability>
     public let config: DeviceConfiguration
     
+    public var peerCertificate: SecCertificate? {
+        return connections.first?.peerCertificate
+    }
+    public var hostCertificate: SecCertificate? {
+        return connections.first?.hostCertificate
+    }
+    
     public private(set) var isReachable: Bool = false {
         didSet {
             if oldValue != self.isReachable {

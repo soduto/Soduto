@@ -6,38 +6,37 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner"/>
+        <customObject id="-2" userLabel="File's Owner" customClass="DeviceInfoWindowController" customModule="Soduto" customModuleProvider="target">
+            <connections>
+                <outlet property="deviceIDLabel" destination="tMR-2q-3c0" id="qLs-oc-EcN"/>
+                <outlet property="deviceNameLabel" destination="9ZC-Ny-bMb" id="nS1-Fb-ra3"/>
+                <outlet property="deviceTypeImage" destination="Hq9-nH-nzu" id="l6E-v9-6QQ"/>
+                <outlet property="localCertificateLabel" destination="2gr-HD-57h" id="WSx-72-XbJ"/>
+                <outlet property="remoteCertificateLabel" destination="s0F-4o-R06" id="2rl-uN-zbz"/>
+                <outlet property="statusLabel" destination="suV-ZP-tUj" id="SbY-GY-Ffg"/>
+                <outlet property="window" destination="QvC-M9-y7g" id="ljj-YX-xkB"/>
+            </connections>
+        </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g">
+        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="493" height="270"/>
+            <rect key="contentRect" x="196" y="240" width="515" height="270"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
             <view key="contentView" wantsLayer="YES" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="515" height="270"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
-                    <visualEffectView appearanceType="vibrantLight" blendingMode="behindWindow" material="selection" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="ofn-aU-g9J" userLabel="Top Visual Effect View">
-                        <rect key="frame" x="0.0" y="195" width="515" height="75"/>
-                    </visualEffectView>
                     <visualEffectView appearanceType="vibrantLight" blendingMode="behindWindow" material="popover" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="q4D-5l-CMl">
-                        <rect key="frame" x="0.0" y="0.0" width="515" height="195"/>
+                        <rect key="frame" x="0.0" y="0.0" width="515" height="270"/>
                     </visualEffectView>
-                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Hq9-nH-nzu">
+                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" alphaValue="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Hq9-nH-nzu">
                         <rect key="frame" x="20" y="215" width="35" height="35"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="35" id="1Nm-OV-8gq"/>
                             <constraint firstAttribute="width" constant="35" id="2o4-vc-lFx"/>
                         </constraints>
-                        <contentFilters>
-                            <ciFilter name="CIGammaAdjust">
-                                <configuration>
-                                    <null key="inputImage"/>
-                                    <real key="inputPower" value="2"/>
-                                </configuration>
-                            </ciFilter>
-                        </contentFilters>
                         <imageCell key="cell" enabled="NO" alignment="left" imageScaling="proportionallyDown" image="phoneIcon" id="jtK-RJ-iDP"/>
                     </imageView>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9ZC-Ny-bMb">
@@ -52,7 +51,7 @@
                         <rect key="frame" x="61" y="218" width="436" height="14"/>
                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="phone - reachable" id="qz7-yK-qIY">
                             <font key="font" metaFont="smallSystem"/>
-                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
@@ -78,7 +77,7 @@
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="yDb-Yu-Dk3">
                         <rect key="frame" x="18" y="105" width="126" height="14"/>
                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Certificate Fingerprints" id="LN9-6B-Nb3">
-                            <font key="font" metaFont="system" size="11"/>
+                            <font key="font" metaFont="smallSystem"/>
                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
@@ -132,6 +131,9 @@
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
+                        <connections>
+                            <action selector="done:" target="-2" id="LlG-p0-Vfx"/>
+                        </connections>
                     </button>
                 </subviews>
                 <constraints>
@@ -142,14 +144,13 @@
                     <constraint firstItem="FeG-TU-lDk" firstAttribute="top" secondItem="wXE-yK-g6O" secondAttribute="bottom" priority="999" constant="20" id="Cmj-PZ-GC9"/>
                     <constraint firstItem="NSb-Dm-d0M" firstAttribute="centerY" secondItem="yDb-Yu-Dk3" secondAttribute="centerY" id="F6K-ih-68j"/>
                     <constraint firstAttribute="bottom" secondItem="FeG-TU-lDk" secondAttribute="bottom" constant="20" id="FtG-Ec-9Vz"/>
-                    <constraint firstItem="ofn-aU-g9J" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" id="GaY-Fl-7zW"/>
-                    <constraint firstItem="ofn-aU-g9J" firstAttribute="bottom" secondItem="Hq9-nH-nzu" secondAttribute="bottom" constant="20" id="Hp7-51-uA1"/>
                     <constraint firstItem="aeM-L2-ixw" firstAttribute="leading" secondItem="lvD-Hi-ssn" secondAttribute="trailing" constant="8" id="ILn-Hi-K05"/>
                     <constraint firstItem="tMR-2q-3c0" firstAttribute="leading" secondItem="M84-PQ-Xtz" secondAttribute="trailing" constant="8" id="IqX-Vv-su4"/>
                     <constraint firstItem="FeG-TU-lDk" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="JRp-aX-Hrh"/>
                     <constraint firstItem="suV-ZP-tUj" firstAttribute="top" secondItem="9ZC-Ny-bMb" secondAttribute="bottom" constant="1" id="KlF-dH-NkY"/>
                     <constraint firstItem="yDb-Yu-Dk3" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" id="LT4-8L-8hl"/>
                     <constraint firstAttribute="trailing" secondItem="q4D-5l-CMl" secondAttribute="trailing" id="NGA-rp-hVU"/>
+                    <constraint firstItem="q4D-5l-CMl" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" id="Pof-6v-ELx"/>
                     <constraint firstItem="wXE-yK-g6O" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" id="SUA-xO-61c"/>
                     <constraint firstItem="9ZC-Ny-bMb" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" id="Sm0-N5-e0t"/>
                     <constraint firstAttribute="bottom" secondItem="q4D-5l-CMl" secondAttribute="bottom" id="Ucd-P4-1XA"/>
@@ -166,20 +167,17 @@
                     <constraint firstItem="yDb-Yu-Dk3" firstAttribute="trailing" secondItem="M84-PQ-Xtz" secondAttribute="trailing" id="e3J-CG-xIk"/>
                     <constraint firstItem="Hq9-nH-nzu" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" id="eKF-fu-dtn"/>
                     <constraint firstItem="2gr-HD-57h" firstAttribute="baseline" secondItem="wXE-yK-g6O" secondAttribute="baseline" id="fXu-dV-5a9"/>
-                    <constraint firstAttribute="trailing" secondItem="ofn-aU-g9J" secondAttribute="trailing" id="hYe-Ns-aEB"/>
                     <constraint firstItem="lvD-Hi-ssn" firstAttribute="top" secondItem="Hq9-nH-nzu" secondAttribute="bottom" constant="40" id="i2a-rn-nSP"/>
                     <constraint firstItem="tMR-2q-3c0" firstAttribute="baseline" secondItem="M84-PQ-Xtz" secondAttribute="baseline" id="ive-8P-npC"/>
                     <constraint firstItem="M84-PQ-Xtz" firstAttribute="trailing" secondItem="lvD-Hi-ssn" secondAttribute="trailing" id="iyL-ML-GQV"/>
                     <constraint firstAttribute="trailing" secondItem="tMR-2q-3c0" secondAttribute="trailing" constant="20" id="jXP-oP-FXB"/>
                     <constraint firstItem="M84-PQ-Xtz" firstAttribute="top" secondItem="lvD-Hi-ssn" secondAttribute="bottom" constant="8" id="jyP-c4-JIO"/>
-                    <constraint firstItem="ofn-aU-g9J" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" id="kV1-rx-KWc"/>
                     <constraint firstItem="9ZC-Ny-bMb" firstAttribute="leading" secondItem="Hq9-nH-nzu" secondAttribute="trailing" constant="8" id="mcb-bT-iaV"/>
                     <constraint firstItem="yDb-Yu-Dk3" firstAttribute="top" secondItem="M84-PQ-Xtz" secondAttribute="bottom" constant="20" id="oau-w8-tjU"/>
                     <constraint firstItem="wXE-yK-g6O" firstAttribute="top" secondItem="8Vm-mP-E9T" secondAttribute="bottom" constant="8" id="ocn-g4-RAz"/>
                     <constraint firstAttribute="trailing" secondItem="9ZC-Ny-bMb" secondAttribute="trailing" constant="20" id="pN2-Ix-ryY"/>
                     <constraint firstAttribute="trailing" secondItem="aeM-L2-ixw" secondAttribute="trailing" constant="20" id="qzO-z5-JRd"/>
                     <constraint firstItem="M84-PQ-Xtz" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="50" id="rr1-sN-pc6"/>
-                    <constraint firstItem="q4D-5l-CMl" firstAttribute="top" secondItem="ofn-aU-g9J" secondAttribute="bottom" id="uTq-KF-y69"/>
                     <constraint firstItem="s0F-4o-R06" firstAttribute="leading" secondItem="8Vm-mP-E9T" secondAttribute="trailing" constant="8" id="v7z-QG-oOh"/>
                     <constraint firstAttribute="trailing" secondItem="2gr-HD-57h" secondAttribute="trailing" constant="20" id="yJT-nZ-Heq"/>
                     <constraint firstItem="2gr-HD-57h" firstAttribute="leading" secondItem="wXE-yK-g6O" secondAttribute="trailing" constant="8" id="yc0-J3-Cgx"/>

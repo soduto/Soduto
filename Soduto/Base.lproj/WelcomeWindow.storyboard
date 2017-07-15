@@ -12,7 +12,7 @@
         <scene sceneID="vJa-XP-Pfn">
             <objects>
                 <windowController id="5Dj-mc-cY5" customClass="WelcomeWindowController" customModule="Soduto" customModuleProvider="target" sceneMemberID="viewController">
-                    <window key="window" title="Welcome to Soduto" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="W4s-rv-ANH">
+                    <window key="window" title="Welcome to Soduto" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="W4s-rv-ANH">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="196" y="100" width="480" height="270"/>
@@ -175,6 +175,7 @@
                                                         <constraints>
                                                             <constraint firstItem="fmL-F4-Nwl" firstAttribute="leading" secondItem="k2w-XX-2cE" secondAttribute="leading" id="ApF-2w-ZPc"/>
                                                             <constraint firstAttribute="bottom" secondItem="BrB-qP-M42" secondAttribute="bottom" id="EaS-AV-1x9"/>
+                                                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="BrB-qP-M42" secondAttribute="trailing" constant="20" symbolic="YES" id="VbQ-h3-eIG"/>
                                                             <constraint firstAttribute="trailing" secondItem="fmL-F4-Nwl" secondAttribute="trailing" id="ZRM-40-2Ex"/>
                                                             <constraint firstItem="rdd-PF-z6N" firstAttribute="top" secondItem="fmL-F4-Nwl" secondAttribute="bottom" constant="2" id="aeg-wt-GPi"/>
                                                             <constraint firstItem="fmL-F4-Nwl" firstAttribute="top" secondItem="k2w-XX-2cE" secondAttribute="top" id="jIZ-4Y-TZv"/>
@@ -243,6 +244,7 @@
                                                             <constraint firstAttribute="trailing" secondItem="y3t-Ak-Gtb" secondAttribute="trailing" id="crZ-Df-OAz"/>
                                                             <constraint firstItem="H6m-zs-RLh" firstAttribute="leading" secondItem="ejp-Nv-QS8" secondAttribute="leading" id="egJ-1J-is8"/>
                                                             <constraint firstAttribute="bottom" secondItem="eWd-oj-mY5" secondAttribute="bottom" id="i60-Gu-mO1"/>
+                                                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="eWd-oj-mY5" secondAttribute="trailing" constant="20" symbolic="YES" id="m0U-7s-aaz"/>
                                                             <constraint firstItem="y3t-Ak-Gtb" firstAttribute="leading" secondItem="ejp-Nv-QS8" secondAttribute="leading" id="rCS-aD-eSg"/>
                                                             <constraint firstItem="eWd-oj-mY5" firstAttribute="leading" secondItem="ejp-Nv-QS8" secondAttribute="leading" id="yvS-dA-nhV"/>
                                                         </constraints>
@@ -320,6 +322,7 @@
                                                             <constraint firstItem="ulX-82-Tx6" firstAttribute="top" secondItem="SQr-GK-bF7" secondAttribute="bottom" constant="2" id="KOY-ua-D2Q"/>
                                                             <constraint firstItem="ulX-82-Tx6" firstAttribute="leading" secondItem="td9-7C-bgV" secondAttribute="leading" id="U6I-RU-qoe"/>
                                                             <constraint firstAttribute="bottom" secondItem="FRX-ei-h5M" secondAttribute="bottom" id="cyE-p2-1Xa"/>
+                                                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="FRX-ei-h5M" secondAttribute="trailing" constant="20" symbolic="YES" id="giO-xO-2ho"/>
                                                             <constraint firstItem="SQr-GK-bF7" firstAttribute="leading" secondItem="td9-7C-bgV" secondAttribute="leading" id="iSW-5d-b7i"/>
                                                             <constraint firstItem="FRX-ei-h5M" firstAttribute="leading" secondItem="td9-7C-bgV" secondAttribute="leading" id="nPL-g4-5i2"/>
                                                         </constraints>

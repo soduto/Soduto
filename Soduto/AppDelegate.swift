@@ -110,6 +110,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
         NSApp.activate(ignoringOtherApps: true)
         
         controller.deviceDataSource = self.deviceManager
+        controller.dismissHandler = { [weak self] _ in self?.welcomeWindowController = nil }
         controller.showWindow(nil)
         self.welcomeWindowController = controller
     }

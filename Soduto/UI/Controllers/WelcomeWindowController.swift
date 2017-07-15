@@ -11,6 +11,8 @@ import Cocoa
 
 class WelcomeWindowController: NSWindowController {
     
+    var dismissHandler: ((WelcomeWindowController)->Void)?
+    
     var tabViewController: WelcomeTabViewController? {
         assert(self.contentViewController is WelcomeTabViewController)
         return self.contentViewController as? WelcomeTabViewController
@@ -21,14 +23,24 @@ class WelcomeWindowController: NSWindowController {
         set { self.tabViewController?.deviceDataSource = newValue }
     }
     
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     override func windowDidLoad() {
         super.windowDidLoad()
         
         self.window?.titleVisibility = .hidden
         self.window?.styleMask.insert(.fullSizeContentView)
         self.window?.titlebarAppearsTransparent = true
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(handleWindowWillClose(_:)), name: NSWindow.willCloseNotification, object: nil)
     }
     
+    @objc private func handleWindowWillClose(_ notification: Notification) {
+        guard notification.object as? NSWindow == self.window else { return }
+        dismissHandler?(self)
+    }
 }
 
 class WelcomeTabViewController: NSTabViewController {
@@ -75,7 +87,7 @@ class WelcomeTabViewController: NSTabViewController {
 
 class WelcomeTabItemViewController: NSViewController {
     
-    var tabViewController: WelcomeTabViewController?
+    weak var tabViewController: WelcomeTabViewController?
     
     @IBAction func back(_ sender: AnyObject) {
         self.tabViewController?.selectPreviousTab(self)
@@ -109,7 +121,7 @@ class PairingTabItemViewController: WelcomeTabItemViewController {
     
     @IBOutlet weak var troubleshootingLabel: NSTextField?
     
-    private var deviceListController: DeviceListController?
+    private weak var deviceListController: DeviceListController?
     
     var deviceDataSource: DeviceDataSource? { return self.tabViewController?.deviceDataSource }
     

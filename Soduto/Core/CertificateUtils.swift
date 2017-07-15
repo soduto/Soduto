@@ -162,8 +162,8 @@ public class CertificateUtils {
     
     public class func digestString(for certificate: SecCertificate) -> String {
         let digest = self.digest(for: certificate)
-        let hexBytes = digest.map { String(format: "%02hhx", $0) }
-        return hexBytes.joined()
+        let hexBytes = digest.map { String(format: "%02hhX", $0) }
+        return hexBytes.joined(separator: " ")
     }
     
     public class func validate(certificate: SecCertificate) -> Bool {

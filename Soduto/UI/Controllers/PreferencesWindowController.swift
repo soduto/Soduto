@@ -63,6 +63,20 @@ public class PreferencesWindowController: NSWindowController {
             NotificationCenter.default.post(name: ConnectionProvider.broadcastAnnouncementNotification, object: nil)
         }
     }
+    
+    @IBAction func showDeviceInfo(_ sender: Any?) {
+        guard self.deviceList.clickedRow >= 0 else { return }
+        guard let rowView = self.deviceList.rowView(atRow: self.deviceList.clickedRow, makeIfNecessary: false) else { return }
+        guard let cellView = rowView.view(atColumn: 0) as? DeviceListItemView else { return }
+        guard let device = cellView.device else { return }
+        
+        let controller = DeviceInfoWindowController.loadController()
+        controller.device = device
+        guard let window = controller.window else { return }
+        self.window?.beginSheet(window) { _ in
+            controller.window = nil // just to keep controller until sheet ends
+        }
+    }
 }
 
 
