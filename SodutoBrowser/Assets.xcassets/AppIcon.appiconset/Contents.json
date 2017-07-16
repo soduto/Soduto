@@ -54,8 +54,9 @@
       "scale" : "1x"
     },
     {
-      "idiom" : "mac",
       "size" : "512x512",
+      "idiom" : "mac",
+      "filename" : "AppIcon512@2x.png",
       "scale" : "2x"
     }
   ],
