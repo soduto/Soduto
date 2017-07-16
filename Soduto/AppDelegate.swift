@@ -64,7 +64,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
         self.serviceManager.add(service: PingService())
         self.serviceManager.add(service: BatteryService())
         self.serviceManager.add(service: FindMyPhoneService())
-        self.serviceManager.add(service: RemoteKeyboardService())
+//        self.serviceManager.add(service: RemoteKeyboardService())
         
         self.connectionProvider.start()
         
