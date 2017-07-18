@@ -211,7 +211,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, BrowserWindowControllerDeleg
             let name = url.fragment ?? host
             let port: UInt16? = (url.port != nil) ? UInt16(url.port!) : nil
             let path = url.path
-            guard let fs = try? SftpFileSystem(name: name, host: host, port: port, user: user, password: password, path: path) else { Log.info?.message("Failed to connect to SFTP at URL [\(url)]"); return }
+            guard let fs = try? SftpFileSystem(name: name, host: host, port: port, user: user, password: password, path: path) else {
+                var urlWithouPassword = URLComponents(url: url, resolvingAgainstBaseURL: false)
+                urlWithouPassword?.password = nil
+                Log.info?.message("Failed to connect to SFTP at URL [\(urlWithouPassword?.string ?? "")]");
+                return
+            }
             newBrowserWindow(with: fs)
         default:
             Log.info?.message("Unsupported URL scheme: \(scheme)")
