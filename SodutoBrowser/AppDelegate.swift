@@ -75,6 +75,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, BrowserWindowControllerDeleg
             let aslRecorder = ASLLogRecorder(formatter: formatter, echoToStdErr: true)
             let severity: LogSeverity = LogSeverity(rawValue: UserDefaults.standard.integer(forKey: AppDelegate.logLevelConfigurationKey)) ?? .info
             Log.enable(configuration: BasicLogConfiguration(minimumSeverity: severity, recorders: [aslRecorder]))
+            switch severity {
+            case .verbose: NMSSHLogger.shared().logLevel = .verbose
+            case .debug: NMSSHLogger.shared().logLevel = .verbose
+            case .info : NMSSHLogger.shared().logLevel = .info
+            case .warning : NMSSHLogger.shared().logLevel = .warn
+            default: NMSSHLogger.shared().logLevel = .error
+            }
         #endif
         
         if #available(OSX 10.12, *) {
