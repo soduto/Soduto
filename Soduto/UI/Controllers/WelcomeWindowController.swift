@@ -113,17 +113,17 @@ class WelcomeTabItemViewController: NSViewController {
     
     @IBAction func goToSodutoWebsite(_ sender: AnyObject) {
         guard let url = URL(string: "http://www.soduto.com") else { assertionFailure("Could not create URL"); return }
-        NSWorkspace.shared.open(url)
+        NSWorkspace.shared().open(url)
     }
     
     @IBAction func goToKdeConnectLinuxWebsite(_ sender: AnyObject) {
         guard let url = URL(string: "https://community.kde.org/KDEConnect") else { assertionFailure("Could not create URL"); return }
-        NSWorkspace.shared.open(url)
+        NSWorkspace.shared().open(url)
     }
     
     @IBAction func goToKdeConnectAndroidWebsite(_ sender: AnyObject) {
         guard let url = URL(string: "https://play.google.com/store/apps/details?id=org.kde.kdeconnect_tp") else { assertionFailure("Could not create URL"); return }
-        NSWorkspace.shared.open(url)
+        NSWorkspace.shared().open(url)
     }
 }
 

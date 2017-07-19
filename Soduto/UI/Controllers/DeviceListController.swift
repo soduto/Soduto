@@ -95,7 +95,7 @@ extension DeviceListController: NSTableViewDelegate {
             }
         }
         
-        if let view = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "DeviceItemID"), owner: nil) as? DeviceListItemView {
+        if let view = tableView.make(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "DeviceItemID"), owner: nil) as? DeviceListItemView {
             view.device = device
             return view
         }

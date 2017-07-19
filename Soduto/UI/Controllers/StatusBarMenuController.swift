@@ -19,7 +19,7 @@ public class StatusBarMenuController: NSObject, NSWindowDelegate, NSMenuDelegate
     public var serviceManager: ServiceManager?
     public var config: Configuration?
     
-    let statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+    let statusBarItem = NSStatusBar.system().statusItem(withLength: NSStatusItem.squareLength)
     
     var preferencesWindowController: PreferencesWindowController?
     
@@ -176,7 +176,7 @@ public class StatusBarMenuController: NSObject, NSWindowDelegate, NSMenuDelegate
                     chargingIcon.draw(in: rect)
                     return true
                 }
-                if let context = NSGraphicsContext.current,
+                if let context = NSGraphicsContext.current(),
                     let cgMask = mask.cgImage(forProposedRect: &rect, context: context, hints: nil),
                     let cgMask2 = CGImage(maskWidth: cgMask.width, height: cgMask.height, bitsPerComponent: cgMask.bitsPerComponent, bitsPerPixel: cgMask.bitsPerPixel, bytesPerRow: cgMask.bytesPerRow, provider: cgMask.dataProvider!, decode: nil, shouldInterpolate: false) {
                     

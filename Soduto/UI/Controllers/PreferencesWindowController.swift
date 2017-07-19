@@ -38,7 +38,7 @@ public class PreferencesWindowController: NSWindowController {
             let label = NSMutableAttributedString(string: NSLocalizedString("This device is discoverable as", comment: "") + ":")
             label.addAttributes([
                 NSAttributedStringKey.foregroundColor: NSColor.disabledControlTextColor,
-                NSAttributedStringKey.font: NSFont.systemFont(ofSize: NSFont.smallSystemFontSize) 
+                NSAttributedStringKey.font: NSFont.systemFont(ofSize: NSFont.smallSystemFontSize()) 
             ], range: NSMakeRange(0, label.length))
             label.append(NSAttributedString(string: "\n\(hostName)"))
             label.setAlignment(.center, range: NSMakeRange(0, label.length))
@@ -121,7 +121,7 @@ extension PreferencesWindowController: NSTableViewDelegate {
             }
         }
         
-        if let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "DeviceItemID"), owner: nil) as? DeviceListItemView {
+        if let cell = tableView.make(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "DeviceItemID"), owner: nil) as? DeviceListItemView {
             cell.device = device
             return cell
         }

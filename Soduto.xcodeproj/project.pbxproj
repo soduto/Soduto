@@ -114,6 +114,9 @@
 		84FA45E81DDE088B00EF3992 /* ServiceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA45E71DDE088B00EF3992 /* ServiceManager.swift */; };
 		84FA45EA1DDF433400EF3992 /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA45E91DDF433300EF3992 /* Service.swift */; };
 		84FA45ED1DDF525200EF3992 /* PingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA45EC1DDF525200EF3992 /* PingService.swift */; };
+		84FE71141F1EA3BA000B44F9 /* SwiftCompat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FE71131F1EA3BA000B44F9 /* SwiftCompat.swift */; };
+		84FE71151F1EA3BA000B44F9 /* SwiftCompat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FE71131F1EA3BA000B44F9 /* SwiftCompat.swift */; };
+		84FE71161F1EA3BA000B44F9 /* SwiftCompat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FE71131F1EA3BA000B44F9 /* SwiftCompat.swift */; };
 		84FFDA2A1E1D8D370069AC9A /* SimplePing.m in Sources */ = {isa = PBXBuildFile; fileRef = 84FFDA291E1D8D370069AC9A /* SimplePing.m */; };
 		8FC977F11D4778E9001ADF7E /* StatusBarMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC977F01D4778E9001ADF7E /* StatusBarMenuController.swift */; };
 /* End PBXBuildFile section */
@@ -539,6 +542,7 @@
 		84FA45E71DDE088B00EF3992 /* ServiceManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceManager.swift; sourceTree = "<group>"; };
 		84FA45E91DDF433300EF3992 /* Service.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
 		84FA45EC1DDF525200EF3992 /* PingService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PingService.swift; sourceTree = "<group>"; };
+		84FE71131F1EA3BA000B44F9 /* SwiftCompat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftCompat.swift; sourceTree = "<group>"; };
 		84FFDA1F1E1D8D0D0069AC9A /* SimplePing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimplePing.h; sourceTree = "<group>"; };
 		84FFDA291E1D8D370069AC9A /* SimplePing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimplePing.m; sourceTree = "<group>"; };
 		8FC977F01D4778E9001ADF7E /* StatusBarMenuController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusBarMenuController.swift; sourceTree = "<group>"; };
@@ -589,6 +593,7 @@
 			isa = PBXGroup;
 			children = (
 				0225F6101F06E2380021BFE2 /* NSAttributedString.swift */,
+				84FE71131F1EA3BA000B44F9 /* SwiftCompat.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1387,6 +1392,7 @@
 				84FA45DD1DDDCB3D00EF3992 /* SocketAddress.swift in Sources */,
 				840538201ED62282003798AA /* WelcomeWindowController.swift in Sources */,
 				84FA45E61DDDE87F00EF3992 /* AppDelegate.swift in Sources */,
+				84FE71141F1EA3BA000B44F9 /* SwiftCompat.swift in Sources */,
 				84651A741E59F9C900D17601 /* MenuView.swift in Sources */,
 				84FA45ED1DDF525200EF3992 /* PingService.swift in Sources */,
 			);
@@ -1414,6 +1420,7 @@
 				845BC72A1E6A0CF100DC9B81 /* IconItemView.swift in Sources */,
 				8440FD071E6CA6CA00E5BFA9 /* LocalFileSystem.swift in Sources */,
 				845BC7261E69F25F00DC9B81 /* BrowserWindowController.swift in Sources */,
+				84FE71161F1EA3BA000B44F9 /* SwiftCompat.swift in Sources */,
 				8440FCF71E6CA68300E5BFA9 /* FileSystem.swift in Sources */,
 				845BC70D1E69F00E00DC9B81 /* AppDelegate.swift in Sources */,
 				845BE2E31EC246F500F3BD62 /* LoadingWindowController.swift in Sources */,
@@ -1426,6 +1433,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				847EF4C51DC9049D00360BBE /* SodutoTests.swift in Sources */,
+				84FE71151F1EA3BA000B44F9 /* SwiftCompat.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1712,7 +1720,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "Soduto/Soduto-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -1743,7 +1751,7 @@
 				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Soduto/OpenSSL/openssl/include";
 				SWIFT_OBJC_BRIDGING_HEADER = "Soduto/Soduto-Bridging-Header.h";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -1800,8 +1808,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Soduto/OpenSSL/openssl/include";
 				SWIFT_OBJC_BRIDGING_HEADER = "SodutoBrowser/SodutoBrowser-Bridging-Header.h";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -1828,8 +1835,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Soduto/OpenSSL/openssl/include";
 				SWIFT_OBJC_BRIDGING_HEADER = "SodutoBrowser/SodutoBrowser-Bridging-Header.h";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -1844,7 +1850,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.soduto.SodutoTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
-				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Soduto.app/Contents/MacOS/Soduto";
 			};
 			name = Debug;
@@ -1860,7 +1865,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.soduto.SodutoTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
-				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Soduto.app/Contents/MacOS/Soduto";
 			};
 			name = Release;

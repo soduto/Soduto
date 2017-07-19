@@ -127,7 +127,7 @@ class BrowserWindowController: NSWindowController {
         let iconItemNib = NSNib(nibNamed: NSNib.Name(rawValue: "IconItem"), bundle: nil)
         self.collectionView.register(iconItemNib, forItemWithIdentifier: NSUserInterfaceItemIdentifier(rawValue: "IconItem"))
         self.collectionView.setDraggingSourceOperationMask(.copy, forLocal: false)
-        self.collectionView.registerForDraggedTypes(type(of: self).dropTypes)
+        self.collectionView.register(forDraggedTypes: type(of: self).dropTypes)
         
         updateFilter()
         updateSorting()
@@ -601,7 +601,7 @@ class BrowserWindowController: NSWindowController {
             guard let destUrl = copyOperation.destination else { assertionFailure("Expected non-nil destination for rename operation (\(copyOperation))."); return }
             guard destUrl.isFileURL else { assertionFailure("Destination URL (\(destUrl)) expected to be a local file."); return }
             guard !destUrl.hasDirectoryPath else { assertionFailure("Destination URL (\(destUrl)) expected to be a simple file."); return }
-            NSWorkspace.shared.openFile(destUrl.path)
+            NSWorkspace.shared().openFile(destUrl.path)
             DispatchQueue.main.async { self.updateProgress() }
         }
         completionOperation.addDependency(copyOperation)
@@ -872,13 +872,13 @@ class BrowserWindowController: NSWindowController {
     }
     
     @IBAction func copy(_ sender: Any?) {
-        if !self.writeFileItems(at: self.collectionView.selectionIndexPaths, to: NSPasteboard.general) {
+        if !self.writeFileItems(at: self.collectionView.selectionIndexPaths, to: NSPasteboard.general()) {
             NSSound.beep()
         }
     }
     
     @IBAction func paste(_ sender: Any?) {
-        if !self.pasteFileItems(from: NSPasteboard.general) {
+        if !self.pasteFileItems(from: NSPasteboard.general()) {
             NSSound.beep()
         }
     }
@@ -912,8 +912,8 @@ class BrowserWindowController: NSWindowController {
         
         guard let action = menuItem.action else { return super.validateMenuItem(menuItem) }
         switch action {
-        case #selector(copy(_:)): return self.canWriteFileItems(at: self.collectionView.selectionIndexPaths, to: NSPasteboard.general)
-        case #selector(paste(_:)): return self.canReadFileItems(from: NSPasteboard.general)
+        case #selector(copy(_:)): return self.canWriteFileItems(at: self.collectionView.selectionIndexPaths, to: NSPasteboard.general())
+        case #selector(paste(_:)): return self.canReadFileItems(from: NSPasteboard.general())
         default: return super.validateMenuItem(menuItem)
         }
     }
@@ -1037,7 +1037,7 @@ extension BrowserWindowController: NSCollectionViewDelegate {
         
         let validItemCount: Int
         let operation: NSDragOperation
-        if (!movableUrls.isEmpty && !NSEvent.modifierFlags.contains(.option)) || copyableUrls.isEmpty {
+        if (!movableUrls.isEmpty && !NSEvent.modifierFlags().contains(.option)) || copyableUrls.isEmpty {
             operation =  [ .move ]
             validItemCount = movableUrls.count
         }
@@ -1083,7 +1083,7 @@ extension BrowserWindowController: NSCollectionViewDelegate {
         
         guard !copyableItems.isEmpty || !movableItems.isEmpty else { return false }
         
-        if (!movableItems.isEmpty && !NSEvent.modifierFlags.contains(.option)) || copyableItems.isEmpty {
+        if (!movableItems.isEmpty && !NSEvent.modifierFlags().contains(.option)) || copyableItems.isEmpty {
             moveFiles(movableItems, to: destUrl)
         }
         else {

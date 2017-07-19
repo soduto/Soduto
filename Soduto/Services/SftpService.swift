@@ -193,7 +193,7 @@ public class SftpService: NSObject, Service, NSWindowDelegate {
                 .appendingPathComponent("SodutoBrowser.app", isDirectory: false)
             let files: [URL] = [url]
             let options: NSWorkspace.LaunchOptions = NSWorkspace.LaunchOptions.default
-            _ = try NSWorkspace.shared.open(files, withApplicationAt: appUrl, options: options, configuration: [:])
+            _ = try NSWorkspace.shared().open(files, withApplicationAt: appUrl, options: options, configuration: [:])
         }
         catch {
             Log.error?.message("Could not launch SodutoBrowser: \(error)")

@@ -86,11 +86,6 @@ public class TextFieldWithLinks: NSTextField {
         let fullRange = NSMakeRange(0, string.length)
         var infos: [LinkInfo] = []
         
-        let image = NSImage(size: bounds.size, flipped: true) { (rect) -> Bool in
-            layoutManager.drawGlyphs(forGlyphRange: layoutManager.glyphRange(for: textContainer), at: NSPoint.zero)
-            return true
-        }
-        
         string.enumerateAttribute(NSAttributedStringKey.link, in: fullRange, options: []) { (value, range, stop) in
             guard let url = value as? NSURL else { return }
             
@@ -116,7 +111,7 @@ public class TextFieldWithLinks: NSTextField {
         
         for info in self.linkInfos {
             for rect in info.rects {
-                addCursorRect(rect, cursor: NSCursor.pointingHand)
+                addCursorRect(rect, cursor: NSCursor.pointingHand())
             }
         }
     }
@@ -135,7 +130,7 @@ public class TextFieldWithLinks: NSTextField {
         
         for info in linkInfos {
             guard info.range.contains(index) else { continue }
-            NSWorkspace.shared.open(info.link)
+            NSWorkspace.shared().open(info.link)
         }
     }
     

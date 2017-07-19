@@ -70,7 +70,7 @@ class SendMessageWindowController: NSWindowController {
         self.bodyInput.textContainerInset = NSSize(width: 15.0, height: 8.0)
         self.bodyInput.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .regular))
         
-        if let screenSize = NSScreen.main?.frame.size, let windowSize = self.window?.frame.size {
+        if let screenSize = NSScreen.main()?.frame.size, let windowSize = self.window?.frame.size {
             let pos = NSPoint(x: (screenSize.width - windowSize.width) * 0.5, y: (screenSize.height - windowSize.height) * 0.5)
             self.window?.setFrameOrigin(pos)
         }
@@ -135,7 +135,7 @@ extension SendMessageWindowController: NSTextDelegate {
         
         // Message body
         if view === self.bodyInput {
-            self.bodyInputPlaceholder.isHidden = self.bodyInput.string.isEmpty != true
+            self.bodyInputPlaceholder.isHidden = self.bodyInput.string?.isEmpty != true
             self.sendButton.isEnabled = self.isReadyToSend
         }
         
@@ -199,7 +199,7 @@ extension SendMessageWindowController: NSTokenFieldDelegate {
         }
     }
     
-    func tokenField(_ tokenField: NSTokenField, representedObjectForEditing editingString: String) -> Any? {
+    func tokenField(_ tokenField: NSTokenField, representedObjectForEditing editingString: String) -> Any {
         if self.isContactsAccessAllowed, let contactPhoneNumber = ContactPhoneNumber(string: editingString) {
             return contactPhoneNumber
         }
