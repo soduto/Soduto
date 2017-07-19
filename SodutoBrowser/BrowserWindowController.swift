@@ -596,13 +596,13 @@ class BrowserWindowController: NSWindowController {
         
         let completionOperation = BlockOperation {
             loadingController.dismissController(nil)
+            DispatchQueue.main.async { self.updateProgress() }
             
             guard !copyOperation.isCancelled else { return }
             guard let destUrl = copyOperation.destination else { assertionFailure("Expected non-nil destination for rename operation (\(copyOperation))."); return }
             guard destUrl.isFileURL else { assertionFailure("Destination URL (\(destUrl)) expected to be a local file."); return }
             guard !destUrl.hasDirectoryPath else { assertionFailure("Destination URL (\(destUrl)) expected to be a simple file."); return }
             NSWorkspace.shared().openFile(destUrl.path)
-            DispatchQueue.main.async { self.updateProgress() }
         }
         completionOperation.addDependency(copyOperation)
         OperationQueue.main.addOperation(completionOperation)
@@ -688,7 +688,7 @@ class BrowserWindowController: NSWindowController {
     }
     
     private func handleErrors(for fileOperations: [FileOperation]) {
-        let failedOperations = fileOperations.filter { $0.error != nil }
+        let failedOperations = fileOperations.filter { $0.error != nil && !$0.isCancelled }
         guard !failedOperations.isEmpty else { return }
         
         var deleteMessages: [String] = []
