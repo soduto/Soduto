@@ -21,8 +21,8 @@ BOOL tryLock(NSString *path) {
         // file is locked
         return NO;
     }
-    if (fd == -1) {
-        NSLog(@"errno=%d", errno);
-    }
+//    if (fd == -1) {
+//        NSLog(@"errno=%d", errno);
+//    }
     return YES;
 }
