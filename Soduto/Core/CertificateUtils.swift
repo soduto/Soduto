@@ -329,3 +329,13 @@ public class CertificateUtils {
     }
 
 }
+
+extension SecIdentity {
+    
+    public var certificate: SecCertificate? {
+        var certificate: SecCertificate? = nil
+        SecIdentityCopyCertificate(self, &certificate)
+        return certificate
+    }
+    
+}

@@ -86,6 +86,10 @@ public class DeviceConfiguration: NSObject {
         }
     }
     
+    public var hostCertificate: SecIdentity? {
+        return Configuration.hostCertificate(using: self.userDefaults)
+    }
+    
     public var hwAddresses: [String] {
         didSet {
             if self.hwAddresses != oldValue {
@@ -280,18 +284,7 @@ public class Configuration: ConnectionConfiguration, DeviceManagerConfiguration,
     }
     
     public var hostCertificate: SecIdentity? {
-        guard let name = self.userDefaults.string(forKey: Property.hostCertificateName.rawValue) else {
-            Log.error?.message("Failed to get host certificate name")
-            return nil
-        }
-        let expirationInterval = 60.0 * 60.0 * 24.0 * 365.0 * 10.0
-        do {
-            return try CertificateUtils.getOrCreateIdentity(name, certCommonName: hostDeviceId, expirationInterval: expirationInterval)
-        }
-        catch {
-            Log.error?.message("Failed to get host identity for SSL: \(error)")
-            return nil
-        }
+        return Configuration.hostCertificate(using: self.userDefaults)
     }
     
     public func deviceConfig(for deviceId: Device.Id) -> DeviceConfiguration {
@@ -337,5 +330,25 @@ public class Configuration: ConnectionConfiguration, DeviceManagerConfiguration,
     
     class func isSafeDeviceIdCharacter(_ c: Character) -> Bool {
         return (c >= "0" && c <= "9") || (c >= "a" && c <= "z") || (c >= "A" && c <= "Z") || (c == "_")
+    }
+    
+    fileprivate class func hostCertificate(using userDefaults: UserDefaults) -> SecIdentity? {
+        guard let hostDeviceId = userDefaults.string(forKey: Property.hostDeviceId.rawValue) else {
+            Log.error?.message("Failed to get host device ID")
+            return nil
+        }
+        guard let name = userDefaults.string(forKey: Property.hostCertificateName.rawValue) else {
+            Log.error?.message("Failed to get host certificate name")
+            return nil
+        }
+        let expirationInterval = 60.0 * 60.0 * 24.0 * 365.0 * 10.0
+        do {
+            return try CertificateUtils.getOrCreateIdentity(name, certCommonName: hostDeviceId, expirationInterval: expirationInterval)
+        }
+        catch {
+            Log.error?.message("Failed to get host identity for SSL: \(error)")
+            return nil
+        }
+
     }
 }

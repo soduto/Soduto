@@ -89,12 +89,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
     public private(set) var peerCertificate: SecCertificate? = nil
     public private(set) var peerAddress: SocketAddress
     
-    public var hostCertificate: SecCertificate? {
-        guard let identity = self.config.hostCertificate else { return nil }
-        var certificate: SecCertificate? = nil
-        SecIdentityCopyCertificate(identity, &certificate)
-        return certificate
-    }
+    public var hostCertificate: SecCertificate? { return self.config.hostCertificate?.certificate }
     
     private let config: ConnectionConfiguration
     private let socket: GCDAsyncSocket

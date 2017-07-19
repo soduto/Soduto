@@ -72,10 +72,11 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable, CustomStrin
     public let config: DeviceConfiguration
     
     public var peerCertificate: SecCertificate? {
-        return connections.first?.peerCertificate
+        if let certificate = self.connections.first?.peerCertificate { return certificate }
+        else { return self.config.certificate }
     }
     public var hostCertificate: SecCertificate? {
-        return connections.first?.hostCertificate
+        return self.config.hostCertificate?.certificate
     }
     
     public private(set) var isReachable: Bool = false {
