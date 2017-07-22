@@ -44,6 +44,8 @@ public class SftpService: NSObject, Service, NSWindowDelegate {
     
     // MARK: Service
     
+    public let id: Service.Id = "com.soduto.services.sftp"
+    
     public let incomingCapabilities = Set<Service.Capability>([ DataPacket.sftpPacketType ])
     public let outgoingCapabilities = Set<Service.Capability>([ DataPacket.sftpRequestPacketType ])
     

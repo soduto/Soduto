@@ -11,6 +11,9 @@ import Foundation
 public protocol Service: class, DeviceDataPacketHandler {
     
     typealias Capability = String
+    typealias Id = String
+    
+    var id: Id { get }
     
     var incomingCapabilities: Set<Capability> { get }
     var outgoingCapabilities: Set<Capability> { get }

@@ -59,6 +59,8 @@ public class PingService: Service {
     
     // MARK: Service properties
     
+    public let id: Service.Id = "com.soduto.services.ping"
+    
     public let incomingCapabilities = Set<Service.Capability>([ DataPacket.pingPacketType ])
     public let outgoingCapabilities = Set<Service.Capability>([ DataPacket.pingPacketType ])
     
@@ -110,7 +112,7 @@ public class PingService: Service {
         notification.informativeText = try? dataPacket.getMessage() ?? "Ping!"
         notification.soundName = NSUserNotificationDefaultSoundName
         notification.hasActionButton = false
-        notification.identifier = "com.soduto.pingservice.ping.device.\(device.id)"
+        notification.identifier = "\(self.id).\(device.id)"
         NSUserNotificationCenter.default.scheduleNotification(notification)
         
         _ = Timer.compatScheduledTimer(withTimeInterval: 5.0, repeats: false) { _ in

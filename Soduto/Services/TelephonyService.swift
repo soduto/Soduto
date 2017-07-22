@@ -30,11 +30,11 @@ public class TelephonyService: Service, UserNotificationActionHandler {
     // MARK: Types
     
     enum NotificationProperty: String {
-        case deviceId = "com.soduto.TelephonyService.notification.deviceId"
-        case event = "com.soduto.TelephonyService.notification.event"
-        case phoneNumber = "com.soduto.TelephonyService.notification.phoneNumber"
-        case contactName = "com.soduto.TelephonyService.notification.contactName"
-        case originalMessage = "com.soduto.TelephonyService.notification.originalMessage"
+        case deviceId = "com.soduto.services.telephony.notification.deviceId"
+        case event = "com.soduto.services.telephony.notification.event"
+        case phoneNumber = "com.soduto.services.telephony.notification.phoneNumber"
+        case contactName = "com.soduto.services.telephony.notification.contactName"
+        case originalMessage = "com.soduto.services.telephony.notification.originalMessage"
     }
     
     
@@ -50,6 +50,8 @@ public class TelephonyService: Service, UserNotificationActionHandler {
     
     
     // MARK: Service properties
+    
+    public let id: Service.Id = "com.soduto.services.telephony"
     
     public let incomingCapabilities = Set<Service.Capability>([ DataPacket.telephonyPacketType ])
     public let outgoingCapabilities = Set<Service.Capability>([ DataPacket.telephonyRequestPacketType, DataPacket.smsRequestPacketType ])
@@ -169,11 +171,11 @@ public class TelephonyService: Service, UserNotificationActionHandler {
             // For SMS notifications we want them to be uniqueue per contact 
             // TODO: or should it be unique per message?
             let phoneNumber = (try? dataPacket.getPhoneNumber())??.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? "unknownPhoneNumber"
-            return "com.soduto.TelephonyService.\(deviceId).sms.\(phoneNumber)"
+            return "\(self.id).\(deviceId).sms.\(phoneNumber)"
         }
         else {
             // For calling notifications we use ids unique per device
-            return "com.soduto.TelephonyService.\(deviceId).call"
+            return "\(self.id).\(deviceId).call"
         }
     }
     

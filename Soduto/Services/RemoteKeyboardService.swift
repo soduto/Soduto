@@ -14,6 +14,8 @@ public class RemoteKeyboardService: Service {
     
     // MARK: Service
     
+    public let id: Service.Id = "com.soduto.services.remotekeyboard"
+    
     public let incomingCapabilities = Set<Service.Capability>([ DataPacket.remoteKeyboardRequestPacketType ])
     public let outgoingCapabilities = Set<Service.Capability>([ DataPacket.remoteKeyboardEchoPacketType ])
     

@@ -42,6 +42,8 @@ public class BatteryService: Service {
     
     // MARK: Service
     
+    public let id: Service.Id = "com.soduto.services.battery"
+    
     public let incomingCapabilities = Set<Service.Capability>([ DataPacket.batteryPacketType ])
     public let outgoingCapabilities = Set<Service.Capability>([ DataPacket.batteryPacketType ])
     
@@ -107,7 +109,7 @@ public class BatteryService: Service {
     }
     
     private func notificationId(for device: Device) -> NSUserNotification.Id {
-        return "com.soduto.batteryservice.\(device.id)"
+        return "\(self.id).\(device.id)"
     }
     
     private func showNotification(for device: Device, withStatus status: BatteryStatus) {

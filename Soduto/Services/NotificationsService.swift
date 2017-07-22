@@ -49,13 +49,15 @@ public class NotificationsService: Service, UserNotificationActionHandler {
     public typealias NotificationId = String
     
     enum UserInfoProperty: String {
-        case deviceId = "com.soduto.NotificationService.deviceId"
-        case notificationId = "com.soduto.NotificationService.notificationId"
-        case isCancelable = "com.soduto.NotificationService.isCancelable"
+        case deviceId = "com.soduto.services.notifications.deviceId"
+        case notificationId = "com.soduto.services.notifications.notificationId"
+        case isCancelable = "com.soduto.services.notifications.isCancelable"
     }
     
     
     // MARK: Service properties
+    
+    public let id: Service.Id = "com.soduto.services.notifications"
     
     public let incomingCapabilities = Set<Service.Capability>([ DataPacket.notificationPacketType ])
     public let outgoingCapabilities = Set<Service.Capability>([ DataPacket.notificationPacketType ])
@@ -138,7 +140,7 @@ public class NotificationsService: Service, UserNotificationActionHandler {
         guard let deviceId = device.id.addingPercentEncoding(withAllowedCharacters: .alphanumerics) else { return nil }
         guard let packetId = (try? dataPacket.getId())??.addingPercentEncoding(withAllowedCharacters: .alphanumerics) else { return nil }
         
-        return "com.soduto.notificationsservice.\(deviceId).\(packetId)"
+        return "\(self.id).\(deviceId).\(packetId)"
     }
     
     private func showNotification(for dataPacket: DataPacket, from device: Device) {

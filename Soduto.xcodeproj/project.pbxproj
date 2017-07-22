@@ -11,6 +11,8 @@
 		0223974F1F0908FB00B0C70A /* TextFieldWithLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0223974E1F0908FB00B0C70A /* TextFieldWithLinks.swift */; };
 		0225F6111F06E2380021BFE2 /* NSAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0225F6101F06E2380021BFE2 /* NSAttributedString.swift */; };
 		026BFB581F194D7D00D888E2 /* DeviceInfoWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026BFB571F194D7D00D888E2 /* DeviceInfoWindowController.swift */; };
+		02EC48B51F229CCE00C9370F /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EC48B41F229CCE00C9370F /* Configuration.swift */; };
+		02EC48B71F229CEE00C9370F /* ServiceConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EC48B61F229CEE00C9370F /* ServiceConfiguration.swift */; };
 		840538201ED62282003798AA /* WelcomeWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8405381F1ED62282003798AA /* WelcomeWindowController.swift */; };
 		840FC2F91DEF6AF400AC4824 /* ClipboardService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840FC2F81DEF6AF400AC4824 /* ClipboardService.swift */; };
 		84218DC81D789BAB00C7CEBE /* DeviceListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84218DC71D789BAB00C7CEBE /* DeviceListItemView.swift */; };
@@ -47,7 +49,6 @@
 		8440FCF71E6CA68300E5BFA9 /* FileSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8440FCF61E6CA68300E5BFA9 /* FileSystem.swift */; };
 		8440FD071E6CA6CA00E5BFA9 /* LocalFileSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8440FD061E6CA6CA00E5BFA9 /* LocalFileSystem.swift */; };
 		844AF28F1ED6185100422B7F /* DevicesList.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 844AF28E1ED6185100422B7F /* DevicesList.storyboard */; };
-		8450274B1DAABB9900C20247 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8450274A1DAABB9900C20247 /* Configuration.swift */; };
 		8456F4A81D7DE393006EFE19 /* Pairable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456F4A71D7DE393006EFE19 /* Pairable.swift */; };
 		8456F4AA1D7DEA47006EFE19 /* DefaultPairingHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456F4A91D7DEA47006EFE19 /* DefaultPairingHandler.swift */; };
 		845847301E75D33600EE5A09 /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8458472F1E75D33600EE5A09 /* URL.swift */; };
@@ -429,6 +430,8 @@
 		0223974E1F0908FB00B0C70A /* TextFieldWithLinks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldWithLinks.swift; sourceTree = "<group>"; };
 		0225F6101F06E2380021BFE2 /* NSAttributedString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSAttributedString.swift; sourceTree = "<group>"; };
 		026BFB571F194D7D00D888E2 /* DeviceInfoWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoWindowController.swift; sourceTree = "<group>"; };
+		02EC48B41F229CCE00C9370F /* Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Configuration.swift; path = Configuration/Configuration.swift; sourceTree = "<group>"; };
+		02EC48B61F229CEE00C9370F /* ServiceConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceConfiguration.swift; sourceTree = "<group>"; };
 		8405381F1ED62282003798AA /* WelcomeWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeWindowController.swift; sourceTree = "<group>"; };
 		840FC2F81DEF6AF400AC4824 /* ClipboardService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClipboardService.swift; sourceTree = "<group>"; };
 		841E814C1D809C360096A846 /* Soduto.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Soduto.entitlements; sourceTree = "<group>"; };
@@ -467,7 +470,6 @@
 		8440FCF61E6CA68300E5BFA9 /* FileSystem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileSystem.swift; sourceTree = "<group>"; };
 		8440FD061E6CA6CA00E5BFA9 /* LocalFileSystem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalFileSystem.swift; sourceTree = "<group>"; };
 		844AF28E1ED6185100422B7F /* DevicesList.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = DevicesList.storyboard; sourceTree = "<group>"; };
-		8450274A1DAABB9900C20247 /* Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		8454D12C1D34228D00788632 /* Soduto-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Soduto-Bridging-Header.h"; sourceTree = "<group>"; };
 		8456F4A71D7DE393006EFE19 /* Pairable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pairable.swift; sourceTree = "<group>"; };
 		8456F4A91D7DEA47006EFE19 /* DefaultPairingHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultPairingHandler.swift; sourceTree = "<group>"; };
@@ -596,6 +598,15 @@
 				84FE71131F1EA3BA000B44F9 /* SwiftCompat.swift */,
 			);
 			path = Utils;
+			sourceTree = "<group>";
+		};
+		02EC48A91F2296C600C9370F /* Configuration */ = {
+			isa = PBXGroup;
+			children = (
+				02EC48B41F229CCE00C9370F /* Configuration.swift */,
+				02EC48B61F229CEE00C9370F /* ServiceConfiguration.swift */,
+			);
+			name = Configuration;
 			sourceTree = "<group>";
 		};
 		8421A8DF1D75FEA0008AC833 /* XIB */ = {
@@ -733,9 +744,9 @@
 		8456F4A41D7DE31A006EFE19 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				02EC48A91F2296C600C9370F /* Configuration */,
 				8468BDFE1DEB7F5F003B9925 /* Utils */,
 				84D903A11DC696A600E61DA7 /* CertificateUtils.swift */,
-				8450274A1DAABB9900C20247 /* Configuration.swift */,
 				84FA45CF1DDDCB3D00EF3992 /* Connection.swift */,
 				84FA45D01DDDCB3D00EF3992 /* ConnectionProvider.swift */,
 				84FA45D11DDDCB3D00EF3992 /* DataPacket.swift */,
@@ -1342,6 +1353,7 @@
 				84C613E31DECBF6C00CE7F7A /* UploadTask.swift in Sources */,
 				84FA45E81DDE088B00EF3992 /* ServiceManager.swift in Sources */,
 				84FA45DB1DDDCB3D00EF3992 /* DeviceManager.swift in Sources */,
+				02EC48B51F229CCE00C9370F /* Configuration.swift in Sources */,
 				840FC2F91DEF6AF400AC4824 /* ClipboardService.swift in Sources */,
 				849962131D572B1F002B893A /* Logging.m in Sources */,
 				843107731E3D32A300AE96AB /* SendMessageWindowController.swift in Sources */,
@@ -1357,8 +1369,8 @@
 				84FA45D91DDDCB3D00EF3992 /* DataPacket.swift in Sources */,
 				8FC977F11D4778E9001ADF7E /* StatusBarMenuController.swift in Sources */,
 				843B670A1DF2CEC400289EC9 /* DownloadTask.swift in Sources */,
-				8450274B1DAABB9900C20247 /* Configuration.swift in Sources */,
 				84FA45DE1DDDCB3D00EF3992 /* UnsafePointersUtils.swift in Sources */,
+				02EC48B71F229CEE00C9370F /* ServiceConfiguration.swift in Sources */,
 				84B933EF1E281AB40071DEFF /* CertificateUtils.m in Sources */,
 				849237A11DE224CF00D95BBA /* FindMyPhoneService.swift in Sources */,
 				84FA45E41DDDDB7F00EF3992 /* InterfaceElementTags.swift in Sources */,

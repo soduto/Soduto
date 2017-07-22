@@ -57,6 +57,8 @@ public class ShareService: NSObject, Service, DownloadTaskDelegate, UserNotifica
     
     // MARK: Service properties
     
+    public let id: Service.Id = "com.soduto.services.share"
+    
     private static let dragTypes: [NSPasteboard.PasteboardType] = [
         NSPasteboard.PasteboardType(rawValue: kUTTypeFileURL as String),
         NSPasteboard.PasteboardType(rawValue: kUTTypeURL as String),
@@ -390,7 +392,7 @@ public class ShareService: NSObject, Service, DownloadTaskDelegate, UserNotifica
         notification.soundName = NSUserNotificationDefaultSoundName
         notification.hasActionButton = succeeded && finalUrl != nil
         notification.actionButtonTitle = "Open"
-        notification.identifier = "com.soduto.ShareService.download.\(task.id)"
+        notification.identifier = "\(self.id).download.\(task.id)"
         NSUserNotificationCenter.default.scheduleNotification(notification)
         
         if !succeeded {
