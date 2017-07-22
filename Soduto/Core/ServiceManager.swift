@@ -60,7 +60,7 @@ public class ServiceManager: CapabilitiesDataSource {
         }
     }
     
-    /// Clenup services for provided device. This is done when device becomes unavailable or not unpaired
+    /// Cleanup services for provided device. This is done when device becomes unavailable or not unpaired
     public func cleanup(for device: Device) {
         for service in self.services {
             service.cleanup(for: device)

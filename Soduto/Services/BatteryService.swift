@@ -9,6 +9,7 @@
 import Foundation
 import Cocoa
 import CleanroomLogger
+import IOKit.ps
 
 /// This service receives packages with type "kdeconnect.battery" and reads the
 /// following fields:
@@ -32,6 +33,11 @@ public class BatteryService: Service {
     public struct BatteryStatus {
         var currentCharge: Int
         var isCharging: Bool
+        var isCritical: Bool { return !isCharging && currentCharge <= 2 }
+    }
+    
+    public enum BatteryStatusError: Error {
+        case readFailure(info: String)
     }
     
     
@@ -39,13 +45,25 @@ public class BatteryService: Service {
     
     public private(set) var statuses: [Device.Id:BatteryStatus] = [:]
     
+    private var devices: [Device] = []
+    private var runLoopSource: CFRunLoopSource?
+    private var lastBatteryStatus: BatteryStatus?
+    private let thresholdValue: Int = 15
+    
+    
+    // MARK: Setup / Cleanup
+    
+    deinit {
+        stopMonitoringBatteryState()
+    }
+    
     
     // MARK: Service
     
     public let id: Service.Id = "com.soduto.services.battery"
     
-    public let incomingCapabilities = Set<Service.Capability>([ DataPacket.batteryPacketType ])
-    public let outgoingCapabilities = Set<Service.Capability>([ DataPacket.batteryPacketType ])
+    public let incomingCapabilities = Set<Service.Capability>([ DataPacket.batteryPacketType, DataPacket.batteryRequestPacketType ])
+    public let outgoingCapabilities = Set<Service.Capability>([ DataPacket.batteryPacketType, DataPacket.batteryRequestPacketType ])
     
     public func handleDataPacket(_ dataPacket: DataPacket, fromDevice device: Device, onConnection connection: Connection) -> Bool {
         guard dataPacket.isBatteryPacket || dataPacket.isBatteryRequestPacket else { return false }
@@ -66,11 +84,27 @@ public class BatteryService: Service {
     }
     
     public func setup(for device: Device) {
+        guard !self.devices.contains(where: { $0.id == device.id }) else { return }
+        
+        self.devices.append(device)
+        
         device.send(DataPacket.batteryRequestPacket())
+        
+        if self.runLoopSource == nil {
+            self.startMonitoringBatteryState()
+        }
     }
     
     public func cleanup(for device: Device) {
         self.statuses.removeValue(forKey: device.id)
+        
+        guard let index = self.devices.index(where: { $0.id == device.id }) else { return }
+        
+        self.devices.remove(at: index)
+        
+        if self.devices.count == 0 {
+            self.stopMonitoringBatteryState()
+        }
     }
     
     public func actions(for device: Device) -> [ServiceAction] {
@@ -87,7 +121,8 @@ public class BatteryService: Service {
     
     private func handle(requestPacket packet: DataPacket, fromDevice device: Device) throws {
         guard try packet.getRequestFlag() else { return }
-        // TODO
+        guard let status = getBatteryStatus() else { return }
+        sendBatteryStatus(status, to: device)
     }
     
     private func handle(statusPacket packet: DataPacket, fromDevice device: Device) throws {
@@ -99,8 +134,7 @@ public class BatteryService: Service {
         
         let notificationId = self.notificationId(for: device)
         let hasNotification = NSUserNotificationCenter.default.containsDeliveredNotification(withId: notificationId)
-        let isCritical = !isCharging && currentCharge <= 2
-        if thresholdEvent == .batteryLow || hasNotification || isCritical {
+        if thresholdEvent == .batteryLow || hasNotification || newStatus.isCritical {
             self.showNotification(for: device, withStatus: newStatus)
         }
         else if isCharging {
@@ -129,6 +163,82 @@ public class BatteryService: Service {
         let notificationId = self.notificationId(for: device)
         NSUserNotificationCenter.default.removeNotification(withId: notificationId)
     }
+    
+    private func getBatteryStatus() -> BatteryStatus? {
+        do {
+            // Take a snapshot of all the power source info
+            guard let snapshot = IOPSCopyPowerSourcesInfo()?.takeRetainedValue()
+                else { throw BatteryStatusError.readFailure(info: "IOPSCopyPowerSourcesInfo failed") }
+            
+            // Pull out a list of power sources
+            guard let sources: NSArray = IOPSCopyPowerSourcesList(snapshot)?.takeRetainedValue()
+                else { throw BatteryStatusError.readFailure(info: "IOPSCopyPowerSourcesList failed") }
+            
+            // For each power source...
+            for ps in sources {
+                // Fetch the information for a given power source out of our snapshot
+                guard let info: NSDictionary = IOPSGetPowerSourceDescription(snapshot, ps as CFTypeRef)?.takeUnretainedValue()
+                    else { throw BatteryStatusError.readFailure(info: "IOPSGetPowerSourceDescription failed") }
+                
+                guard let capacity = info[kIOPSCurrentCapacityKey] as? Int else { continue }
+                guard let maxCapacity = info[kIOPSMaxCapacityKey] as? Int else { continue }
+                let isCharging = info[kIOPSIsChargingKey] as? Bool ?? false
+                
+                let currentCharge = Int(Double(capacity) / Double(maxCapacity) * 100.0)
+                return BatteryStatus(currentCharge: currentCharge, isCharging: isCharging)
+            }
+            
+            return nil
+            
+        }
+        catch {
+            Log.error?.message("Failed to read battery status information: \(error)")
+            return nil
+        }
+    }
+    
+    private func sendBatteryStatus(_ batteryStatus: BatteryStatus, to device: Device) {
+        let chargeDropped = (self.lastBatteryStatus?.currentCharge ?? 100) > batteryStatus.currentCharge
+        let chargeDropedBelowThreshold = chargeDropped && batteryStatus.currentCharge <= self.thresholdValue
+        let thresholdEvent: DataPacket.ThresholdEvent = batteryStatus.isCritical || (chargeDropedBelowThreshold && !batteryStatus.isCharging) ? .batteryLow : .none
+        let packet = DataPacket.batteryPacket(currentCharge: batteryStatus.currentCharge, isCharging: batteryStatus.isCharging, thresholdEvent: thresholdEvent)
+        device.send(packet)
+    }
+    
+    private func startMonitoringBatteryState() {
+        guard self.runLoopSource == nil else { return }
+        
+        let opaque = Unmanaged.passUnretained(self).toOpaque()
+        let context = UnsafeMutableRawPointer(opaque)
+        let source: CFRunLoopSource = IOPSNotificationCreateRunLoopSource(
+            PowerSourceChanged,
+            context
+        ).takeRetainedValue() as CFRunLoopSource
+        CFRunLoopAddSource(CFRunLoopGetCurrent(), source, CFRunLoopMode.defaultMode)
+        
+        self.runLoopSource = source
+    }
+    
+    private func stopMonitoringBatteryState() {
+        guard let source = self.runLoopSource else { return }
+        CFRunLoopRemoveSource(CFRunLoopGetCurrent(), source, CFRunLoopMode.defaultMode)
+        self.runLoopSource = nil
+        self.lastBatteryStatus = nil
+    }
+    
+    fileprivate func powerSourceChanged() {
+        guard let status = getBatteryStatus() else { return }
+        for device in self.devices {
+            sendBatteryStatus(status, to: device)
+        }
+        self.lastBatteryStatus = status
+    }
+}
+
+func PowerSourceChanged(context: UnsafeMutableRawPointer?) {
+    let opaque = Unmanaged<BatteryService>.fromOpaque(context!)
+    let _self = opaque.takeUnretainedValue()
+    _self.powerSourceChanged()
 }
 
 
@@ -175,6 +285,15 @@ fileprivate extension DataPacket {
         return DataPacket(type: batteryRequestPacketType, body: [
             BatteryProperty.request: true as AnyObject
         ])
+    }
+    
+    static func batteryPacket(currentCharge: Int, isCharging: Bool, thresholdEvent: ThresholdEvent) -> DataPacket {
+        return DataPacket(type: batteryPacketType, body: [
+            BatteryProperty.currentCharge: currentCharge as AnyObject,
+            BatteryProperty.isCharging: isCharging as AnyObject,
+            BatteryProperty.thresholdEvent: thresholdEvent.rawValue as AnyObject
+        ])
+
     }
     
     
