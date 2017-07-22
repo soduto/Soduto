@@ -180,6 +180,10 @@ public class ShareService: NSObject, Service, DownloadTaskDelegate, UserNotifica
     // MARK: NSDraggingDestination
     
     public dynamic func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
+        return draggingUpdated(sender)
+    }
+    
+    public dynamic func draggingUpdated(_ sender: NSDraggingInfo) -> NSDragOperation {
         guard self.validDevices.count > 0 else { return [] }
         
         let types: [String] = type(of: self).dragTypes.map { $0.rawValue }

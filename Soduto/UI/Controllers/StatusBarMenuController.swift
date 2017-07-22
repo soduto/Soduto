@@ -23,6 +23,8 @@ public class StatusBarMenuController: NSObject, NSWindowDelegate, NSMenuDelegate
     
     var preferencesWindowController: PreferencesWindowController?
     
+    private var dragOperationPerformed: Bool = false
+    
     override public func awakeFromNib() {
         let statusBarIcon = #imageLiteral(resourceName: "statusBarIcon")
         statusBarIcon.isTemplate = true
@@ -61,6 +63,7 @@ public class StatusBarMenuController: NSObject, NSWindowDelegate, NSMenuDelegate
     // MARK: Drag'n'Drop
     
     public dynamic func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
+        dragOperationPerformed = false
         for service in self.serviceManager?.services ?? [] {
             guard let destination = service as? NSDraggingDestination else { continue }
             guard let operation = destination.draggingEntered?(sender) else { continue }
@@ -70,7 +73,31 @@ public class StatusBarMenuController: NSObject, NSWindowDelegate, NSMenuDelegate
         return []
     }
     
+    public dynamic func draggingUpdated(_ sender: NSDraggingInfo) -> NSDragOperation {
+        dragOperationPerformed = false
+        for service in self.serviceManager?.services ?? [] {
+            guard let destination = service as? NSDraggingDestination else { continue }
+            guard let operation = destination.draggingUpdated?(sender) else { continue }
+            guard !operation.isEmpty else { continue }
+            return operation
+        }
+        return []
+    }
+    
+    public dynamic func draggingEnded(_ sender: NSDraggingInfo?) {
+        for service in self.serviceManager?.services ?? [] {
+            guard let destination = service as? NSDraggingDestination else { continue }
+            destination.draggingEnded?(sender)
+        }
+        
+        // A workaround for items dragged from dock stack - in such case performDragOperation is not called
+        if !dragOperationPerformed, let sender = sender, self.statusBarItem.button?.frame.contains(sender.draggingLocation()) == true {
+            _ = performDragOperation(sender)
+        }
+    }
+    
     public dynamic func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
+        dragOperationPerformed = true
         for service in self.serviceManager?.services ?? [] {
             guard let destination = service as? NSDraggingDestination else { continue }
             guard destination.performDragOperation?(sender) == true else { continue }
