@@ -10,13 +10,14 @@
 		02150DE81F17F98F00401CC6 /* DeviceInfoWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 02150DE61F17F98F00401CC6 /* DeviceInfoWindow.xib */; };
 		0223974F1F0908FB00B0C70A /* TextFieldWithLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0223974E1F0908FB00B0C70A /* TextFieldWithLinks.swift */; };
 		0225F6111F06E2380021BFE2 /* NSAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0225F6101F06E2380021BFE2 /* NSAttributedString.swift */; };
+		0248E0FF1F23C4AF00C411F7 /* DevicePreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0248E0FE1F23C4AF00C411F7 /* DevicePreferencesViewController.swift */; };
+		024B435F1F23BEEB00037A33 /* PreferencesWindow.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 024B435D1F23BEEB00037A33 /* PreferencesWindow.storyboard */; };
 		026BFB581F194D7D00D888E2 /* DeviceInfoWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026BFB571F194D7D00D888E2 /* DeviceInfoWindowController.swift */; };
 		02EC48B51F229CCE00C9370F /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EC48B41F229CCE00C9370F /* Configuration.swift */; };
 		02EC48B71F229CEE00C9370F /* ServiceConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EC48B61F229CEE00C9370F /* ServiceConfiguration.swift */; };
 		840538201ED62282003798AA /* WelcomeWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8405381F1ED62282003798AA /* WelcomeWindowController.swift */; };
 		840FC2F91DEF6AF400AC4824 /* ClipboardService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840FC2F81DEF6AF400AC4824 /* ClipboardService.swift */; };
 		84218DC81D789BAB00C7CEBE /* DeviceListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84218DC71D789BAB00C7CEBE /* DeviceListItemView.swift */; };
-		8421A8E21D75FF05008AC833 /* PreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8421A8E01D75FF05008AC833 /* PreferencesWindow.xib */; };
 		8421A8E71D761409008AC833 /* PreferencesWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8421A8E61D761409008AC833 /* PreferencesWindowController.swift */; };
 		842505E91ED1BD3C00AEE25F /* RemoteKeyboardService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842505E81ED1BD3C00AEE25F /* RemoteKeyboardService.swift */; };
 		842506371ED3692300AEE25F /* WelcomeWindow.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 842506351ED3692300AEE25F /* WelcomeWindow.storyboard */; };
@@ -429,6 +430,8 @@
 		02150DE71F17F98F00401CC6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/DeviceInfoWindow.xib; sourceTree = "<group>"; };
 		0223974E1F0908FB00B0C70A /* TextFieldWithLinks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldWithLinks.swift; sourceTree = "<group>"; };
 		0225F6101F06E2380021BFE2 /* NSAttributedString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSAttributedString.swift; sourceTree = "<group>"; };
+		0248E0FE1F23C4AF00C411F7 /* DevicePreferencesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DevicePreferencesViewController.swift; sourceTree = "<group>"; };
+		024B435E1F23BEEB00037A33 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/PreferencesWindow.storyboard; sourceTree = "<group>"; };
 		026BFB571F194D7D00D888E2 /* DeviceInfoWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoWindowController.swift; sourceTree = "<group>"; };
 		02EC48B41F229CCE00C9370F /* Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Configuration.swift; path = Configuration/Configuration.swift; sourceTree = "<group>"; };
 		02EC48B61F229CEE00C9370F /* ServiceConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceConfiguration.swift; sourceTree = "<group>"; };
@@ -436,7 +439,6 @@
 		840FC2F81DEF6AF400AC4824 /* ClipboardService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClipboardService.swift; sourceTree = "<group>"; };
 		841E814C1D809C360096A846 /* Soduto.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Soduto.entitlements; sourceTree = "<group>"; };
 		84218DC71D789BAB00C7CEBE /* DeviceListItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceListItemView.swift; sourceTree = "<group>"; };
-		8421A8E11D75FF05008AC833 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindow.xib; sourceTree = "<group>"; };
 		8421A8E61D761409008AC833 /* PreferencesWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesWindowController.swift; sourceTree = "<group>"; };
 		842505E81ED1BD3C00AEE25F /* RemoteKeyboardService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteKeyboardService.swift; sourceTree = "<group>"; };
 		842506361ED3692300AEE25F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/WelcomeWindow.storyboard; sourceTree = "<group>"; };
@@ -616,7 +618,7 @@
 				844AF28E1ED6185100422B7F /* DevicesList.storyboard */,
 				8461F35A1EC0FBC500E99C17 /* LoadingView.xib */,
 				843301671D2D8CB8008934BB /* MainMenu.xib */,
-				8421A8E01D75FF05008AC833 /* PreferencesWindow.xib */,
+				024B435D1F23BEEB00037A33 /* PreferencesWindow.storyboard */,
 				8431076F1E3D23C900AE96AB /* SendMessageWindow.xib */,
 				842506351ED3692300AEE25F /* WelcomeWindow.storyboard */,
 			);
@@ -653,6 +655,7 @@
 			children = (
 				026BFB571F194D7D00D888E2 /* DeviceInfoWindowController.swift */,
 				842506721ED4CEF800AEE25F /* DeviceListController.swift */,
+				0248E0FE1F23C4AF00C411F7 /* DevicePreferencesViewController.swift */,
 				849237EB1DE5FC9600D95BBA /* PairingInterfaceController.swift */,
 				8421A8E61D761409008AC833 /* PreferencesWindowController.swift */,
 				843107721E3D32A300AE96AB /* SendMessageWindowController.swift */,
@@ -1299,7 +1302,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8421A8E21D75FF05008AC833 /* PreferencesWindow.xib in Resources */,
 				849961B81D5726B0002B893A /* LICENSE.txt in Resources */,
 				843107711E3D23CA00AE96AB /* SendMessageWindow.xib in Resources */,
 				02150DE81F17F98F00401CC6 /* DeviceInfoWindow.xib in Resources */,
@@ -1308,6 +1310,7 @@
 				8461F35C1EC0FBC500E99C17 /* LoadingView.xib in Resources */,
 				843301661D2D8CB8008934BB /* Assets.xcassets in Resources */,
 				843301691D2D8CB8008934BB /* MainMenu.xib in Resources */,
+				024B435F1F23BEEB00037A33 /* PreferencesWindow.storyboard in Resources */,
 				842506371ED3692300AEE25F /* WelcomeWindow.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1349,6 +1352,7 @@
 			files = (
 				8468BDFB1DE8F10D003B9925 /* NotificationsService.swift in Sources */,
 				842506731ED4CEF800AEE25F /* DeviceListController.swift in Sources */,
+				0248E0FF1F23C4AF00C411F7 /* DevicePreferencesViewController.swift in Sources */,
 				84218DC81D789BAB00C7CEBE /* DeviceListItemView.swift in Sources */,
 				84C613E31DECBF6C00CE7F7A /* UploadTask.swift in Sources */,
 				84FA45E81DDE088B00EF3992 /* ServiceManager.swift in Sources */,
@@ -1543,12 +1547,12 @@
 			name = DeviceInfoWindow.xib;
 			sourceTree = "<group>";
 		};
-		8421A8E01D75FF05008AC833 /* PreferencesWindow.xib */ = {
+		024B435D1F23BEEB00037A33 /* PreferencesWindow.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				8421A8E11D75FF05008AC833 /* Base */,
+				024B435E1F23BEEB00037A33 /* Base */,
 			);
-			name = PreferencesWindow.xib;
+			name = PreferencesWindow.storyboard;
 			sourceTree = "<group>";
 		};
 		842506351ED3692300AEE25F /* WelcomeWindow.storyboard */ = {

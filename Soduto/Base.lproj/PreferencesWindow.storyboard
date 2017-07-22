@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="17A306f" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="QIk-mV-oFh">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12121"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Window Controller-->
+        <scene sceneID="CyF-16-nXU">
+            <objects>
+                <windowController id="QIk-mV-oFh" customClass="PreferencesWindowController" customModule="Soduto" customModuleProvider="target" sceneMemberID="viewController">
+                    <window key="window" title="Soduto Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="7Xx-Hj-IV7">
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+                        <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+                        <rect key="contentRect" x="196" y="240" width="680" height="400"/>
+                        <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
+                    </window>
+                    <connections>
+                        <segue destination="DvB-YZ-h1x" kind="relationship" relationship="window.shadowedContentViewController" id="A6u-U5-GiY"/>
+                    </connections>
+                </windowController>
+                <customObject id="iHk-G5-I9x" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-308" y="-266"/>
+        </scene>
+        <!--Device Preferences View Controller-->
+        <scene sceneID="lJS-zU-n7a">
+            <objects>
+                <viewController id="DvB-YZ-h1x" customClass="DevicePreferencesViewController" customModule="Soduto" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" wantsLayer="YES" id="gnx-Qc-teH">
+                        <rect key="frame" x="0.0" y="0.0" width="680" height="400"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="1St-dx-ejH">
+                                <rect key="frame" x="240" y="20" width="420" height="360"/>
+                                <connections>
+                                    <segue destination="NJm-NZ-OS4" kind="embed" id="sAC-j9-Ov0"/>
+                                </connections>
+                            </containerView>
+                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Nu6-PX-g25">
+                                <rect key="frame" x="40" y="248" width="172" height="112"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="112" id="BRh-GY-Swb"/>
+                                    <constraint firstAttribute="width" constant="172" id="CFB-5S-goK"/>
+                                </constraints>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="AppIcon" id="HWE-4F-dhu"/>
+                            </imageView>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JI8-Vn-Ayd" userLabel="Host name">
+                                <rect key="frame" x="18" y="203" width="216" height="17"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Host name" id="sAG-f5-P1a">
+                                    <font key="font" metaFont="titleBar"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="1St-dx-ejH" firstAttribute="leading" secondItem="JI8-Vn-Ayd" secondAttribute="trailing" constant="8" id="6sN-f4-H1h"/>
+                            <constraint firstItem="JI8-Vn-Ayd" firstAttribute="leading" secondItem="gnx-Qc-teH" secondAttribute="leading" constant="20" id="AyK-rz-M9I"/>
+                            <constraint firstAttribute="trailing" secondItem="1St-dx-ejH" secondAttribute="trailing" constant="20" id="B8B-bW-Eho"/>
+                            <constraint firstItem="1St-dx-ejH" firstAttribute="leading" secondItem="Nu6-PX-g25" secondAttribute="trailing" constant="28" id="IVQ-J9-Sgi"/>
+                            <constraint firstItem="1St-dx-ejH" firstAttribute="leading" secondItem="gnx-Qc-teH" secondAttribute="leading" constant="240" id="LFH-bh-UmZ"/>
+                            <constraint firstItem="JI8-Vn-Ayd" firstAttribute="top" secondItem="Nu6-PX-g25" secondAttribute="bottom" constant="28" id="QD6-OX-pYh"/>
+                            <constraint firstAttribute="bottom" secondItem="1St-dx-ejH" secondAttribute="bottom" constant="20" id="VZr-HA-JHk"/>
+                            <constraint firstItem="Nu6-PX-g25" firstAttribute="top" secondItem="gnx-Qc-teH" secondAttribute="top" constant="40" id="ZKF-dG-sIu"/>
+                            <constraint firstItem="1St-dx-ejH" firstAttribute="top" secondItem="gnx-Qc-teH" secondAttribute="top" constant="20" id="uOG-og-lRx"/>
+                            <constraint firstItem="Nu6-PX-g25" firstAttribute="leading" secondItem="gnx-Qc-teH" secondAttribute="leading" constant="40" id="vEl-YV-B8O"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="hostNameLabel" destination="JI8-Vn-Ayd" id="y72-cI-p8V"/>
+                    </connections>
+                </viewController>
+                <customObject id="c2y-hy-LHA" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="436" y="-273"/>
+        </scene>
+        <!--DevicesList-->
+        <scene sceneID="I3b-7o-XkM">
+            <objects>
+                <controllerPlaceholder storyboardName="DevicesList" id="NJm-NZ-OS4" sceneMemberID="viewController"/>
+                <customObject id="1Je-sa-LAO" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1163" y="-273"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="AppIcon" width="128" height="128"/>
+    </resources>
+</document>

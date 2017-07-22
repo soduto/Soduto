@@ -21,7 +21,12 @@ public class StatusBarMenuController: NSObject, NSWindowDelegate, NSMenuDelegate
     
     let statusBarItem = NSStatusBar.system().statusItem(withLength: NSStatusItem.squareLength)
     
-    var preferencesWindowController: PreferencesWindowController?
+    lazy var preferencesWindowController: PreferencesWindowController? = {
+        let controller = PreferencesWindowController.loadController()
+        controller.deviceDataSource = self.deviceDataSource
+        controller.config = self.config
+        return controller
+    }()
     
     private var dragOperationPerformed: Bool = false
     
@@ -51,11 +56,6 @@ public class StatusBarMenuController: NSObject, NSWindowDelegate, NSMenuDelegate
     }
     
     @IBAction func openPreferences(_ sender: AnyObject?) {
-        if self.preferencesWindowController == nil {
-            self.preferencesWindowController = PreferencesWindowController.loadController()
-            self.preferencesWindowController!.deviceDataSource = self.deviceDataSource
-            self.preferencesWindowController!.config = self.config
-        }
         self.preferencesWindowController?.showWindow(nil)
     }
     
