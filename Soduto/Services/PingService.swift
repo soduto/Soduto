@@ -83,7 +83,7 @@ public class PingService: Service {
         guard device.pairingStatus == .Paired else { return [] }
         
         return [
-            ServiceAction(id: ActionId.send.rawValue, group: "setup", title: "Test connection", description: "Send ping to the remote device to test connectivity", service: self, device: device)
+            ServiceAction(id: ActionId.send.rawValue, group: "setup", title: "Test Connection", description: "Send ping to the remote device to test connectivity", service: self, device: device)
         ]
     }
     
