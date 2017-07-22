@@ -86,24 +86,26 @@ public class BatteryService: Service {
     public func setup(for device: Device) {
         guard !self.devices.contains(where: { $0.id == device.id }) else { return }
         
-        self.devices.append(device)
+        if device.incomingCapabilities.contains(DataPacket.batteryRequestPacketType) {
+            device.send(DataPacket.batteryRequestPacket())
+        }
         
-        device.send(DataPacket.batteryRequestPacket())
-        
-        if self.runLoopSource == nil {
-            self.startMonitoringBatteryState()
+        if device.incomingCapabilities.contains(DataPacket.batteryPacketType) {
+            self.devices.append(device)
+            if self.runLoopSource == nil {
+                self.startMonitoringBatteryState()
+            }
         }
     }
     
     public func cleanup(for device: Device) {
         self.statuses.removeValue(forKey: device.id)
         
-        guard let index = self.devices.index(where: { $0.id == device.id }) else { return }
-        
-        self.devices.remove(at: index)
-        
-        if self.devices.count == 0 {
-            self.stopMonitoringBatteryState()
+        if let index = self.devices.index(where: { $0.id == device.id }) {
+            self.devices.remove(at: index)
+            if self.devices.count == 0 {
+                self.stopMonitoringBatteryState()
+            }
         }
     }
     
