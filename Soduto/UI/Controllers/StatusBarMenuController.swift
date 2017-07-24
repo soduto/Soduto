@@ -122,7 +122,7 @@ public class StatusBarMenuController: NSObject, NSWindowDelegate, NSMenuDelegate
     // MARK: Public methods
     
     func refreshDeviceLists() {
-        self.preferencesWindowController?.refreshDeviceList()
+        self.preferencesWindowController?.refreshDeviceLists()
     }
     
     

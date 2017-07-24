@@ -12,6 +12,7 @@
 		0225F6111F06E2380021BFE2 /* NSAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0225F6101F06E2380021BFE2 /* NSAttributedString.swift */; };
 		0248E0FF1F23C4AF00C411F7 /* DevicePreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0248E0FE1F23C4AF00C411F7 /* DevicePreferencesViewController.swift */; };
 		024B435F1F23BEEB00037A33 /* PreferencesWindow.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 024B435D1F23BEEB00037A33 /* PreferencesWindow.storyboard */; };
+		024F8B191F24FC7700D6E504 /* ServicePreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024F8B181F24FC7700D6E504 /* ServicePreferencesViewController.swift */; };
 		026BFB581F194D7D00D888E2 /* DeviceInfoWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026BFB571F194D7D00D888E2 /* DeviceInfoWindowController.swift */; };
 		02EC48B51F229CCE00C9370F /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EC48B41F229CCE00C9370F /* Configuration.swift */; };
 		02EC48B71F229CEE00C9370F /* ServiceConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EC48B61F229CEE00C9370F /* ServiceConfiguration.swift */; };
@@ -432,6 +433,7 @@
 		0225F6101F06E2380021BFE2 /* NSAttributedString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSAttributedString.swift; sourceTree = "<group>"; };
 		0248E0FE1F23C4AF00C411F7 /* DevicePreferencesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DevicePreferencesViewController.swift; sourceTree = "<group>"; };
 		024B435E1F23BEEB00037A33 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/PreferencesWindow.storyboard; sourceTree = "<group>"; };
+		024F8B181F24FC7700D6E504 /* ServicePreferencesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServicePreferencesViewController.swift; sourceTree = "<group>"; };
 		026BFB571F194D7D00D888E2 /* DeviceInfoWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoWindowController.swift; sourceTree = "<group>"; };
 		02EC48B41F229CCE00C9370F /* Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Configuration.swift; path = Configuration/Configuration.swift; sourceTree = "<group>"; };
 		02EC48B61F229CEE00C9370F /* ServiceConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceConfiguration.swift; sourceTree = "<group>"; };
@@ -643,9 +645,9 @@
 			children = (
 				84218DC71D789BAB00C7CEBE /* DeviceListItemView.swift */,
 				8492379C1DE1C55900D95BBA /* DeviceMenu.swift */,
+				84651A731E59F9C900D17601 /* MenuView.swift */,
 				8492379E1DE1C87600D95BBA /* ServiceActionMenuItem.swift */,
 				842B50561E4295D200969AA7 /* UnifiedTitlebarWindow.swift */,
-				84651A731E59F9C900D17601 /* MenuView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -659,6 +661,7 @@
 				849237EB1DE5FC9600D95BBA /* PairingInterfaceController.swift */,
 				8421A8E61D761409008AC833 /* PreferencesWindowController.swift */,
 				843107721E3D32A300AE96AB /* SendMessageWindowController.swift */,
+				024F8B181F24FC7700D6E504 /* ServicePreferencesViewController.swift */,
 				8FC977F01D4778E9001ADF7E /* StatusBarMenuController.swift */,
 				8405381F1ED62282003798AA /* WelcomeWindowController.swift */,
 			);
@@ -1375,6 +1378,7 @@
 				843B670A1DF2CEC400289EC9 /* DownloadTask.swift in Sources */,
 				84FA45DE1DDDCB3D00EF3992 /* UnsafePointersUtils.swift in Sources */,
 				02EC48B71F229CEE00C9370F /* ServiceConfiguration.swift in Sources */,
+				024F8B191F24FC7700D6E504 /* ServicePreferencesViewController.swift in Sources */,
 				84B933EF1E281AB40071DEFF /* CertificateUtils.m in Sources */,
 				849237A11DE224CF00D95BBA /* FindMyPhoneService.swift in Sources */,
 				84FA45E41DDDDB7F00EF3992 /* InterfaceElementTags.swift in Sources */,
