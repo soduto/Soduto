@@ -30,7 +30,7 @@ public class FindMyPhoneService: Service {
     
     // MARK: Service properties
     
-    public let id: Service.Id = "com.soduto.services.findmyphone"
+    public static let serviceId: Service.Id = "com.soduto.services.findmyphone"
     
     public let incomingCapabilities = Set<Service.Capability>()
     public let outgoingCapabilities = Set<Service.Capability>([ DataPacket.findMyPhoneRequestPacketType ])

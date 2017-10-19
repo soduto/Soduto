@@ -35,7 +35,7 @@ public class ClipboardService: Service {
     
     // MARK: Service
     
-    public let id: Service.Id = "com.soduto.services.clipboard"
+    public static let serviceId: Service.Id = "com.soduto.services.clipboard"
     
     public let incomingCapabilities = Set<Service.Capability>([ DataPacket.clipboardPacketType ])
     public let outgoingCapabilities = Set<Service.Capability>([ DataPacket.clipboardPacketType ])

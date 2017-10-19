@@ -59,7 +59,7 @@ public class PingService: Service {
     
     // MARK: Service properties
     
-    public let id: Service.Id = "com.soduto.services.ping"
+    public static let serviceId: Service.Id = "com.soduto.services.ping"
     
     public let incomingCapabilities = Set<Service.Capability>([ DataPacket.pingPacketType ])
     public let outgoingCapabilities = Set<Service.Capability>([ DataPacket.pingPacketType ])

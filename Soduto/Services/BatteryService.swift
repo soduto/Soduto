@@ -60,7 +60,7 @@ public class BatteryService: Service {
     
     // MARK: Service
     
-    public let id: Service.Id = "com.soduto.services.battery"
+    public static let serviceId: Service.Id = "com.soduto.services.battery"
     
     public let incomingCapabilities = Set<Service.Capability>([ DataPacket.batteryPacketType, DataPacket.batteryRequestPacketType ])
     public let outgoingCapabilities = Set<Service.Capability>([ DataPacket.batteryPacketType, DataPacket.batteryRequestPacketType ])

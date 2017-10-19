@@ -51,7 +51,7 @@ public class TelephonyService: Service, UserNotificationActionHandler {
     
     // MARK: Service properties
     
-    public let id: Service.Id = "com.soduto.services.telephony"
+    public static let serviceId: Service.Id = "com.soduto.services.telephony"
     
     public let incomingCapabilities = Set<Service.Capability>([ DataPacket.telephonyPacketType ])
     public let outgoingCapabilities = Set<Service.Capability>([ DataPacket.telephonyRequestPacketType, DataPacket.smsRequestPacketType ])

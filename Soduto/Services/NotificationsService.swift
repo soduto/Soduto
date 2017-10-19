@@ -57,7 +57,7 @@ public class NotificationsService: Service, UserNotificationActionHandler {
     
     // MARK: Service properties
     
-    public let id: Service.Id = "com.soduto.services.notifications"
+    public static let serviceId: Service.Id = "com.soduto.services.notifications"
     
     public let incomingCapabilities = Set<Service.Capability>([ DataPacket.notificationPacketType ])
     public let outgoingCapabilities = Set<Service.Capability>([ DataPacket.notificationPacketType ])

@@ -13,7 +13,7 @@ public protocol Service: class, DeviceDataPacketHandler {
     typealias Capability = String
     typealias Id = String
     
-    var id: Id { get }
+    static var serviceId: Id { get }
     
     var incomingCapabilities: Set<Capability> { get }
     var outgoingCapabilities: Set<Capability> { get }
@@ -23,4 +23,8 @@ public protocol Service: class, DeviceDataPacketHandler {
     
     func actions(for device: Device) -> [ServiceAction]
     func performAction(_ id: ServiceAction.Id, forDevice device: Device)
+}
+
+extension Service {
+    var id: Id { return type(of: self).serviceId }
 }

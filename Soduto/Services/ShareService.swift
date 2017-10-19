@@ -57,7 +57,7 @@ public class ShareService: NSObject, Service, DownloadTaskDelegate, UserNotifica
     
     // MARK: Service properties
     
-    public let id: Service.Id = "com.soduto.services.share"
+    public static let serviceId: Service.Id = "com.soduto.services.share"
     
     private static let dragTypes: [NSPasteboard.PasteboardType] = [
         NSPasteboard.PasteboardType(rawValue: kUTTypeFileURL as String),
