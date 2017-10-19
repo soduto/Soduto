@@ -237,6 +237,10 @@ public protocol HostConfiguration {
     var outgoingCapabilities: Set<Service.Capability> { get }
 }
 
+public protocol ServicesConfiguartion {
+    func serviceConfig(for serviceId:Service.Id) -> ServiceConfiguration
+}
+
 public class Configuration: ConnectionConfiguration, DeviceManagerConfiguration, HostConfiguration {
     
     enum Property: String {
@@ -302,6 +306,10 @@ public class Configuration: ConnectionConfiguration, DeviceManagerConfiguration,
         }
         
         return configs
+    }
+    
+    public func serviceConfig(for serviceId: Service.Id) -> ServiceConfiguartion {
+        return ServiceConfiguartion(serviceId: serviceId, userDefaults: self.userDefaults)
     }
     
     public var incomingCapabilities: Set<Service.Capability> {
