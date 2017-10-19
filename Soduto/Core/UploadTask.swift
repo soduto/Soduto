@@ -37,7 +37,7 @@ public class UploadTask: NSObject, GCDAsyncSocketDelegate {
     
     private static let startPort: UInt16 = 1739
     private static let endPort: UInt16 = 1764
-    private static let maxBufferSize = 1024 * 64
+    private static let maxBufferSize = 1024 * 1024 * 32 // optimized for SSD reading (http://codecapsule.com/2014/02/12/coding-for-ssds-part-6-a-summary-what-every-programmer-should-know-about-solid-state-drives/)
     private static let listenTimeout = 30.0
     private static let uploadTimeout = 30.0
     private static var portsManagementLock = NSLock()

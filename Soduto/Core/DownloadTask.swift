@@ -25,7 +25,7 @@ public class DownloadTask: NSObject, GCDAsyncSocketDelegate {
     
     // MARK: Properties
     
-    private static let bufferSize = 1024 * 64
+    private static let bufferSize = 1024 * 1024 * 32 // optimized for SSD writing (http://codecapsule.com/2014/02/12/coding-for-ssds-part-6-a-summary-what-every-programmer-should-know-about-solid-state-drives/)
     private static let downloadTimeout = 30.0
     
     public weak var delegate: DownloadTaskDelegate? = nil
