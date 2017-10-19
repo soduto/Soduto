@@ -19,7 +19,7 @@ public class StatusBarMenuController: NSObject, NSWindowDelegate, NSMenuDelegate
     public var serviceManager: ServiceManager?
     public var config: Configuration?
     
-    let statusBarItem = NSStatusBar.system().statusItem(withLength: NSStatusItem.squareLength)
+    let statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
     
     lazy var preferencesWindowController: PreferencesWindowController? = {
         let controller = PreferencesWindowController.loadController()
@@ -84,14 +84,14 @@ public class StatusBarMenuController: NSObject, NSWindowDelegate, NSMenuDelegate
         return []
     }
     
-    public dynamic func draggingEnded(_ sender: NSDraggingInfo?) {
+    public dynamic func draggingEnded(_ sender: NSDraggingInfo) {
         for service in self.serviceManager?.services ?? [] {
             guard let destination = service as? NSDraggingDestination else { continue }
             destination.draggingEnded?(sender)
         }
         
         // A workaround for items dragged from dock stack - in such case performDragOperation is not called
-        if !dragOperationPerformed, let sender = sender, self.statusBarItem.button?.frame.contains(sender.draggingLocation()) == true {
+        if !dragOperationPerformed && self.statusBarItem.button?.frame.contains(sender.draggingLocation()) == true {
             _ = performDragOperation(sender)
         }
     }
@@ -114,7 +114,7 @@ public class StatusBarMenuController: NSObject, NSWindowDelegate, NSMenuDelegate
         
         if menu == self.statusBarMenu {
             self.refreshMenuDeviceList()
-            self.launchOnLoginItem.state = (self.config?.launchOnLogin ?? false) ? NSControl.StateValue.onState : NSControl.StateValue.offState
+            self.launchOnLoginItem.state = (self.config?.launchOnLogin ?? false) ? NSControl.StateValue.on : NSControl.StateValue.off
         }
     }
     
@@ -179,7 +179,7 @@ public class StatusBarMenuController: NSObject, NSWindowDelegate, NSMenuDelegate
                     chargingIcon.draw(in: rect)
                     return true
                 }
-                if let context = NSGraphicsContext.current(),
+                if let context = NSGraphicsContext.current,
                     let cgMask = mask.cgImage(forProposedRect: &rect, context: context, hints: nil),
                     let cgMask2 = CGImage(maskWidth: cgMask.width, height: cgMask.height, bitsPerComponent: cgMask.bitsPerComponent, bitsPerPixel: cgMask.bitsPerPixel, bytesPerRow: cgMask.bytesPerRow, provider: cgMask.dataProvider!, decode: nil, shouldInterpolate: false) {
                     

@@ -37,7 +37,7 @@ class DevicePreferencesViewController: NSViewController {
             let label = NSMutableAttributedString(string: NSLocalizedString("This device is discoverable as", comment: "") + ":")
             label.addAttributes([
                 NSAttributedStringKey.foregroundColor: NSColor.disabledControlTextColor,
-                NSAttributedStringKey.font: NSFont.systemFont(ofSize: NSFont.smallSystemFontSize())
+                NSAttributedStringKey.font: NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
                 ], range: NSMakeRange(0, label.length))
             label.append(NSAttributedString(string: "\n\(hostName)"))
             label.setAlignment(.center, range: NSMakeRange(0, label.length))

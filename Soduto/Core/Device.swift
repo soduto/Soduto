@@ -159,8 +159,7 @@ public class Device: ConnectionDelegate, PairableDelegate, Pairable, CustomStrin
         // do it after new connection added to avoid unnecessary device state switches (especially to .Unavailable)
         let index = self.connections.index { c in
             guard c !== connection else { return false }
-//            return Swift.type(of: c) == Swift.type(of: connection)
-            return type(of: c) == type(of: connection)
+            return Swift.type(of: c) == Swift.type(of: connection)
         }
         if let index = index {
             let dismissedConnection = self.connections.remove(at: index)

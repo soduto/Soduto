@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class ServiceConfiguartion {
+public class ServiceConfiguration {
     
     // MARK: Properties
     
@@ -81,7 +81,7 @@ public class ServiceConfiguartion {
 
 // MARK: - Specialized Configuration Values
 
-extension ServiceConfiguartion {
+extension ServiceConfiguration {
     
     // MARK: Types
     

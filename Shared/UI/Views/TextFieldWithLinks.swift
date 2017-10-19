@@ -111,7 +111,7 @@ public class TextFieldWithLinks: NSTextField {
         
         for info in self.linkInfos {
             for rect in info.rects {
-                addCursorRect(rect, cursor: NSCursor.pointingHand())
+                addCursorRect(rect, cursor: NSCursor.pointingHand)
             }
         }
     }
@@ -130,7 +130,7 @@ public class TextFieldWithLinks: NSTextField {
         
         for info in linkInfos {
             guard info.range.contains(index) else { continue }
-            NSWorkspace.shared().open(info.link)
+            NSWorkspace.shared.open(info.link)
         }
     }
     

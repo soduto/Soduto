@@ -51,7 +51,7 @@ public class FileItem: NSObject, NSPasteboardReading, NSPasteboardWriting {
     
     public convenience init(url: URL) {
         if url.isFileURL {
-            let icon = NSWorkspace.shared().icon(forFile: url.path)
+            let icon = NSWorkspace.shared.icon(forFile: url.path)
             do {
                 let resourceValues = try url.resourceValues(forKeys: [URLResourceKey.isHiddenKey, URLResourceKey.localizedNameKey, URLResourceKey.isDirectoryKey])
                 let name = resourceValues.localizedName ?? url.lastPathComponent
@@ -79,7 +79,7 @@ public class FileItem: NSObject, NSPasteboardReading, NSPasteboardWriting {
             if url.hasDirectoryPath { flags.insert(.isDirectory) }
             if url.lastPathComponent.hasPrefix(".") { flags.insert(.isHidden) }
             let fileType: String = flags.contains(.isDirectory) ? String(kUTTypeDirectory) : url.pathExtension
-            let icon = NSWorkspace.shared().icon(forFileType: fileType)
+            let icon = NSWorkspace.shared.icon(forFileType: fileType)
             self.init(url: url, name: name, icon: icon, flags: flags)
 
         }

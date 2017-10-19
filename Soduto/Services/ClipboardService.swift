@@ -27,7 +27,7 @@ public class ClipboardService: Service {
     private static let monitoringInterval: TimeInterval = 0.5
     
     private var monitoringTimer: Timer? = nil
-    private var lastChangeCount: Int = NSPasteboard.general().changeCount
+    private var lastChangeCount: Int = NSPasteboard.general.changeCount
     private var lastExternalChangeCount: Int = -1
     private var lastExternalChangeDevice: Device? = nil
     private var devices: [Device] = []
@@ -46,8 +46,8 @@ public class ClipboardService: Service {
         guard let contents = try? dataPacket.getContent() else { return true }
         
         self.lastExternalChangeDevice = device
-        self.lastExternalChangeCount = NSPasteboard.general().clearContents()
-        NSPasteboard.general().writeObjects([ contents as NSString ])
+        self.lastExternalChangeCount = NSPasteboard.general.clearContents()
+        NSPasteboard.general.writeObjects([ contents as NSString ])
         
         return true
     }
@@ -97,12 +97,12 @@ public class ClipboardService: Service {
     }
     
     private func checkPasteboard() {
-        guard NSPasteboard.general().changeCount != self.lastChangeCount else { return }
-        guard let items = NSPasteboard.general().readObjects(forClasses: [ NSString.self ], options: nil) else { return }
+        guard NSPasteboard.general.changeCount != self.lastChangeCount else { return }
+        guard let items = NSPasteboard.general.readObjects(forClasses: [ NSString.self ], options: nil) else { return }
         guard items.count > 0 else { return }
         guard let content = items[0] as? String else { return }
         
-        self.lastChangeCount = NSPasteboard.general().changeCount
+        self.lastChangeCount = NSPasteboard.general.changeCount
         
         for device in self.devices {
             guard !(self.lastChangeCount == self.lastExternalChangeCount && self.lastExternalChangeDevice === device) else { continue }

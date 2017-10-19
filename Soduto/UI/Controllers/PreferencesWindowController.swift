@@ -35,7 +35,7 @@ public class PreferencesWindowController: NSWindowController {
     public override func windowDidLoad() {
         super.windowDidLoad()
         
-        let screenRect = NSScreen.main()?.frame ?? NSRect.zero
+        let screenRect = NSScreen.main?.frame ?? NSRect.zero
         self.window?.setFrame(NSRect(x: screenRect.width / 2 - 340, y: screenRect.height / 2 - 200, width: 680, height: 400), display: false)
         
         self.preferencesTabViewController?.deviceDataSource = self.deviceDataSource

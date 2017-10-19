@@ -308,8 +308,8 @@ public class Configuration: ConnectionConfiguration, DeviceManagerConfiguration,
         return configs
     }
     
-    public func serviceConfig(for serviceId: Service.Id) -> ServiceConfiguartion {
-        return ServiceConfiguartion(serviceId: serviceId, userDefaults: self.userDefaults)
+    public func serviceConfig(for serviceId: Service.Id) -> ServiceConfiguration {
+        return ServiceConfiguration(serviceId: serviceId, userDefaults: self.userDefaults)
     }
     
     public var incomingCapabilities: Set<Service.Capability> {

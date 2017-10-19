@@ -73,11 +73,11 @@ public class IconItemView: NSBox, NSTextFieldDelegate {
     public override func mouseUp(with event: NSEvent) {
         if event.clickCount == 1 {
             if let location = self.superview?.convert(event.locationInWindow, from: nil), hitTest(location) == self.labelView {
-                NSApplication.shared().sendAction(#selector(BrowserWindowController.collectionItemViewLabelClick(_:)), to: nil, from: self.collectionItem)
+                NSApplication.shared.sendAction(#selector(BrowserWindowController.collectionItemViewLabelClick(_:)), to: nil, from: self.collectionItem)
             }
         }
         else if event.clickCount == 2 {
-            NSApplication.shared().sendAction(#selector(BrowserWindowController.collectionItemViewDoubleClick(_:)), to: nil, from: self.collectionItem)
+            NSApplication.shared.sendAction(#selector(BrowserWindowController.collectionItemViewDoubleClick(_:)), to: nil, from: self.collectionItem)
         }
         super.mouseUp(with: event)
     }

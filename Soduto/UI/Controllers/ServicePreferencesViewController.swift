@@ -78,7 +78,7 @@ extension ServicePreferencesViewController: NSTableViewDelegate {
             device = nil
         }
         
-        if let view = tableView.make(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "DeviceItemID"), owner: nil) as? DeviceListItemView {
+        if let view = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "DeviceItemID"), owner: nil) as? DeviceListItemView {
             view.defaultTextString = NSLocalizedString("Default", comment: "Default config for all devices")
             view.defaultInfoString = NSLocalizedString("All devices", comment: "Default config for all devices")
             view.device = device

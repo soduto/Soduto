@@ -90,10 +90,10 @@ public class ShareService: NSObject, Service, DownloadTaskDelegate, UserNotifica
                 let fileName = try dataPacket.getFilename() ?? "\(UUID().uuidString).txt"
                 let fullURL = URL(fileURLWithPath: fileName, relativeTo: URL(fileURLWithPath: directory, isDirectory: true))
                 try text.write(to: fullURL, atomically: true, encoding: .utf8)
-                NSWorkspace.shared().open(fullURL)
+                NSWorkspace.shared.open(fullURL)
             }
             else if let urlString = try dataPacket.getUrl(), let url = URL(string: urlString) {
-                NSWorkspace.shared().open(url)
+                NSWorkspace.shared.open(url)
             }
             else {
                 Log.error?.message("Unknown shared content")
@@ -175,7 +175,7 @@ public class ShareService: NSObject, Service, DownloadTaskDelegate, UserNotifica
         guard let url = URL(string: urlString) else { return }
         guard notification.activationType == .actionButtonClicked || notification.activationType == .contentsClicked else { return }
         
-        NSWorkspace.shared().open(url)
+        NSWorkspace.shared.open(url)
     }
     
     
@@ -445,7 +445,7 @@ public class ShareService: NSObject, Service, DownloadTaskDelegate, UserNotifica
             menu.addItem(item)
         }
         
-        let position: NSPoint = sender.draggingDestinationWindow()?.frame.origin ?? NSEvent.mouseLocation()
+        let position = sender.draggingDestinationWindow()?.frame.origin ?? NSEvent.mouseLocation
         return menu.popUp(positioning: nil, at: position, in: nil)
     }
     
