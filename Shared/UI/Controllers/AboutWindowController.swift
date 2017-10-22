@@ -17,10 +17,15 @@ public class AboutWindowController: NSWindowController {
         NotificationCenter.default.removeObserver(self)
     }
     
+    private static var controller: AboutWindowController?
+    
     public static func showAboutWindow() {
-        let storyboard = NSStoryboard(name: NSStoryboard.Name(rawValue: "AboutWindow"), bundle: nil)
-        var controller = storyboard.instantiateInitialController() as? AboutWindowController
+        if controller == nil {
+            let storyboard = NSStoryboard(name: NSStoryboard.Name(rawValue: "AboutWindow"), bundle: nil)
+            controller = storyboard.instantiateInitialController() as? AboutWindowController
+        }
         assert(controller != nil, "Could not load about window controller.")
+        NSApp.activate(ignoringOtherApps: true)
         controller?.dismissHandler = { _ in controller = nil }
         controller?.showWindow(nil)
     }

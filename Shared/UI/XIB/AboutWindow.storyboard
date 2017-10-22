@@ -11,7 +11,7 @@
         <scene sceneID="Av9-k4-aIc">
             <objects>
                 <windowController id="c3F-eL-4OW" customClass="AboutWindowController" customModule="Soduto" customModuleProvider="target" sceneMemberID="viewController">
-                    <window key="window" title="About" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" titleVisibility="hidden" id="dih-o7-Wn6">
+                    <window key="window" title="About" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" titlebarAppearsTransparent="YES" titleVisibility="hidden" id="dih-o7-Wn6">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
                         <rect key="contentRect" x="196" y="240" width="480" height="220"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
@@ -32,11 +32,11 @@
             <objects>
                 <viewController id="2gI-DK-8ag" customClass="AboutViewController" customModule="Soduto" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="77b-QD-oqa">
-                        <rect key="frame" x="0.0" y="0.0" width="480" height="220"/>
+                        <rect key="frame" x="0.0" y="0.0" width="480" height="208"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ROc-bQ-Uld">
-                                <rect key="frame" x="206" y="171" width="256" height="29"/>
+                                <rect key="frame" x="214" y="179" width="248" height="29"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="AppName" id="X7J-8j-Mfy">
                                     <font key="font" metaFont="systemLight" size="24"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -44,7 +44,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3pi-0i-yfx">
-                                <rect key="frame" x="206" y="153" width="256" height="14"/>
+                                <rect key="frame" x="214" y="161" width="248" height="14"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Version 1.2 (3)" id="wTo-f5-UGF">
                                     <font key="font" metaFont="smallSystem"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -52,15 +52,15 @@
                                 </textFieldCell>
                             </textField>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="DAH-Wm-Unq">
-                                <rect key="frame" x="20" y="20" width="180" height="180"/>
+                                <rect key="frame" x="20" y="20" width="188" height="188"/>
                                 <subviews>
                                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="aV4-iD-cRD">
-                                        <rect key="frame" x="30" y="30" width="120" height="120"/>
+                                        <rect key="frame" x="19" y="19" width="150" height="150"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="120" id="AgZ-Ea-GEG"/>
-                                            <constraint firstAttribute="width" constant="120" id="hpa-Qv-8yo"/>
+                                            <constraint firstAttribute="height" constant="150" id="AgZ-Ea-GEG"/>
+                                            <constraint firstAttribute="width" constant="150" id="hpa-Qv-8yo"/>
                                         </constraints>
-                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="AppIcon" id="zTk-If-tk1"/>
+                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="AppIcon" id="zTk-If-tk1"/>
                                     </imageView>
                                 </subviews>
                                 <constraints>
@@ -70,7 +70,7 @@
                                 </constraints>
                             </customView>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Gpd-FV-Mge">
-                                <rect key="frame" x="203" y="14" width="127" height="28"/>
+                                <rect key="frame" x="211" y="14" width="127" height="28"/>
                                 <buttonCell key="cell" type="push" title="License Agreement" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qeU-ds-qE4">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="smallSystem"/>
@@ -80,7 +80,7 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tDa-De-ibz">
-                                <rect key="frame" x="328" y="14" width="129" height="28"/>
+                                <rect key="frame" x="336" y="14" width="129" height="28"/>
                                 <buttonCell key="cell" type="push" title="Acknowledgements" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="e6Q-GP-q2w">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="smallSystem"/>
@@ -90,7 +90,7 @@
                                 </connections>
                             </button>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="iw8-oY-cjU">
-                                <rect key="frame" x="206" y="117" width="256" height="28"/>
+                                <rect key="frame" x="214" y="125" width="248" height="28"/>
                                 <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="Copyright © 2017 Giedrius Stanevičius. All rights reserved." id="0lM-UD-1ax">
                                     <font key="font" metaFont="smallSystem"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -102,7 +102,7 @@
                             <constraint firstItem="Gpd-FV-Mge" firstAttribute="leading" secondItem="ROc-bQ-Uld" secondAttribute="leading" id="0bX-UG-PJd"/>
                             <constraint firstItem="iw8-oY-cjU" firstAttribute="leading" secondItem="ROc-bQ-Uld" secondAttribute="leading" id="A3A-Gh-MBc"/>
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="tDa-De-ibz" secondAttribute="trailing" constant="20" id="FMX-EW-Qys"/>
-                            <constraint firstItem="DAH-Wm-Unq" firstAttribute="top" secondItem="77b-QD-oqa" secondAttribute="top" constant="20" id="GD6-7t-NW6"/>
+                            <constraint firstItem="DAH-Wm-Unq" firstAttribute="top" secondItem="77b-QD-oqa" secondAttribute="top" id="GD6-7t-NW6"/>
                             <constraint firstAttribute="bottom" secondItem="DAH-Wm-Unq" secondAttribute="bottom" constant="20" id="HO8-0d-cyW"/>
                             <constraint firstAttribute="trailing" secondItem="ROc-bQ-Uld" secondAttribute="trailing" constant="20" id="P2z-x5-SgN"/>
                             <constraint firstItem="tDa-De-ibz" firstAttribute="leading" secondItem="Gpd-FV-Mge" secondAttribute="trailing" constant="8" id="RHI-fY-NjR"/>
@@ -112,7 +112,7 @@
                             <constraint firstAttribute="bottom" secondItem="Gpd-FV-Mge" secondAttribute="bottom" constant="20" id="iZn-Rm-0KU"/>
                             <constraint firstItem="3pi-0i-yfx" firstAttribute="leading" secondItem="ROc-bQ-Uld" secondAttribute="leading" id="pBB-iq-8Fp"/>
                             <constraint firstItem="iw8-oY-cjU" firstAttribute="top" secondItem="3pi-0i-yfx" secondAttribute="bottom" constant="8" id="pK8-jP-94s"/>
-                            <constraint firstItem="ROc-bQ-Uld" firstAttribute="top" secondItem="77b-QD-oqa" secondAttribute="top" constant="20" id="u3O-xi-fZu"/>
+                            <constraint firstItem="ROc-bQ-Uld" firstAttribute="top" secondItem="77b-QD-oqa" secondAttribute="top" id="u3O-xi-fZu"/>
                             <constraint firstItem="DAH-Wm-Unq" firstAttribute="leading" secondItem="77b-QD-oqa" secondAttribute="leading" constant="20" id="xJF-HU-U17"/>
                             <constraint firstItem="iw8-oY-cjU" firstAttribute="width" secondItem="ROc-bQ-Uld" secondAttribute="width" id="znK-gp-Fh5"/>
                             <constraint firstItem="ROc-bQ-Uld" firstAttribute="leading" secondItem="DAH-Wm-Unq" secondAttribute="trailing" constant="8" id="zwh-q2-mS8"/>
