@@ -47,16 +47,20 @@ public class StatusBarMenuController: NSObject, NSWindowDelegate, NSMenuDelegate
     
     // MARK: Actions
     
-    @IBAction func quit(_ sender: AnyObject?) {
+    @IBAction func quit(_ sender: Any?) {
         NSApp.terminate(sender)
     }
     
-    @IBAction func toggleLaunchOnLogin(_ sender: AnyObject?) {
+    @IBAction func toggleLaunchOnLogin(_ sender: Any?) {
         self.config?.launchOnLogin = !(self.config?.launchOnLogin ?? false)
     }
     
-    @IBAction func openPreferences(_ sender: AnyObject?) {
+    @IBAction func openPreferences(_ sender: Any?) {
         self.preferencesWindowController?.showWindow(nil)
+    }
+    
+    @IBAction func showAboutWindow(_ sender: Any?) {
+        AboutWindowController.showAboutWindow()
     }
     
     
