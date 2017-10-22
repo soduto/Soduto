@@ -16,6 +16,8 @@
 		0236B63D1F9936C80020DA9F /* AboutWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0236B63B1F9936C80020DA9F /* AboutWindowController.swift */; };
 		0236D2B91F9CFBAA00E0F6A6 /* Acknowledgements.html in Resources */ = {isa = PBXBuildFile; fileRef = 0236D2B81F9CFB2500E0F6A6 /* Acknowledgements.html */; };
 		0236D2BA1F9CFBAA00E0F6A6 /* License.html in Resources */ = {isa = PBXBuildFile; fileRef = 0236D2AD1F9CFB1A00E0F6A6 /* License.html */; };
+		0236D2BB1F9D067A00E0F6A6 /* Acknowledgements.html in Resources */ = {isa = PBXBuildFile; fileRef = 0236D2B81F9CFB2500E0F6A6 /* Acknowledgements.html */; };
+		0236D2BC1F9D067A00E0F6A6 /* License.html in Resources */ = {isa = PBXBuildFile; fileRef = 0236D2AD1F9CFB1A00E0F6A6 /* License.html */; };
 		0248E0FF1F23C4AF00C411F7 /* DevicePreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0248E0FE1F23C4AF00C411F7 /* DevicePreferencesViewController.swift */; };
 		024B435F1F23BEEB00037A33 /* PreferencesWindow.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 024B435D1F23BEEB00037A33 /* PreferencesWindow.storyboard */; };
 		024F8B191F24FC7700D6E504 /* ServicePreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024F8B181F24FC7700D6E504 /* ServicePreferencesViewController.swift */; };
@@ -1343,6 +1345,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0236D2BB1F9D067A00E0F6A6 /* Acknowledgements.html in Resources */,
+				0236D2BC1F9D067A00E0F6A6 /* License.html in Resources */,
 				849927811E6C5CA600AF8CF4 /* IconItem.xib in Resources */,
 				845BC7281E6A062900DC9B81 /* BrowserWindow.xib in Resources */,
 				845BC70F1E69F00E00DC9B81 /* Assets.xcassets in Resources */,

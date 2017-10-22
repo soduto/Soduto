@@ -15,6 +15,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, BrowserWindowControllerDeleg
     // MARK: Types
     
     struct MenuItemTags {
+        // Application menu
+        static let about: Int = 1
+        
         // Go menu
         static let back: Int = 1001
         static let forward: Int = 1002
@@ -115,6 +118,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, BrowserWindowControllerDeleg
     
     // MARK: Actions
     
+    @IBAction func showAboutWindow(_ sender: Any?) {
+        AboutWindowController.showAboutWindow()
+    }
+    
     @IBAction func newWindow(_ sender: Any?) {
         guard let controller = self.keyBrowserWindowController else { NSSound.beep(); return }
         newBrowserWindow(with: controller.fileSystem)
@@ -150,6 +157,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, BrowserWindowControllerDeleg
     
     override func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         switch menuItem.tag {
+        case MenuItemTags.about: return true
         case MenuItemTags.newWindow: return keyBrowserWindowController != nil
         case MenuItemTags.newTab:
             if #available(OSX 10.12, *) {
