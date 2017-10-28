@@ -177,7 +177,7 @@ public class StatusBarMenuController: NSObject, NSWindowDelegate, NSMenuDelegate
             
             if batteryStatus.isCharging {
                 let chargingIcon = #imageLiteral(resourceName: "batteryStatusChargingIcon")
-                let mask = NSImage(size: chargingIcon.size, flipped: false) { _ in
+                let mask = NSImage(size: chargingIcon.size, flipped: false) { [rect] _ in
                     NSColor.white.setFill()
                     rect.fill()
                     chargingIcon.draw(in: rect)
