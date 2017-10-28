@@ -45,7 +45,6 @@ public extension URL {
     private func substring(string: String, range: NSRange) -> String {
         let startIndex = string.index(string.startIndex, offsetBy: range.location)
         let endIndex = string.index(startIndex, offsetBy: range.length)
-        let stringRange = startIndex ..< endIndex
-        return string.substring(with: stringRange)
+        return String(string[startIndex ..< endIndex])
     }
 }

@@ -30,9 +30,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
             Log.enable(configuration: XcodeLogConfiguration(minimumSeverity: .debug, debugMode: true))
         #else
             let formatter = FieldBasedLogFormatter(fields: [.severity(.simple), .delimiter(.spacedPipe), .payload])
-            let aslRecorder = ASLLogRecorder(formatter: formatter, echoToStdErr: true)
-            let severity: LogSeverity = LogSeverity(rawValue: UserDefaults.standard.integer(forKey: AppDelegate.logLevelConfigurationKey)) ?? .info
-            Log.enable(configuration: BasicLogConfiguration(minimumSeverity: severity, recorders: [aslRecorder]))
+            if let osRecorder = OSLogRecorder(formatters: [formatter]) {
+                let severity: LogSeverity = LogSeverity(rawValue: UserDefaults.standard.integer(forKey: AppDelegate.logLevelConfigurationKey)) ?? .info
+                Log.enable(configuration: BasicLogConfiguration(minimumSeverity: severity, recorders: [osRecorder]))
+            }
         #endif
         
         

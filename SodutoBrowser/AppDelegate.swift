@@ -59,9 +59,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, BrowserWindowControllerDeleg
             Log.enable(configuration: XcodeLogConfiguration(minimumSeverity: .debug, debugMode: true))
         #else
             let formatter = FieldBasedLogFormatter(fields: [.severity(.simple), .delimiter(.spacedPipe), .payload])
-            let aslRecorder = ASLLogRecorder(formatter: formatter, echoToStdErr: true)
-            let severity: LogSeverity = LogSeverity(rawValue: UserDefaults.standard.integer(forKey: AppDelegate.logLevelConfigurationKey)) ?? .info
-            Log.enable(configuration: BasicLogConfiguration(minimumSeverity: severity, recorders: [aslRecorder]))
+            if let osRecorder = OSLogRecorder(formatters: [formatter]) {
+                let severity: LogSeverity = LogSeverity(rawValue: UserDefaults.standard.integer(forKey: AppDelegate.logLevelConfigurationKey)) ?? .info
+                Log.enable(configuration: BasicLogConfiguration(minimumSeverity: severity, recorders: [osRecorder]))
+            }
         #endif
     }
     
@@ -74,10 +75,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, BrowserWindowControllerDeleg
         #if DEBUG
             Log.enable(configuration: XcodeLogConfiguration(minimumSeverity: .debug, debugMode: true))
         #else
-            let formatter = FieldBasedLogFormatter(fields: [.severity(.simple), .delimiter(.spacedPipe), .payload])
-            let aslRecorder = ASLLogRecorder(formatter: formatter, echoToStdErr: true)
             let severity: LogSeverity = LogSeverity(rawValue: UserDefaults.standard.integer(forKey: AppDelegate.logLevelConfigurationKey)) ?? .info
-            Log.enable(configuration: BasicLogConfiguration(minimumSeverity: severity, recorders: [aslRecorder]))
+            let formatter = FieldBasedLogFormatter(fields: [.severity(.simple), .delimiter(.spacedPipe), .payload])
+            if let osRecorder = OSLogRecorder(formatters: [formatter]) {
+                Log.enable(configuration: BasicLogConfiguration(minimumSeverity: severity, recorders: [osRecorder]))
+            }
             switch severity {
             case .verbose: NMSSHLogger.shared().logLevel = .verbose
             case .debug: NMSSHLogger.shared().logLevel = .verbose
