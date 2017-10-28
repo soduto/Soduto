@@ -126,7 +126,7 @@ public class DeviceConfiguration: NSObject {
     
         let deviceId: Device.Id
         if DeviceConfiguration.isDeviceConfigKey(configKey) {
-            deviceId = configKey.substring(from: configKey.index(configKey.startIndex, offsetBy: DeviceConfiguration.configKeyPrefix.characters.count))
+            deviceId = String(configKey[configKey.index(configKey.startIndex, offsetBy: DeviceConfiguration.configKeyPrefix.characters.count)...])
         }
         else {
             deviceId = ""
