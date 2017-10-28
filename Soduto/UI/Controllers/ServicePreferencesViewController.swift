@@ -11,16 +11,30 @@ import Cocoa
 
 class ServicePreferencesViewController: NSViewController {
     
+    // MARK: Types
+    
+    private struct ServiceInfo {
+        let id: Service.Id
+        let name: String
+    }
+    
+    
     // MARK: Properties
     
+    var servicesConfiguration: ServicesConfiguartion?
     var deviceDataSource: DeviceDataSource?
-    @IBOutlet weak var deviceList: NSTableView!
+    @IBOutlet weak var serviceList: NSTableView!
+    
+    private let configurableServices: [ServiceInfo] = [
+        ServiceInfo(id: ClipboardService.serviceId, name: NSLocalizedString("Clipboard Sharing", comment: "Service name")),
+        ServiceInfo(id: NotificationsService.serviceId, name: NSLocalizedString("Notifications", comment: "Service name"))
+    ]
     
     
     // MARK: Public API
     
     func refreshDeviceList() {
-        self.deviceList.reloadData()
+//        self.deviceList.reloadData()
     }
     
     
@@ -32,7 +46,7 @@ class ServicePreferencesViewController: NSViewController {
     
     override func viewWillAppear() {
         // Resize first column to full table width
-        self.deviceList.tableColumns.first?.width = self.deviceList.frame.width - self.deviceList.intercellSpacing.width
+//        self.deviceList.tableColumns.first?.width = self.deviceList.frame.width - self.deviceList.intercellSpacing.width
     }
 }
 
