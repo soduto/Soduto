@@ -9,6 +9,7 @@
 import Foundation
 import CocoaAsyncSocket
 import CleanroomLogger
+import Reachability
 
 public enum ConnectionError: Error {
     case InitializationAlreadyFinished
@@ -212,8 +213,8 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
         }
     }
     
-    public func send(_ packet: DataPacket) -> Bool {
-        return self.send(packet, whenCompleted: nil)
+    public func send(_ dataPacket: DataPacket) -> Bool {
+        return self.send(dataPacket, whenCompleted: nil)
     }
     
     public func readOnePacket() {
@@ -525,6 +526,11 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
         }
     }
     
+    private func sendKeepAlivePacket() {
+        let packet = DataPacket(type: "soduto.keepalive", body: [:])
+        _ = send(packet)
+    }
+    
     private func finalizeSending(packet: DataPacket, completionHandler: SendingCompletionHandler?, packetSent: Bool, payloadSent: Bool) {
         completionHandler?(packetSent, payloadSent)
         if packetSent {
@@ -577,6 +583,11 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
         NotificationCenter.default.addObserver(forName: UploadTask.portReleaseNotification, object: nil, queue: nil) { [weak self] notification in
             if let strongSelf = self {
                 strongSelf.delegate?.connectionCapacityChanged(strongSelf)
+            }
+        }
+        NotificationCenter.default.addObserver(forName: ReachabilityChangedNotification, object: nil, queue: nil) { [weak self] notification in
+            if let reachability = notification.object as? Reachability, reachability.isReachable {
+                self?.sendKeepAlivePacket()
             }
         }
     }
