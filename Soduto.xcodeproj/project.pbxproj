@@ -48,8 +48,6 @@
 		8438ECE71EBA67B6006CBB07 /* NMSSH.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 845BC6A21E68C26B00DC9B81 /* NMSSH.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8438ECEB1EBA67BC006CBB07 /* CleanroomLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84E732081DF46F94001E1549 /* CleanroomLogger.framework */; };
 		8438ECEC1EBA67BC006CBB07 /* CleanroomLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84E732081DF46F94001E1549 /* CleanroomLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		8438ECEF1EBA67CB006CBB07 /* CleanroomASL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84E732171DF47237001E1549 /* CleanroomASL.framework */; };
-		8438ECF01EBA67CB006CBB07 /* CleanroomASL.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84E732171DF47237001E1549 /* CleanroomASL.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		843B67041DF1E64A00289EC9 /* ShareService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843B67031DF1E64A00289EC9 /* ShareService.swift */; };
 		843B670A1DF2CEC400289EC9 /* DownloadTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843B67091DF2CEC400289EC9 /* DownloadTask.swift */; };
 		843B670C1DF3087800289EC9 /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843B670B1DF3087800289EC9 /* URL.swift */; };
@@ -109,8 +107,6 @@
 		84D903A21DC696A600E61DA7 /* CertificateUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D903A11DC696A600E61DA7 /* CertificateUtils.swift */; };
 		84E7320F1DF4714F001E1549 /* CleanroomLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84E732081DF46F94001E1549 /* CleanroomLogger.framework */; };
 		84E732101DF47186001E1549 /* CocoaAsyncSocket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84E2F2F41D574A4F00EAA802 /* CocoaAsyncSocket.framework */; };
-		84E7321A1DF55B67001E1549 /* CleanroomASL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84E732171DF47237001E1549 /* CleanroomASL.framework */; };
-		84E7321B1DF55B67001E1549 /* CleanroomASL.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84E732171DF47237001E1549 /* CleanroomASL.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84E7321F1DF55B67001E1549 /* CleanroomLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84E732081DF46F94001E1549 /* CleanroomLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84E732231DF55B67001E1549 /* CocoaAsyncSocket.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84E2F2F41D574A4F00EAA802 /* CocoaAsyncSocket.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84FA45D71DDDCB3D00EF3992 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA45CF1DDDCB3D00EF3992 /* Connection.swift */; };
@@ -143,13 +139,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 3B9059021DAECB5200B4EEC0;
 			remoteInfo = CleanroomLogger;
-		};
-		8438ECF11EBA67CB006CBB07 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84E732111DF47237001E1549 /* CleanroomASL.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 3B9059021DAECB5200B4EEC0;
-			remoteInfo = CleanroomASL;
 		};
 		843E16EF1E2413CE001D0444 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -333,27 +322,6 @@
 			remoteGlobalIDString = 3B9059021DAECB5200B4EEC0;
 			remoteInfo = CleanroomLogger;
 		};
-		84E732161DF47237001E1549 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84E732111DF47237001E1549 /* CleanroomASL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3B9059031DAECB5200B4EEC0;
-			remoteInfo = CleanroomASL;
-		};
-		84E732181DF47237001E1549 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84E732111DF47237001E1549 /* CleanroomASL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3B90590C1DAECB5200B4EEC0;
-			remoteInfo = CleanroomASLTests;
-		};
-		84E7321C1DF55B67001E1549 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84E732111DF47237001E1549 /* CleanroomASL.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 3B9059021DAECB5200B4EEC0;
-			remoteInfo = CleanroomASL;
-		};
 		84E732201DF55B67001E1549 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 84E732021DF46F93001E1549 /* CleanroomLogger.xcodeproj */;
@@ -378,7 +346,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				8438ECE71EBA67B6006CBB07 /* NMSSH.framework in Embed Frameworks */,
-				8438ECF01EBA67CB006CBB07 /* CleanroomASL.framework in Embed Frameworks */,
 				8438ECEC1EBA67BC006CBB07 /* CleanroomLogger.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -424,7 +391,6 @@
 			files = (
 				84B4D0EC1DFD759700437CBB /* Reachability.framework in Embed Frameworks */,
 				84E732231DF55B67001E1549 /* CocoaAsyncSocket.framework in Embed Frameworks */,
-				84E7321B1DF55B67001E1549 /* CleanroomASL.framework in Embed Frameworks */,
 				84E7321F1DF55B67001E1549 /* CleanroomLogger.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -544,7 +510,6 @@
 		84C613E21DECBF6B00CE7F7A /* UploadTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadTask.swift; sourceTree = "<group>"; };
 		84D903A11DC696A600E61DA7 /* CertificateUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CertificateUtils.swift; sourceTree = "<group>"; };
 		84E732021DF46F93001E1549 /* CleanroomLogger.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CleanroomLogger.xcodeproj; path = Soduto/CleanroomLogger/CleanroomLogger.xcodeproj; sourceTree = "<group>"; };
-		84E732111DF47237001E1549 /* CleanroomASL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CleanroomASL.xcodeproj; path = Soduto/CleanroomASL/CleanroomASL.xcodeproj; sourceTree = "<group>"; };
 		84FA45CF1DDDCB3D00EF3992 /* Connection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
 		84FA45D01DDDCB3D00EF3992 /* ConnectionProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionProvider.swift; sourceTree = "<group>"; };
 		84FA45D11DDDCB3D00EF3992 /* DataPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataPacket.swift; sourceTree = "<group>"; };
@@ -571,7 +536,6 @@
 				843E16F11E2413CE001D0444 /* libcrypto.a in Frameworks */,
 				84B4D0E91DFD756A00437CBB /* Reachability.framework in Frameworks */,
 				84E732101DF47186001E1549 /* CocoaAsyncSocket.framework in Frameworks */,
-				84E7321A1DF55B67001E1549 /* CleanroomASL.framework in Frameworks */,
 				84E7320F1DF4714F001E1549 /* CleanroomLogger.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -588,7 +552,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8438ECE61EBA67B6006CBB07 /* NMSSH.framework in Frameworks */,
-				8438ECEF1EBA67CB006CBB07 /* CleanroomASL.framework in Frameworks */,
 				8438ECEB1EBA67BC006CBB07 /* CleanroomLogger.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -682,7 +645,6 @@
 				84BEF7271E660E2600D839D3 /* LibSSH2.xcodeproj */,
 				843E16DF1E240F46001D0444 /* OpenSSL.xcodeproj */,
 				84B4D0CE1DFD754700437CBB /* Reachability.xcodeproj */,
-				84E732111DF47237001E1549 /* CleanroomASL.xcodeproj */,
 				84E732021DF46F93001E1549 /* CleanroomLogger.xcodeproj */,
 				8499621A1D57438E002B893A /* CocoaAsyncSocket.xcodeproj */,
 				845BE2CD1EC2443300F3BD62 /* Shared */,
@@ -963,15 +925,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		84E732121DF47237001E1549 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				84E732171DF47237001E1549 /* CleanroomASL.framework */,
-				84E732191DF47237001E1549 /* CleanroomASLUnitTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		84FA45EB1DDF51EB00EF3992 /* Services */ = {
 			isa = PBXGroup;
 			children = (
@@ -1011,7 +964,6 @@
 				84B4D0E81DFD755800437CBB /* PBXTargetDependency */,
 				84E7320E1DF47006001E1549 /* PBXTargetDependency */,
 				84E2F2F81D574A5900EAA802 /* PBXTargetDependency */,
-				84E7321D1DF55B67001E1549 /* PBXTargetDependency */,
 				84E732211DF55B67001E1549 /* PBXTargetDependency */,
 				84E732251DF55B67001E1549 /* PBXTargetDependency */,
 			);
@@ -1055,7 +1007,6 @@
 				84C545F51EABC410005A8107 /* PBXTargetDependency */,
 				8438ECE91EBA67B6006CBB07 /* PBXTargetDependency */,
 				8438ECEE1EBA67BC006CBB07 /* PBXTargetDependency */,
-				8438ECF21EBA67CB006CBB07 /* PBXTargetDependency */,
 			);
 			name = SodutoBrowser;
 			productName = SodutoBrowser;
@@ -1143,10 +1094,6 @@
 			productRefGroup = 843301611D2D8CB8008934BB /* Products */;
 			projectDirPath = "";
 			projectReferences = (
-				{
-					ProductGroup = 84E732121DF47237001E1549 /* Products */;
-					ProjectRef = 84E732111DF47237001E1549 /* CleanroomASL.xcodeproj */;
-				},
 				{
 					ProductGroup = 84E732031DF46F93001E1549 /* Products */;
 					ProjectRef = 84E732021DF46F93001E1549 /* CleanroomLogger.xcodeproj */;
@@ -1293,20 +1240,6 @@
 			fileType = wrapper.cfbundle;
 			path = CleanroomLoggerUnitTests.xctest;
 			remoteRef = 84E732091DF46F94001E1549 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		84E732171DF47237001E1549 /* CleanroomASL.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = CleanroomASL.framework;
-			remoteRef = 84E732161DF47237001E1549 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		84E732191DF47237001E1549 /* CleanroomASLUnitTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = CleanroomASLUnitTests.xctest;
-			remoteRef = 84E732181DF47237001E1549 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1486,11 +1419,6 @@
 			name = CleanroomLogger;
 			targetProxy = 8438ECED1EBA67BC006CBB07 /* PBXContainerItemProxy */;
 		};
-		8438ECF21EBA67CB006CBB07 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = CleanroomASL;
-			targetProxy = 8438ECF11EBA67CB006CBB07 /* PBXContainerItemProxy */;
-		};
 		8472F4711EC8DD490028627C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = crypto;
@@ -1540,11 +1468,6 @@
 			isa = PBXTargetDependency;
 			name = CleanroomLogger;
 			targetProxy = 84E7320D1DF47006001E1549 /* PBXContainerItemProxy */;
-		};
-		84E7321D1DF55B67001E1549 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = CleanroomASL;
-			targetProxy = 84E7321C1DF55B67001E1549 /* PBXContainerItemProxy */;
 		};
 		84E732211DF55B67001E1549 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

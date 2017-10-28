@@ -1,6 +1,3 @@
-[submodule "Soduto/CleanroomASL"]
-	path = Soduto/CleanroomASL
-	url = https://giedrius-stanevicius@github.com/giedrius-stanevicius/CleanroomASL.git
 [submodule "Soduto/CleanroomLogger"]
 	path = Soduto/CleanroomLogger
 	url = https://giedrius-stanevicius@github.com/giedrius-stanevicius/CleanroomLogger.git

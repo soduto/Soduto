@@ -27,7 +27,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
         UserDefaults.standard.register(defaults: [AppDelegate.logLevelConfigurationKey: LogSeverity.info.rawValue])
         
         #if DEBUG
-            Log.enable(configuration: XcodeLogConfiguration(minimumSeverity: .debug, logToASL: false))
+            Log.enable(configuration: XcodeLogConfiguration(minimumSeverity: .debug, debugMode: true))
         #else
             let formatter = FieldBasedLogFormatter(fields: [.severity(.simple), .delimiter(.spacedPipe), .payload])
             let aslRecorder = ASLLogRecorder(formatter: formatter, echoToStdErr: true)

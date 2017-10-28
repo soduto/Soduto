@@ -56,7 +56,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, BrowserWindowControllerDeleg
         UserDefaults.standard.register(defaults: [AppDelegate.logLevelConfigurationKey: LogSeverity.info.rawValue])
         
         #if DEBUG
-            Log.enable(configuration: XcodeLogConfiguration(minimumSeverity: .debug, logToASL: true))
+            Log.enable(configuration: XcodeLogConfiguration(minimumSeverity: .debug, debugMode: true))
         #else
             let formatter = FieldBasedLogFormatter(fields: [.severity(.simple), .delimiter(.spacedPipe), .payload])
             let aslRecorder = ASLLogRecorder(formatter: formatter, echoToStdErr: true)
@@ -72,7 +72,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, BrowserWindowControllerDeleg
         UserDefaults.standard.register(defaults: [AppDelegate.logLevelConfigurationKey: LogSeverity.info.rawValue])
         
         #if DEBUG
-            Log.enable(configuration: XcodeLogConfiguration(minimumSeverity: .debug, logToASL: false))
+            Log.enable(configuration: XcodeLogConfiguration(minimumSeverity: .debug, debugMode: true))
         #else
             let formatter = FieldBasedLogFormatter(fields: [.severity(.simple), .delimiter(.spacedPipe), .payload])
             let aslRecorder = ASLLogRecorder(formatter: formatter, echoToStdErr: true)
