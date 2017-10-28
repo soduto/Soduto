@@ -90,7 +90,6 @@
 		849927801E6C5CA600AF8CF4 /* IconItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8499277E1E6C5CA600AF8CF4 /* IconItem.swift */; };
 		849927811E6C5CA600AF8CF4 /* IconItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8499277F1E6C5CA600AF8CF4 /* IconItem.xib */; };
 		849927831E6C5CD600AF8CF4 /* FileItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849927821E6C5CD600AF8CF4 /* FileItem.swift */; };
-		849961B81D5726B0002B893A /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = 849961B41D5726B0002B893A /* LICENSE.txt */; };
 		849961B91D5726B0002B893A /* MYAnonymousIdentity.m in Sources */ = {isa = PBXBuildFile; fileRef = 849961B61D5726B0002B893A /* MYAnonymousIdentity.m */; };
 		849961C11D57287F002B893A /* CollectionUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 849961BC1D57287F002B893A /* CollectionUtils.m */; };
 		849961C31D57287F002B893A /* Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 849961C01D57287F002B893A /* Test.m */; };
@@ -1251,7 +1250,6 @@
 			files = (
 				0236D2B91F9CFBAA00E0F6A6 /* Acknowledgements.html in Resources */,
 				0236D2BA1F9CFBAA00E0F6A6 /* License.html in Resources */,
-				849961B81D5726B0002B893A /* LICENSE.txt in Resources */,
 				843107711E3D23CA00AE96AB /* SendMessageWindow.xib in Resources */,
 				02150DE81F17F98F00401CC6 /* DeviceInfoWindow.xib in Resources */,
 				845BE2DE1EC2465500F3BD62 /* LoadingWindow.xib in Resources */,

@@ -32,6 +32,12 @@ public class AboutWindowController: NSWindowController {
     
     public override func windowDidLoad() {
         super.windowDidLoad()
+        
+        // IB does not set it correctly on 10.12
+        self.window?.titleVisibility = .hidden
+        self.window?.styleMask.insert(.fullSizeContentView)
+        self.window?.titlebarAppearsTransparent = true
+        
         NotificationCenter.default.addObserver(self, selector: #selector(handleWindowWillClose(_:)), name: NSWindow.willCloseNotification, object: nil)
     }
     
@@ -74,8 +80,7 @@ public class AboutViewController: NSViewController {
         }
         self.copyrightLabel.stringValue = (bundle.object(forInfoDictionaryKey: "NSHumanReadableCopyright") as? String) ?? ""
         
-        let iconName = (bundle.object(forInfoDictionaryKey: "CFBundleIconName") as? String) ?? "AppIcon"
-        self.iconView.image = bundle.image(forResource: NSImage.Name(rawValue: iconName))
+        self.iconView.image = NSApp.applicationIconImage
         
         self.licenseButton.isEnabled = licensePath != nil
         self.acknowledgementsButton.isEnabled = acknowledgmentsPath != nil

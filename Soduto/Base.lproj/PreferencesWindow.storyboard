@@ -72,7 +72,7 @@
                                     <constraint firstAttribute="height" constant="112" id="BRh-GY-Swb"/>
                                     <constraint firstAttribute="width" constant="172" id="CFB-5S-goK"/>
                                 </constraints>
-                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="AppIcon" id="HWE-4F-dhu"/>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="NSApplicationIcon" id="HWE-4F-dhu"/>
                             </imageView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JI8-Vn-Ayd" userLabel="Host name">
                                 <rect key="frame" x="18" y="203" width="216" height="17"/>
@@ -114,7 +114,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="AppIcon" width="128" height="128"/>
+        <image name="NSApplicationIcon" width="128" height="128"/>
         <image name="NSComputer" width="32" height="32"/>
     </resources>
 </document>
