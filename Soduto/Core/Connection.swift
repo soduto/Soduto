@@ -428,7 +428,7 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
         let socketString = self.socket.description
         let endIndex = socketString.index(socketString.endIndex, offsetBy: -1)
         let startIndex = socketString.index(endIndex, offsetBy: -11)
-        let socketAddress = socketString.substring(with: startIndex..<endIndex)
+        let socketAddress = socketString[startIndex..<endIndex]
         
         let id: String = (try? self.identity?.getDeviceId() ?? "") ?? ""
         let name: String = (try? self.identity?.getDeviceName() ?? "") ?? ""
