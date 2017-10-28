@@ -31,10 +31,10 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="XN7-yK-oPR"/>
-                <menuItem title="Open Soduto Preferences..." id="NNU-ep-Fgn" userLabel="Open Soduto Preferences">
+                <menuItem title="About Soduto" id="sNE-CC-2Jm">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
-                        <action selector="openPreferences:" target="vQj-dd-GoX" id="rrW-aH-Gim"/>
+                        <action selector="showAboutWindow:" target="vQj-dd-GoX" id="Z8y-Zi-KJK"/>
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="Zv9-hp-heD"/>
@@ -44,13 +44,13 @@
                         <action selector="toggleLaunchOnLogin:" target="vQj-dd-GoX" id="tjq-3a-oye"/>
                     </connections>
                 </menuItem>
-                <menuItem isSeparatorItem="YES" id="NAb-Li-52a"/>
-                <menuItem title="About Soduto" id="sNE-CC-2Jm">
+                <menuItem title="Open Soduto Preferences..." id="NNU-ep-Fgn" userLabel="Open Soduto Preferences">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
-                        <action selector="showAboutWindow:" target="vQj-dd-GoX" id="Z8y-Zi-KJK"/>
+                        <action selector="openPreferences:" target="vQj-dd-GoX" id="rrW-aH-Gim"/>
                     </connections>
                 </menuItem>
+                <menuItem isSeparatorItem="YES" id="NAb-Li-52a"/>
                 <menuItem title="Quit" id="LmP-mI-dDc" userLabel="Quit">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
