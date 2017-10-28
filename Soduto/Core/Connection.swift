@@ -585,8 +585,8 @@ public class Connection: NSObject, GCDAsyncSocketDelegate, PairingHandlerDelegat
                 strongSelf.delegate?.connectionCapacityChanged(strongSelf)
             }
         }
-        NotificationCenter.default.addObserver(forName: ReachabilityChangedNotification, object: nil, queue: nil) { [weak self] notification in
-            if let reachability = notification.object as? Reachability, reachability.isReachable {
+        NotificationCenter.default.addObserver(forName: Notification.Name.reachabilityChanged, object: nil, queue: nil) { [weak self] notification in
+            if let reachability = notification.object as? Reachability, reachability.connection != .none {
                 self?.sendKeepAlivePacket()
             }
         }
