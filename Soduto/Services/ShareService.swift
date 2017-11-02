@@ -62,7 +62,8 @@ public class ShareService: NSObject, Service, DownloadTaskDelegate, UserNotifica
     private static let dragTypes: [NSPasteboard.PasteboardType] = [
         NSPasteboard.PasteboardType(rawValue: kUTTypeFileURL as String),
         NSPasteboard.PasteboardType(rawValue: kUTTypeURL as String),
-        NSPasteboard.PasteboardType(rawValue: kUTTypeText as String) ]
+        NSPasteboard.PasteboardType(rawValue: kUTTypeUTF8PlainText as String),
+        NSPasteboard.PasteboardType(rawValue: kUTTypeText as String)]
     
     public let incomingCapabilities = Set<Service.Capability>([ DataPacket.sharePacketType ])
     public let outgoingCapabilities = Set<Service.Capability>([ DataPacket.sharePacketType ])
@@ -222,8 +223,14 @@ public class ShareService: NSObject, Service, DownloadTaskDelegate, UserNotifica
                 
             case type.rawValue where UTTypeConformsTo(type.rawValue as CFString, kUTTypeText):
                 guard let text = item.string(forType: type) else { break }
-                let dataPacket = self.dataPacket(forText: text)
-                textPackets.append(dataPacket)
+                if let url = URL(string: text), url.scheme != nil {
+                    let dataPacket = self.dataPacket(forUrl: url)
+                    urlPackets.append(dataPacket)
+                }
+                else {
+                    let dataPacket = self.dataPacket(forText: text)
+                    textPackets.append(dataPacket)
+                }
                 break
                 
             default:
