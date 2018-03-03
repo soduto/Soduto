@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol Service: class, DeviceDataPacketHandler {
+public protocol Service: DeviceDataPacketHandler {
     
     typealias Capability = String
     typealias Id = String

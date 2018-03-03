@@ -126,7 +126,7 @@ public class DeviceConfiguration: NSObject {
     
         let deviceId: Device.Id
         if DeviceConfiguration.isDeviceConfigKey(configKey) {
-            deviceId = String(configKey[configKey.index(configKey.startIndex, offsetBy: DeviceConfiguration.configKeyPrefix.characters.count)...])
+            deviceId = String(configKey[configKey.index(configKey.startIndex, offsetBy: DeviceConfiguration.configKeyPrefix.count)...])
         }
         else {
             deviceId = ""
@@ -332,7 +332,7 @@ public class Configuration: ConnectionConfiguration, DeviceManagerConfiguration,
     
     class func generateDeviceId() -> Device.Id {
         let uuid = UUID().uuidString
-        let deviceId = String(uuid.characters.map { return isSafeDeviceIdCharacter($0) ? $0 : "_" })
+        let deviceId = String(uuid.map { return isSafeDeviceIdCharacter($0) ? $0 : "_" })
         return deviceId
     }
     

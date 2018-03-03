@@ -402,7 +402,7 @@ extension FileItem {
     
     fileprivate convenience init?(sftpFile: NMSFTPFile, parentUrl: URL, user: String) {
         guard var name = sftpFile.filename else { return nil }
-        if name.hasSuffix("/") { name = name.substring(to: name.index(before: name.endIndex)) }
+        if name.hasSuffix("/") { name = String(name.dropLast()) }
         
         let url = parentUrl.appendingPathComponent(name, isDirectory: sftpFile.isDirectory)
         
