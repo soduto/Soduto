@@ -448,11 +448,20 @@ extension ContactPhoneNumber {
             let request = CNContactFetchRequest(keysToFetch: keysToFetch)
             request.unifyResults = true
             try store.enumerateContacts(with: request, usingBlock: { (contact: CNContact, result: UnsafeMutablePointer<ObjCBool>) in
-                guard contact.phoneNumbers.count > 0 else { return }
+                let phoneNumbers = contact.phoneNumbers.filter { phoneNumber in
+                    return phoneNumber.label != CNLabelPhoneNumberPager
+                        && phoneNumber.label != CNLabelPhoneNumberHomeFax
+                        && phoneNumber.label != CNLabelPhoneNumberWorkFax
+                        && phoneNumber.label != CNLabelPhoneNumberOtherFax
+                }
+                guard phoneNumbers.count > 0 else { return }
                 guard let fullName = CNContactFormatter.string(from: contact, style: .fullName) else { return }
-                guard fullName.localizedCaseInsensitiveContains(string) else { return }
-                guard let contactPhoneNumber = ContactPhoneNumber(contact: contact) else { return }
-                results.append(contactPhoneNumber)
+                for phoneNumber in phoneNumbers {
+                    guard fullName.localizedCaseInsensitiveContains(string) else { return }
+                    guard let contactPhoneNumber = ContactPhoneNumber(contact: contact) else { return }
+                    contactPhoneNumber.selectedPhone = phoneNumber
+                    results.append(contactPhoneNumber)
+                }
             })
         }
         catch {
