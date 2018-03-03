@@ -176,8 +176,8 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
         Log.debug?.message("udpSocket(<\(sock)> didSendDataWithTag:<\(tag)>)")
     }
     
-    public func udpSocket(_ sock: GCDAsyncUdpSocket, didNotSendDataWithTag tag: Int, dueToError error: Error) {
-        Log.debug?.message("udpSocket(<\(sock)> didNotSendDataWithTag:<\(tag)> dueToError:<\(error)>)")
+    public func udpSocket(_ sock: GCDAsyncUdpSocket, didNotSendDataWithTag tag: Int, dueToError error: Error?) {
+        Log.debug?.message("udpSocket(<\(sock)> didNotSendDataWithTag:<\(tag)> dueToError:<\(String(describing: error))>)")
     }
     
     public func udpSocket(_ sock: GCDAsyncUdpSocket, didReceive data: Data, fromAddress address: Data, withFilterContext filterContext: Any?) {
@@ -202,7 +202,7 @@ public class ConnectionProvider: NSObject, GCDAsyncSocketDelegate, GCDAsyncUdpSo
         }
     }
     
-    public func udpSocketDidClose(_ sock: GCDAsyncUdpSocket, withError error: Error) {
+    public func udpSocketDidClose(_ sock: GCDAsyncUdpSocket, withError error: Error?) {
 //        Log.debug?.message("udpSocketDidClose(<\(sock)> withError:<\(error)>)")
     }
     
