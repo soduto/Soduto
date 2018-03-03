@@ -42,13 +42,13 @@ cd "$OPENSSL_SRC"
 for BUILDARCH in $BUILDARCHS
 do
     echo "***** BUILDING UNIVERSAL ARCH $BUILDARCH ******"
-    make clean
 
     # disable assembler
     echo "***** configuring WITHOUT assembler optimizations based on architecture $BUILDARCH and build style $BUILD_STYLE *****"
     ./config no-asm $OPENSSL_OPTIONS --openssldir="$OPENSSLDIR" --prefix="$OPENSSLDIR"
     ASM_DEF="-UOPENSSL_BN_ASM_PART_WORDS"
 
+    make clean
     make CFLAG="-D_DARWIN_C_SOURCE $ASM_DEF -arch $BUILDARCH $ISYSROOT -Wno-unused-value -Wno-parentheses" SHARED_LDFLAGS="-arch $BUILDARCH -dynamiclib"
     make -j install
     

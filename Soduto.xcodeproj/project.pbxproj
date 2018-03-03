@@ -18,6 +18,14 @@
 		0236D2BA1F9CFBAA00E0F6A6 /* License.html in Resources */ = {isa = PBXBuildFile; fileRef = 0236D2AD1F9CFB1A00E0F6A6 /* License.html */; };
 		0236D2BB1F9D067A00E0F6A6 /* Acknowledgements.html in Resources */ = {isa = PBXBuildFile; fileRef = 0236D2B81F9CFB2500E0F6A6 /* Acknowledgements.html */; };
 		0236D2BC1F9D067A00E0F6A6 /* License.html in Resources */ = {isa = PBXBuildFile; fileRef = 0236D2AD1F9CFB1A00E0F6A6 /* License.html */; };
+		023BD59E204AEE270045B5F9 /* NMSSH.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0281086F204AD901000FCA5E /* NMSSH.framework */; };
+		023BD59F204AEE270045B5F9 /* NMSSH.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0281086F204AD901000FCA5E /* NMSSH.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		023BD5A3204AEE900045B5F9 /* CocoaAsyncSocket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02810896204AD9A0000FCA5E /* CocoaAsyncSocket.framework */; };
+		023BD5A4204AEE900045B5F9 /* CocoaAsyncSocket.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 02810896204AD9A0000FCA5E /* CocoaAsyncSocket.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		023BD5A7204AEEAD0045B5F9 /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0281087D204AD915000FCA5E /* Reachability.framework */; };
+		023BD5A8204AEEAD0045B5F9 /* Reachability.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0281087D204AD915000FCA5E /* Reachability.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		023BD5AB204AEF560045B5F9 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0229540A204AE57A0068BFA0 /* libcrypto.a */; };
+		023BD5AC204AEF560045B5F9 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0229540C204AE57A0068BFA0 /* libssl.a */; };
 		0248E0FF1F23C4AF00C411F7 /* DevicePreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0248E0FE1F23C4AF00C411F7 /* DevicePreferencesViewController.swift */; };
 		024B435F1F23BEEB00037A33 /* PreferencesWindow.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 024B435D1F23BEEB00037A33 /* PreferencesWindow.storyboard */; };
 		024F8B191F24FC7700D6E504 /* ServicePreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024F8B181F24FC7700D6E504 /* ServicePreferencesViewController.swift */; };
@@ -44,14 +52,9 @@
 		8436DEF81E956DA000529362 /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8436DEF71E956DA000529362 /* Timer.swift */; };
 		8436DEFA1E958ABA00529362 /* FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8436DEF91E958ABA00529362 /* FileManager.swift */; };
 		8438A9261E45145F00922155 /* StatusBarApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8438A9251E45145F00922155 /* StatusBarApplication.swift */; };
-		8438ECE61EBA67B6006CBB07 /* NMSSH.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 845BC6A21E68C26B00DC9B81 /* NMSSH.framework */; };
-		8438ECE71EBA67B6006CBB07 /* NMSSH.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 845BC6A21E68C26B00DC9B81 /* NMSSH.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		8438ECEB1EBA67BC006CBB07 /* CleanroomLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84E732081DF46F94001E1549 /* CleanroomLogger.framework */; };
-		8438ECEC1EBA67BC006CBB07 /* CleanroomLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84E732081DF46F94001E1549 /* CleanroomLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		843B67041DF1E64A00289EC9 /* ShareService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843B67031DF1E64A00289EC9 /* ShareService.swift */; };
 		843B670A1DF2CEC400289EC9 /* DownloadTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843B67091DF2CEC400289EC9 /* DownloadTask.swift */; };
 		843B670C1DF3087800289EC9 /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843B670B1DF3087800289EC9 /* URL.swift */; };
-		843E16F11E2413CE001D0444 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 843E16F01E2413CE001D0444 /* libcrypto.a */; };
 		843E170E1E25851D001D0444 /* IO.m in Sources */ = {isa = PBXBuildFile; fileRef = 843E170D1E25851D001D0444 /* IO.m */; };
 		843E17891E26B56A001D0444 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 843E17881E26B56A001D0444 /* ServiceManagement.framework */; };
 		8440FCF71E6CA68300E5BFA9 /* FileSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8440FCF61E6CA68300E5BFA9 /* FileSystem.swift */; };
@@ -97,17 +100,11 @@
 		8499620E1D5728EE002B893A /* Test_Assertions.m in Sources */ = {isa = PBXBuildFile; fileRef = 849961F31D5728EE002B893A /* Test_Assertions.m */; };
 		849962131D572B1F002B893A /* Logging.m in Sources */ = {isa = PBXBuildFile; fileRef = 849962121D572B1F002B893A /* Logging.m */; };
 		84A16BE01E9EBADD00DE2C0B /* Sequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A16BDF1E9EBADD00DE2C0B /* Sequence.swift */; };
-		84B4D0E91DFD756A00437CBB /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B4D0DC1DFD754800437CBB /* Reachability.framework */; };
-		84B4D0EC1DFD759700437CBB /* Reachability.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84B4D0DE1DFD754800437CBB /* Reachability.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84B933EF1E281AB40071DEFF /* CertificateUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 84B933EE1E281AB40071DEFF /* CertificateUtils.m */; };
 		84C545E01EABC14E005A8107 /* SftpFileSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C545DF1EABC14E005A8107 /* SftpFileSystem.swift */; };
 		84C613E31DECBF6C00CE7F7A /* UploadTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C613E21DECBF6B00CE7F7A /* UploadTask.swift */; };
 		84D071681EB91F5D004D383A /* SodutoBrowser.app in Embed Helper Executables */ = {isa = PBXBuildFile; fileRef = 845BC70A1E69F00E00DC9B81 /* SodutoBrowser.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		84D903A21DC696A600E61DA7 /* CertificateUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D903A11DC696A600E61DA7 /* CertificateUtils.swift */; };
-		84E7320F1DF4714F001E1549 /* CleanroomLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84E732081DF46F94001E1549 /* CleanroomLogger.framework */; };
-		84E732101DF47186001E1549 /* CocoaAsyncSocket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84E2F2F41D574A4F00EAA802 /* CocoaAsyncSocket.framework */; };
-		84E7321F1DF55B67001E1549 /* CleanroomLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84E732081DF46F94001E1549 /* CleanroomLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		84E732231DF55B67001E1549 /* CocoaAsyncSocket.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84E2F2F41D574A4F00EAA802 /* CocoaAsyncSocket.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84FA45D71DDDCB3D00EF3992 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA45CF1DDDCB3D00EF3992 /* Connection.swift */; };
 		84FA45D81DDDCB3D00EF3992 /* ConnectionProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA45D01DDDCB3D00EF3992 /* ConnectionProvider.swift */; };
 		84FA45D91DDDCB3D00EF3992 /* DataPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA45D11DDDCB3D00EF3992 /* DataPacket.swift */; };
@@ -125,75 +122,138 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		8438ECE81EBA67B6006CBB07 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 845BC6971E68C26B00DC9B81 /* NMSSH.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = E4E96D83158E10FD002E6E0A;
-			remoteInfo = NMSSH;
-		};
-		8438ECED1EBA67BC006CBB07 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84E732021DF46F93001E1549 /* CleanroomLogger.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 3B9059021DAECB5200B4EEC0;
-			remoteInfo = CleanroomLogger;
-		};
-		843E16EF1E2413CE001D0444 /* PBXContainerItemProxy */ = {
+		02295409204AE57A0068BFA0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 843E16DF1E240F46001D0444 /* OpenSSL.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 9069D28C0FCE659A0042E34C;
 			remoteInfo = crypto;
 		};
-		845BC6A11E68C26B00DC9B81 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 845BC6971E68C26B00DC9B81 /* NMSSH.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = E4E96D84158E10FD002E6E0A;
-			remoteInfo = NMSSH;
-		};
-		845BC6A31E68C26B00DC9B81 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 845BC6971E68C26B00DC9B81 /* NMSSH.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = E4E96D9C158E10FD002E6E0A;
-			remoteInfo = NMSSHTests;
-		};
-		845BC6C51E68C4BF00DC9B81 /* PBXContainerItemProxy */ = {
+		0229540B204AE57A0068BFA0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 843E16DF1E240F46001D0444 /* OpenSSL.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 845BC6BB1E68C3B000DC9B81;
 			remoteInfo = ssl;
 		};
-		8472F4701EC8DD490028627C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 843E16DF1E240F46001D0444 /* OpenSSL.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 9069D28B0FCE659A0042E34C;
-			remoteInfo = crypto;
-		};
-		8472F47F1EC8DD530028627C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 843E16DF1E240F46001D0444 /* OpenSSL.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 845BC6BA1E68C3B000DC9B81;
-			remoteInfo = ssl;
-		};
-		8472F4811EC8DD590028627C /* PBXContainerItemProxy */ = {
+		023BD58D204AE9100045B5F9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 84BEF7271E660E2600D839D3 /* LibSSH2.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 84BEF71F1E660E2600D839D3;
+			proxyType = 2;
+			remoteGlobalIDString = 84BEF7201E660E2600D839D3;
 			remoteInfo = ssh2;
 		};
-		8472F4981EC8EFB60028627C /* PBXContainerItemProxy */ = {
+		023BD5A0204AEE270045B5F9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 843E16DF1E240F46001D0444 /* OpenSSL.xcodeproj */;
+			containerPortal = 845BC6971E68C26B00DC9B81 /* NMSSH.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 9069D28B0FCE659A0042E34C;
-			remoteInfo = crypto;
+			remoteGlobalIDString = E4E96D83158E10FD002E6E0A;
+			remoteInfo = NMSSH;
+		};
+		023BD5A5204AEE900045B5F9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8499621A1D57438E002B893A /* CocoaAsyncSocket.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 9FC41F121B9D965000578BEB;
+			remoteInfo = "Mac CocoaAsyncSocket";
+		};
+		023BD5A9204AEEAD0045B5F9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84B4D0CE1DFD754700437CBB /* Reachability.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 00C54B101C09CD9C001C3F12;
+			remoteInfo = ReachabilityMac;
+		};
+		0281086E204AD901000FCA5E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 845BC6971E68C26B00DC9B81 /* NMSSH.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E4E96D84158E10FD002E6E0A;
+			remoteInfo = NMSSH;
+		};
+		02810870204AD901000FCA5E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 845BC6971E68C26B00DC9B81 /* NMSSH.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E4E96D9C158E10FD002E6E0A;
+			remoteInfo = NMSSHTests;
+		};
+		0281087A204AD915000FCA5E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84B4D0CE1DFD754700437CBB /* Reachability.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = AA7344721BE7678B008AFE69;
+			remoteInfo = Reachability;
+		};
+		0281087C204AD915000FCA5E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84B4D0CE1DFD754700437CBB /* Reachability.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 00C54B111C09CD9C001C3F12;
+			remoteInfo = ReachabilityMac;
+		};
+		0281087E204AD915000FCA5E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84B4D0CE1DFD754700437CBB /* Reachability.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 57A45A2A1C197F4800384AE4;
+			remoteInfo = ReachabilityTV;
+		};
+		02810880204AD915000FCA5E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84B4D0CE1DFD754700437CBB /* Reachability.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = AA7344901BE76820008AFE69;
+			remoteInfo = ReachabilitySample;
+		};
+		02810882204AD915000FCA5E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84B4D0CE1DFD754700437CBB /* Reachability.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 00C54B1F1C09CF67001C3F12;
+			remoteInfo = ReachabilityMacSample;
+		};
+		02810884204AD915000FCA5E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84B4D0CE1DFD754700437CBB /* Reachability.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 57A45A011C197BE800384AE4;
+			remoteInfo = ReachabilityAppleTVSample;
+		};
+		0281088A204AD92E000FCA5E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84E732021DF46F93001E1549 /* CleanroomLogger.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3B9059031DAECB5200B4EEC0;
+			remoteInfo = CleanroomLogger;
+		};
+		0281088C204AD92E000FCA5E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84E732021DF46F93001E1549 /* CleanroomLogger.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3B90590C1DAECB5200B4EEC0;
+			remoteInfo = CleanroomLoggerTests;
+		};
+		02810893204AD9A0000FCA5E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8499621A1D57438E002B893A /* CocoaAsyncSocket.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6CD990101B77868C0011A685;
+			remoteInfo = "iOS CocoaAsyncSocket";
+		};
+		02810895204AD9A0000FCA5E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8499621A1D57438E002B893A /* CocoaAsyncSocket.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9FC41F131B9D965000578BEB;
+			remoteInfo = "Mac CocoaAsyncSocket";
+		};
+		02810897204AD9A0000FCA5E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8499621A1D57438E002B893A /* CocoaAsyncSocket.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7D8B70C41BCFA15700D8E273;
+			remoteInfo = "tvOS CocoaAsyncSocket";
 		};
 		847EF4C71DC9049D00360BBE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -202,69 +262,6 @@
 			remoteGlobalIDString = 8433015F1D2D8CB8008934BB;
 			remoteInfo = Soduto;
 		};
-		84B4D0DB1DFD754800437CBB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84B4D0CE1DFD754700437CBB /* Reachability.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = AA7344721BE7678B008AFE69;
-			remoteInfo = Reachability;
-		};
-		84B4D0DD1DFD754800437CBB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84B4D0CE1DFD754700437CBB /* Reachability.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 00C54B111C09CD9C001C3F12;
-			remoteInfo = ReachabilityMac;
-		};
-		84B4D0DF1DFD754800437CBB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84B4D0CE1DFD754700437CBB /* Reachability.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 57A45A2A1C197F4800384AE4;
-			remoteInfo = ReachabilityTV;
-		};
-		84B4D0E11DFD754800437CBB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84B4D0CE1DFD754700437CBB /* Reachability.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = AA7344901BE76820008AFE69;
-			remoteInfo = ReachabilitySample;
-		};
-		84B4D0E31DFD754800437CBB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84B4D0CE1DFD754700437CBB /* Reachability.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 00C54B1F1C09CF67001C3F12;
-			remoteInfo = ReachabilityMacSample;
-		};
-		84B4D0E51DFD754800437CBB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84B4D0CE1DFD754700437CBB /* Reachability.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 57A45A011C197BE800384AE4;
-			remoteInfo = ReachabilityAppleTVSample;
-		};
-		84B4D0E71DFD755800437CBB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84B4D0CE1DFD754700437CBB /* Reachability.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 00C54B101C09CD9C001C3F12;
-			remoteInfo = ReachabilityMac;
-		};
-		84BEF72F1E660E2800D839D3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84BEF7271E660E2600D839D3 /* LibSSH2.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 84BEF7201E660E2600D839D3;
-			remoteInfo = LibSSH2;
-		};
-		84C545F41EABC410005A8107 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 845BC6971E68C26B00DC9B81 /* NMSSH.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = E4E96D83158E10FD002E6E0A;
-			remoteInfo = NMSSH;
-		};
 		84D071691EB91FAE004D383A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 843301581D2D8CB8008934BB /* Project object */;
@@ -272,80 +269,16 @@
 			remoteGlobalIDString = 845BC7091E69F00E00DC9B81;
 			remoteInfo = SodutoBrowser;
 		};
-		84E2F2F11D574A4F00EAA802 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8499621A1D57438E002B893A /* CocoaAsyncSocket.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 6CD990101B77868C0011A685;
-			remoteInfo = "iOS CocoaAsyncSocket";
-		};
-		84E2F2F31D574A4F00EAA802 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8499621A1D57438E002B893A /* CocoaAsyncSocket.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 9FC41F131B9D965000578BEB;
-			remoteInfo = "Mac CocoaAsyncSocket";
-		};
-		84E2F2F51D574A4F00EAA802 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8499621A1D57438E002B893A /* CocoaAsyncSocket.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 7D8B70C41BCFA15700D8E273;
-			remoteInfo = "tvOS CocoaAsyncSocket";
-		};
-		84E2F2F71D574A5900EAA802 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8499621A1D57438E002B893A /* CocoaAsyncSocket.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 9FC41F121B9D965000578BEB;
-			remoteInfo = "Mac CocoaAsyncSocket";
-		};
-		84E732071DF46F94001E1549 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84E732021DF46F93001E1549 /* CleanroomLogger.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3B9059031DAECB5200B4EEC0;
-			remoteInfo = CleanroomLogger;
-		};
-		84E732091DF46F94001E1549 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84E732021DF46F93001E1549 /* CleanroomLogger.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3B90590C1DAECB5200B4EEC0;
-			remoteInfo = CleanroomLoggerTests;
-		};
-		84E7320D1DF47006001E1549 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84E732021DF46F93001E1549 /* CleanroomLogger.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 3B9059021DAECB5200B4EEC0;
-			remoteInfo = CleanroomLogger;
-		};
-		84E732201DF55B67001E1549 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 84E732021DF46F93001E1549 /* CleanroomLogger.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 3B9059021DAECB5200B4EEC0;
-			remoteInfo = CleanroomLogger;
-		};
-		84E732241DF55B67001E1549 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8499621A1D57438E002B893A /* CocoaAsyncSocket.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 9FC41F121B9D965000578BEB;
-			remoteInfo = "Mac CocoaAsyncSocket";
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		8438ECEA1EBA67B6006CBB07 /* Embed Frameworks */ = {
+		023BD5A2204AEE270045B5F9 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				8438ECE71EBA67B6006CBB07 /* NMSSH.framework in Embed Frameworks */,
-				8438ECEC1EBA67BC006CBB07 /* CleanroomLogger.framework in Embed Frameworks */,
+				023BD59F204AEE270045B5F9 /* NMSSH.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -388,9 +321,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				84B4D0EC1DFD759700437CBB /* Reachability.framework in Embed Frameworks */,
-				84E732231DF55B67001E1549 /* CocoaAsyncSocket.framework in Embed Frameworks */,
-				84E7321F1DF55B67001E1549 /* CleanroomLogger.framework in Embed Frameworks */,
+				023BD5A4204AEE900045B5F9 /* CocoaAsyncSocket.framework in Embed Frameworks */,
+				023BD5A8204AEEAD0045B5F9 /* Reachability.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -441,7 +373,7 @@
 		843B67031DF1E64A00289EC9 /* ShareService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareService.swift; sourceTree = "<group>"; };
 		843B67091DF2CEC400289EC9 /* DownloadTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadTask.swift; sourceTree = "<group>"; };
 		843B670B1DF3087800289EC9 /* URL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
-		843E16DF1E240F46001D0444 /* OpenSSL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpenSSL.xcodeproj; path = Soduto/OpenSSL/OpenSSL.xcodeproj; sourceTree = "<group>"; };
+		843E16DF1E240F46001D0444 /* OpenSSL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpenSSL.xcodeproj; path = OpenSSL/OpenSSL.xcodeproj; sourceTree = "<group>"; };
 		843E170C1E25851D001D0444 /* IO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IO.h; sourceTree = "<group>"; };
 		843E170D1E25851D001D0444 /* IO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IO.m; sourceTree = "<group>"; };
 		843E17881E26B56A001D0444 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
@@ -452,7 +384,7 @@
 		8456F4A71D7DE393006EFE19 /* Pairable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pairable.swift; sourceTree = "<group>"; };
 		8456F4A91D7DEA47006EFE19 /* DefaultPairingHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultPairingHandler.swift; sourceTree = "<group>"; };
 		8458472F1E75D33600EE5A09 /* URL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
-		845BC6971E68C26B00DC9B81 /* NMSSH.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = NMSSH.xcodeproj; path = Soduto/NMSSH/NMSSH.xcodeproj; sourceTree = "<group>"; };
+		845BC6971E68C26B00DC9B81 /* NMSSH.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = NMSSH.xcodeproj; path = NMSSH/NMSSH.xcodeproj; sourceTree = "<group>"; };
 		845BC70A1E69F00E00DC9B81 /* SodutoBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SodutoBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		845BC70C1E69F00E00DC9B81 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		845BC70E1E69F00E00DC9B81 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -497,18 +429,18 @@
 		849961F31D5728EE002B893A /* Test_Assertions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Test_Assertions.m; path = MYUtilities/Test_Assertions.m; sourceTree = "<group>"; };
 		849962111D572B1F002B893A /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = MYUtilities/Logging.h; sourceTree = "<group>"; };
 		849962121D572B1F002B893A /* Logging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Logging.m; path = MYUtilities/Logging.m; sourceTree = "<group>"; };
-		8499621A1D57438E002B893A /* CocoaAsyncSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CocoaAsyncSocket.xcodeproj; path = Soduto/CocoaAsyncSocket/CocoaAsyncSocket.xcodeproj; sourceTree = "<group>"; };
+		8499621A1D57438E002B893A /* CocoaAsyncSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CocoaAsyncSocket.xcodeproj; path = CocoaAsyncSocket/CocoaAsyncSocket.xcodeproj; sourceTree = "<group>"; };
 		849962271D574530002B893A /* CocoaAsyncSocket.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaAsyncSocket.framework; path = Soduto/CocoaAsyncSocket/build/Debug/CocoaAsyncSocket.framework; sourceTree = "<group>"; };
 		84A16BDF1E9EBADD00DE2C0B /* Sequence.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sequence.swift; sourceTree = "<group>"; };
-		84B4D0CE1DFD754700437CBB /* Reachability.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Reachability.xcodeproj; path = Soduto/Reachability.swift/Reachability.xcodeproj; sourceTree = "<group>"; };
+		84B4D0CE1DFD754700437CBB /* Reachability.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Reachability.xcodeproj; path = Reachability.swift/Reachability.xcodeproj; sourceTree = "<group>"; };
 		84B933EE1E281AB40071DEFF /* CertificateUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CertificateUtils.m; sourceTree = "<group>"; };
 		84B9340D1E2A56EA0071DEFF /* CertificateUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CertificateUtils.h; sourceTree = "<group>"; };
-		84BEF7271E660E2600D839D3 /* LibSSH2.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = LibSSH2.xcodeproj; path = Soduto/LibSSH2/LibSSH2.xcodeproj; sourceTree = "<group>"; };
+		84BEF7271E660E2600D839D3 /* LibSSH2.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = LibSSH2.xcodeproj; path = LibSSH2/LibSSH2.xcodeproj; sourceTree = "<group>"; };
 		84C545DF1EABC14E005A8107 /* SftpFileSystem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SftpFileSystem.swift; sourceTree = "<group>"; };
 		84C545F71EABECDE005A8107 /* SodutoBrowser-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SodutoBrowser-Bridging-Header.h"; sourceTree = "<group>"; };
 		84C613E21DECBF6B00CE7F7A /* UploadTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadTask.swift; sourceTree = "<group>"; };
 		84D903A11DC696A600E61DA7 /* CertificateUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CertificateUtils.swift; sourceTree = "<group>"; };
-		84E732021DF46F93001E1549 /* CleanroomLogger.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CleanroomLogger.xcodeproj; path = Soduto/CleanroomLogger/CleanroomLogger.xcodeproj; sourceTree = "<group>"; };
+		84E732021DF46F93001E1549 /* CleanroomLogger.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CleanroomLogger.xcodeproj; path = CleanroomLogger/CleanroomLogger.xcodeproj; sourceTree = "<group>"; };
 		84FA45CF1DDDCB3D00EF3992 /* Connection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
 		84FA45D01DDDCB3D00EF3992 /* ConnectionProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionProvider.swift; sourceTree = "<group>"; };
 		84FA45D11DDDCB3D00EF3992 /* DataPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataPacket.swift; sourceTree = "<group>"; };
@@ -531,11 +463,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				023BD5AB204AEF560045B5F9 /* libcrypto.a in Frameworks */,
+				023BD5AC204AEF560045B5F9 /* libssl.a in Frameworks */,
+				023BD5A3204AEE900045B5F9 /* CocoaAsyncSocket.framework in Frameworks */,
+				023BD5A7204AEEAD0045B5F9 /* Reachability.framework in Frameworks */,
 				843E17891E26B56A001D0444 /* ServiceManagement.framework in Frameworks */,
-				843E16F11E2413CE001D0444 /* libcrypto.a in Frameworks */,
-				84B4D0E91DFD756A00437CBB /* Reachability.framework in Frameworks */,
-				84E732101DF47186001E1549 /* CocoaAsyncSocket.framework in Frameworks */,
-				84E7320F1DF4714F001E1549 /* CleanroomLogger.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -550,8 +482,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8438ECE61EBA67B6006CBB07 /* NMSSH.framework in Frameworks */,
-				8438ECEB1EBA67BC006CBB07 /* CleanroomLogger.framework in Frameworks */,
+				023BD59E204AEE270045B5F9 /* NMSSH.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -571,6 +502,64 @@
 				0225F6101F06E2380021BFE2 /* NSAttributedString.swift */,
 			);
 			path = Utils;
+			sourceTree = "<group>";
+		};
+		02295405204AE57A0068BFA0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0229540A204AE57A0068BFA0 /* libcrypto.a */,
+				0229540C204AE57A0068BFA0 /* libssl.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		023BD585204AE9100045B5F9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				023BD58E204AE9100045B5F9 /* libssh2.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0281086A204AD901000FCA5E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0281086F204AD901000FCA5E /* NMSSH.framework */,
+				02810871204AD901000FCA5E /* NMSSHTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		02810872204AD915000FCA5E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0281087B204AD915000FCA5E /* Reachability.framework */,
+				0281087D204AD915000FCA5E /* Reachability.framework */,
+				0281087F204AD915000FCA5E /* Reachability.framework */,
+				02810881204AD915000FCA5E /* ReachabilitySample.app */,
+				02810883204AD915000FCA5E /* ReachabilityMacSample.app */,
+				02810885204AD915000FCA5E /* ReachabilityAppleTVSample.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		02810886204AD92E000FCA5E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0281088B204AD92E000FCA5E /* CleanroomLogger.framework */,
+				0281088D204AD92E000FCA5E /* CleanroomLoggerUnitTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0281088E204AD99F000FCA5E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				02810894204AD9A0000FCA5E /* CocoaAsyncSocket.framework */,
+				02810896204AD9A0000FCA5E /* CocoaAsyncSocket.framework */,
+				02810898204AD9A0000FCA5E /* CocoaAsyncSocket.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		02EC48A91F2296C600C9370F /* Configuration */ = {
@@ -708,15 +697,6 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		843E16E01E240F46001D0444 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				843E16F01E2413CE001D0444 /* libcrypto.a */,
-				845BC6C61E68C4BF00DC9B81 /* libssl.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		8456F4A41D7DE31A006EFE19 /* Core */ = {
 			isa = PBXGroup;
 			children = (
@@ -748,15 +728,6 @@
 				84A16BDF1E9EBADD00DE2C0B /* Sequence.swift */,
 			);
 			path = Utils;
-			sourceTree = "<group>";
-		};
-		845BC6981E68C26B00DC9B81 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				845BC6A21E68C26B00DC9B81 /* NMSSH.framework */,
-				845BC6A41E68C26B00DC9B81 /* NMSSHTests.xctest */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		845BC70B1E69F00E00DC9B81 /* SodutoBrowser */ = {
@@ -884,46 +855,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		84B4D0CF1DFD754700437CBB /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				84B4D0DC1DFD754800437CBB /* Reachability.framework */,
-				84B4D0DE1DFD754800437CBB /* Reachability.framework */,
-				84B4D0E01DFD754800437CBB /* Reachability.framework */,
-				84B4D0E21DFD754800437CBB /* ReachabilitySample.app */,
-				84B4D0E41DFD754800437CBB /* ReachabilityMacSample.app */,
-				84B4D0E61DFD754800437CBB /* ReachabilityAppleTVSample.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		84BEF7281E660E2600D839D3 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				84BEF7301E660E2800D839D3 /* libssh2.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		84E2F2EC1D574A4E00EAA802 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				84E2F2F21D574A4F00EAA802 /* CocoaAsyncSocket.framework */,
-				84E2F2F41D574A4F00EAA802 /* CocoaAsyncSocket.framework */,
-				84E2F2F61D574A4F00EAA802 /* CocoaAsyncSocket.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		84E732031DF46F93001E1549 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				84E732081DF46F94001E1549 /* CleanroomLogger.framework */,
-				84E7320A1DF46F94001E1549 /* CleanroomLoggerUnitTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		84FA45EB1DDF51EB00EF3992 /* Services */ = {
 			isa = PBXGroup;
 			children = (
@@ -958,13 +889,9 @@
 			buildRules = (
 			);
 			dependencies = (
-				8472F4991EC8EFB60028627C /* PBXTargetDependency */,
 				84D0716A1EB91FAE004D383A /* PBXTargetDependency */,
-				84B4D0E81DFD755800437CBB /* PBXTargetDependency */,
-				84E7320E1DF47006001E1549 /* PBXTargetDependency */,
-				84E2F2F81D574A5900EAA802 /* PBXTargetDependency */,
-				84E732211DF55B67001E1549 /* PBXTargetDependency */,
-				84E732251DF55B67001E1549 /* PBXTargetDependency */,
+				023BD5A6204AEE900045B5F9 /* PBXTargetDependency */,
+				023BD5AA204AEEAD0045B5F9 /* PBXTargetDependency */,
 			);
 			name = Soduto;
 			productName = Soduto;
@@ -995,17 +922,12 @@
 				845BC7061E69F00E00DC9B81 /* Sources */,
 				845BC7071E69F00E00DC9B81 /* Frameworks */,
 				845BC7081E69F00E00DC9B81 /* Resources */,
-				8438ECEA1EBA67B6006CBB07 /* Embed Frameworks */,
+				023BD5A2204AEE270045B5F9 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				8472F4711EC8DD490028627C /* PBXTargetDependency */,
-				8472F4801EC8DD530028627C /* PBXTargetDependency */,
-				8472F4821EC8DD590028627C /* PBXTargetDependency */,
-				84C545F51EABC410005A8107 /* PBXTargetDependency */,
-				8438ECE91EBA67B6006CBB07 /* PBXTargetDependency */,
-				8438ECEE1EBA67BC006CBB07 /* PBXTargetDependency */,
+				023BD5A1204AEE270045B5F9 /* PBXTargetDependency */,
 			);
 			name = SodutoBrowser;
 			productName = SodutoBrowser;
@@ -1094,27 +1016,27 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 84E732031DF46F93001E1549 /* Products */;
+					ProductGroup = 02810886204AD92E000FCA5E /* Products */;
 					ProjectRef = 84E732021DF46F93001E1549 /* CleanroomLogger.xcodeproj */;
 				},
 				{
-					ProductGroup = 84E2F2EC1D574A4E00EAA802 /* Products */;
+					ProductGroup = 0281088E204AD99F000FCA5E /* Products */;
 					ProjectRef = 8499621A1D57438E002B893A /* CocoaAsyncSocket.xcodeproj */;
 				},
 				{
-					ProductGroup = 84BEF7281E660E2600D839D3 /* Products */;
+					ProductGroup = 023BD585204AE9100045B5F9 /* Products */;
 					ProjectRef = 84BEF7271E660E2600D839D3 /* LibSSH2.xcodeproj */;
 				},
 				{
-					ProductGroup = 845BC6981E68C26B00DC9B81 /* Products */;
+					ProductGroup = 0281086A204AD901000FCA5E /* Products */;
 					ProjectRef = 845BC6971E68C26B00DC9B81 /* NMSSH.xcodeproj */;
 				},
 				{
-					ProductGroup = 843E16E01E240F46001D0444 /* Products */;
+					ProductGroup = 02295405204AE57A0068BFA0 /* Products */;
 					ProjectRef = 843E16DF1E240F46001D0444 /* OpenSSL.xcodeproj */;
 				},
 				{
-					ProductGroup = 84B4D0CF1DFD754700437CBB /* Products */;
+					ProductGroup = 02810872204AD915000FCA5E /* Products */;
 					ProjectRef = 84B4D0CE1DFD754700437CBB /* Reachability.xcodeproj */;
 				},
 			);
@@ -1129,116 +1051,116 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		843E16F01E2413CE001D0444 /* libcrypto.a */ = {
+		0229540A204AE57A0068BFA0 /* libcrypto.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libcrypto.a;
-			remoteRef = 843E16EF1E2413CE001D0444 /* PBXContainerItemProxy */;
+			remoteRef = 02295409204AE57A0068BFA0 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		845BC6A21E68C26B00DC9B81 /* NMSSH.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = NMSSH.framework;
-			remoteRef = 845BC6A11E68C26B00DC9B81 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		845BC6A41E68C26B00DC9B81 /* NMSSHTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = NMSSHTests.xctest;
-			remoteRef = 845BC6A31E68C26B00DC9B81 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		845BC6C61E68C4BF00DC9B81 /* libssl.a */ = {
+		0229540C204AE57A0068BFA0 /* libssl.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libssl.a;
-			remoteRef = 845BC6C51E68C4BF00DC9B81 /* PBXContainerItemProxy */;
+			remoteRef = 0229540B204AE57A0068BFA0 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		84B4D0DC1DFD754800437CBB /* Reachability.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Reachability.framework;
-			remoteRef = 84B4D0DB1DFD754800437CBB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		84B4D0DE1DFD754800437CBB /* Reachability.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Reachability.framework;
-			remoteRef = 84B4D0DD1DFD754800437CBB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		84B4D0E01DFD754800437CBB /* Reachability.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Reachability.framework;
-			remoteRef = 84B4D0DF1DFD754800437CBB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		84B4D0E21DFD754800437CBB /* ReachabilitySample.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = ReachabilitySample.app;
-			remoteRef = 84B4D0E11DFD754800437CBB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		84B4D0E41DFD754800437CBB /* ReachabilityMacSample.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = ReachabilityMacSample.app;
-			remoteRef = 84B4D0E31DFD754800437CBB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		84B4D0E61DFD754800437CBB /* ReachabilityAppleTVSample.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = ReachabilityAppleTVSample.app;
-			remoteRef = 84B4D0E51DFD754800437CBB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		84BEF7301E660E2800D839D3 /* libssh2.a */ = {
+		023BD58E204AE9100045B5F9 /* libssh2.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libssh2.a;
-			remoteRef = 84BEF72F1E660E2800D839D3 /* PBXContainerItemProxy */;
+			remoteRef = 023BD58D204AE9100045B5F9 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		84E2F2F21D574A4F00EAA802 /* CocoaAsyncSocket.framework */ = {
+		0281086F204AD901000FCA5E /* NMSSH.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = CocoaAsyncSocket.framework;
-			remoteRef = 84E2F2F11D574A4F00EAA802 /* PBXContainerItemProxy */;
+			path = NMSSH.framework;
+			remoteRef = 0281086E204AD901000FCA5E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		84E2F2F41D574A4F00EAA802 /* CocoaAsyncSocket.framework */ = {
+		02810871204AD901000FCA5E /* NMSSHTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = NMSSHTests.xctest;
+			remoteRef = 02810870204AD901000FCA5E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		0281087B204AD915000FCA5E /* Reachability.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = CocoaAsyncSocket.framework;
-			remoteRef = 84E2F2F31D574A4F00EAA802 /* PBXContainerItemProxy */;
+			path = Reachability.framework;
+			remoteRef = 0281087A204AD915000FCA5E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		84E2F2F61D574A4F00EAA802 /* CocoaAsyncSocket.framework */ = {
+		0281087D204AD915000FCA5E /* Reachability.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = CocoaAsyncSocket.framework;
-			remoteRef = 84E2F2F51D574A4F00EAA802 /* PBXContainerItemProxy */;
+			path = Reachability.framework;
+			remoteRef = 0281087C204AD915000FCA5E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		84E732081DF46F94001E1549 /* CleanroomLogger.framework */ = {
+		0281087F204AD915000FCA5E /* Reachability.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Reachability.framework;
+			remoteRef = 0281087E204AD915000FCA5E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		02810881204AD915000FCA5E /* ReachabilitySample.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = ReachabilitySample.app;
+			remoteRef = 02810880204AD915000FCA5E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		02810883204AD915000FCA5E /* ReachabilityMacSample.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = ReachabilityMacSample.app;
+			remoteRef = 02810882204AD915000FCA5E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		02810885204AD915000FCA5E /* ReachabilityAppleTVSample.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = ReachabilityAppleTVSample.app;
+			remoteRef = 02810884204AD915000FCA5E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		0281088B204AD92E000FCA5E /* CleanroomLogger.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = CleanroomLogger.framework;
-			remoteRef = 84E732071DF46F94001E1549 /* PBXContainerItemProxy */;
+			remoteRef = 0281088A204AD92E000FCA5E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		84E7320A1DF46F94001E1549 /* CleanroomLoggerUnitTests.xctest */ = {
+		0281088D204AD92E000FCA5E /* CleanroomLoggerUnitTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = CleanroomLoggerUnitTests.xctest;
-			remoteRef = 84E732091DF46F94001E1549 /* PBXContainerItemProxy */;
+			remoteRef = 0281088C204AD92E000FCA5E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		02810894204AD9A0000FCA5E /* CocoaAsyncSocket.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = CocoaAsyncSocket.framework;
+			remoteRef = 02810893204AD9A0000FCA5E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		02810896204AD9A0000FCA5E /* CocoaAsyncSocket.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = CocoaAsyncSocket.framework;
+			remoteRef = 02810895204AD9A0000FCA5E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		02810898204AD9A0000FCA5E /* CocoaAsyncSocket.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = CocoaAsyncSocket.framework;
+			remoteRef = 02810897204AD9A0000FCA5E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1407,75 +1329,30 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		8438ECE91EBA67B6006CBB07 /* PBXTargetDependency */ = {
+		023BD5A1204AEE270045B5F9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = NMSSH;
-			targetProxy = 8438ECE81EBA67B6006CBB07 /* PBXContainerItemProxy */;
+			targetProxy = 023BD5A0204AEE270045B5F9 /* PBXContainerItemProxy */;
 		};
-		8438ECEE1EBA67BC006CBB07 /* PBXTargetDependency */ = {
+		023BD5A6204AEE900045B5F9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = CleanroomLogger;
-			targetProxy = 8438ECED1EBA67BC006CBB07 /* PBXContainerItemProxy */;
+			name = "Mac CocoaAsyncSocket";
+			targetProxy = 023BD5A5204AEE900045B5F9 /* PBXContainerItemProxy */;
 		};
-		8472F4711EC8DD490028627C /* PBXTargetDependency */ = {
+		023BD5AA204AEEAD0045B5F9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = crypto;
-			targetProxy = 8472F4701EC8DD490028627C /* PBXContainerItemProxy */;
-		};
-		8472F4801EC8DD530028627C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = ssl;
-			targetProxy = 8472F47F1EC8DD530028627C /* PBXContainerItemProxy */;
-		};
-		8472F4821EC8DD590028627C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = ssh2;
-			targetProxy = 8472F4811EC8DD590028627C /* PBXContainerItemProxy */;
-		};
-		8472F4991EC8EFB60028627C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = crypto;
-			targetProxy = 8472F4981EC8EFB60028627C /* PBXContainerItemProxy */;
+			name = ReachabilityMac;
+			targetProxy = 023BD5A9204AEEAD0045B5F9 /* PBXContainerItemProxy */;
 		};
 		847EF4C81DC9049D00360BBE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 8433015F1D2D8CB8008934BB /* Soduto */;
 			targetProxy = 847EF4C71DC9049D00360BBE /* PBXContainerItemProxy */;
 		};
-		84B4D0E81DFD755800437CBB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = ReachabilityMac;
-			targetProxy = 84B4D0E71DFD755800437CBB /* PBXContainerItemProxy */;
-		};
-		84C545F51EABC410005A8107 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = NMSSH;
-			targetProxy = 84C545F41EABC410005A8107 /* PBXContainerItemProxy */;
-		};
 		84D0716A1EB91FAE004D383A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 845BC7091E69F00E00DC9B81 /* SodutoBrowser */;
 			targetProxy = 84D071691EB91FAE004D383A /* PBXContainerItemProxy */;
-		};
-		84E2F2F81D574A5900EAA802 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "Mac CocoaAsyncSocket";
-			targetProxy = 84E2F2F71D574A5900EAA802 /* PBXContainerItemProxy */;
-		};
-		84E7320E1DF47006001E1549 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = CleanroomLogger;
-			targetProxy = 84E7320D1DF47006001E1549 /* PBXContainerItemProxy */;
-		};
-		84E732211DF55B67001E1549 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = CleanroomLogger;
-			targetProxy = 84E732201DF55B67001E1549 /* PBXContainerItemProxy */;
-		};
-		84E732251DF55B67001E1549 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "Mac CocoaAsyncSocket";
-			targetProxy = 84E732241DF55B67001E1549 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1747,7 +1624,6 @@
 		845BC7141E69F00E00DC9B81 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = SodutoBrowser/SodutoBrowser.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
@@ -1773,7 +1649,6 @@
 		845BC7151E69F00E00DC9B81 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = SodutoBrowser/SodutoBrowser.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
