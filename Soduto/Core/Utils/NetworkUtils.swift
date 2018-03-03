@@ -63,8 +63,8 @@ public struct NetworkUtils {
                 var hwAddressString: String? = nil
                 if sdl.pointee.sdl_alen > 0 {
                     var sdlCopy = sdl.pointee
-                    let sdlCopyStart: UnsafePointer<UInt8> = cast(pointer: &sdlCopy)
-                    let sdlCopyDataStart: UnsafePointer<UInt8> = cast(pointer: &sdlCopy.sdl_data)
+                    let sdlCopyStart = UnsafeRawPointer(UnsafeMutablePointer(&sdlCopy))
+                    let sdlCopyDataStart = UnsafeRawPointer(UnsafeMutablePointer(&sdlCopy.sdl_data))
                     let dataOffset = sdlCopyStart.distance(to: sdlCopyDataStart)
                     let sdlDataPtr = UnsafeRawPointer(sdl).advanced(by: dataOffset).assumingMemoryBound(to: UInt8.self)
                     hwAddressString = String(format: "%x:%x:%x:%x:%x:%x",
