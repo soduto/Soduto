@@ -1,18 +1,18 @@
 [submodule "CleanroomLogger"]
 	path = CleanroomLogger
-	url = https://soduto@github.com/soduto/CleanroomLogger.git
+	url = https://github.com/soduto/CleanroomLogger.git
 [submodule "NMSSH"]
 	path = NMSSH
-	url = https://soduto@github.com/soduto/NMSSH.git
+	url = https://github.com/soduto/NMSSH.git
 [submodule "Reachability.swift"]
 	path = Reachability.swift
-	url = https://soduto@github.com/soduto/Reachability.swift.git
+	url = https://github.com/soduto/Reachability.swift.git
 [submodule "CocoaAsyncSocket"]
 	path = CocoaAsyncSocket
-	url = https://soduto@github.com/soduto/CocoaAsyncSocket.git
+	url = https://github.com/soduto/CocoaAsyncSocket.git
 [submodule "OpenSSL/openssl"]
 	path = OpenSSL/openssl
 	url = https://github.com/openssl/openssl.git
 [submodule "LibSSH2/libssh2"]
 	path = LibSSH2/libssh2
-	url = https://soduto@github.com/libssh2/libssh2.git
+	url = https://github.com/libssh2/libssh2.git
