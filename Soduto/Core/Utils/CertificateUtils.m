@@ -21,10 +21,45 @@ EVP_PKEY * generate_key() {
         return NULL;
     }
     
-    /* Generate the RSA key and assign it to pkey. */
-    RSA * rsa = RSA_generate_key(2048, RSA_F4, NULL, NULL);
-    if (!EVP_PKEY_assign_RSA(pkey, rsa)) {
-        NSLog(@"Unable to generate 2048-bit RSA key.");
+    /* Allocate BIGNUM structure for exponent */
+    BIGNUM *bne = BN_new();
+    if (!bne) {
+        NSLog(@"Unable to create BIGNUM structure.");
+        EVP_PKEY_free(pkey);
+        return NULL;
+    }
+    
+    /* Assign exponent value */
+    if (BN_set_word(bne, RSA_F4) != 1) {
+        NSLog(@"Unable to assign exponent value to BIGNUM.");
+        BN_free(bne);
+        EVP_PKEY_free(pkey);
+        return NULL;
+    }
+    
+    /* Allocate RSA structure */
+    RSA *rsa = RSA_new();
+    if (!rsa) {
+        NSLog(@"Unable to create RSA structure.");
+        BN_free(bne);
+        EVP_PKEY_free(pkey);
+        return NULL;
+    }
+    
+    /* Generate the RSA key. */
+    if (RSA_generate_key_ex(rsa, 2048, bne, NULL) != 1) {
+        NSLog(@"Failed to generate 2048-bit RSA key.");
+        RSA_free(rsa);
+        BN_free(bne);
+        EVP_PKEY_free(pkey);
+        return NULL;
+    }
+    
+    /* Assign RSA key to pkey */
+    if (EVP_PKEY_assign_RSA(pkey, rsa) != 1) {
+        NSLog(@"Unable to assign RSA key to pkey.");
+        RSA_free(rsa);
+        BN_free(bne);
         EVP_PKEY_free(pkey);
         return NULL;
     }
