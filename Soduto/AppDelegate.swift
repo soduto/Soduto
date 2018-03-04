@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  Soduto
 //
-//  Created by Admin on 2016-07-06.
+//  Created by Giedrius Stanevičius on 2016-07-06.
 //  Copyright © 2016 Soduto. All rights reserved.
 //
 
@@ -118,35 +118,4 @@ class AppDelegate: NSObject, NSApplicationDelegate, DeviceManagerDelegate {
         self.welcomeWindowController = controller
     }
     
-    
-    
-//    let serviceUUID: UUID = UUID(uuidString: "185f3df4-3268-4e3f-9fca-d4d5059915bd")!
-//    var inquiry: IOBluetoothDeviceInquiry?
-//
-//    private func checkBluetooth() {
-//        inquiry = IOBluetoothDeviceInquiry(delegate: self)
-//
-//        inquiry?.inquiryLength = 15
-//        guard inquiry?.start() == kIOReturnSuccess else { Log.error?.message("Failed to start BT inquiry"); return }
-//        _ = Timer.compatScheduledTimer(withTimeInterval: 20, repeats: true) { (timer) in
-//            guard self.inquiry?.stop() == kIOReturnSuccess else { Log.error?.message("Failed to stop BT inquiry"); return }
-//            guard self.inquiry?.start() == kIOReturnSuccess else { Log.error?.message("Failed to start BT inquiry"); return }
-//        }
-//    }
 }
-
-//extension AppDelegate: IOBluetoothDeviceInquiryDelegate {
-//
-//    @objc dynamic func deviceInquiryStarted(_ sender: IOBluetoothDeviceInquiry!) {
-//        Log.info?.message("Searching Bluetooth devices.")
-//    }
-//
-//    @objc dynamic func deviceInquiryDeviceFound(_ sender: IOBluetoothDeviceInquiry!, device: IOBluetoothDevice!) {
-//        Log.info?.message("Found Bluetooth device: \(device)")
-//    }
-//
-//    @objc dynamic func deviceInquiryComplete(_ sender: IOBluetoothDeviceInquiry!, error: IOReturn, aborted: Bool) {
-//        Log.info?.message("Found Bluetooth devices: \(sender.foundDevices())")
-//    }
-//}
-
