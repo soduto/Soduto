@@ -30,6 +30,7 @@
 		024B435F1F23BEEB00037A33 /* PreferencesWindow.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 024B435D1F23BEEB00037A33 /* PreferencesWindow.storyboard */; };
 		024F8B191F24FC7700D6E504 /* ServicePreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024F8B181F24FC7700D6E504 /* ServicePreferencesViewController.swift */; };
 		026BFB581F194D7D00D888E2 /* DeviceInfoWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026BFB571F194D7D00D888E2 /* DeviceInfoWindowController.swift */; };
+		02968D0C204C4B9100FCE5E0 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 02968CFE204C4B9000FCE5E0 /* README.md */; };
 		02EC48B51F229CCE00C9370F /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EC48B41F229CCE00C9370F /* Configuration.swift */; };
 		02EC48B71F229CEE00C9370F /* ServiceConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EC48B61F229CEE00C9370F /* ServiceConfiguration.swift */; };
 		840538201ED62282003798AA /* WelcomeWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8405381F1ED62282003798AA /* WelcomeWindowController.swift */; };
@@ -341,6 +342,7 @@
 		024F8B181F24FC7700D6E504 /* ServicePreferencesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServicePreferencesViewController.swift; sourceTree = "<group>"; };
 		026BFB571F194D7D00D888E2 /* DeviceInfoWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoWindowController.swift; sourceTree = "<group>"; };
 		02968CD8204C42F500FCE5E0 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		02968CFE204C4B9000FCE5E0 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		02EC48B41F229CCE00C9370F /* Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Configuration.swift; path = Configuration/Configuration.swift; sourceTree = "<group>"; };
 		02EC48B61F229CEE00C9370F /* ServiceConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceConfiguration.swift; sourceTree = "<group>"; };
 		8405381F1ED62282003798AA /* WelcomeWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeWindowController.swift; sourceTree = "<group>"; };
@@ -628,6 +630,7 @@
 		843301571D2D8CB8008934BB = {
 			isa = PBXGroup;
 			children = (
+				02968CFE204C4B9000FCE5E0 /* README.md */,
 				02968CD8204C42F500FCE5E0 /* LICENSE */,
 				845BC6971E68C26B00DC9B81 /* NMSSH.xcodeproj */,
 				84BEF7271E660E2600D839D3 /* LibSSH2.xcodeproj */,
@@ -1173,6 +1176,7 @@
 				0236D2BA1F9CFBAA00E0F6A6 /* License.html in Resources */,
 				843107711E3D23CA00AE96AB /* SendMessageWindow.xib in Resources */,
 				02150DE81F17F98F00401CC6 /* DeviceInfoWindow.xib in Resources */,
+				02968D0C204C4B9100FCE5E0 /* README.md in Resources */,
 				845BE2DE1EC2465500F3BD62 /* LoadingWindow.xib in Resources */,
 				844AF28F1ED6185100422B7F /* DevicesList.storyboard in Resources */,
 				8461F35C1EC0FBC500E99C17 /* LoadingView.xib in Resources */,
