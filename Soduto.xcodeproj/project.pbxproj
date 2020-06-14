@@ -269,6 +269,13 @@
 			remoteGlobalIDString = 845BC7091E69F00E00DC9B81;
 			remoteInfo = SodutoBrowser;
 		};
+		88B5BADA24924BB5002AE35B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84E732021DF46F93001E1549 /* CleanroomLogger.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 3B9059021DAECB5200B4EEC0;
+			remoteInfo = CleanroomLogger;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -929,6 +936,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				88B5BADB24924BB5002AE35B /* PBXTargetDependency */,
 				023BD5A1204AEE270045B5F9 /* PBXTargetDependency */,
 			);
 			name = SodutoBrowser;
@@ -1010,6 +1018,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -1355,6 +1364,11 @@
 			isa = PBXTargetDependency;
 			target = 845BC7091E69F00E00DC9B81 /* SodutoBrowser */;
 			targetProxy = 84D071691EB91FAE004D383A /* PBXContainerItemProxy */;
+		};
+		88B5BADB24924BB5002AE35B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = CleanroomLogger;
+			targetProxy = 88B5BADA24924BB5002AE35B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
