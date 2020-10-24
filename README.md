@@ -28,6 +28,8 @@ Check it on [soduto.com](https://www.soduto.com)
     * On Action menu select "Include Debug Messages"
     * In Search field enter "process:Soduto category:CleanroomLogger"
 
-* To switch logging level in `Terminal.app` run command (with `<level>` being an integer between 1 and 5):
+* To switch logging level in `Terminal.app` run command (with `<level>` being an integer between 1 and 5, 1 being the most verbose and 5 - the least):
 
     `defaults write com.soduto.Soduto com.soduto.logLevel -int <level>`
+    
+    It is highly recommended to enable verbose logging levels only during debugging as sensitive data may be logged in plain text (like passwords copied into a clipboard)
