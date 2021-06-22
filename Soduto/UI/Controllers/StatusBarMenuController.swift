@@ -163,12 +163,17 @@ public class StatusBarMenuController: NSObject, NSWindowDelegate, NSMenuDelegate
         guard let serviceManager = self.serviceManager else { return nil }
         guard let service = serviceManager.services.first(where: { $0 is BatteryService }) as? BatteryService else { return nil }
         guard let batteryStatus = service.statuses.first(where: { $0.key == device.id })?.value else { return nil }
-        
+
         var rect = NSRect(x: 0, y: 0, width: 24, height: 13)
-        let image = NSImage(size: rect.size, flipped: false) { _ in
+        let image = NSImage(size: CGSize(width: 56, height: 13), flipped: false) { _ in
             let mainIcon = #imageLiteral(resourceName: "batteryStatusIcon")
             assert(mainIcon.size == rect.size)
             mainIcon.draw(in: rect)
+
+            let percentage = "\(batteryStatus.currentCharge)%" as NSString
+            let attr = [NSAttributedStringKey.font: NSFont.systemFont(ofSize: 10),
+                        NSAttributedStringKey.foregroundColor: NSColor.black,]
+            percentage.draw(in: NSRect(x: 26, y: 2, width: 28, height: 10), withAttributes: attr)
             
             let fullWidth: CGFloat = 16
             let chargedWidth: CGFloat = fullWidth * CGFloat(batteryStatus.currentCharge) / 100.0
