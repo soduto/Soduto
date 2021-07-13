@@ -9,7 +9,7 @@ For more information take a look at [soduto.com](https://www.soduto.com)
 
 * Install [Homebrew](https://brew.sh/):
 
-    `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
+    `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
 
 * Install `libtool` and `automake` using Homebrew:
 
