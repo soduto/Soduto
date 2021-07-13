@@ -10,6 +10,13 @@ For more information take a look at [soduto.com](https://www.soduto.com)
 * Install [Homebrew](https://brew.sh/):
 
     `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+    
+* Add Homebrew to your PATH in `~/.profile`:
+    
+    ```
+    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.profile
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+    ```
 
 * Install `libtool` and `automake` using Homebrew:
 
