@@ -5,6 +5,17 @@
 Soduto is a KDEConnect compatible application for macOS. It allows better integration between your phones, desktops and tablets. 
 For more information take a look at [soduto.com](https://www.soduto.com)
 
+## Installation
+
+Soduto application can be downloaded from [soduto.com](https://www.soduto.com). To install, open the downloaded .dmg file and drag 
+Soduto.app onto Applications folder.
+
+There is also a (unofficial) Homebrew formulae, that can install Soduto with such command:
+
+```bash
+brew install --cask soduto
+```
+
 ## Building
 
 * Install [Homebrew](https://brew.sh/):
