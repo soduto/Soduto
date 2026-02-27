@@ -1,5 +1,13 @@
 # Soduto
 
+> [!IMPORTANT]  
+> Original project from this repository is not under development anymore.
+> You may want to check out forked versions instead.
+>
+> One of the forks which seems to be actively developed is at https://github.com/sannidhyaroy/Soduto.
+> I do not know the developer(s) of that fork, nor do I encourage to use their version - Soduto may access a lot of your private data,
+> so use your own judgement whether to trust the developer(s).
+
 ## What is it?
 
 Soduto is a KDEConnect compatible application for macOS. It allows better integration between your phones, desktops and tablets. 
